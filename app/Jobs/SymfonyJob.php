@@ -37,34 +37,35 @@ class SymfonyJob implements ShouldQueue
      */
     public function handle(): void
     {
-        $apiKey = DB::table('api_keys')
-            ->where('api_name', '=', ApiName::JOB)
-        ->orderByDesc('request_remaining')
-        ->first();
-        if ($apiKey->request_remaining > 0) {
-            for ($page = 1; $page <= 2; $page++) {
-                $response = Http::job()->get('/search', [
-                    'query' => config('job-fetch.symfony_search_query'),
-                    'page' => $page,
-                    'num_pages' => 20,
-                    'date_posted' => 'week',
-                    'api_key_id' => $apiKey->id,
-                ]);
-                if ($response->ok()) {
-                    StoreJobs::dispatch($response->json(), 'Symfony');
+        try {
+            $apiKey = DB::table('api_keys')
+                ->where('api_name', '=', ApiName::JOB)
+                ->orderByDesc('request_remaining')
+                ->first();
+            if ($apiKey->request_remaining > 0) {
+                for ($page = 1; $page <= 2; $page++) {
+                    $response = Http::job()->get('/search', [
+                        'query' => config('job-fetch.symfony_search_query'),
+                        'page' => $page,
+                        'num_pages' => 20,
+                        'date_posted' => 'week',
+                        'api_key_id' => $apiKey->id,
+                    ]);
+                    if ($response->ok()) {
+                        StoreJobs::dispatch($response->json(), 'Symfony');
 
-                    DB::table('api_keys')
-                        ->where('id', $apiKey->id)
-                        ->update(['request_remaining' => $response->header('X-RateLimit-Requests-Remaining')]);
-                } else {
-                    Log::error($response['message']);
-                    DB::table('api_keys')
-                        ->where('id', $apiKey->id)
-                        ->update(['request_remaining' => $response->header('X-RateLimit-Requests-Remaining')]);
-
-                    continue;
+                        DB::table('api_keys')
+                            ->where('id', $apiKey->id)
+                            ->update(['request_remaining' => $response->header('X-RateLimit-Requests-Remaining')]);
+                    } else {
+                        Log::error('Error fetching data from API'. $response->json('message'));
+                    }
                 }
+            } else {
+                Log::error('No request remaining for Symfony API');
             }
+        } catch (\Exception $e) {
+            Log::error('Error fetching data from API'. $e->getMessage());
         }
 
     }
