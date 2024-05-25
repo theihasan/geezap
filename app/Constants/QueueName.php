@@ -5,12 +5,9 @@ namespace App\Constants;
 class QueueName
 {
 
-    public const JOBS = 'jobs';
+    public const JOBS = 'joblist';
 
     public const DEFAULT = 'default';
-
-
-
 
 
 

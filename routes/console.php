@@ -1,8 +1,14 @@
 <?php
 
-use Illuminate\Foundation\Inspiring;
-use Illuminate\Support\Facades\Artisan;
 
-Artisan::command('inspire', function () {
-    $this->comment(Inspiring::quote());
-})->purpose('Display an inspiring quote')->hourly();
+use App\Jobs\AspJob;
+use App\Jobs\LaravelJob;
+use App\Jobs\NodeJSJob;
+use App\Jobs\PaythonJob;
+use App\Jobs\ReactJob;
+use App\Jobs\SymfonyJob;
+use App\Jobs\VueJsJob;
+use App\Jobs\WordPressJob;
+use Illuminate\Support\Facades\Schedule;
+
+

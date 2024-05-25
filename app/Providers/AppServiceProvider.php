@@ -24,7 +24,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Http::macro('job', function () {
             $apiKey = DB::table('api_keys')
-                ->where('provider', '=', ApiName::JOB)
+                ->where('api_name', '=', ApiName::JOB)
                 ->orderByDesc('request_remaining')
                 ->first();
 

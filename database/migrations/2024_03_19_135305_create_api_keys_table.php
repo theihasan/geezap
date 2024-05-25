@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->string('api_key');
             $table->string('api_secret')->nullable();
             $table->string('api_name');
-            $table->integer('request_remaining');
+            $table->integer('request_remaining')->default(100);
             $table->timestamps();
         });
     }
