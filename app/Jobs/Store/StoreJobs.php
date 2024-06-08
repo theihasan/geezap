@@ -44,6 +44,8 @@ class StoreJobs implements ShouldQueue
                     'job_title' => $job['job_title'],
                     'job_category' => $this->jobCategory,
                     'apply_link' => $job['job_apply_link'],
+                    'latitude' => $job['job_latitude']?? null,
+                    'longitude' => $job['job_longitude']?? null,
                     'description' => $job['job_description'],
                     'is_remote' => $job['job_is_remote'],
                     'city' => $job['job_city'],
