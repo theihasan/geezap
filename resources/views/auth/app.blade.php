@@ -2,7 +2,7 @@
 <html lang="en" class="light scroll-smooth" dir="ltr">
 <head>
     <meta charset="UTF-8">
-    <title>Jobstack - Job Portal Tailwind CSS Template</title>
+    <title>@yield('auth-title', 'Geezap')</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta content="Job Listing Landing Template" name="description">
     <meta content="Job, CV, Career, Resume, Job Portal, Create Job, Post job, tailwind Css" name="keywords">

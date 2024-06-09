@@ -2,59 +2,58 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ContactInfoUpdateRequest;
+use App\Http\Requests\PasswordUpdateRequest;
+use App\Http\Requests\PersonalInfoUpdateRequest;
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Http\Requests\SocialMediaInfoUpdateRequest;
+use App\Services\ProfileService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
-    /**
-     * Display the user's profile form.
-     */
-    public function edit(Request $request): View
+    public function edit(): View
     {
-        return view('profile.edit', [
-            'user' => $request->user(),
-        ]);
+        return view('profile.profile-setting');
     }
 
-    /**
-     * Update the user's profile information.
-     */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function updatePersonalInfo(PersonalInfoUpdateRequest $request, ProfileService $profileService): RedirectResponse
     {
-        $request->user()->fill($request->validated());
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
-        }
+         $profileService->updatePersonalInfo($request, Auth::user());
+         return Redirect::route('profile.update')->with('status', 'Profile updated successfully');
 
-        $request->user()->save();
-
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 
-    /**
-     * Delete the user's account.
-     */
-    public function destroy(Request $request): RedirectResponse
+    public function updateContactInfo(ContactInfoUpdateRequest $request, ProfileService $profileService): RedirectResponse
     {
-        $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
-        ]);
+        $profileService->updateContactInfo($request, Auth::user());
+        return Redirect::route('profile.update')->with('status', 'Contact info updated successfully');
+    }
 
-        $user = $request->user();
+    public function updatePassword(PasswordUpdateRequest $request, ProfileService $profileService): RedirectResponse
+    {
+        $profileService->updatePassword($request, Auth::user());
+        return Redirect::route('profile.update')->with('status', 'Password updated successfully');
+    }
 
-        Auth::logout();
+    public function updateSocialMediaInfo(SocialMediaInfoUpdateRequest $request, ProfileService $profileService): RedirectResponse
+    {
+        $profileService->updateSocialMediaInfo($request, Auth::user());
+        return Redirect::route('profile.update')->with('status', 'Social media info updated successfully');
+    }
 
+
+    public function destroy(): RedirectResponse
+    {
+        $user = Auth::user();
         $user->delete();
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return Redirect::to('/');
+        return Redirect::route('home')->with('success', 'Profile deleted successfully');
     }
 }

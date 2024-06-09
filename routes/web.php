@@ -28,9 +28,11 @@ Route::get('/profile-update', function () {
 })->middleware(['auth', 'verified'])->name('profile.update');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    //Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::post('personal-info', [ProfileController::class, 'updatePersonalInfo'])->name('personal-info.update');
+    Route::post('contact-info', [ProfileController::class, 'updateContactInfo'])->name('contact-info.update');
+    Route::post('password', [ProfileController::class, 'updatePassword'])->name('password.update');
+    Route::post('social-media-info', [ProfileController::class, 'updateSocialMediaInfo'])->name('social-media-info.update');
+
 });
 
 require __DIR__.'/auth.php';
