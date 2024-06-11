@@ -36,7 +36,8 @@
             </li>
             <li class="dropdown inline-block relative ps-1">
                 <button data-dropdown-toggle="dropdown" class="dropdown-toggle items-center" type="button">
-                    <span class="btn btn-icon rounded-full bg-emerald-600 hover:bg-emerald-700 border-emerald-600 hover:border-emerald-700 text-white"><img src="assets/images/team/01.jpg" class="rounded-full" alt=""></span>
+                    <span class="btn btn-icon rounded-full bg-emerald-600 hover:bg-emerald-700 border-emerald-600 hover:border-emerald-700 text-white">
+                        <img src="{{asset('assets/images/profile.jpg')}}" class="rounded-full" alt=""></span>
                 </button>
                 <!-- Dropdown menu -->
                 <div class="dropdown-menu absolute end-0 m-0 mt-4 z-10 w-44 rounded-md overflow-hidden bg-white dark:bg-slate-900 shadow dark:shadow-gray-700 hidden" onclick="event.stopPropagation();">

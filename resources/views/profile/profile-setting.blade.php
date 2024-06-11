@@ -17,7 +17,7 @@
                                 <input id="pro-img" name="profile-image" type="file" class="hidden" onchange="loadFile(event)" />
                                 <div>
                                     <div class="relative size-28 max-w-[112px] max-h-[112px] mx-auto">
-                                        <img src="{{asset('assets/images/team/01.jpg')}}" class="rounded-full shadow dark:shadow-gray-800 ring-4 ring-slate-50 dark:ring-slate-800" id="profile-image" alt="">
+                                        <img src="{{asset('assets/images/profile.jpg')}}" class="rounded-full shadow dark:shadow-gray-800 ring-4 ring-slate-50 dark:ring-slate-800" id="profile-image" alt="">
                                         <label class="absolute inset-0 cursor-pointer" for="pro-img"></label>
                                     </div>
                                 </div>
@@ -55,9 +55,9 @@
 
                                     <div class="lg:col-span-6">
                                         <label class="form-label font-medium">Your Email : <span class="text-red-600">*</span></label>
-                                        <input type="email" class="form-input border border-slate-100 dark:border-slate-800 mt-2"
-                                               value="{{auth()->user()->email}}"
-                                               name="email" required="">
+                                        <input type="email" class="form-input border border-slate-100 dark:border-slate-800 mt-2 disabled:opacity-50"
+                                               value="{{ auth()->user()->email }}"
+                                               name="email" required="" disabled>
                                     @error('email')
                                     <span class="text-red-600">{{$message}}</span>
                                     @enderror
@@ -67,7 +67,7 @@
                                         <label class="form-label font-medium" for="birthday">Date of Birth :</label>
                                         <input type="date" id="birthday" name="dob"
                                                class="form-input border border-slate-100 dark:border-slate-800 mt-2"
-                                                value="{{auth()->user()->dob ?? null}}">
+                                                value="{{auth()->user()->dob->format('Y-m-d')}}">
                                     @error('dob')
                                     <span class="text-red-600">{{$message}}</span>
                                     @enderror
@@ -106,10 +106,10 @@
                                     <div class="lg:col-span-3">
                                         <label class="form-label font-medium">Timezone :</label>
                                         <select name="timezone" class="form-select form-input border border-slate-100 dark:border-slate-800 block w-full mt-2">
-                                            <option value="{{auth()->user()->timezone}}">{{auth()->user()->timezone}}</option>
-                                            <option value="NY">USA</option>
-                                            <option value="MC">UK</option>
-                                            <option value="SC">India</option>
+                                            <option value="{{auth()->user()->timezone}}" selected>{{auth()->user()->timezone}}</option>
+                                            @foreach($timezones as $timezone)
+                                                <option value="{{$timezone->value}}">{{$timezone->value}}</option>
+                                            @endforeach
                                         </select>
                                     @error('timezone')
                                     <span class="text-red-600">{{$message}}</span>
@@ -168,41 +168,67 @@
                             <div class="grid grid-cols-1 gap-4">
                                 <div>
                                     <h5 class="text-lg font-semibold mb-4">Skills :</h5>
-                                    <form>
-                                        <div class="grid grid-cols-1 gap-4">
-                                            <div class="">
-                                                <label class="form-label font-medium" for="WordPress">WordPress</label>
-                                                <input type="number" class="form-input border border-slate-100 dark:border-slate-800 mt-2" placeholder="First Name:" id="WordPress" name="number" required="">
+                                    <form id="skills-form" action="{{route('skill.update')}}" method="POST">
+                                        @csrf
+                                        @if(!empty($skills['skill']))
+                                        @foreach($skills['skill'] as $index => $skill)
+                                            <div class="grid grid-cols-1 gap-4 skill-entry">
+                                                <div>
+                                                    <label for="skill" class="form-label font-medium">Skill Name</label>
+                                                    <input type="text"
+                                                           class="form-input border border-slate-100 dark:border-slate-800 mt-2"
+                                                           placeholder="Skill Name:" id="skill" name="skill[]" required="" value="{{$skill}}">
+                                                @error('skill')
+                                                <span class="text-red-600">{{$message}}</span>
+                                                @enderror
+                                                </div>
+                                                <div>
+                                                    <label for="skill_level" class="form-label font-medium">Skill Level</label>
+                                                    <select
+                                                        class="form-select border border-slate-100 dark:border-slate-800 mt-2 mx-5 px-20 py-3"
+                                                        id="skill_level" name="skill_level[]" required="">
+                                                        <option value="{{App\Enums\SkillProfeciency::PROFICIENT->value}}" @if($skills['skill_level'][$index] == App\Enums\SkillProfeciency::PROFICIENT->value) selected @endif>Proficient</option>
+                                                        <option value="{{App\Enums\SkillProfeciency::INTERMEDIATE->value}}" @if($skills['skill_level'][$index] == App\Enums\SkillProfeciency::INTERMEDIATE->value) selected @endif>Intermediate</option>
+                                                        <option value="{{App\Enums\SkillProfeciency::BEGINNER->value}}" @if($skills['skill_level'][$index] == App\Enums\SkillProfeciency::BEGINNER->value) selected @endif>Beginner</option>
+                                                    </select>
+                                                @error('skill_level')
+                                                <span class="text-red-600">{{$message}}</span>
+                                                @enderror
+                                                </div>
                                             </div>
-
-                                            <div class="">
-                                                <label class="form-label font-medium" for="JavaScript">JavaScript</label>
-                                                <input type="number" class="form-input border border-slate-100 dark:border-slate-800 mt-2" placeholder="First Name:" id="JavaScript" name="number" required="">
+                                        @endforeach
+                                        @else
+                                            <div id="skills-container">
+                                                <div class="grid grid-cols-1 gap-4 skill-entry">
+                                                    <div>
+                                                        <label for="skill" class="form-label font-medium">Skill Name</label>
+                                                        <input type="text"
+                                                               class="form-input border border-slate-100 dark:border-slate-800 mt-2"
+                                                               placeholder="Skill Name:" id="skill" name="skill[]" required="">
+                                                        @error('skill')
+                                                        <span class="text-red-600">{{$message}}</span>
+                                                        @enderror
+                                                    </div>
+                                                    <div>
+                                                        <label for="skill_level" class="form-label font-medium">Skill Level</label>
+                                                        <select
+                                                            class="form-select border border-slate-100 dark:border-slate-800 mt-2 mx-5 px-20 py-3"
+                                                            id="skill_level" name="skill_level[]" required="">
+                                                            <option value="{{App\Enums\SkillProfeciency::PROFICIENT->value}}">Proficient</option>
+                                                            <option value="{{App\Enums\SkillProfeciency::INTERMEDIATE->value}}">Intermediate</option>
+                                                            <option value="{{App\Enums\SkillProfeciency::BEGINNER->value}}">Beginner</option>
+                                                        </select>
+                                                        @error('skill_level')
+                                                        <span class="text-red-600">{{$message}}</span>
+                                                        @enderror
+                                                    </div>
+                                                </div>
                                             </div>
-
-                                            <div class="">
-                                                <label class="form-label font-medium" for="HTML">HTML</label>
-                                                <input type="number" class="form-input border border-slate-100 dark:border-slate-800 mt-2" placeholder="First Name:" id="HTML" name="number" required="">
-                                            </div>
-
-                                            <div class="">
-                                                <label class="form-label font-medium" for="Figma">Figma</label>
-                                                <input type="number" class="form-input border border-slate-100 dark:border-slate-800 mt-2" placeholder="First Name:" id="Figma" name="number" required="">
-                                            </div>
-
-                                            <div class="">
-                                                <label class="form-label font-medium" for="Photoshop">Photoshop</label>
-                                                <input type="number" class="form-input border border-slate-100 dark:border-slate-800 mt-2" placeholder="First Name:" id="Photoshop" name="number" required="">
-                                            </div>
-
-                                            <div class="">
-                                                <label class="form-label font-medium" for="Illustration">Illustration</label>
-                                                <input type="number" class="form-input border border-slate-100 dark:border-slate-800 mt-2" placeholder="First Name:" id="Illustration" name="number" required="">
-                                            </div>
-                                        </div>
-
-                                        <button type="submit" class="btn bg-emerald-600 hover:bg-emerald-700 text-white rounded-md mt-5">Update Personal Info</button>
+                                        @endif
+                                        <button type="button" id="add-skill" class="btn bg-emerald-600 hover:bg-emerald-700 text-white rounded-md mt-5">Add More Skill</button>
+                                        <button type="submit" class="btn bg-emerald-600 hover:bg-emerald-700 text-white rounded-md mt-5">Update Skills</button>
                                     </form>
+
                                 </div>
                             </div>
                         </div>
@@ -213,43 +239,67 @@
                             <div class="grid grid-cols-1 gap-4">
                                 <div>
                                     <h5 class="text-lg font-semibold mb-4">Experience :</h5>
-
-                                    <div>
-                                        <div>
-                                            <div class="preview-box flex justify-center rounded-md shadow dark:shadow-gray-800 overflow-hidden bg-gray-50 dark:bg-slate-800 text-slate-400 p-2 text-center small">Supports JPG, PNG and MP4 videos. Max file size : 10MB.</div>
-                                            <input type="file" id="input-file" name="input-file" accept="image/*" onchange={handleChange()} hidden>
-                                            <label class="btn-upload btn bg-emerald-600 hover:bg-emerald-700 text-white rounded-md mt-5 cursor-pointer" for="input-file">Upload Image</label>
-                                        </div>
-                                        <form>
-                                            <div class="grid grid-cols-12 mt-6 gap-4">
-                                                <div class="col-span-12">
-                                                    <label class="form-label font-medium">Job Title <span class="text-red-600">*</span></label>
-                                                    <input name="name" id="JobTitle" type="text" class="form-input border border-slate-100 dark:border-slate-800" placeholder="Title :">
-                                                </div><!--end col-->
-
-                                                <div class="col-span-12">
-                                                    <label class="form-label font-medium">Company Name <span class="text-red-600">*</span></label>
-                                                    <input name="name" id="CompanyName" type="text" class="form-input border border-slate-100 dark:border-slate-800" placeholder="Company :">
-                                                </div><!--end col-->
-
-                                                <div class="col-span-12">
-                                                    <label class="form-label font-medium">Year <span class="text-red-600">*</span></label>
-                                                    <input name="number" id="Year" type="number" class="form-input border border-slate-100 dark:border-slate-800" placeholder="Year :">
-                                                </div><!--end col-->
-
-                                                <div class="col-span-12">
-                                                    <label class="form-label font-medium"> Description : </label>
-                                                    <textarea name="comments" id="Description" class="form-input border border-slate-100 dark:border-slate-800 textarea" placeholder="Description :"></textarea>
-                                                </div><!--end col-->
-                                            </div>
-                                        </form>
-
-                                        <input type="submit" id="submit" name="send" class="btn bg-emerald-600 hover:bg-emerald-700 text-white rounded-md mt-5" value="Save Changes">
-                                    </div>
+                                    <form action="{{ route('experience.update') }}" method="POST">
+                                        @csrf
+                                        <div id="experience-container">
+                                            @if(!empty($experiences['job_title']))
+                                                @foreach($experiences['job_title'] as $index => $job_title)
+                                                    <div class="experience-form">
+                                                        <div class="grid grid-cols-12 mt-6 gap-4">
+                                                            <div class="col-span-12">
+                                                                <label class="form-label font-medium">Job Title <span class="text-red-600">*</span></label>
+                                                                <input name="job_title[]" id="JobTitle" type="text"
+                                                                       class="form-input border border-slate-100 dark:border-slate-800" placeholder="Title :" value="{{ $job_title }}">
+                                                            </div><!--end col-->
+                                                            <div class="col-span-12">
+                                                                <label class="form-label font-medium">Company Name <span class="text-red-600">*</span></label>
+                                                                <input name="company_name[]" id="CompanyName" type="text"
+                                                                       class="form-input border border-slate-100 dark:border-slate-800" placeholder="Company :" value="{{ $experiences['company_name'][$index] }}">
+                                                            </div><!--end col-->
+                                                            <div class="col-span-12">
+                                                                <label class="form-label font-medium">Year <span class="text-red-600">*</span></label>
+                                                                <input name="year[]" id="Year" type="number"
+                                                                       class="form-input border border-slate-100 dark:border-slate-800" placeholder="Year :" value="{{ $experiences['year'][$index] }}">
+                                                            </div><!--end col-->
+                                                            <div class="col-span-12">
+                                                                <label class="form-label font-medium"> Description : </label>
+                                                                <textarea name="description[]" id="Description"
+                                                                          class="form-input border border-slate-100 dark:border-slate-800 textarea" placeholder="Description :">{{ $experiences['description'][$index] }}</textarea>
+                                                            </div><!--end col-->
+                                                        </div>
+                                                    </div><!-- end experience-form -->
+                                                @endforeach
+                                            @else
+                                                <div class="experience-form">
+                                                    <div class="grid grid-cols-12 mt-6 gap-4">
+                                                        <div class="col-span-12">
+                                                            <label class="form-label font-medium">Job Title <span class="text-red-600">*</span></label>
+                                                            <input name="job_title[]" id="JobTitle" type="text" class="form-input border border-slate-100 dark:border-slate-800" placeholder="Title :">
+                                                        </div><!--end col-->
+                                                        <div class="col-span-12">
+                                                            <label class="form-label font-medium">Company Name <span class="text-red-600">*</span></label>
+                                                            <input name="company_name[]" id="CompanyName" type="text" class="form-input border border-slate-100 dark:border-slate-800" placeholder="Company :">
+                                                        </div><!--end col-->
+                                                        <div class="col-span-12">
+                                                            <label class="form-label font-medium">Year <span class="text-red-600">*</span></label>
+                                                            <input name="year[]" id="Year" type="number" class="form-input border border-slate-100 dark:border-slate-800" placeholder="Year :">
+                                                        </div><!--end col-->
+                                                        <div class="col-span-12">
+                                                            <label class="form-label font-medium"> Description : </label>
+                                                            <textarea name="description[]" id="Description" class="form-input border border-slate-100 dark:border-slate-800 textarea" placeholder="Description :"></textarea>
+                                                        </div><!--end col-->
+                                                    </div>
+                                                </div><!-- end experience-form -->
+                                            @endif
+                                        </div><!-- end experience-container -->
+                                        <button id="add-experience" class="btn bg-emerald-600 hover:bg-emerald-700 text-white rounded-md mt-5">Add New Experience</button>
+                                        <button type="submit" class="btn bg-emerald-600 hover:bg-emerald-700 text-white rounded-md mt-5">Update Experience</button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
                     </div>
+
 
                     <div class="lg:col-span-12">
                         <div class="p-6 rounded-md shadow dark:shadow-gray-800 bg-white dark:bg-slate-900">
@@ -422,6 +472,33 @@
         <!-- End Hero -->
 @endsection
 @push('extra-js')
+    <script>
+        document.getElementById('add-experience').addEventListener('click', function(event) {
+            event.preventDefault();
+            var experienceContainer = document.getElementById('experience-container');
+            var experienceForm = document.querySelector('.experience-form');
+            var newExperienceForm = experienceForm.cloneNode(true);
+
+            var inputs = newExperienceForm.querySelectorAll('input, textarea');
+            inputs.forEach(function(input) {
+                input.value = '';
+            });
+
+            experienceContainer.appendChild(newExperienceForm);
+        });
+
+        document.getElementById('add-skill').addEventListener('click', function() {
+            var skillContainer = document.getElementById('skills-container');
+            var skillEntry = document.querySelector('.skill-entry');
+            var newSkillEntry = skillEntry.cloneNode(true);
+
+            newSkillEntry.querySelector('input').value = '';
+            newSkillEntry.querySelector('select').value = 'proficient';
+
+            skillContainer.appendChild(newSkillEntry);
+        });
+
+    </script>
 
 
 

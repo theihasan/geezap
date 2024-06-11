@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\Timezone;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class PersonalInfoUpdateRequest extends FormRequest
 {
@@ -24,13 +26,12 @@ class PersonalInfoUpdateRequest extends FormRequest
 
         return [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255'],
             'address' => ['nullable', 'string'],
             'dob' => ['nullable', 'date'],
             'state' => ['nullable', 'string'],
             'country' => ['nullable', 'string'],
             'occupation' => ['nullable', 'string'],
-            'timezone'  => ['nullable', 'string'],
+            'timezone'  => ['nullable', 'string', Rule::in(Timezone::toValues())],
             'postcode' => ['nullable', 'string'],
             'phone' => ['nullable', 'string'],
             'bio' => ['nullable', 'string'],

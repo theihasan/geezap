@@ -18,7 +18,6 @@ class ProfileService
         $data = $request->validated();
         $user->update([
             'name' => $data['name'],
-            'email' => $data['email'],
             'address' => $data['address'],
             'dob' => $data['dob'],
             'state' => $data['state'],
