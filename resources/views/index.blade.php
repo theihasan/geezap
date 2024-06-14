@@ -79,251 +79,61 @@
                 </div><!--end grid-->
 
                 <div class="grid md:grid-cols-2 mt-8 gap-[30px]">
+
+                    @forelse($latestJobs as $latestJob)
                     <div class="group rounded-lg shadow hover:shadow-lg dark:shadow-gray-700 transition-all duration-500">
                         <div class="flex items-center justify-between p-6">
                             <div class="flex items-center">
                                 <div class="size-14 flex items-center justify-center bg-white dark:bg-slate-900 shadow dark:shadow-gray-700 rounded-md">
-                                    <img src="{{asset('assets/images/company/facebook-logo.png')}}" class="size-8"  alt="">
+                                    @if($latestJob->employer_logo)
+                                        <img src="{{$latestJob->employer_logo}}" class="size-8"  alt="{{$latestJob->employer_name}}">
+                                    @endif
                                 </div>
 
                                 <div class="ms-3">
-                                    <a href="employer-detail.html" class="block text-[16px] font-semibold hover:text-emerald-600 transition-all duration-500">Facebook</a>
-                                    <span class="block text-sm text-slate-400">2 days ago</span>
+                                    <a href="{{route('job.show', $latestJob->slug)}}"
+                                       class="block text-[16px] font-semibold hover:text-emerald-600 transition-all duration-500">{{$latestJob->employer_name}}</a>
+                                    <span class="block text-sm text-slate-400">{{$latestJob->posted_at->diffForHumans()}}</span>
                                 </div>
                             </div>
 
-                            <a href="job-apply.html" class="btn btn-icon btn-lg rounded-full bg-emerald-600/5 group-hover:bg-emerald-600 border border-slate-100 dark:border-slate-800 text-emerald-600 group-hover:text-white"><i class="uil uil-arrow-up-right"></i></a>
+                            <a href="{{route('job.show', $latestJob->slug)}}"
+                               class="btn btn-icon btn-lg rounded-full bg-emerald-600/5
+                               group-hover:bg-emerald-600 border border-slate-100 dark:border-slate-800
+                               text-emerald-600 group-hover:text-white"><i class="uil uil-arrow-up-right"></i></a>
                         </div>
 
                         <div class="lg:flex items-center justify-between border-t border-gray-100 dark:border-gray-800 p-6">
                             <div>
-                                <a href="job-detail-one.html" class="text-lg font-semibold hover:text-emerald-600">Web Designer / Developer</a>
+                                <a href="{{route('job.show', $latestJob->slug)}}" class="text-lg font-semibold hover:text-emerald-600">{{$latestJob->job_title}}</a>
                                 <p class="text-slate-400 mt-1">Total Openings: 1</p>
                             </div>
 
-                            <p class="text-slate-400 lg:mt-0 mt-4"><i class="uil uil-usd-circle text-[20px] text-emerald-600"></i> $950 - $1100/mo</p>
+                            <p class="text-slate-400 lg:mt-0 mt-4">
+                                @if($latestJob->min_salary && $latestJob->max_salary)
+                                    <i class="uil uil-usd-circle text-[20px] text-emerald-600"></i>
+                                    ${{$latestJob->min_salary}} - ${{$latestJob->max_salary}}/${{$latestJob->salary_period}}
+                                @endif
+                            </p>
                         </div>
 
                         <div class="px-6 py-2 bg-slate-50 dark:bg-slate-800 flex justify-between items-center">
                             <div>
-                                <span class="inline-block font-semibold"><i class="mdi mdi-check-decagram mdi-18px text-blue-500 me-1"></i>Verified</span>
-                                <ul class="list-none inline-block ms-1 text-yellow-400 space-x-0.5">
-                                    <li class="inline"><i class="mdi mdi-star text-lg"></i></li>
-                                    <li class="inline"><i class="mdi mdi-star text-lg"></i></li>
-                                    <li class="inline"><i class="mdi mdi-star text-lg"></i></li>
-                                    <li class="inline"><i class="mdi mdi-star text-lg"></i></li>
-                                    <li class="inline"><i class="mdi mdi-star text-lg"></i></li>
-                                    <li class="inline text-slate-400 font-semibold">4.8</li>
-                                </ul>
+
                             </div>
-                            <span class="inline-block me-1 text-slate-400"><i class="uil uil-map-marker text-[18px] text-slate-900 dark:text-white me-1"></i>Australia</span>
+                            <span
+                                class="inline-block me-1 text-slate-400">
+                                <i class="uil uil-map-marker text-[18px] text-slate-900 dark:text-white me-1"></i>
+                                @if($latestJob->country)
+                                    {{$latestJob->country}}
+                                @endif
+                            </span>
                         </div>
                     </div><!--end content-->
+                    @empty
+                        No Jobs Found
+                    @endforelse
 
-                    <div class="group rounded-lg shadow hover:shadow-lg dark:shadow-gray-700 transition-all duration-500">
-                        <div class="flex items-center justify-between p-6">
-                            <div class="flex items-center">
-                                <div class="size-14 flex items-center justify-center bg-white dark:bg-slate-900 shadow dark:shadow-gray-700 rounded-md">
-                                    <img src="{{asset('assets/images/company/google-logo.png')}}" class="size-8"  alt="">
-                                </div>
-
-                                <div class="ms-3">
-                                    <a href="employer-detail.html" class="block text-[16px] font-semibold hover:text-emerald-600 transition-all duration-500">Google</a>
-                                    <span class="block text-sm text-slate-400">2 days ago</span>
-                                </div>
-                            </div>
-
-                            <a href="job-apply.html" class="btn btn-icon btn-lg rounded-full bg-emerald-600/5 group-hover:bg-emerald-600 border border-slate-100 dark:border-slate-800 text-emerald-600 group-hover:text-white"><i class="uil uil-arrow-up-right"></i></a>
-                        </div>
-
-                        <div class="lg:flex items-center justify-between border-t border-gray-100 dark:border-gray-800 p-6">
-                            <div>
-                                <a href="job-detail-one.html" class="text-lg font-semibold hover:text-emerald-600">Marketing Director</a>
-                                <p class="text-slate-400 mt-1">Total Openings: 1</p>
-                            </div>
-
-                            <p class="text-slate-400 lg:mt-0 mt-4"><i class="uil uil-usd-circle text-[20px] text-emerald-600"></i> $950 - $1100/mo</p>
-                        </div>
-
-                        <div class="px-6 py-2 bg-slate-50 dark:bg-slate-800 flex justify-between items-center">
-                            <div>
-                                <span class="inline-block font-semibold"><i class="mdi mdi-check-decagram mdi-18px text-blue-500 me-1"></i>Verified</span>
-                                <ul class="list-none inline-block ms-1 text-yellow-400 space-x-0.5">
-                                    <li class="inline"><i class="mdi mdi-star text-lg"></i></li>
-                                    <li class="inline"><i class="mdi mdi-star text-lg"></i></li>
-                                    <li class="inline"><i class="mdi mdi-star text-lg"></i></li>
-                                    <li class="inline"><i class="mdi mdi-star text-lg"></i></li>
-                                    <li class="inline"><i class="mdi mdi-star text-lg"></i></li>
-                                    <li class="inline text-slate-400 font-semibold">4.8</li>
-                                </ul>
-                            </div>
-                            <span class="inline-block me-1 text-slate-400"><i class="uil uil-map-marker text-[18px] text-slate-900 dark:text-white me-1"></i>USA</span>
-                        </div>
-                    </div><!--end content-->
-
-                    <div class="group rounded-lg shadow hover:shadow-lg dark:shadow-gray-700 transition-all duration-500">
-                        <div class="flex items-center justify-between p-6">
-                            <div class="flex items-center">
-                                <div class="size-14 flex items-center justify-center bg-white dark:bg-slate-900 shadow dark:shadow-gray-700 rounded-md">
-                                    <img src="{{asset('assets/images/company/android.png')}}" class="size-8"  alt="">
-                                </div>
-
-                                <div class="ms-3">
-                                    <a href="employer-detail.html" class="block text-[16px] font-semibold hover:text-emerald-600 transition-all duration-500">Android</a>
-                                    <span class="block text-sm text-slate-400">2 days ago</span>
-                                </div>
-                            </div>
-
-                            <a href="job-apply.html" class="btn btn-icon btn-lg rounded-full bg-emerald-600/5 group-hover:bg-emerald-600 border border-slate-100 dark:border-slate-800 text-emerald-600 group-hover:text-white"><i class="uil uil-arrow-up-right"></i></a>
-                        </div>
-
-                        <div class="lg:flex items-center justify-between border-t border-gray-100 dark:border-gray-800 p-6">
-                            <div>
-                                <a href="job-detail-one.html" class="text-lg font-semibold hover:text-emerald-600">Application Developer</a>
-                                <p class="text-slate-400 mt-1">Total Openings: 1</p>
-                            </div>
-
-                            <p class="text-slate-400 lg:mt-0 mt-4"><i class="uil uil-usd-circle text-[20px] text-emerald-600"></i> $950 - $1100/mo</p>
-                        </div>
-
-                        <div class="px-6 py-2 bg-slate-50 dark:bg-slate-800 flex justify-between items-center">
-                            <div>
-                                <span class="inline-block font-semibold"><i class="mdi mdi-check-decagram mdi-18px text-blue-500 me-1"></i>Verified</span>
-                                <ul class="list-none inline-block ms-1 text-yellow-400 space-x-0.5">
-                                    <li class="inline"><i class="mdi mdi-star text-lg"></i></li>
-                                    <li class="inline"><i class="mdi mdi-star text-lg"></i></li>
-                                    <li class="inline"><i class="mdi mdi-star text-lg"></i></li>
-                                    <li class="inline"><i class="mdi mdi-star text-lg"></i></li>
-                                    <li class="inline"><i class="mdi mdi-star text-lg"></i></li>
-                                    <li class="inline text-slate-400 font-semibold">4.8</li>
-                                </ul>
-                            </div>
-                            <span class="inline-block me-1 text-slate-400"><i class="uil uil-map-marker text-[18px] text-slate-900 dark:text-white me-1"></i>China</span>
-                        </div>
-                    </div><!--end content-->
-
-                    <div class="group rounded-lg shadow hover:shadow-lg dark:shadow-gray-700 transition-all duration-500">
-                        <div class="flex items-center justify-between p-6">
-                            <div class="flex items-center">
-                                <div class="size-14 flex items-center justify-center bg-white dark:bg-slate-900 shadow dark:shadow-gray-700 rounded-md">
-                                    <img src="{{asset('assets/images/company/lenovo-logo.png')}}" class="size-8"  alt="">
-                                </div>
-
-                                <div class="ms-3">
-                                    <a href="employer-detail.html" class="block text-[16px] font-semibold hover:text-emerald-600 transition-all duration-500">Lenovo</a>
-                                    <span class="block text-sm text-slate-400">2 days ago</span>
-                                </div>
-                            </div>
-
-                            <a href="job-apply.html" class="btn btn-icon btn-lg rounded-full bg-emerald-600/5 group-hover:bg-emerald-600 border border-slate-100 dark:border-slate-800 text-emerald-600 group-hover:text-white"><i class="uil uil-arrow-up-right"></i></a>
-                        </div>
-
-                        <div class="lg:flex items-center justify-between border-t border-gray-100 dark:border-gray-800 p-6">
-                            <div>
-                                <a href="job-detail-one.html" class="text-lg font-semibold hover:text-emerald-600">Senior Product Designer</a>
-                                <p class="text-slate-400 mt-1">Total Openings: 1</p>
-                            </div>
-
-                            <p class="text-slate-400 lg:mt-0 mt-4"><i class="uil uil-usd-circle text-[20px] text-emerald-600"></i> $950 - $1100/mo</p>
-                        </div>
-
-                        <div class="px-6 py-2 bg-slate-50 dark:bg-slate-800 flex justify-between items-center">
-                            <div>
-                                <span class="inline-block font-semibold"><i class="mdi mdi-check-decagram mdi-18px text-blue-500 me-1"></i>Verified</span>
-                                <ul class="list-none inline-block ms-1 text-yellow-400 space-x-0.5">
-                                    <li class="inline"><i class="mdi mdi-star text-lg"></i></li>
-                                    <li class="inline"><i class="mdi mdi-star text-lg"></i></li>
-                                    <li class="inline"><i class="mdi mdi-star text-lg"></i></li>
-                                    <li class="inline"><i class="mdi mdi-star text-lg"></i></li>
-                                    <li class="inline"><i class="mdi mdi-star text-lg"></i></li>
-                                    <li class="inline text-slate-400 font-semibold">4.8</li>
-                                </ul>
-                            </div>
-                            <span class="inline-block me-1 text-slate-400"><i class="uil uil-map-marker text-[18px] text-slate-900 dark:text-white me-1"></i>Dubai</span>
-                        </div>
-                    </div><!--end content-->
-
-                    <div class="group rounded-lg shadow hover:shadow-lg dark:shadow-gray-700 transition-all duration-500">
-                        <div class="flex items-center justify-between p-6">
-                            <div class="flex items-center">
-                                <div class="size-14 flex items-center justify-center bg-white dark:bg-slate-900 shadow dark:shadow-gray-700 rounded-md">
-                                    <img src="{{asset('assets/images/company/spotify.png')}}" class="size-8"  alt="">
-                                </div>
-
-                                <div class="ms-3">
-                                    <a href="employer-detail.html" class="block text-[16px] font-semibold hover:text-emerald-600 transition-all duration-500">Spotify</a>
-                                    <span class="block text-sm text-slate-400">2 days ago</span>
-                                </div>
-                            </div>
-
-                            <a href="job-apply.html" class="btn btn-icon btn-lg rounded-full bg-emerald-600/5 group-hover:bg-emerald-600 border border-slate-100 dark:border-slate-800 text-emerald-600 group-hover:text-white"><i class="uil uil-arrow-up-right"></i></a>
-                        </div>
-
-                        <div class="lg:flex items-center justify-between border-t border-gray-100 dark:border-gray-800 p-6">
-                            <div>
-                                <a href="job-detail-one.html" class="text-lg font-semibold hover:text-emerald-600">C++ Developer</a>
-                                <p class="text-slate-400 mt-1">Total Openings: 1</p>
-                            </div>
-
-                            <p class="text-slate-400 lg:mt-0 mt-4"><i class="uil uil-usd-circle text-[20px] text-emerald-600"></i> $950 - $1100/mo</p>
-                        </div>
-
-                        <div class="px-6 py-2 bg-slate-50 dark:bg-slate-800 flex justify-between items-center">
-                            <div>
-                                <span class="inline-block font-semibold"><i class="mdi mdi-check-decagram mdi-18px text-blue-500 me-1"></i>Verified</span>
-                                <ul class="list-none inline-block ms-1 text-yellow-400 space-x-0.5">
-                                    <li class="inline"><i class="mdi mdi-star text-lg"></i></li>
-                                    <li class="inline"><i class="mdi mdi-star text-lg"></i></li>
-                                    <li class="inline"><i class="mdi mdi-star text-lg"></i></li>
-                                    <li class="inline"><i class="mdi mdi-star text-lg"></i></li>
-                                    <li class="inline"><i class="mdi mdi-star text-lg"></i></li>
-                                    <li class="inline text-slate-400 font-semibold">4.8</li>
-                                </ul>
-                            </div>
-                            <span class="inline-block me-1 text-slate-400"><i class="uil uil-map-marker text-[18px] text-slate-900 dark:text-white me-1"></i>India</span>
-                        </div>
-                    </div><!--end content-->
-
-                    <div class="group rounded-lg shadow hover:shadow-lg dark:shadow-gray-700 transition-all duration-500">
-                        <div class="flex items-center justify-between p-6">
-                            <div class="flex items-center">
-                                <div class="size-14 flex items-center justify-center bg-white dark:bg-slate-900 shadow dark:shadow-gray-700 rounded-md">
-                                    <img src="assets/images/company/linkedin.png" class="size-8"  alt="">
-                                </div>
-
-                                <div class="ms-3">
-                                    <a href="employer-detail.html" class="block text-[16px] font-semibold hover:text-emerald-600 transition-all duration-500">Linkedin</a>
-                                    <span class="block text-sm text-slate-400">2 days ago</span>
-                                </div>
-                            </div>
-
-                            <a href="job-apply.html" class="btn btn-icon btn-lg rounded-full bg-emerald-600/5 group-hover:bg-emerald-600 border border-slate-100 dark:border-slate-800 text-emerald-600 group-hover:text-white"><i class="uil uil-arrow-up-right"></i></a>
-                        </div>
-
-                        <div class="lg:flex items-center justify-between border-t border-gray-100 dark:border-gray-800 p-6">
-                            <div>
-                                <a href="job-detail-one.html" class="text-lg font-semibold hover:text-emerald-600">Php Developer</a>
-                                <p class="text-slate-400 mt-1">Total Openings: 1</p>
-                            </div>
-
-                            <p class="text-slate-400 lg:mt-0 mt-4"><i class="uil uil-usd-circle text-[20px] text-emerald-600"></i> $950 - $1100/mo</p>
-                        </div>
-
-                        <div class="px-6 py-2 bg-slate-50 dark:bg-slate-800 flex justify-between items-center">
-                            <div>
-                                <span class="inline-block font-semibold"><i class="mdi mdi-check-decagram mdi-18px text-blue-500 me-1"></i>Verified</span>
-                                <ul class="list-none inline-block ms-1 text-yellow-400 space-x-0.5">
-                                    <li class="inline"><i class="mdi mdi-star text-lg"></i></li>
-                                    <li class="inline"><i class="mdi mdi-star text-lg"></i></li>
-                                    <li class="inline"><i class="mdi mdi-star text-lg"></i></li>
-                                    <li class="inline"><i class="mdi mdi-star text-lg"></i></li>
-                                    <li class="inline"><i class="mdi mdi-star text-lg"></i></li>
-                                    <li class="inline text-slate-400 font-semibold">4.8</li>
-                                </ul>
-                            </div>
-                            <span class="inline-block me-1 text-slate-400"><i class="uil uil-map-marker text-[18px] text-slate-900 dark:text-white me-1"></i>Pakistan</span>
-                        </div>
-                    </div><!--end content-->
                 </div><!--end grid-->
 
                 <div class="grid md:grid-cols-12 grid-cols-1 mt-8">
@@ -336,17 +146,23 @@
             <div class="container md:mt-24 mt-16">
                 <div class="relative grid md:grid-cols-3 grid-cols-1 items-center gap-[30px] z-1">
                     <div class="counter-box text-center">
-                        <h1 class="lg:text-5xl text-4xl font-semibold mb-2 dark:text-white"><span class="counter-value" data-target="700">700</span>+</h1>
+                        <h1 class="lg:text-5xl text-4xl font-semibold mb-2 dark:text-white">
+                            <span class="counter-value" data-target="@if($todayAddedJobsCount){{$todayAddedJobsCount}} @else 100 @endif">
+                            </span>+</h1>
                         <h5 class="counter-head text-sm font-semibold text-slate-400 uppercase">Today Added Jobs</h5>
                     </div><!--end counter box-->
 
                     <div class="counter-box text-center">
-                        <h1 class="lg:text-5xl text-4xl font-semibold mb-2 dark:text-white"><span class="counter-value" data-target="300">300</span>+</h1>
+                        <h1 class="lg:text-5xl text-4xl font-semibold mb-2 dark:text-white">
+                            <span class="counter-value" data-target="@if($jobCategoriesJobsCount){{$jobCategoriesJobsCount}}@else 250 @endif">
+                            </span>+</h1>
                         <h5 class="counter-head text-sm font-semibold text-slate-400 uppercase">Job Categories Jobs</h5>
                     </div><!--end counter box-->
 
                     <div class="counter-box text-center">
-                        <h1 class="lg:text-5xl text-4xl font-semibold mb-2 dark:text-white"><span class="counter-value" data-target="25">25</span>+</h1>
+                        <h1 class="lg:text-5xl text-4xl font-semibold mb-2 dark:text-white">
+                            <span class="counter-value" data-target="@if($jobCategoriesCount)  {{$jobCategoriesCount}} @else 20 @endif">
+                            </span>+</h1>
                         <h5 class="counter-head text-sm font-semibold text-slate-400 uppercase">Job Categories</h5>
                     </div><!--end counter box-->
                 </div>
@@ -365,133 +181,27 @@
                 </div><!--end grid-->
 
                 <div class="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 mt-8 gap-[30px]">
-                    <div class="group relative p-6 rounded-md shadow dark:shadow-gray-700 mt-6">
-                        <div class="size-14 flex items-center justify-center bg-white dark:bg-slate-900 shadow-md dark:shadow-gray-700 rounded-md relative -mt-12">
-                            <img src="assets/images/company/spotify.png" class="size-8"  alt="">
-                        </div>
 
-                        <div class="mt-4">
-                            <a href="#" class="text-lg hover:text-emerald-600 font-semibold">Spotify</a>
-                            <p class="text-slate-400 mt-2">Digital Marketing Solutions for Tomorrow</p>
-                        </div>
-
-                        <div class="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-between">
-                            <span class="text-slate-400"><i class="uil uil-map-marker"></i> Australia</span>
-                            <span class="block font-semibold text-emerald-600">6 Jobs</span>
-                        </div>
-                    </div><!--end content-->
+                    @forelse($jobCategories as $category)
 
                     <div class="group relative p-6 rounded-md shadow dark:shadow-gray-700 mt-6">
                         <div class="size-14 flex items-center justify-center bg-white dark:bg-slate-900 shadow-md dark:shadow-gray-700 rounded-md relative -mt-12">
-                            <img src="assets/images/company/facebook-logo.png" class="size-8"  alt="">
+                            <img src="{{$category->employer_logo}}" class="size-8"  alt="">
                         </div>
 
                         <div class="mt-4">
-                            <a href="#" class="text-lg hover:text-emerald-600 font-semibold">Facebook</a>
-                            <p class="text-slate-400 mt-2">Digital Marketing Solutions for Tomorrow</p>
+                            <a href="#" class="text-lg hover:text-emerald-600 font-semibold">{{$category->job_category}}</a>
                         </div>
 
                         <div class="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-between">
-                            <span class="text-slate-400"><i class="uil uil-map-marker"></i> USA</span>
-                            <span class="block font-semibold text-emerald-600">6 Jobs</span>
+                            <span class="text-slate-400"><i class="uil uil-map-marker"></i> {{ $category->country }}</span>
+                            <span class="block font-semibold text-emerald-600">{{ $category->total_jobs }} Jobs</span>
                         </div>
                     </div><!--end content-->
+                    @empty
+                        No Job Categories Found
+                    @endforelse
 
-                    <div class="group relative p-6 rounded-md shadow dark:shadow-gray-700 mt-6">
-                        <div class="size-14 flex items-center justify-center bg-white dark:bg-slate-900 shadow-md dark:shadow-gray-700 rounded-md relative -mt-12">
-                            <img src="assets/images/company/google-logo.png" class="size-8"  alt="">
-                        </div>
-
-                        <div class="mt-4">
-                            <a href="#" class="text-lg hover:text-emerald-600 font-semibold">Google</a>
-                            <p class="text-slate-400 mt-2">Digital Marketing Solutions for Tomorrow</p>
-                        </div>
-
-                        <div class="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-between">
-                            <span class="text-slate-400"><i class="uil uil-map-marker"></i> China</span>
-                            <span class="block font-semibold text-emerald-600">6 Jobs</span>
-                        </div>
-                    </div><!--end content-->
-
-                    <div class="group relative p-6 rounded-md shadow dark:shadow-gray-700 mt-6">
-                        <div class="size-14 flex items-center justify-center bg-white dark:bg-slate-900 shadow-md dark:shadow-gray-700 rounded-md relative -mt-12">
-                            <img src="assets/images/company/android.png" class="size-8"  alt="">
-                        </div>
-
-                        <div class="mt-4">
-                            <a href="#" class="text-lg hover:text-emerald-600 font-semibold">Android</a>
-                            <p class="text-slate-400 mt-2">Digital Marketing Solutions for Tomorrow</p>
-                        </div>
-
-                        <div class="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-between">
-                            <span class="text-slate-400"><i class="uil uil-map-marker"></i> Dubai</span>
-                            <span class="block font-semibold text-emerald-600">6 Jobs</span>
-                        </div>
-                    </div><!--end content-->
-
-                    <div class="group relative p-6 rounded-md shadow dark:shadow-gray-700 mt-6">
-                        <div class="size-14 flex items-center justify-center bg-white dark:bg-slate-900 shadow-md dark:shadow-gray-700 rounded-md relative -mt-12">
-                            <img src="assets/images/company/lenovo-logo.png" class="size-8"  alt="">
-                        </div>
-
-                        <div class="mt-4">
-                            <a href="#" class="text-lg hover:text-emerald-600 font-semibold">Lenovo</a>
-                            <p class="text-slate-400 mt-2">Digital Marketing Solutions for Tomorrow</p>
-                        </div>
-
-                        <div class="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-between">
-                            <span class="text-slate-400"><i class="uil uil-map-marker"></i> Pakistan</span>
-                            <span class="block font-semibold text-emerald-600">6 Jobs</span>
-                        </div>
-                    </div><!--end content-->
-
-                    <div class="group relative p-6 rounded-md shadow dark:shadow-gray-700 mt-6">
-                        <div class="size-14 flex items-center justify-center bg-white dark:bg-slate-900 shadow-md dark:shadow-gray-700 rounded-md relative -mt-12">
-                            <img src="assets/images/company/shree-logo.png" class="size-8"  alt="">
-                        </div>
-
-                        <div class="mt-4">
-                            <a href="#" class="text-lg hover:text-emerald-600 font-semibold">Shreethemes</a>
-                            <p class="text-slate-400 mt-2">Digital Marketing Solutions for Tomorrow</p>
-                        </div>
-
-                        <div class="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-between">
-                            <span class="text-slate-400"><i class="uil uil-map-marker"></i> India</span>
-                            <span class="block font-semibold text-emerald-600">6 Jobs</span>
-                        </div>
-                    </div><!--end content-->
-
-                    <div class="group relative p-6 rounded-md shadow dark:shadow-gray-700 mt-6">
-                        <div class="size-14 flex items-center justify-center bg-white dark:bg-slate-900 shadow-md dark:shadow-gray-700 rounded-md relative -mt-12">
-                            <img src="assets/images/company/skype.png" class="size-8"  alt="">
-                        </div>
-
-                        <div class="mt-4">
-                            <a href="#" class="text-lg hover:text-emerald-600 font-semibold">Skype</a>
-                            <p class="text-slate-400 mt-2">Digital Marketing Solutions for Tomorrow</p>
-                        </div>
-
-                        <div class="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-between">
-                            <span class="text-slate-400"><i class="uil uil-map-marker"></i> Rush</span>
-                            <span class="block font-semibold text-emerald-600">6 Jobs</span>
-                        </div>
-                    </div><!--end content-->
-
-                    <div class="group relative p-6 rounded-md shadow dark:shadow-gray-700 mt-6">
-                        <div class="size-14 flex items-center justify-center bg-white dark:bg-slate-900 shadow-md dark:shadow-gray-700 rounded-md relative -mt-12">
-                            <img src="assets/images/company/snapchat.png" class="size-8"  alt="">
-                        </div>
-
-                        <div class="mt-4">
-                            <a href="#" class="text-lg hover:text-emerald-600 font-semibold">Snapchat</a>
-                            <p class="text-slate-400 mt-2">Digital Marketing Solutions for Tomorrow</p>
-                        </div>
-
-                        <div class="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-between">
-                            <span class="text-slate-400"><i class="uil uil-map-marker"></i> Turkey</span>
-                            <span class="block font-semibold text-emerald-600">6 Jobs</span>
-                        </div>
-                    </div><!--end content-->
                 </div><!--end grid-->
 
                 <div class="grid md:grid-cols-12 grid-cols-1 mt-6">

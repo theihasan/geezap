@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Constants\ApiName;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\ServiceProvider;
@@ -32,6 +33,18 @@ class AppServiceProvider extends ServiceProvider
                 'X-RapidAPI-Host' => 'jsearch.p.rapidapi.com',
                 'X-RapidAPI-Key' => $apiKey->api_key,
             ])->baseUrl('https://jsearch.p.rapidapi.com');
+        });
+
+        Carbon::macro('dayWithSuffix', function () {
+            $day = $this->day;
+            if (!in_array(($day % 100), [11, 12, 13])) {
+                switch ($day % 10) {
+                    case 1: return $day . 'st';
+                    case 2: return $day . 'nd';
+                    case 3: return $day . 'rd';
+                }
+            }
+            return $day . 'th';
         });
 
     }

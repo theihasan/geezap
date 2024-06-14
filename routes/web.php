@@ -1,15 +1,16 @@
 <?php
 
+use App\Http\Controllers\HomePageController;
+use App\Http\Controllers\JobController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('index');
-})->name('home');
+Route::get('/', HomePageController::class)->name('home');
+Route::prefix('jobs')->group(function () {
+    Route::get('/', [JobController::class, 'index'])->name('job.index');
+    Route::get('/{slug}', [JobController::class, 'job'])->name('job.show');
+});
 
-Route::get('/jobs', function () {
-    return view('job.index');
-})->name('job.index');
 
 Route::get('/categories', function () {
     return view('job.categories');

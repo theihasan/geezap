@@ -10,7 +10,7 @@
             </div><!--end container-->
             <div class="absolute text-center z-10 bottom-5 start-0 end-0 mx-3">
                 <ul class="breadcrumb tracking-[0.5px] breadcrumb-light mb-0 inline-block">
-                   <li class="inline breadcrumb-item text-[15px] font-semibold duration-500 ease-in-out text-white/50 hover:text-white"><a href="index.html">Jobstack</a></li>
+                   <li class="inline breadcrumb-item text-[15px] font-semibold duration-500 ease-in-out text-white/50 hover:text-white"><a href="{{route('home')}}">Geezap</a></li>
                     <li class="inline breadcrumb-item text-[15px] font-semibold duration-500 ease-in-out text-white" aria-current="page">Job List</li>
                 </ul>
             </div>
@@ -146,336 +146,73 @@
 
                     <div class="lg:col-span-8 md:col-span-6">
                         <div class="grid grid-cols-1 gap-[30px]">
-                            <div class="group relative overflow-hidden lg:flex justify-between items-center rounded shadow hover:shadow-md dark:shadow-gray-700 transition-all duration-500 p-5">
-                                <div class="flex items-center">
-                                    <div class="size-14 flex items-center justify-center bg-white dark:bg-slate-900 shadow dark:shadow-gray-700 rounded-md">
-                                        <img src="assets/images/company/facebook-logo.png" class="size-8"  alt="">
-                                    </div>
-                                    <a href="job-detail-three.html" class="text-lg hover:text-emerald-600 font-semibold transition-all duration-500 ms-3 min-w-[150px]">Web Designer</a>
-                                </div>
-
-                                <div class="lg:block flex justify-between lg:mt-0 mt-4">
-                                    <span class="block"><span class="bg-emerald-600/10 inline-block text-emerald-600 text-xs px-2.5 py-0.5 font-semibold rounded-full">Full Time</span></span>
-                                    <span class="block text-slate-400 text-sm md:mt-1 mt-0"><i class="uil uil-clock"></i> 20th Feb 2023</span>
-                                </div>
-
-                                <div class="lg:block flex justify-between lg:mt-0 mt-2">
-                                    <span class="text-slate-400"><i class="uil uil-map-marker"></i> Australia</span>
-                                    <span class="block font-semibold lg:mt-1 mt-0">$4,000 - $4,500</span>
-                                </div>
-
-                                <div class="lg:mt-0 mt-4">
-                                    <a href="#" class="btn btn-icon rounded-full bg-emerald-600/5 hover:bg-emerald-600 border-emerald-600/10 hover:border-emerald-600 text-emerald-600 hover:text-white lg:relative absolute top-0 end-0 lg:m-0 m-3"><i data-feather="bookmark" class="size-4"></i></a>
-                                    <a href="job-apply.html" class="btn rounded-md bg-emerald-600 hover:bg-emerald-700 border-emerald-600 hover:border-emerald-700 text-white md:ms-2 w-full md:w-auto">Apply Now</a>
-                                </div>
-
-                                <span class="w-24 bg-yellow-400 text-white text-center absolute ltr:-rotate-45 rtl:rotate-45 -start-[30px] top-1"><i class="uil uil-star"></i></span>
-                            </div><!--end content-->
+                            @forelse($jobs as $job)
 
                             <div class="group relative overflow-hidden lg:flex justify-between items-center rounded shadow hover:shadow-md dark:shadow-gray-700 transition-all duration-500 p-5">
                                 <div class="flex items-center">
                                     <div class="size-14 flex items-center justify-center bg-white dark:bg-slate-900 shadow dark:shadow-gray-700 rounded-md">
-                                        <img src="assets/images/company/google-logo.png" class="size-8"  alt="">
+                                        <img src="{{$job->employer_logo}}" class="size-8"  alt="{{$job->employer_name}}">
                                     </div>
-                                    <a href="job-detail-three.html" class="text-lg hover:text-emerald-600 font-semibold transition-all duration-500 ms-3 min-w-[150px]">Marketing Director</a>
-                                </div>
-
-                                <div class="lg:block flex justify-between lg:mt-0 mt-4">
-                                    <span class="block"><span class="bg-emerald-600/10 inline-block text-emerald-600 text-xs px-2.5 py-0.5 font-semibold rounded-full">Part Time</span></span>
-                                    <span class="block text-slate-400 text-sm md:mt-1 mt-0"><i class="uil uil-clock"></i> 20th Feb 2023</span>
-                                </div>
-
-                                <div class="lg:block flex justify-between lg:mt-0 mt-2">
-                                    <span class="text-slate-400"><i class="uil uil-map-marker"></i> USA</span>
-                                    <span class="block font-semibold lg:mt-1 mt-0">$4,000 - $4,500</span>
-                                </div>
-
-                                <div class="lg:mt-0 mt-4">
-                                    <a href="#" class="btn btn-icon rounded-full bg-emerald-600/5 hover:bg-emerald-600 border-emerald-600/10 hover:border-emerald-600 text-emerald-600 hover:text-white lg:relative absolute top-0 end-0 lg:m-0 m-3"><i data-feather="bookmark" class="size-4"></i></a>
-                                    <a href="job-apply.html" class="btn rounded-md bg-emerald-600 hover:bg-emerald-700 border-emerald-600 hover:border-emerald-700 text-white md:ms-2 w-full md:w-auto">Apply Now</a>
-                                </div>
-                            </div><!--end content-->
-
-                            <div class="group relative overflow-hidden lg:flex justify-between items-center rounded shadow hover:shadow-md dark:shadow-gray-700 transition-all duration-500 p-5">
-                                <div class="flex items-center">
-                                    <div class="size-14 flex items-center justify-center bg-white dark:bg-slate-900 shadow dark:shadow-gray-700 rounded-md">
-                                        <img src="assets/images/company/android.png" class="size-8"  alt="">
-                                    </div>
-                                    <a href="job-detail-three.html" class="text-lg hover:text-emerald-600 font-semibold transition-all duration-500 ms-3 min-w-[150px]">App Developer</a>
+                                    <a href="{{route('job.show', $job->slug)}}"
+                                       class="text-lg hover:text-emerald-600 font-semibold
+                                       transition-all duration-500 ms-3 min-w-[150px]">{{$job->job_title}}</a>
                                 </div>
 
                                 <div class="lg:block flex justify-between lg:mt-0 mt-4">
                                     <span class="block"><span class="bg-emerald-600/10 inline-block text-emerald-600 text-xs px-2.5 py-0.5 font-semibold rounded-full">Remote</span></span>
-                                    <span class="block text-slate-400 text-sm md:mt-1 mt-0"><i class="uil uil-clock"></i> 20th Feb 2023</span>
+                                    <span class="block text-slate-400 text-sm md:mt-1 mt-0">
+                                        <i class="uil uil-clock"></i> {{ $job->posted_at->dayWithSuffix() . '-' . $job->posted_at->format('M-Y') }}</span>
                                 </div>
 
                                 <div class="lg:block flex justify-between lg:mt-0 mt-2">
-                                    <span class="text-slate-400"><i class="uil uil-map-marker"></i> China</span>
-                                    <span class="block font-semibold lg:mt-1 mt-0">$4,000 - $4,500</span>
+                                    <span class="text-slate-400"><i class="uil uil-map-marker"></i> {{$job->country}}</span>
+                                    @if($job->min_salary && $job->max_salary)
+                                    <span class="block font-semibold lg:mt-1 mt-0">
+                                        <i class="uil uil-dollar-sign"></i> {{$job->min_salary}} - {{$job->max_salary}}/{{$job->salary_period}}
+                                    </span>
+                                    @endif
                                 </div>
 
                                 <div class="lg:mt-0 mt-4">
-                                    <a href="#" class="btn btn-icon rounded-full bg-emerald-600/5 hover:bg-emerald-600 border-emerald-600/10 hover:border-emerald-600 text-emerald-600 hover:text-white lg:relative absolute top-0 end-0 lg:m-0 m-3"><i data-feather="bookmark" class="size-4"></i></a>
-                                    <a href="job-apply.html" class="btn rounded-md bg-emerald-600 hover:bg-emerald-700 border-emerald-600 hover:border-emerald-700 text-white md:ms-2 w-full md:w-auto">Apply Now</a>
+                                    <a href="{{route('job.show', $job->slug)}}"
+                                       class="btn rounded-md bg-emerald-600 hover:bg-emerald-700 border-emerald-600
+                                       hover:border-emerald-700 text-white md:ms-2 w-full md:w-auto">View Details</a>
                                 </div>
+
                             </div><!--end content-->
+                            @empty
+                                No Job Found
+                            @endforelse
 
-                            <div class="group relative overflow-hidden lg:flex justify-between items-center rounded shadow hover:shadow-md dark:shadow-gray-700 transition-all duration-500 p-5">
-                                <div class="flex items-center">
-                                    <div class="size-14 flex items-center justify-center bg-white dark:bg-slate-900 shadow dark:shadow-gray-700 rounded-md">
-                                        <img src="assets/images/company/lenovo-logo.png" class="size-8"  alt="">
-                                    </div>
-                                    <a href="job-detail-three.html" class="text-lg hover:text-emerald-600 font-semibold transition-all duration-500 ms-3 min-w-[150px]">Product Designer</a>
-                                </div>
-
-                                <div class="lg:block flex justify-between lg:mt-0 mt-4">
-                                    <span class="block"><span class="bg-emerald-600/10 inline-block text-emerald-600 text-xs px-2.5 py-0.5 font-semibold rounded-full">WFH</span></span>
-                                    <span class="block text-slate-400 text-sm md:mt-1 mt-0"><i class="uil uil-clock"></i> 20th Feb 2023</span>
-                                </div>
-
-                                <div class="lg:block flex justify-between lg:mt-0 mt-2">
-                                    <span class="text-slate-400"><i class="uil uil-map-marker"></i> Dubai</span>
-                                    <span class="block font-semibold lg:mt-1 mt-0">$4,000 - $4,500</span>
-                                </div>
-
-                                <div class="lg:mt-0 mt-4">
-                                    <a href="#" class="btn btn-icon rounded-full bg-emerald-600/5 hover:bg-emerald-600 border-emerald-600/10 hover:border-emerald-600 text-emerald-600 hover:text-white lg:relative absolute top-0 end-0 lg:m-0 m-3"><i data-feather="bookmark" class="size-4"></i></a>
-                                    <a href="job-apply.html" class="btn rounded-md bg-emerald-600 hover:bg-emerald-700 border-emerald-600 hover:border-emerald-700 text-white md:ms-2 w-full md:w-auto">Apply Now</a>
-                                </div>
-                            </div><!--end content-->
-
-                            <div class="group relative overflow-hidden lg:flex justify-between items-center rounded shadow hover:shadow-md dark:shadow-gray-700 transition-all duration-500 p-5">
-                                <div class="flex items-center">
-                                    <div class="size-14 flex items-center justify-center bg-white dark:bg-slate-900 shadow dark:shadow-gray-700 rounded-md">
-                                        <img src="assets/images/company/spotify.png" class="size-8"  alt="">
-                                    </div>
-                                    <a href="job-detail-three.html" class="text-lg hover:text-emerald-600 font-semibold transition-all duration-500 ms-3 min-w-[150px]">C++ Developer</a>
-                                </div>
-
-                                <div class="lg:block flex justify-between lg:mt-0 mt-4">
-                                    <span class="block"><span class="bg-emerald-600/10 inline-block text-emerald-600 text-xs px-2.5 py-0.5 font-semibold rounded-full">Full Time</span></span>
-                                    <span class="block text-slate-400 text-sm md:mt-1 mt-0"><i class="uil uil-clock"></i> 20th Feb 2023</span>
-                                </div>
-
-                                <div class="lg:block flex justify-between lg:mt-0 mt-2">
-                                    <span class="text-slate-400"><i class="uil uil-map-marker"></i> India</span>
-                                    <span class="block font-semibold lg:mt-1 mt-0">$4,000 - $4,500</span>
-                                </div>
-
-                                <div class="lg:mt-0 mt-4">
-                                    <a href="#" class="btn btn-icon rounded-full bg-emerald-600/5 hover:bg-emerald-600 border-emerald-600/10 hover:border-emerald-600 text-emerald-600 hover:text-white lg:relative absolute top-0 end-0 lg:m-0 m-3"><i data-feather="bookmark" class="size-4"></i></a>
-                                    <a href="job-apply.html" class="btn rounded-md bg-emerald-600 hover:bg-emerald-700 border-emerald-600 hover:border-emerald-700 text-white md:ms-2 w-full md:w-auto">Apply Now</a>
-                                </div>
-
-                                <span class="w-24 bg-yellow-400 text-white text-center absolute ltr:-rotate-45 rtl:rotate-45 -start-[30px] top-1"><i class="uil uil-star"></i></span>
-                            </div><!--end content-->
-
-                            <div class="group relative overflow-hidden lg:flex justify-between items-center rounded shadow hover:shadow-md dark:shadow-gray-700 transition-all duration-500 p-5">
-                                <div class="flex items-center">
-                                    <div class="size-14 flex items-center justify-center bg-white dark:bg-slate-900 shadow dark:shadow-gray-700 rounded-md">
-                                        <img src="assets/images/company/linkedin.png" class="size-8"  alt="">
-                                    </div>
-                                    <a href="job-detail-three.html" class="text-lg hover:text-emerald-600 font-semibold transition-all duration-500 ms-3 min-w-[150px]">Php Developer</a>
-                                </div>
-
-                                <div class="lg:block flex justify-between lg:mt-0 mt-4">
-                                    <span class="block"><span class="bg-emerald-600/10 inline-block text-emerald-600 text-xs px-2.5 py-0.5 font-semibold rounded-full">Remote</span></span>
-                                    <span class="block text-slate-400 text-sm md:mt-1 mt-0"><i class="uil uil-clock"></i> 20th Feb 2023</span>
-                                </div>
-
-                                <div class="lg:block flex justify-between lg:mt-0 mt-2">
-                                    <span class="text-slate-400"><i class="uil uil-map-marker"></i> Pakistan</span>
-                                    <span class="block font-semibold lg:mt-1 mt-0">$4,000 - $4,500</span>
-                                </div>
-
-                                <div class="lg:mt-0 mt-4">
-                                    <a href="#" class="btn btn-icon rounded-full bg-emerald-600/5 hover:bg-emerald-600 border-emerald-600/10 hover:border-emerald-600 text-emerald-600 hover:text-white lg:relative absolute top-0 end-0 lg:m-0 m-3"><i data-feather="bookmark" class="size-4"></i></a>
-                                    <a href="job-apply.html" class="btn rounded-md bg-emerald-600 hover:bg-emerald-700 border-emerald-600 hover:border-emerald-700 text-white md:ms-2 w-full md:w-auto">Apply Now</a>
-                                </div>
-
-                                <span class="w-24 bg-yellow-400 text-white text-center absolute ltr:-rotate-45 rtl:rotate-45 -start-[30px] top-1"><i class="uil uil-star"></i></span>
-                            </div><!--end content-->
-
-                            <div class="group relative overflow-hidden lg:flex justify-between items-center rounded shadow hover:shadow-md dark:shadow-gray-700 transition-all duration-500 p-5">
-                                <div class="flex items-center">
-                                    <div class="size-14 flex items-center justify-center bg-white dark:bg-slate-900 shadow dark:shadow-gray-700 rounded-md">
-                                        <img src="assets/images/company/circle-logo.png" class="size-8"  alt="">
-                                    </div>
-                                    <a href="job-detail-three.html" class="text-lg hover:text-emerald-600 font-semibold transition-all duration-500 ms-3 min-w-[150px]">Web Designer</a>
-                                </div>
-
-                                <div class="lg:block flex justify-between lg:mt-0 mt-4">
-                                    <span class="block"><span class="bg-emerald-600/10 inline-block text-emerald-600 text-xs px-2.5 py-0.5 font-semibold rounded-full">Full Time</span></span>
-                                    <span class="block text-slate-400 text-sm md:mt-1 mt-0"><i class="uil uil-clock"></i> 20th Feb 2023</span>
-                                </div>
-
-                                <div class="lg:block flex justify-between lg:mt-0 mt-2">
-                                    <span class="text-slate-400"><i class="uil uil-map-marker"></i> Australia</span>
-                                    <span class="block font-semibold lg:mt-1 mt-0">$4,000 - $4,500</span>
-                                </div>
-
-                                <div class="lg:mt-0 mt-4">
-                                    <a href="#" class="btn btn-icon rounded-full bg-emerald-600/5 hover:bg-emerald-600 border-emerald-600/10 hover:border-emerald-600 text-emerald-600 hover:text-white lg:relative absolute top-0 end-0 lg:m-0 m-3"><i data-feather="bookmark" class="size-4"></i></a>
-                                    <a href="job-apply.html" class="btn rounded-md bg-emerald-600 hover:bg-emerald-700 border-emerald-600 hover:border-emerald-700 text-white md:ms-2 w-full md:w-auto">Apply Now</a>
-                                </div>
-
-                                <span class="w-24 bg-yellow-400 text-white text-center absolute ltr:-rotate-45 rtl:rotate-45 -start-[30px] top-1"><i class="uil uil-star"></i></span>
-                            </div><!--end content-->
-
-                            <div class="group relative overflow-hidden lg:flex justify-between items-center rounded shadow hover:shadow-md dark:shadow-gray-700 transition-all duration-500 p-5">
-                                <div class="flex items-center">
-                                    <div class="size-14 flex items-center justify-center bg-white dark:bg-slate-900 shadow dark:shadow-gray-700 rounded-md">
-                                        <img src="assets/images/company/skype.png" class="size-8"  alt="">
-                                    </div>
-                                    <a href="job-detail-three.html" class="text-lg hover:text-emerald-600 font-semibold transition-all duration-500 ms-3 min-w-[150px]">Marketing Director</a>
-                                </div>
-
-                                <div class="lg:block flex justify-between lg:mt-0 mt-4">
-                                    <span class="block"><span class="bg-emerald-600/10 inline-block text-emerald-600 text-xs px-2.5 py-0.5 font-semibold rounded-full">Part Time</span></span>
-                                    <span class="block text-slate-400 text-sm md:mt-1 mt-0"><i class="uil uil-clock"></i> 20th Feb 2023</span>
-                                </div>
-
-                                <div class="lg:block flex justify-between lg:mt-0 mt-2">
-                                    <span class="text-slate-400"><i class="uil uil-map-marker"></i> USA</span>
-                                    <span class="block font-semibold lg:mt-1 mt-0">$4,000 - $4,500</span>
-                                </div>
-
-                                <div class="lg:mt-0 mt-4">
-                                    <a href="#" class="btn btn-icon rounded-full bg-emerald-600/5 hover:bg-emerald-600 border-emerald-600/10 hover:border-emerald-600 text-emerald-600 hover:text-white lg:relative absolute top-0 end-0 lg:m-0 m-3"><i data-feather="bookmark" class="size-4"></i></a>
-                                    <a href="job-apply.html" class="btn rounded-md bg-emerald-600 hover:bg-emerald-700 border-emerald-600 hover:border-emerald-700 text-white md:ms-2 w-full md:w-auto">Apply Now</a>
-                                </div>
-                            </div><!--end content-->
-
-                            <div class="group relative overflow-hidden lg:flex justify-between items-center rounded shadow hover:shadow-md dark:shadow-gray-700 transition-all duration-500 p-5">
-                                <div class="flex items-center">
-                                    <div class="size-14 flex items-center justify-center bg-white dark:bg-slate-900 shadow dark:shadow-gray-700 rounded-md">
-                                        <img src="assets/images/company/snapchat.png" class="size-8"  alt="">
-                                    </div>
-                                    <a href="job-detail-three.html" class="text-lg hover:text-emerald-600 font-semibold transition-all duration-500 ms-3 min-w-[150px]">App Developer</a>
-                                </div>
-
-                                <div class="lg:block flex justify-between lg:mt-0 mt-4">
-                                    <span class="block"><span class="bg-emerald-600/10 inline-block text-emerald-600 text-xs px-2.5 py-0.5 font-semibold rounded-full">Remote</span></span>
-                                    <span class="block text-slate-400 text-sm md:mt-1 mt-0"><i class="uil uil-clock"></i> 20th Feb 2023</span>
-                                </div>
-
-                                <div class="lg:block flex justify-between lg:mt-0 mt-2">
-                                    <span class="text-slate-400"><i class="uil uil-map-marker"></i> China</span>
-                                    <span class="block font-semibold lg:mt-1 mt-0">$4,000 - $4,500</span>
-                                </div>
-
-                                <div class="lg:mt-0 mt-4">
-                                    <a href="#" class="btn btn-icon rounded-full bg-emerald-600/5 hover:bg-emerald-600 border-emerald-600/10 hover:border-emerald-600 text-emerald-600 hover:text-white lg:relative absolute top-0 end-0 lg:m-0 m-3"><i data-feather="bookmark" class="size-4"></i></a>
-                                    <a href="job-apply.html" class="btn rounded-md bg-emerald-600 hover:bg-emerald-700 border-emerald-600 hover:border-emerald-700 text-white md:ms-2 w-full md:w-auto">Apply Now</a>
-                                </div>
-                            </div><!--end content-->
-
-                            <div class="group relative overflow-hidden lg:flex justify-between items-center rounded shadow hover:shadow-md dark:shadow-gray-700 transition-all duration-500 p-5">
-                                <div class="flex items-center">
-                                    <div class="size-14 flex items-center justify-center bg-white dark:bg-slate-900 shadow dark:shadow-gray-700 rounded-md">
-                                        <img src="assets/images/company/shree-logo.png" class="size-8"  alt="">
-                                    </div>
-                                    <a href="job-detail-three.html" class="text-lg hover:text-emerald-600 font-semibold transition-all duration-500 ms-3 min-w-[150px]">Product Designer</a>
-                                </div>
-
-                                <div class="lg:block flex justify-between lg:mt-0 mt-4">
-                                    <span class="block"><span class="bg-emerald-600/10 inline-block text-emerald-600 text-xs px-2.5 py-0.5 font-semibold rounded-full">WFH</span></span>
-                                    <span class="block text-slate-400 text-sm md:mt-1 mt-0"><i class="uil uil-clock"></i> 20th Feb 2023</span>
-                                </div>
-
-                                <div class="lg:block flex justify-between lg:mt-0 mt-2">
-                                    <span class="text-slate-400"><i class="uil uil-map-marker"></i> Dubai</span>
-                                    <span class="block font-semibold lg:mt-1 mt-0">$4,000 - $4,500</span>
-                                </div>
-
-                                <div class="lg:mt-0 mt-4">
-                                    <a href="#" class="btn btn-icon rounded-full bg-emerald-600/5 hover:bg-emerald-600 border-emerald-600/10 hover:border-emerald-600 text-emerald-600 hover:text-white lg:relative absolute top-0 end-0 lg:m-0 m-3"><i data-feather="bookmark" class="size-4"></i></a>
-                                    <a href="job-apply.html" class="btn rounded-md bg-emerald-600 hover:bg-emerald-700 border-emerald-600 hover:border-emerald-700 text-white md:ms-2 w-full md:w-auto">Apply Now</a>
-                                </div>
-                            </div><!--end content-->
-
-                            <div class="group relative overflow-hidden lg:flex justify-between items-center rounded shadow hover:shadow-md dark:shadow-gray-700 transition-all duration-500 p-5">
-                                <div class="flex items-center">
-                                    <div class="size-14 flex items-center justify-center bg-white dark:bg-slate-900 shadow dark:shadow-gray-700 rounded-md">
-                                        <img src="assets/images/company/telegram.png" class="size-8"  alt="">
-                                    </div>
-                                    <a href="job-detail-three.html" class="text-lg hover:text-emerald-600 font-semibold transition-all duration-500 ms-3 min-w-[150px]">C++ Developer</a>
-                                </div>
-
-                                <div class="lg:block flex justify-between lg:mt-0 mt-4">
-                                    <span class="block"><span class="bg-emerald-600/10 inline-block text-emerald-600 text-xs px-2.5 py-0.5 font-semibold rounded-full">Full Time</span></span>
-                                    <span class="block text-slate-400 text-sm md:mt-1 mt-0"><i class="uil uil-clock"></i> 20th Feb 2023</span>
-                                </div>
-
-                                <div class="lg:block flex justify-between lg:mt-0 mt-2">
-                                    <span class="text-slate-400"><i class="uil uil-map-marker"></i> India</span>
-                                    <span class="block font-semibold lg:mt-1 mt-0">$4,000 - $4,500</span>
-                                </div>
-
-                                <div class="lg:mt-0 mt-4">
-                                    <a href="#" class="btn btn-icon rounded-full bg-emerald-600/5 hover:bg-emerald-600 border-emerald-600/10 hover:border-emerald-600 text-emerald-600 hover:text-white lg:relative absolute top-0 end-0 lg:m-0 m-3"><i data-feather="bookmark" class="size-4"></i></a>
-                                    <a href="job-apply.html" class="btn rounded-md bg-emerald-600 hover:bg-emerald-700 border-emerald-600 hover:border-emerald-700 text-white md:ms-2 w-full md:w-auto">Apply Now</a>
-                                </div>
-
-                                <span class="w-24 bg-yellow-400 text-white text-center absolute ltr:-rotate-45 rtl:rotate-45 -start-[30px] top-1"><i class="uil uil-star"></i></span>
-                            </div><!--end content-->
-
-                            <div class="group relative overflow-hidden lg:flex justify-between items-center rounded shadow hover:shadow-md dark:shadow-gray-700 transition-all duration-500 p-5">
-                                <div class="flex items-center">
-                                    <div class="size-14 flex items-center justify-center bg-white dark:bg-slate-900 shadow dark:shadow-gray-700 rounded-md">
-                                        <img src="assets/images/company/whatsapp.png" class="size-8"  alt="">
-                                    </div>
-                                    <a href="job-detail-three.html" class="text-lg hover:text-emerald-600 font-semibold transition-all duration-500 ms-3 min-w-[150px]">Php Developer</a>
-                                </div>
-
-                                <div class="lg:block flex justify-between lg:mt-0 mt-4">
-                                    <span class="block"><span class="bg-emerald-600/10 inline-block text-emerald-600 text-xs px-2.5 py-0.5 font-semibold rounded-full">Remote</span></span>
-                                    <span class="block text-slate-400 text-sm md:mt-1 mt-0"><i class="uil uil-clock"></i> 20th Feb 2023</span>
-                                </div>
-
-                                <div class="lg:block flex justify-between lg:mt-0 mt-2">
-                                    <span class="text-slate-400"><i class="uil uil-map-marker"></i> Pakistan</span>
-                                    <span class="block font-semibold lg:mt-1 mt-0">$4,000 - $4,500</span>
-                                </div>
-
-                                <div class="lg:mt-0 mt-4">
-                                    <a href="#" class="btn btn-icon rounded-full bg-emerald-600/5 hover:bg-emerald-600 border-emerald-600/10 hover:border-emerald-600 text-emerald-600 hover:text-white lg:relative absolute top-0 end-0 lg:m-0 m-3"><i data-feather="bookmark" class="size-4"></i></a>
-                                    <a href="job-apply.html" class="btn rounded-md bg-emerald-600 hover:bg-emerald-700 border-emerald-600 hover:border-emerald-700 text-white md:ms-2 w-full md:w-auto">Apply Now</a>
-                                </div>
-
-                                <span class="w-24 bg-yellow-400 text-white text-center absolute ltr:-rotate-45 rtl:rotate-45 -start-[30px] top-1"><i class="uil uil-star"></i></span>
-                            </div><!--end content-->
                         </div><!--end grid-->
 
                         <div class="grid md:grid-cols-12 grid-cols-1 mt-8">
                             <div class="md:col-span-12 text-center">
                                 <nav aria-label="Page navigation example">
                                     <ul class="inline-flex items-center -space-x-px">
+                                        @if($jobs->previousPageUrl())
+                                            <li>
+                                                <a href="{{ $jobs->previousPageUrl() }}&page={{ $currentPage - 1 }}" class="pagination-item">
+                                                    <i class="uil uil-angle-left text-[20px] rtl:rotate-180 rtl:-mt-1"></i>
+                                                    <span>Previous Page</span>
+                                                </a>
+                                            </li>
+                                        @endif
+
                                         <li>
-                                            <a href="#" class="size-[40px] inline-flex justify-center items-center text-slate-400 bg-white dark:bg-slate-900 rounded-s-3xl hover:text-white border border-gray-100 dark:border-gray-800 hover:border-emerald-600 dark:hover:border-emerald-600 hover:bg-emerald-600 dark:hover:bg-emerald-600">
-                                                <i class="uil uil-angle-left text-[20px] rtl:rotate-180 rtl:-mt-1"></i>
-                                            </a>
+                                            <span class="pagination-item active">
+                                                Page {{ $currentPage }}
+                                            </span>
                                         </li>
-                                        <li>
-                                            <a href="#" class="size-[40px] inline-flex justify-center items-center text-slate-400 hover:text-white bg-white dark:bg-slate-900 border border-gray-100 dark:border-gray-800 hover:border-emerald-600 dark:hover:border-emerald-600 hover:bg-emerald-600 dark:hover:bg-emerald-600">1</a>
-                                        </li>
-                                        <li>
-                                            <a href="#" class="size-[40px] inline-flex justify-center items-center text-slate-400 hover:text-white bg-white dark:bg-slate-900 border border-gray-100 dark:border-gray-800 hover:border-emerald-600 dark:hover:border-emerald-600 hover:bg-emerald-600 dark:hover:bg-emerald-600">2</a>
-                                        </li>
-                                        <li>
-                                            <a href="#" aria-current="page" class="z-10 size-[40px] inline-flex justify-center items-center text-white bg-emerald-600 border border-emerald-600">3</a>
-                                        </li>
-                                        <li>
-                                            <a href="#" class="size-[40px] inline-flex justify-center items-center text-slate-400 hover:text-white bg-white dark:bg-slate-900 border border-gray-100 dark:border-gray-800 hover:border-emerald-600 dark:hover:border-emerald-600 hover:bg-emerald-600 dark:hover:bg-emerald-600">4</a>
-                                        </li>
-                                        <li>
-                                            <a href="#" class="size-[40px] inline-flex justify-center items-center text-slate-400 hover:text-white bg-white dark:bg-slate-900 border border-gray-100 dark:border-gray-800 hover:border-emerald-600 dark:hover:border-emerald-600 hover:bg-emerald-600 dark:hover:bg-emerald-600">5</a>
-                                        </li>
-                                        <li>
-                                            <a href="#" class="size-[40px] inline-flex justify-center items-center text-slate-400 bg-white dark:bg-slate-900 rounded-e-3xl hover:text-white border border-gray-100 dark:border-gray-800 hover:border-emerald-600 dark:hover:border-emerald-600 hover:bg-emerald-600 dark:hover:bg-emerald-600">
-                                                <i class="uil uil-angle-right text-[20px] rtl:rotate-180 rtl:-mt-1"></i>
-                                            </a>
-                                        </li>
+
+                                        @if($jobs->nextPageUrl())
+                                            <li>
+                                                <a href="{{ $jobs->nextPageUrl() }}&page={{ $currentPage + 1 }}" class="pagination-item">
+                                                    <span>Next Page</span>
+                                                    <i class="uil uil-angle-right text-[20px] rtl:rotate-180 rtl:-mt-1"></i>
+                                                </a>
+                                            </li>
+                                        @endif
                                     </ul>
                                 </nav>
                             </div><!--end col-->
@@ -585,4 +322,34 @@
         <!-- End -->
 
 @endsection
+@push('extra-css')
+    <style>
+        .pagination-item {
+            display: inline-flex;
+            justify-center: center;
+            align-items: center;
+            text-slate-400;
+            bg-white;
+            dark:bg-slate-900;
+            border: 1px solid;
+            border-color: gray-100;
+            dark:border-gray-800;
+            hover:border-emerald-600;
+            dark:hover:border-emerald-600;
+            hover:bg-emerald-600;
+            dark:hover:bg-emerald-600;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin: 0 5px;
+        }
+        .pagination-item.active {
+            bg-emerald-600;
+            text-white;
+            border-color: emerald-600;
+        }
+        .pagination-item span {
+            margin-left: 8px;
+        }
+    </style>
+@endpush
 

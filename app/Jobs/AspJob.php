@@ -72,7 +72,7 @@ class AspJob implements ShouldQueue
                 Log::error('No request remaining for AspJob API');
             }
         } catch (\Exception $e) {
-            Log::error($e->getMessage());
+            Log::error('Error In Job class'.$e->getMessage());
         }
     }
 }
