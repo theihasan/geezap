@@ -2,15 +2,18 @@
 
 namespace App\Models;
 
+use Abbasudo\Purity\Traits\Filterable;
+use App\Filters\JobFilter;
 use App\Observers\JobListingObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 #[ObservedBy([JobListingObserver::class])]
 class JobListing extends Model
 {
-    use HasFactory;
+    use HasFactory, Filterable;
 
     protected $fillable = [
         'employer_name',
@@ -53,4 +56,6 @@ class JobListing extends Model
     {
         return $this->hasMany(Bookmark::class);
     }
+
+
 }

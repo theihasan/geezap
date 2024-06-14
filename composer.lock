@@ -4,8 +4,67 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "87a518a5ac9c2479776e74a2fe5e0666",
+    "content-hash": "73eb72a6506856e3c4c141814d1f7b28",
     "packages": [
+        {
+            "name": "abbasudo/laravel-purity",
+            "version": "v3.3.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/abbasudo/laravel-purity.git",
+                "reference": "5dc70b98c6548e56a175c9702566e86962354b51"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/abbasudo/laravel-purity/zipball/5dc70b98c6548e56a175c9702566e86962354b51",
+                "reference": "5dc70b98c6548e56a175c9702566e86962354b51",
+                "shasum": ""
+            },
+            "require": {
+                "laravel/framework": "^11.0|^10.0|^9.0|^8.0",
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "orchestra/testbench": "8.*",
+                "phpunit/phpunit": "^10.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Abbasudo\\Purity\\PurityServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Abbasudo\\Purity\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "abbas mkhzomi",
+                    "email": "llabbasmkhll@gmail.com",
+                    "role": "developer"
+                }
+            ],
+            "description": "elegant way to add filter and sort in laravel",
+            "support": {
+                "issues": "https://github.com/abbasudo/laravel-purity/issues",
+                "source": "https://github.com/abbasudo/laravel-purity/tree/v3.3.2"
+            },
+            "funding": [
+                {
+                    "url": "https://www.patreon.com/abbasudo",
+                    "type": "patreon"
+                }
+            ],
+            "time": "2024-05-12T07:50:12+00:00"
+        },
         {
             "name": "brick/math",
             "version": "0.12.1",

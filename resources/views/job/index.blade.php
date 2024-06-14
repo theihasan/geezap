@@ -30,31 +30,29 @@
                 <div class="grid md:grid-cols-12 grid-cols-1 gap-[30px]">
                     <div class="lg:col-span-4 md:col-span-6">
                         <div class="shadow dark:shadow-gray-700 p-6 rounded-md bg-white dark:bg-slate-900 sticky top-20">
-                            <form>
+                            <form method="GET" action="{{ route('job.index') }}">
+                                @foreach(request()->except(['page', 'search', 'category', 'fulltime', 'contractor', 'parttime']) as $key => $value)
+                                    @if(!empty($value))
+                                        <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+                                    @endif
+                                @endforeach
+
                                 <div class="grid grid-cols-1 gap-3">
                                     <div>
                                         <label for="searchname" class="font-semibold">Search Company</label>
                                         <div class="relative mt-2">
                                             <i class="uil uil-search text-lg absolute top-[5px] start-3"></i>
-                                            <input name="search" id="searchname" type="text" class="form-input border border-slate-100 dark:border-slate-800 ps-10" placeholder="Search">
+                                            <input name="search" id="searchname" type="text" class="form-input border border-slate-100 dark:border-slate-800 ps-10" placeholder="Search" value="{{ request('search') }}">
                                         </div>
                                     </div>
 
                                     <div>
                                         <label class="font-semibold">Categories</label>
-                                        <select class="form-select form-input border border-slate-100 dark:border-slate-800 block w-full mt-1">
-                                            <option value="WD">Web Designer</option>
-                                            <option value="WD">Web Developer</option>
-                                            <option value="UI">UI / UX Desinger</option>
-                                        </select>
-                                    </div>
-
-                                    <div>
-                                        <label class="font-semibold">Location</label>
-                                        <select class="form-select form-input border border-slate-100 dark:border-slate-800 block w-full mt-1">
-                                            <option value="NY">New York</option>
-                                            <option value="MC">North Carolina</option>
-                                            <option value="SC">South Carolina</option>
+                                        <select name="category" class="form-select form-input border border-slate-100 dark:border-slate-800 block w-full mt-1">
+                                            <option value="">Select Category</option>
+                                            @foreach(App\Enums\JobCategory::cases() as $category)
+                                                <option value="{{ $category->value }}" {{ request('category') == $category->value ? 'selected' : '' }}>{{ $category->name }}</option>
+                                            @endforeach
                                         </select>
                                     </div>
 
@@ -63,75 +61,24 @@
                                         <div class="block mt-2">
                                             <div class="flex justify-between">
                                                 <div class="inline-flex items-center mb-0">
-                                                    <input class="form-checkbox rounded border-gray-200 dark:border-gray-800 text-emerald-600 focus:border-emerald-300 focus:ring focus:ring-offset-0 focus:ring-emerald-200 focus:ring-opacity-50 me-2" type="checkbox" value="" id="fulltime">
+                                                    <input class="form-checkbox rounded border-gray-200 dark:border-gray-800 text-emerald-600 focus:border-emerald-300 focus:ring focus:ring-offset-0 focus:ring-emerald-200 focus:ring-opacity-50 me-2"
+                                                           type="checkbox" name="fulltime" id="fulltime" value="fulltime" {{ request('fulltime') ? 'checked' : '' }}>
                                                     <label class="form-checkbox-label text-slate-400" for="fulltime">Full Time</label>
                                                 </div>
-
-                                                <span class="bg-emerald-600/10 text-emerald-600 text-xs px-2.5 py-0.5 font-semibold rounded-full h-5">3</span>
                                             </div>
                                             <div class="flex justify-between">
                                                 <div class="inline-flex items-center mb-0">
-                                                    <input class="form-checkbox rounded border-gray-200 dark:border-gray-800 text-emerald-600 focus:border-emerald-300 focus:ring focus:ring-offset-0 focus:ring-emerald-200 focus:ring-opacity-50 me-2" type="checkbox" value="" id="parttime">
+                                                    <input class="form-checkbox rounded border-gray-200 dark:border-gray-800 text-emerald-600 focus:border-emerald-300 focus:ring focus:ring-offset-0 focus:ring-emerald-200 focus:ring-opacity-50 me-2"
+                                                           type="checkbox" name="contractor" id="contractor" value="contractor" {{ request('contractor') ? 'checked' : '' }}>
+                                                    <label class="form-checkbox-label text-slate-400" for="contractor">Contractor</label>
+                                                </div>
+                                            </div>
+                                            <div class="flex justify-between">
+                                                <div class="inline-flex items-center mb-0">
+                                                    <input class="form-checkbox rounded border-gray-200 dark:border-gray-800 text-emerald-600 focus:border-emerald-300 focus:ring focus:ring-offset-0 focus:ring-emerald-200 focus:ring-opacity-50 me-2"
+                                                           type="checkbox" name="parttime" id="parttime" value="parttime" {{ request('parttime') ? 'checked' : '' }}>
                                                     <label class="form-checkbox-label text-slate-400" for="parttime">Part Time</label>
                                                 </div>
-
-                                                <span class="bg-emerald-600/10 text-emerald-600 text-xs px-2.5 py-0.5 font-semibold rounded-full h-5">7</span>
-                                            </div>
-                                            <div class="flex justify-between">
-                                                <div class="inline-flex items-center mb-0">
-                                                    <input class="form-checkbox rounded border-gray-200 dark:border-gray-800 text-emerald-600 focus:border-emerald-300 focus:ring focus:ring-offset-0 focus:ring-emerald-200 focus:ring-opacity-50 me-2" type="checkbox" value="" id="Freelancing">
-                                                    <label class="form-checkbox-label text-slate-400" for="Freelancing">Freelancing</label>
-                                                </div>
-
-                                                <span class="bg-emerald-600/10 text-emerald-600 text-xs px-2.5 py-0.5 font-semibold rounded-full h-5">4</span>
-                                            </div>
-                                            <div class="flex justify-between">
-                                                <div class="inline-flex items-center mb-0">
-                                                    <input class="form-checkbox rounded border-gray-200 dark:border-gray-800 text-emerald-600 focus:border-emerald-300 focus:ring focus:ring-offset-0 focus:ring-emerald-200 focus:ring-opacity-50 me-2" type="checkbox" value="" id="fixedprice">
-                                                    <label class="form-checkbox-label text-slate-400" for="fixedprice">Fixed Price</label>
-                                                </div>
-
-                                                <span class="bg-emerald-600/10 text-emerald-600 text-xs px-2.5 py-0.5 font-semibold rounded-full h-5">6</span>
-                                            </div>
-                                            <div class="flex justify-between">
-                                                <div class="inline-flex items-center mb-0">
-                                                    <input class="form-checkbox rounded border-gray-200 dark:border-gray-800 text-emerald-600 focus:border-emerald-300 focus:ring focus:ring-offset-0 focus:ring-emerald-200 focus:ring-opacity-50 me-2" type="checkbox" value="" id="Remote">
-                                                    <label class="form-checkbox-label text-slate-400" for="Remote">Remote</label>
-                                                </div>
-
-                                                <span class="bg-emerald-600/10 text-emerald-600 text-xs px-2.5 py-0.5 font-semibold rounded-full h-5">7</span>
-                                            </div>
-                                            <div class="flex justify-between">
-                                                <div class="inline-flex items-center mb-0">
-                                                    <input class="form-checkbox rounded border-gray-200 dark:border-gray-800 text-emerald-600 focus:border-emerald-300 focus:ring focus:ring-offset-0 focus:ring-emerald-200 focus:ring-opacity-50 me-2" type="checkbox" value="" id="hourlybasis">
-                                                    <label class="form-checkbox-label text-slate-400" for="hourlybasis">Hourly Basis</label>
-                                                </div>
-
-                                                <span class="bg-emerald-600/10 text-emerald-600 text-xs px-2.5 py-0.5 font-semibold rounded-full h-5">44</span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <label class="font-semibold">Salary</label>
-                                        <div class="block mt-2">
-                                            <div>
-                                                <label class="inline-flex items-center">
-                                                    <input type="radio" class="form-radio border-gray-200 dark:border-gray-800 text-emerald-600 focus:border-emerald-300 focus:ring focus:ring-offset-0 focus:ring-emerald-200 focus:ring-opacity-50 me-2" name="radio-colors" value="1" checked>
-                                                    <span class="text-slate-400">10k - 15k</span>
-                                                </label>
-                                            </div>
-                                            <div>
-                                                <label class="inline-flex items-center">
-                                                    <input type="radio" class="form-radio border-gray-200 dark:border-gray-800 text-emerald-600 focus:border-emerald-300 focus:ring focus:ring-offset-0 focus:ring-emerald-200 focus:ring-opacity-50 me-2" name="radio-colors" value="1">
-                                                    <span class="text-slate-400">15k - 25k</span>
-                                                </label>
-                                            </div>
-                                            <div>
-                                                <label class="inline-flex items-center">
-                                                    <input type="radio" class="form-radio border-gray-200 dark:border-gray-800 text-emerald-600 focus:border-emerald-300 focus:ring focus:ring-offset-0 focus:ring-emerald-200 focus:ring-opacity-50 me-2" name="radio-colors" value="1">
-                                                    <span class="text-slate-400">more than 25K</span>
-                                                </label>
                                             </div>
                                         </div>
                                     </div>
@@ -159,7 +106,8 @@
                                 </div>
 
                                 <div class="lg:block flex justify-between lg:mt-0 mt-4">
-                                    <span class="block"><span class="bg-emerald-600/10 inline-block text-emerald-600 text-xs px-2.5 py-0.5 font-semibold rounded-full">Remote</span></span>
+                                    <span class="block"><span class="bg-emerald-600/10 inline-block
+                                    text-emerald-600 text-xs px-2.5 py-0.5 font-semibold rounded-full">{{$job->employment_type}}</span></span>
                                     <span class="block text-slate-400 text-sm md:mt-1 mt-0">
                                         <i class="uil uil-clock"></i> {{ $job->posted_at->dayWithSuffix() . '-' . $job->posted_at->format('M-Y') }}</span>
                                 </div>
@@ -190,9 +138,13 @@
                             <div class="md:col-span-12 text-center">
                                 <nav aria-label="Page navigation example">
                                     <ul class="inline-flex items-center -space-x-px">
-                                        @if($jobs->previousPageUrl())
+                                        @php
+                                            $query = array_filter(request()->except('page'), fn($value) => !is_null($value) && $value !== '');
+                                        @endphp
+
+                                        @if ($jobs->previousPageUrl())
                                             <li>
-                                                <a href="{{ $jobs->previousPageUrl() }}&page={{ $currentPage - 1 }}" class="pagination-item">
+                                                <a href="{{ $jobs->previousPageUrl() }}&{{ http_build_query($query) }}" class="pagination-item">
                                                     <i class="uil uil-angle-left text-[20px] rtl:rotate-180 rtl:-mt-1"></i>
                                                     <span>Previous Page</span>
                                                 </a>
@@ -200,14 +152,14 @@
                                         @endif
 
                                         <li>
-                                            <span class="pagination-item active">
-                                                Page {{ $currentPage }}
-                                            </span>
+                                        <span class="pagination-item active">
+                                            Page {{ $jobs->currentPage() }}
+                                        </span>
                                         </li>
 
-                                        @if($jobs->nextPageUrl())
+                                        @if ($jobs->nextPageUrl())
                                             <li>
-                                                <a href="{{ $jobs->nextPageUrl() }}&page={{ $currentPage + 1 }}" class="pagination-item">
+                                                <a href="{{ $jobs->nextPageUrl() }}&{{ http_build_query($query) }}" class="pagination-item">
                                                     <span>Next Page</span>
                                                     <i class="uil uil-angle-right text-[20px] rtl:rotate-180 rtl:-mt-1"></i>
                                                 </a>
@@ -215,109 +167,14 @@
                                         @endif
                                     </ul>
                                 </nav>
+
+
                             </div><!--end col-->
                         </div><!--end grid-->
                     </div><!--end col-->
                 </div><!--end grid-->
             </div><!--end container-->
 
-            <div class="container md:mt-24 mt-16">
-                <div class="grid grid-cols-1 pb-8 text-center">
-                    <h3 class="mb-4 md:text-[26px] md:leading-normal text-2xl leading-normal font-semibold">Here's why you'll love it Jobstack</h3>
-
-                    <p class="text-slate-400 max-w-xl mx-auto">Search all the open positions on the web. Get your own personalized salary estimate. Read reviews on over 30000+ companies worldwide.</p>
-                </div><!--end grid-->
-
-                <div class="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 mt-8 gap-[30px]">
-                    <div class="group p-6 shadow dark:shadow-gray-700 rounded-md bg-white hover:bg-emerald-600/5 dark:bg-slate-900 dark:hover:bg-emerald-600/10 text-center transition-all duration-500">
-                        <div class="size-16 flex items-center justify-center mx-auto bg-emerald-600/5 group-hover:bg-emerald-600 dark:bg-emerald-600/10 dark:group-hover:bg-emerald-600 shadow dark:shadow-gray-700 rounded-lg transition-all duration-500">
-                            <i class="uil uil-phone text-[30px] text-emerald-600 group-hover:text-white"></i>
-                        </div>
-
-                        <div class="mt-4">
-                            <a href="#" class="text-lg font-semibold hover:text-emerald-600 transition-all duration-500">24/7 Support</a>
-
-                            <p class="text-slate-400 mt-3 mb-2">Many desktop publishing now use and a search for job.</p>
-
-                            <a href="#" class="hover:text-emerald-600 font-medium transition-all duration-500">Read More <i class="uil uil-arrow-right"></i></a>
-                        </div>
-                    </div><!--end content-->
-
-                    <div class="group p-6 shadow dark:shadow-gray-700 rounded-md bg-white hover:bg-emerald-600/5 dark:bg-slate-900 dark:hover:bg-emerald-600/10 text-center transition-all duration-500">
-                        <div class="size-16 flex items-center justify-center mx-auto bg-emerald-600/5 group-hover:bg-emerald-600 dark:bg-emerald-600/10 dark:group-hover:bg-emerald-600 shadow dark:shadow-gray-700 rounded-lg transition-all duration-500">
-                            <i class="uil uil-atom text-[30px] text-emerald-600 group-hover:text-white"></i>
-                        </div>
-
-                        <div class="mt-4">
-                            <a href="#" class="text-lg font-semibold hover:text-emerald-600 transition-all duration-500">Tech & Startup Jobs</a>
-
-                            <p class="text-slate-400 mt-3 mb-2">Many desktop publishing now use and a search for job.</p>
-
-                            <a href="#" class="hover:text-emerald-600 font-medium transition-all duration-500">Read More <i class="uil uil-arrow-right"></i></a>
-                        </div>
-                    </div><!--end content-->
-
-                    <div class="group p-6 shadow dark:shadow-gray-700 rounded-md bg-white hover:bg-emerald-600/5 dark:bg-slate-900 dark:hover:bg-emerald-600/10 text-center transition-all duration-500">
-                        <div class="size-16 flex items-center justify-center mx-auto bg-emerald-600/5 group-hover:bg-emerald-600 dark:bg-emerald-600/10 dark:group-hover:bg-emerald-600 shadow dark:shadow-gray-700 rounded-lg transition-all duration-500">
-                            <i class="uil uil-user-arrows text-[30px] text-emerald-600 group-hover:text-white"></i>
-                        </div>
-
-                        <div class="mt-4">
-                            <a href="#" class="text-lg font-semibold hover:text-emerald-600 transition-all duration-500">Quick & Easy</a>
-
-                            <p class="text-slate-400 mt-3 mb-2">Many desktop publishing now use and a search for job.</p>
-
-                            <a href="#" class="hover:text-emerald-600 font-medium transition-all duration-500">Read More <i class="uil uil-arrow-right"></i></a>
-                        </div>
-                    </div><!--end content-->
-
-                    <div class="group p-6 shadow dark:shadow-gray-700 rounded-md bg-white hover:bg-emerald-600/5 dark:bg-slate-900 dark:hover:bg-emerald-600/10 text-center transition-all duration-500">
-                        <div class="size-16 flex items-center justify-center mx-auto bg-emerald-600/5 group-hover:bg-emerald-600 dark:bg-emerald-600/10 dark:group-hover:bg-emerald-600 shadow dark:shadow-gray-700 rounded-lg transition-all duration-500">
-                            <i class="uil uil-hourglass text-[30px] text-emerald-600 group-hover:text-white"></i>
-                        </div>
-
-                        <div class="mt-4">
-                            <a href="#" class="text-lg font-semibold hover:text-emerald-600 transition-all duration-500">Save Time</a>
-
-                            <p class="text-slate-400 mt-3 mb-2">Many desktop publishing now use and a search for job.</p>
-
-                            <a href="#" class="hover:text-emerald-600 font-medium transition-all duration-500">Read More <i class="uil uil-arrow-right"></i></a>
-                        </div>
-                    </div><!--end content-->
-                </div><!--end grid-->
-            </div><!--end container-->
-
-            <div class="container-fluid md:mt-24 mt-16">
-                <div class="container">
-                    <div class="grid grid-cols-1">
-                        <div class="relative overflow-hidden lg:px-8 px-6 py-10 rounded-xl shadow-lg dark:shadow-gray-700">
-                            <div class="grid md:grid-cols-12 grid-cols-1 items-center gap-[30px]">
-                                <div class="lg:col-span-8 md:col-span-7">
-                                    <div class="md:text-start text-center relative z-1">
-                                        <h3 class="text-2xl font-semibold text-black dark:text-white mb-4">Explore a job now!</h3>
-                                        <p class="text-slate-400 max-w-xl">Search all the open positions on the web. Get your own personalized salary estimate. Read reviews on over 30000+ companies worldwide.</p>
-                                    </div>
-                                </div><!--end col-->
-
-                                <div class="lg:col-span-4 md:col-span-5">
-                                    <div class="text-end relative z-1">
-                                        <a href="employer-detail.html" class="btn bg-emerald-600 hover:bg-emerald-700 border-emerald-600 dark:border-emerald-600 text-white rounded-md">Apply Now</a>
-                                        <a href="aboutus.html" class="btn bg-emerald-600/5 hover:bg-emerald-600 border-emerald-600/10 hover:border-emerald-600 text-emerald-600 hover:text-white rounded-md ms-2">Learn More</a>
-                                    </div>
-                                </div><!--end col-->
-                            </div><!--end grid-->
-
-                            <div class="absolute -top-5 -start-5">
-                                <div class="uil uil-envelope lg:text-[150px] text-7xl text-black/5 dark:text-white/5 ltr:-rotate-45 rtl:rotate-45"></div>
-                            </div>
-
-                            <div class="absolute -bottom-5 -end-5">
-                                <div class="uil uil-pen lg:text-[150px] text-7xl text-black/5 dark:text-white/5 rtl:-rotate-90"></div>
-                            </div>
-                        </div>
-                    </div><!--end grid-->
-                </div><!--end container-->
-            </div><!--end container-->
         </section><!--end section-->
         <!-- End -->
 

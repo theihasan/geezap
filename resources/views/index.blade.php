@@ -12,18 +12,19 @@
                             <div class="grid lg:grid-cols-12 grid-cols-1" id="reserve-form">
                                 <div class="lg:col-span-10 mt-8">
                                     <div class="bg-white dark:bg-slate-900 border-0 shadow rounded p-3">
-                                        <form action="#">
+                                        <form action="{{route('job.index')}}" method="GET">
                                             <div class="registration-form text-dark text-start">
                                                 <div class="grid md:grid-cols-12 grid-cols-1 md:gap-0 gap-6">
                                                     <div class="lg:col-span-8 md:col-span-7">
                                                         <div class="filter-search-form relative filter-border">
                                                             <i class="uil uil-briefcase-alt icons"></i>
-                                                            <input name="name" type="text" id="job-keyword" class="form-input filter-input-box bg-gray-50 dark:bg-slate-800 border-0" placeholder="Search your Keywords">
+                                                            <input name="search" type="text" id="job-keyword" class="form-input filter-input-box bg-gray-50 dark:bg-slate-800 border-0" placeholder="Search your Keywords">
                                                         </div>
                                                     </div>
 
                                                     <div class="lg:col-span-4 md:col-span-5">
-                                                        <input type="submit" id="search" name="search" style="height: 60px;" class="btn bg-emerald-600 hover:bg-emerald-700 border-emerald-600 hover:border-emerald-700 text-white searchbtn submit-btn w-full" value="Search">
+                                                        <button style="height: 60px;"  type="submit" class="btn bg-emerald-600 hover:bg-emerald-700 border-emerald-600
+                                                                    hover:border-emerald-700 text-white searchbtn submit-btn w-full">Search</button>
                                                     </div>
                                                 </div><!--end grid-->
                                             </div><!--end container-->

@@ -28,12 +28,6 @@
 
         <!--Login button Start-->
         <ul class="buy-button list-none mb-0">
-            <li class="inline-block mb-0">
-                <div class="relative top-[3px]">
-                    <i class="uil uil-search text-lg absolute top-[3px] end-3"></i>
-                    <input type="text" class="form-input h-9 pe-10 rounded-3xl sm:w-44 w-36 border-gray-100 dark:border-slate-800 bg-white dark:bg-slate-900" name="s" id="searchItem" placeholder="Search...">
-                </div>
-            </li>
             <li class="dropdown inline-block relative ps-1">
                 <button data-dropdown-toggle="dropdown" class="dropdown-toggle items-center" type="button">
                     <span class="btn btn-icon rounded-full bg-emerald-600 hover:bg-emerald-700 border-emerald-600 hover:border-emerald-700 text-white">
