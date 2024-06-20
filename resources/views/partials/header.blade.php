@@ -7,6 +7,7 @@
     <title>@yield('page-title', 'Geezap - Personalized Job Arggrigator')</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta content="Job Listing Landing Template" name="description">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta content="Job, CV, Career, Resume, Job Portal" name="keywords">
     <meta name="author" content="Shreethemes">
     <meta name="website" content="https://geezap.com/">

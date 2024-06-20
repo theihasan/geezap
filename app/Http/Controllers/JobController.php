@@ -33,9 +33,14 @@ class JobController extends Controller
     public function job($slug)
     {
         $job = JobListing::where('slug', $slug)->firstOrFail();
-
+        $relatedJobs = JobListing::where('job_category', $job->job_category)
+            ->where('id', '!=', $job->id)
+            ->inRandomOrder()
+            ->limit(3)
+            ->get();
         return view('job.details', [
-            'job' => $job
+            'job' => $job,
+            'relatedJobs' => $relatedJobs
         ]);
     }
 }

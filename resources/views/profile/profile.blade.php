@@ -18,7 +18,7 @@
                             </div>
 
                             <div class="">
-                                <a href="profile-setting.blade.php" class="btn btn-icon rounded-full bg-emerald-600/5 hover:bg-emerald-600 border-emerald-600/10 hover:border-emerald-600 text-emerald-600 hover:text-white"><i data-feather="settings" class="size-4"></i></a>
+                                <a href="{{route('profile.update')}}" class="btn btn-icon rounded-full bg-emerald-600/5 hover:bg-emerald-600 border-emerald-600/10 hover:border-emerald-600 text-emerald-600 hover:text-white"><i data-feather="settings" class="size-4"></i></a>
                             </div>
                         </div>
                     </div>

@@ -70,8 +70,10 @@
                 </li>
 
                 <li><a href="{{route('contact')}}" class="sub-menu-item">Contact</a></li>
+                @guest
                 <li><a href="{{route('login')}}" class="sub-menu-item">Login</a></li>
                 <li><a href="{{route('register')}}" class="sub-menu-item">Register</a></li>
+                @endguest
             </ul>
         </div><!--end navigation-->
     </div><!--end container-->

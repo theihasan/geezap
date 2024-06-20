@@ -6,7 +6,7 @@
                 <div class="grid lg:grid-cols-12 md:grid-cols-2 grid-cols-1 items-center gap-[30px]">
                     <div class="lg:col-span-7">
                         <div class="md:me-6 md:mb-20">
-                            <h4 class="lg:leading-normal leading-normal text-4xl lg:text-5xl mb-5 font-bold">Start Building <br> Your <span class="text-emerald-600">Dream Career</span><br> with Geezap</h4>
+                            <h4 class="lg:leading-normal leading-normal text-4xl lg:text-5xl mb-5 font-bold">FIND Your<br> <span class="text-emerald-600">Dream Job</span><br> with Geezap</h4>
                             <p class="text-lg max-w-xl">Find Jobs, Employment & Career Opportunities. We are here to help you land your dream job</p>
 
                             <div class="grid lg:grid-cols-12 grid-cols-1" id="reserve-form">

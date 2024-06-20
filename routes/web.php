@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CoverLetterController;
 use App\Http\Controllers\HomePageController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\ProfileController;
@@ -33,7 +34,7 @@ Route::middleware('auth')->group(function () {
     Route::post('social-media-info', [ProfileController::class, 'updateSocialMediaInfo'])->name('social-media-info.update');
     Route::post('experience', [ProfileController::class, 'updateExperience'])->name('experience.update');
     Route::post('skill', [ProfileController::class, 'updateSkill'])->name('skill.update');
-
+    Route::post('cover-letter', [CoverLetterController::class, 'coverLetter'])->name('cover-letter.update');
 });
 
 require __DIR__.'/auth.php';
