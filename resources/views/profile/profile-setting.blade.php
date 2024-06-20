@@ -168,71 +168,52 @@
                             <div class="grid grid-cols-1 gap-4">
                                 <div>
                                     <h5 class="text-lg font-semibold mb-4">Skills :</h5>
-                                    <form id="skills-form" action="{{route('skill.update')}}" method="POST">
+                                    <form id="skills-form" action="{{ route('skill.update') }}" method="POST">
                                         @csrf
-                                        @if(!empty($skills['skill']))
-                                        @foreach($skills['skill'] as $index => $skill)
-                                            <div class="grid grid-cols-1 gap-4 skill-entry">
-                                                <div>
-                                                    <label for="skill" class="form-label font-medium">Skill Name</label>
-                                                    <input type="text"
-                                                           class="form-input border border-slate-100 dark:border-slate-800 mt-2"
-                                                           placeholder="Skill Name:" id="skill" name="skill[]" required="" value="{{$skill}}">
-                                                @error('skill')
-                                                <span class="text-red-600">{{$message}}</span>
-                                                @enderror
-                                                </div>
-                                                <div>
-                                                    <label for="skill_level" class="form-label font-medium">Skill Level</label>
-                                                    <select
-                                                        class="form-select border border-slate-100 dark:border-slate-800 mt-2 mx-5 px-20 py-3"
-                                                        id="skill_level" name="skill_level[]" required="">
-                                                        <option value="{{App\Enums\SkillProfeciency::PROFICIENT->value}}" @if($skills['skill_level'][$index] == App\Enums\SkillProfeciency::PROFICIENT->value) selected @endif>Proficient</option>
-                                                        <option value="{{App\Enums\SkillProfeciency::INTERMEDIATE->value}}" @if($skills['skill_level'][$index] == App\Enums\SkillProfeciency::INTERMEDIATE->value) selected @endif>Intermediate</option>
-                                                        <option value="{{App\Enums\SkillProfeciency::BEGINNER->value}}" @if($skills['skill_level'][$index] == App\Enums\SkillProfeciency::BEGINNER->value) selected @endif>Beginner</option>
-                                                    </select>
-                                                @error('skill_level')
-                                                <span class="text-red-600">{{$message}}</span>
-                                                @enderror
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                        @else
-                                            <div id="skills-container">
+                                        <div id="skills-container">
+                                            @foreach ($skills['skill'] as $index => $skill)
                                                 <div class="grid grid-cols-1 gap-4 skill-entry">
                                                     <div>
-                                                        <label for="skill" class="form-label font-medium">Skill Name</label>
-                                                        <input type="text"
-                                                               class="form-input border border-slate-100 dark:border-slate-800 mt-2"
-                                                               placeholder="Skill Name:" id="skill" name="skill[]" required="">
+                                                        <label for="skill{{ $index }}" class="form-label font-medium">Skill Name</label>
+                                                        <input type="text" class="form-input border border-slate-100 dark:border-slate-800 mt-2"
+                                                               placeholder="Skill Name:" id="skill{{ $index }}" name="skill[]" required=""
+                                                               value="{{ $skill }}">
                                                         @error('skill')
-                                                        <span class="text-red-600">{{$message}}</span>
+                                                        <span class="text-red-600">{{ $message }}</span>
                                                         @enderror
                                                     </div>
                                                     <div>
-                                                        <label for="skill_level" class="form-label font-medium">Skill Level</label>
-                                                        <select
-                                                            class="form-select border border-slate-100 dark:border-slate-800 mt-2 mx-5 px-20 py-3"
-                                                            id="skill_level" name="skill_level[]" required="">
-                                                            <option value="{{App\Enums\SkillProfeciency::PROFICIENT->value}}">Proficient</option>
-                                                            <option value="{{App\Enums\SkillProfeciency::INTERMEDIATE->value}}">Intermediate</option>
-                                                            <option value="{{App\Enums\SkillProfeciency::BEGINNER->value}}">Beginner</option>
+                                                        <label for="skill_level{{ $index }}" class="form-label font-medium">Skill Level</label>
+                                                        <select class="form-select border border-slate-100 dark:border-slate-800 mt-2 mx-5 px-20 py-3"
+                                                                id="skill_level{{ $index }}" name="skill_level[]" required="">
+                                                            <option value="{{ App\Enums\SkillProfeciency::PROFICIENT->value }}"
+                                                                    @if ($skills['skill_level'][$index] == App\Enums\SkillProfeciency::PROFICIENT->value) selected @endif>Proficient
+                                                            </option>
+                                                            <option value="{{ App\Enums\SkillProfeciency::INTERMEDIATE->value }}"
+                                                                    @if ($skills['skill_level'][$index] == App\Enums\SkillProfeciency::INTERMEDIATE->value) selected @endif>Intermediate
+                                                            </option>
+                                                            <option value="{{ App\Enums\SkillProfeciency::BEGINNER->value }}"
+                                                                    @if ($skills['skill_level'][$index] == App\Enums\SkillProfeciency::BEGINNER->value) selected @endif>Beginner
+                                                            </option>
                                                         </select>
                                                         @error('skill_level')
-                                                        <span class="text-red-600">{{$message}}</span>
+                                                        <span class="text-red-600">{{ $message }}</span>
                                                         @enderror
                                                     </div>
                                                 </div>
-                                            </div>
-                                        @endif
-                                        <button type="button" id="add-skill" class="btn bg-emerald-600 hover:bg-emerald-700 text-white rounded-md mt-5">Add More Skill</button>
-                                        <button type="submit" class="btn bg-emerald-600 hover:bg-emerald-700 text-white rounded-md mt-5">Update Skills</button>
-                                    </form>
+                                            @endforeach
+                                        </div>
 
+                                        <button type="button" class="btn bg-emerald-600 hover:bg-emerald-700 text-white rounded-md mt-5"
+                                                id="add-skill">Add More Skill</button>
+                                        <button type="submit" class="btn bg-emerald-600 hover:bg-emerald-700 text-white rounded-md mt-5">Update
+                                            Skills</button>
+                                    </form>
                                 </div>
                             </div>
                         </div>
                     </div>
+
 
                     <div class="lg:col-span-6">
                         <div class="p-6 rounded-md shadow dark:shadow-gray-800 bg-white dark:bg-slate-900">
@@ -487,16 +468,18 @@
             experienceContainer.appendChild(newExperienceForm);
         });
 
-        document.getElementById('add-skill').addEventListener('click', function() {
+        document.getElementById('add-skill').addEventListener('click', function () {
             var skillContainer = document.getElementById('skills-container');
-            var skillEntry = document.querySelector('.skill-entry');
-            var newSkillEntry = skillEntry.cloneNode(true);
+            var skillEntry = document.querySelector('.skill-entry'); // Select the first skill entry template
 
-            newSkillEntry.querySelector('input').value = '';
-            newSkillEntry.querySelector('select').value = 'proficient';
-
-            skillContainer.appendChild(newSkillEntry);
+            if (skillEntry) {
+                var newSkillEntry = skillEntry.cloneNode(true);
+                newSkillEntry.querySelector('input').value = '';
+                newSkillEntry.querySelector('select').value = '{{ App\Enums\SkillProfeciency::PROFICIENT->value }}'; // Set default skill level
+                skillContainer.appendChild(newSkillEntry);
+            }
         });
+
 
     </script>
 
