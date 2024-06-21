@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CoverLetterController;
 use App\Http\Controllers\HomePageController;
+use App\Http\Controllers\JobCategoryController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -13,9 +14,7 @@ Route::prefix('jobs')->group(function () {
 });
 
 
-Route::get('/categories', function () {
-    return view('job.categories');
-})->name('job.categories');
+Route::get('/categories', JobCategoryController::class)->name('job.categories');
 
 Route::get('contact', function () {
     return view('contact');

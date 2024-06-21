@@ -5,6 +5,8 @@ namespace App\Enums;
 enum JobCategory :string
 {
     case Laravel = 'laravel';
+    case Symfony = 'symfony';
+    case Wordpress = 'wordpress';
     case Vue = 'vuejs';
     case React = 'react';
     case Angular = 'angular';

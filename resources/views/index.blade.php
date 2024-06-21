@@ -184,124 +184,36 @@
                 <div class="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 mt-8 gap-[30px]">
 
                     @forelse($jobCategories as $category)
+                        <div class="group relative p-6 rounded-md shadow dark:shadow-gray-700 mt-6">
+                            <div class="size-14 flex items-center justify-center bg-white dark:bg-slate-900 shadow-md dark:shadow-gray-700 rounded-md relative -mt-12">
+                                <img src="{{$category->category_image}}" class="size-8" alt="{{$category->job_category}}">
+                            </div>
 
-                    <div class="group relative p-6 rounded-md shadow dark:shadow-gray-700 mt-6">
-                        <div class="size-14 flex items-center justify-center bg-white dark:bg-slate-900 shadow-md dark:shadow-gray-700 rounded-md relative -mt-12">
-                            <img src="{{$category->employer_logo}}" class="size-8"  alt="">
-                        </div>
+                            <div class="mt-4">
+                                <a href="{{ url('jobs?category=' . $category->job_category) }}" class="text-lg hover:text-emerald-600 font-semibold">{{ ucwords($category->job_category) }}</a>
+                            </div>
 
-                        <div class="mt-4">
-                            <a href="#" class="text-lg hover:text-emerald-600 font-semibold">{{$category->job_category}}</a>
-                        </div>
-
-                        <div class="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-between">
-                            <span class="text-slate-400"><i class="uil uil-map-marker"></i> {{ $category->country }}</span>
-                            <span class="block font-semibold text-emerald-600">{{ $category->total_jobs }} Jobs</span>
-                        </div>
-                    </div><!--end content-->
+                            <div class="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 flex justify-between">
+                                <span class="text-slate-400"><i class="uil uil-map-marker"></i> {{ $category->country }}</span>
+                                <span class="block font-semibold text-emerald-600">{{ $category->total_jobs }} Jobs</span>
+                            </div>
+                        </div><!--end content-->
                     @empty
                         No Job Categories Found
                     @endforelse
+
 
                 </div><!--end grid-->
 
                 <div class="grid md:grid-cols-12 grid-cols-1 mt-6">
                     <div class="md:col-span-12 text-center">
-                        <a href="#" class="btn btn-link text-slate-400 hover:text-emerald-600 after:bg-emerald-600 duration-500 ease-in-out">See More Companies <i class="uil uil-arrow-right align-middle"></i></a>
+                        <a href="{{route('job.categories')}}"
+                           class="btn btn-link text-slate-400 hover:text-emerald-600
+                           after:bg-emerald-600 duration-500 ease-in-out">See More Categories <i class="uil uil-arrow-right align-middle"></i></a>
                     </div>
                 </div><!--end grid-->
             </div><!--end container-->
 
-            <div class="container md:mt-24 mt-16">
-                <div class="grid grid-cols-1 pb-8 text-center">
-                    <h3 class="mb-4 md:text-[26px] md:leading-normal text-2xl leading-normal font-semibold">Latest Blog or News</h3>
-
-                    <p class="text-slate-400 max-w-xl mx-auto">Search all the open positions on the web. Get your own personalized salary estimate. Read reviews on over 30000+ companies worldwide.</p>
-                </div><!--end grid-->
-
-                <div class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 mt-8 gap-[30px]">
-                    <div class="group relative overflow-hidden bg-white dark:bg-slate-900 rounded-md shadow dark:shadow-gray-700">
-                        <div class="relative overflow-hidden">
-                            <img src="assets/images/blog/01.jpg" class="scale-110 group-hover:scale-100 transition-all duration-500" alt="">
-                        </div>
-
-                        <div class="relative p-6">
-                            <div class="absolute start-6 -top-4">
-                                <span class="bg-emerald-600 text-white text-[12px] px-2.5 py-1 font-semibold rounded-full h-5">Arts</span>
-                            </div>
-
-                            <div class="">
-                                <div class="flex mb-4">
-                                    <span class="text-slate-400 text-sm"><i class="uil uil-calendar-alt text-slate-900 dark:text-white me-2"></i>20th February, 2023</span>
-                                    <span class="text-slate-400 text-sm ms-3"><i class="uil uil-clock text-slate-900 dark:text-white me-2"></i>5 min read</span>
-                                </div>
-
-                                <a href="blog-detail.html" class="title text-lg font-semibold hover:text-emerald-600 duration-500 ease-in-out">11 Tips to Help You Get New Clients Through Cold Calling</a>
-
-                                <div class="flex justify-between items-center mt-3">
-                                    <a href="blog-detail.html" class="btn btn-link hover:text-emerald-600 after:bg-emerald-600 duration-500 ease-in-out">Read More <i class="uil uil-arrow-right"></i></a>
-                                    <span class="text-slate-400 text-sm">by <a href="#" class="text-slate-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-600 font-medium">Google</a></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!--end content-->
-
-                    <div class="group relative overflow-hidden bg-white dark:bg-slate-900 rounded-md shadow dark:shadow-gray-700">
-                        <div class="relative overflow-hidden">
-                            <img src="assets/images/blog/02.jpg" class="scale-110 group-hover:scale-100 transition-all duration-500" alt="">
-                        </div>
-
-                        <div class="relative p-6">
-                            <div class="absolute start-6 -top-4">
-                                <span class="bg-emerald-600 text-white text-[12px] px-2.5 py-1 font-semibold rounded-full h-5">Illustration</span>
-                            </div>
-
-                            <div class="">
-                                <div class="flex mb-4">
-                                    <span class="text-slate-400 text-sm"><i class="uil uil-calendar-alt text-slate-900 dark:text-white me-2"></i>20th February, 2023</span>
-                                    <span class="text-slate-400 text-sm ms-3"><i class="uil uil-clock text-slate-900 dark:text-white me-2"></i>5 min read</span>
-                                </div>
-
-                                <a href="blog-detail.html" class="title text-lg font-semibold hover:text-emerald-600 duration-500 ease-in-out">DigitalOcean launches first Canadian data centre in Toronto</a>
-
-                                <div class="flex justify-between items-center mt-3">
-                                    <a href="blog-detail.html" class="btn btn-link hover:text-emerald-600 after:bg-emerald-600 duration-500 ease-in-out">Read More <i class="uil uil-arrow-right"></i></a>
-                                    <span class="text-slate-400 text-sm">by <a href="#" class="text-slate-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-600 font-medium">Facebook</a></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!--end content-->
-
-                    <div class="group relative overflow-hidden bg-white dark:bg-slate-900 rounded-md shadow dark:shadow-gray-700">
-                        <div class="relative overflow-hidden">
-                            <img src="assets/images/blog/03.jpg" class="scale-110 group-hover:scale-100 transition-all duration-500" alt="">
-                        </div>
-
-                        <div class="relative p-6">
-                            <div class="absolute start-6 -top-4">
-                                <span class="bg-emerald-600 text-white text-[12px] px-2.5 py-1 font-semibold rounded-full h-5">Music</span>
-                            </div>
-
-                            <div class="">
-                                <div class="flex mb-4">
-                                    <span class="text-slate-400 text-sm"><i class="uil uil-calendar-alt text-slate-900 dark:text-white me-2"></i>20th February, 2023</span>
-                                    <span class="text-slate-400 text-sm ms-3"><i class="uil uil-clock text-slate-900 dark:text-white me-2"></i>5 min read</span>
-                                </div>
-
-                                <a href="blog-detail.html" class="title text-lg font-semibold hover:text-emerald-600 duration-500 ease-in-out">Using Banner Stands To Increase Trade Show Traffic</a>
-
-                                <div class="flex justify-between items-center mt-3">
-                                    <a href="blog-detail.html" class="btn btn-link hover:text-emerald-600 after:bg-emerald-600 duration-500 ease-in-out">Read More <i class="uil uil-arrow-right"></i></a>
-                                    <span class="text-slate-400 text-sm">by <a href="#" class="text-slate-900 dark:text-white hover:text-emerald-600 dark:hover:text-emerald-600 font-medium">Linkedin</a></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!--end content-->
-                </div><!--end grid-->
-            </div><!--end container-->
         </section><!--end section-->
         <!-- End -->
 @endsection

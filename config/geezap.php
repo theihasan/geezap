@@ -1,62 +1,62 @@
 <?php
 
 return [
-    'laravel' => [
+    \App\Enums\JobCategory::Laravel->value => [
         'query' => 'Laravel',
         'num_pages' => 20,
         'date_posted' => 'week',
         'page'  => 2,
-        'category_image' => asset('assets/images/categories/laravel.png'),
+        'category_image' => 'assets/images/categories/laravel.png',
     ],
 
-    'symfony' => [
+    \App\Enums\JobCategory::Symfony->value => [
         'query' => 'Symfony',
         'num_pages' => 20,
         'date_posted' => 'week',
         'page'  => 2,
-        'category_image' => asset('assets/images/categories/symfony.png'),
+        'category_image' => 'assets/images/categories/symfony.png',
     ],
 
-    'wordpress' => [
+    \App\Enums\JobCategory::Wordpress->value => [
         'query' => 'Wordpress',
         'num_pages' => 20,
         'date_posted' => 'week',
         'page'  => 2,
-        'category_image' => asset('assets/images/categories/wordpress.png'),
+        'category_image' => 'assets/images/categories/wordpress.png',
     ],
-    'vuejs' => [
+    \App\Enums\JobCategory::Vue->value => [
         'query' => 'Vue Js',
         'num_pages' => 20,
         'date_posted' => 'week',
         'page'  => 2,
-        'category_image' => asset('assets/images/categories/vuejs.png'),
+        'category_image' => 'assets/images/categories/vuejs.png',
     ],
-    'reactjs' => [
+    \App\Enums\JobCategory::React->value => [
         'query' => 'React JS',
         'num_pages' => 20,
         'date_posted' => 'week',
         'page'  => 2,
-        'category_image' => asset('assets/images/categories/reactjs.png'),
+        'category_image' => 'assets/images/categories/reactjs.png',
     ],
-    'nodejs' => [
+    \App\Enums\JobCategory::NodeJS->value => [
         'query' => 'Node JS',
         'num_pages' => 20,
         'date_posted' => 'week',
         'page'  => 2,
-        'category_image' => asset('assets/images/categories/nodejs.png'),
+        'category_image' => 'assets/images/categories/nodejs.png',
     ],
-    'python' => [
+    \App\Enums\JobCategory::Python->value => [
         'query' => 'Python',
         'num_pages' => 20,
         'date_posted' => 'week',
         'page'  => 2,
-        'category_image' => asset('assets/images/categories/python.png'),
+        'category_image' => 'assets/images/categories/python.png',
     ],
-    'asp' => [
+    \App\Enums\JobCategory::ASPNET->value => [
         'query' => 'Asp.net',
         'num_pages' => 20,
         'date_posted' => 'week',
-        'page'  => 2,
-        'category_image' => asset('assets/images/categories/asp.png'),
+        'page'  => 1,
+        'category_image' => 'assets/images/categories/asp.png',
     ],
 ];

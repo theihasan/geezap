@@ -24,6 +24,7 @@ class JobListing extends Model
         'employment_type',
         'job_title',
         'job_category',
+        'category_image',
         'apply_link',
         'description',
         'is_remote',
