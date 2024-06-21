@@ -3,21 +3,11 @@
         <div class="grid grid-cols-1">
             <div class="relative py-12">
                 <!-- Subscribe -->
-                <div class="relative w-full">
+                <div class="relative w-full text-center">
                     <div class="grid md:grid-cols-12 grid-cols-1 gap-[30px]">
-                        <div class="md:col-span-3">
+                        <div class="md:col-span-12">
                             <h3 class="text-xl font-semibold text-white">Hosting Sponsor</h3>
-                            <a href="https://ibb.co/6Zy2K3P"><img src="https://i.ibb.co/6Zy2K3P/Logo-Satisfy-Host3-0-copy-Logo-V-copy-3.png" alt="Logo-Satisfy-Host3-0-copy-Logo-V-copy-3" border="0" /></a>
-                        </div><!--end col-->
-
-                        <div class="md:col-span-9">
-                            <ul class="list-disc footer-list md:text-end text-center space-x-3">
-                                <li class="inline-block"><a href="index.html" class="text-gray-300 hover:text-gray-400 duration-500 ease-in-out font-medium">Home</a></li>
-                                <li class="inline-block mt-[10px] md:mt-0"><a href="services.html" class="text-gray-300 hover:text-gray-400 duration-500 ease-in-out font-medium">How it works</a></li>
-                                <li class="inline-block mt-[10px] md:mt-0"><a href="#" class="text-gray-300 hover:text-gray-400 duration-500 ease-in-out font-medium">Create a job</a></li>
-                                <li class="inline-block mt-[10px] md:mt-0"><a href="aboutus.html" class="text-gray-300 hover:text-gray-400 duration-500 ease-in-out font-medium">About us</a></li>
-                                <li class="inline-block mt-[10px] md:mt-0"><a href="contact.html" class="text-gray-300 hover:text-gray-400 duration-500 ease-in-out font-medium">Contact us</a></li>
-                            </ul><!--end icon-->
+                            <a href="https://ibb.co/6Zy2K3P"><img src="https://i.ibb.co/6Zy2K3P/Logo-Satisfy-Host3-0-copy-Logo-V-copy-3.png" alt="Logo-Satisfy-Host3-0-copy-Logo-V-copy-3" border="0" class="mx-auto" /></a>
                         </div><!--end col-->
                     </div><!--end grid-->
                 </div>
@@ -28,11 +18,10 @@
 
     <div class="py-[30px] px-0 border-t border-gray-800 dark:border-gray-700">
         <div class="container text-center">
-            <div class="grid md:grid-cols-2 items-center gap-6">
-                <div class="md:text-start text-center">
-                    <p class="mb-0 text-gray-300 font-medium">© <script>document.write(new Date().getFullYear())</script> All rights goes to Geezap</p>
+            <div class="grid md:grid-cols-1 items-center gap-6">
+                <div class="text-center">
+                    <p class="mb-0 text-gray-300 font-medium">© <script>document.write(new Date().getFullYear())</script> All rights go to Geezap</p>
                 </div>
-
             </div><!--end grid-->
         </div><!--end container-->
     </div>
@@ -53,5 +42,4 @@
 @stack('extra-js')
 <!-- JAVASCRIPTS -->
 </body>
-
 </html>

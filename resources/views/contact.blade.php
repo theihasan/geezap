@@ -15,7 +15,7 @@
             <div class="container">
                 <div class="grid md:grid-cols-12 grid-cols-1 items-center gap-[30px]">
                     <div class="lg:col-span-7 md:col-span-6">
-                        <img src="assets/images/svg/contact.svg" alt="">
+                        <img src="{{asset('assets/images/svg/contact.svg')}}" alt="">
                     </div>
 
                     <div class="lg:col-span-5 md:col-span-6">
@@ -68,7 +68,7 @@
 
                         <div class="content mt-7">
                             <h5 class="title h5 text-lg font-semibold">Phone</h5>
-                            <p class="text-slate-400 mt-3">The phrasal sequence of the is now so that many campaign and benefit</p>
+                            <p class="text-slate-400 mt-3">Feel free to give us a call for any inquiries or support. Our team is available to assist you with any questions or concerns you may have.</p>
 
                             <div class="mt-5">
                                 <a href="tel:+152534-468-854" class="btn btn-link text-emerald-600 hover:text-emerald-600 after:bg-emerald-600 transition duration-500">+152 534-468-854</a>
@@ -85,10 +85,12 @@
 
                         <div class="content mt-7">
                             <h5 class="title h5 text-lg font-semibold">Email</h5>
-                            <p class="text-slate-400 mt-3">The phrasal sequence of the is now so that many campaign and benefit</p>
+                            <p class="text-slate-400 mt-3">For any inquiries or support, please send us an email. Our support team is ready to assist you with your needs.</p>
 
                             <div class="mt-5">
-                                <a href="mailto:contact@example.com" class="btn btn-link text-emerald-600 hover:text-emerald-600 after:bg-emerald-600 transition duration-500">contact@example.com</a>
+                                <a href="mailto:info@geezap.com"
+                                   class="btn btn-link text-emerald-600 hover:text-emerald-600
+                                   after:bg-emerald-600 transition duration-500">info@geezap.com</a>
                             </div>
                         </div>
                     </div>
@@ -102,14 +104,16 @@
 
                         <div class="content mt-7">
                             <h5 class="title h5 text-lg font-semibold">Location</h5>
-                            <p class="text-slate-400 mt-3">C/54 Northwest Freeway, Suite 558, <br> Houston, USA 485</p>
+                            <p class="text-slate-400 mt-3">Visit us at our office for in-person consultations. We are located at C/54 Northwest Freeway, Suite 558, Houston, USA 485.</p>
 
                             <div class="mt-5">
                                 <a href="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d39206.002432144705!2d-95.4973981212445!3d29.709510002925988!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8640c16de81f3ca5%3A0xf43e0b60ae539ac9!2sGerald+D.+Hines+Waterwall+Park!5e0!3m2!1sen!2sin!4v1566305861440!5m2!1sen!2sin"
-                                data-type="iframe" class="video-play-icon read-more lightbox btn btn-link text-emerald-600 hover:text-emerald-600 after:bg-emerald-600 transition duration-500">View on Google map</a>
+                                   data-type="iframe" class="video-play-icon read-more lightbox btn btn-link text-emerald-600 hover:text-emerald-600 after:bg-emerald-600 transition duration-500">View on Google map</a>
                             </div>
                         </div>
                     </div>
+
+                </div>
                 </div><!--end grid-->
             </div><!--end container-->
         </section><!--end section-->
