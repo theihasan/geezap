@@ -12,26 +12,28 @@
 
                 <div class="md:flex mx-4 -mt-12">
                     <div class="md:w-full">
-                        <div class="relative flex items-end">
-                            <div class="profile-pic text-center">
-                                <input id="pro-img" name="profile-image" type="file" class="hidden" onchange="loadFile(event)" />
-                                <div>
-                                    <div class="relative size-28 max-w-[112px] max-h-[112px] mx-auto">
-                                        <img src="{{asset('assets/images/profile.jpg')}}" class="rounded-full shadow dark:shadow-gray-800 ring-4 ring-slate-50 dark:ring-slate-800" id="profile-image" alt="">
-                                        <label class="absolute inset-0 cursor-pointer" for="pro-img"></label>
-                                    </div>
+                        <div class="relative flex items-end justify-between mt-4">
+                            <div class="relative flex items-end">
+                                <img src="{{asset('assets/images/profile.jpg')}}"
+                                     class="size-28 rounded-full shadow dark:shadow-gray-800 ring-4 ring-slate-50 dark:ring-slate-800" alt="">
+                                <div class="ms-4">
+                                    <h5 class="text-lg font-semibold">{{auth()->user()->name}}</h5>
+                                    <p class="text-slate-400">{{auth()->user()->occupation}}</p>
                                 </div>
                             </div>
-                            <div class="ms-4">
-                                <h5 class="text-lg font-semibold">{{auth()->user()->name}}</h5>
-                                <p class="text-slate-400">{{auth()->user()->occupation}}</p>
+
+                            <div class="">
+                                <a href="{{route('dashboard')}}"
+                                   class="btn btn-icon rounded-full bg-emerald-600/5 hover:bg-emerald-600
+                                    border-emerald-600/10 hover:border-emerald-600 text-emerald-600
+                                    hover:text-white"><i data-feather="user" class="size-4"></i></a>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div><!--end -->
 
-            <div class="container mt-16">
+
+                <div class="container mt-16">
                 <div class="grid lg:grid-cols-12 grid-cols-1 gap-[30px]">
                     <div class="lg:col-span-12">
                         <div class="p-6 rounded-md shadow dark:shadow-gray-800 bg-white dark:bg-slate-900">
