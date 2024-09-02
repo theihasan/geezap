@@ -24,7 +24,7 @@ class JobController extends Controller
                 ])
                 ->thenReturn();
 
-            return $jobsQuery->paginate(10);
+            return $jobsQuery->latest()->paginate(10);
         });
 
         $currentPage = $jobs->currentPage();
