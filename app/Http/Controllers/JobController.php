@@ -2,6 +2,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\JobListing;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Facades\Cache;
@@ -31,7 +34,7 @@ class JobController extends Controller
         ]);
     }
 
-    public function job($slug)
+    public function job($slug): Factory|Application|View|\Illuminate\Contracts\Foundation\Application
     {
         $jobCacheKey = 'job_' . $slug;
         $relatedJobsCacheKey = 'related_jobs_' . $slug;
