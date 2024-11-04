@@ -1,3 +1,4 @@
+@include('v2.partials.header')
 <body class="bg-[#0A0A1B] font-ubuntu-light">
 <!-- Navigation -->
 <nav class="bg-[#12122b] border-b border-gray-800">

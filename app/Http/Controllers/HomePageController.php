@@ -36,7 +36,7 @@ class HomePageController extends Controller
             return JobListing::distinct()->count('job_category');
         });
 
-        return view('index', [
+        return view('v2.index', [
             'todayAddedJobsCount' => $todayAddedJobsCount,
             'jobCategoriesJobsCount' => $jobCategoriesJobsCount,
             'jobCategoriesCount' => $jobCategoriesCount,
