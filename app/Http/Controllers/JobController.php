@@ -51,7 +51,7 @@ class JobController extends Controller
                 ->get();
         });
 
-        return view('job.details', [
+        return view('v2.job.details', [
             'job' => $job,
             'relatedJobs' => $relatedJobs
         ]);

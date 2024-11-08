@@ -52,6 +52,7 @@ class JobListing extends Model
             'required_experience' => 'integer',
             'qualifications' => 'array',
             'benefits' => 'array',
+            'responsibilities' => 'array',
         ];
     }
 
