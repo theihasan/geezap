@@ -28,7 +28,7 @@ class JobController extends Controller
         });
 
         $currentPage = $jobs->currentPage();
-        return view('job.index', [
+        return view('v2.job.index', [
             'jobs' => $jobs,
             'currentPage' => $currentPage
         ]);
