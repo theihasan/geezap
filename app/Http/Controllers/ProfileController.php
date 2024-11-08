@@ -24,7 +24,7 @@ class ProfileController extends Controller
     {   $experiences = json_decode(Auth::user()->experience, true);
         $skills = json_decode(Auth::user()->skills, true);
         $timezones = Timezone::cases();
-        return view('profile.profile-setting', [
+        return view('v2.profile.edit-profile', [
             'experiences' => $experiences,
             'skills' => $skills,
             'timezones' => $timezones
