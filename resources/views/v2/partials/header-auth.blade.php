@@ -25,16 +25,16 @@
              x-transition:leave-end="opacity-0 scale-95"
              class="absolute right-0 mt-2 w-48 rounded-xl bg-[#1a1a3a] border border-gray-700 shadow-xl z-50">
             <div class="p-2">
-                <a href="view-profile.html" class="flex items-center gap-2 px-4 py-2 text-gray-100 hover:text-pink-500 rounded-lg hover:bg-white/5 transition-all">
+                <a href="{{route('dashboard')}}" class="flex items-center gap-2 px-4 py-2 text-gray-100 hover:text-pink-500 rounded-lg hover:bg-white/5 transition-all">
                     <i class="las la-user-circle"></i>
                     View Profile
                 </a>
-                <a href="my-applications.html" class="flex items-center gap-2 px-4 py-2 text-gray-100 hover:text-pink-500 rounded-lg hover:bg-white/5 transition-all">
+                <a href="{{route('profile.update')}}" class="flex items-center gap-2 px-4 py-2 text-gray-100 hover:text-pink-500 rounded-lg hover:bg-white/5 transition-all">
                     <i class="las la-briefcase"></i>
                     My Applications
                 </a>
                 <div class="border-t border-gray-700 my-2"></div>
-                <a href="#" class="flex items-center gap-2 px-4 py-2 text-red-400 hover:text-red-500 rounded-lg hover:bg-white/5 transition-all">
+                <a href="{{route('logout')}}" class="flex items-center gap-2 px-4 py-2 text-red-400 hover:text-red-500 rounded-lg hover:bg-white/5 transition-all">
                     <i class="las la-sign-out-alt"></i>
                     Sign Out
                 </a>

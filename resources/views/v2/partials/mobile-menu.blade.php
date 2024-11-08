@@ -22,7 +22,7 @@
 
         <!-- Mobile Menu Links -->
         <div class="flex flex-col p-6 space-y-2">
-            <a href="jobs.html"
+            <a href="{{route('job.index')}}"
                class="text-gray-100 hover:text-pink-500 py-4 transition-all duration-200 transform translate-x-4 opacity-0 mobile-menu-item group flex items-center justify-between rounded-xl hover:bg-white/5 px-4">
                     <span class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-lg bg-pink-500/10 flex items-center justify-center group-hover:bg-pink-500/20 transition-colors">
@@ -32,7 +32,7 @@
                     </span>
                 <i class="las la-arrow-right opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all"></i>
             </a>
-            <a href="categories.html"
+            <a href="{{route('job.categories')}}"
                class="text-gray-100 hover:text-pink-500 py-4 transition-all duration-200 transform translate-x-4 opacity-0 mobile-menu-item group flex items-center justify-between rounded-xl hover:bg-white/5 px-4">
                     <span class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-lg bg-pink-500/10 flex items-center justify-center group-hover:bg-pink-500/20 transition-colors">
@@ -45,7 +45,7 @@
 
             <!-- Profile Links -->
             <div class="border-t border-white/10 mt-4 pt-4">
-                <a href="view-profile.html"
+                <a href="{{route('dashboard')}}"
                    class="text-gray-100 hover:text-pink-500 py-4 transition-all duration-200 transform translate-x-4 opacity-0 mobile-menu-item group flex items-center justify-between rounded-xl hover:bg-white/5 px-4">
                         <span class="flex items-center gap-3">
                             <div class="w-10 h-10 rounded-lg bg-pink-500/10 flex items-center justify-center group-hover:bg-pink-500/20 transition-colors">
@@ -55,7 +55,7 @@
                         </span>
                     <i class="las la-arrow-right opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all"></i>
                 </a>
-                <a href="my-applications.html"
+                <a href="{{route('profile.update')}}"
                    class="text-gray-100 hover:text-pink-500 py-4 transition-all duration-200 transform translate-x-4 opacity-0 mobile-menu-item group flex items-center justify-between rounded-xl hover:bg-white/5 px-4">
                         <span class="flex items-center gap-3">
                             <div class="w-10 h-10 rounded-lg bg-pink-500/10 flex items-center justify-center group-hover:bg-pink-500/20 transition-colors">
@@ -70,7 +70,7 @@
 
         <!-- Mobile Menu Footer -->
         <div class="mt-auto p-6 space-y-4 border-t border-white/10">
-            <a href="#" class="w-full bg-white/5 hover:bg-white/10 text-red-400 hover:text-red-500 px-6 py-3 rounded-xl transition-colors flex items-center justify-center gap-2">
+            <a href="{{route('logout')}}" class="w-full bg-white/5 hover:bg-white/10 text-red-400 hover:text-red-500 px-6 py-3 rounded-xl transition-colors flex items-center justify-center gap-2">
                 <i class="las la-sign-out-alt"></i>
                 Sign Out
             </a>
