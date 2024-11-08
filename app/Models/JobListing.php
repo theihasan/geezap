@@ -53,6 +53,7 @@ class JobListing extends Model
             'qualifications' => 'array',
             'benefits' => 'array',
             'responsibilities' => 'array',
+            'skills' => 'array',
         ];
     }
 
