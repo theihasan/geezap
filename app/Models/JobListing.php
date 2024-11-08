@@ -50,6 +50,8 @@ class JobListing extends Model
             'posted_at' => 'datetime',
             'expaire_at' => 'datetime',
             'required_experience' => 'integer',
+            'qualifications' => 'array',
+            'benefits' => 'array',
         ];
     }
 
