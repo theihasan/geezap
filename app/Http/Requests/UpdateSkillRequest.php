@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\SkillProfeciency;
+use App\Enums\SkillProficiency;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -25,7 +25,7 @@ class UpdateSkillRequest extends FormRequest
     {
         return [
             'skill' => ['required', 'array'],
-            'skill_level' => ['required', 'array', Rule::in(SkillProfeciency::toValues())],
+            'skill_level' => ['required', 'array', Rule::in(SkillProficiency::toValues())],
         ];
     }
 
