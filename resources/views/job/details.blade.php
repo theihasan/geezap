@@ -29,7 +29,7 @@
                     @if($job->qualifications)
                         <h5 class="text-lg font-semibold mt-6">Qualifications: </h5>
                         <ul id="qualifications" class="list-none">
-                            @foreach(json_decode($job->qualifications, true) as $qualification)
+                            @foreach($job->qualifications as $qualification)
                                 <li class="text-slate-400 mt-2"><i class="uil uil-arrow-right text-emerald-600 me-1"></i>{{$qualification}}</li>
                             @endforeach
                         </ul>
@@ -38,7 +38,7 @@
                     @if($job->responsibilities)
                         <h5 class="text-lg font-semibold mt-6">Responsibilities: </h5>
                         <ul id="responsibilities" class="list-none">
-                            @foreach(json_decode($job->responsibilities, true) as $responsibility)
+                            @foreach($job->responsibilities as $responsibility)
                                 <li class="text-slate-400 mt-2"><i class="uil uil-arrow-right text-emerald-600 me-1"></i>{{$responsibility}}</li>
                             @endforeach
                         </ul>
@@ -47,7 +47,7 @@
                     @if($job->benefits)
                         <h5 class="text-lg font-semibold mt-6">Benefits: </h5>
                         <ul id="benefits" class="list-none">
-                            @foreach(json_decode($job->benefits, true) as $benefit)
+                            @foreach($job->benefits as $benefit)
                                 <li class="text-slate-400 mt-2"><i class="uil uil-arrow-right text-emerald-600 me-1"></i>{{$benefit}}</li>
                             @endforeach
                         </ul>
