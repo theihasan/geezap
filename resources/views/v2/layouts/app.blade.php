@@ -33,5 +33,3 @@
 <!-- Footer -->
 @include('v2.partials.footer')
 
-</body>
-</html>
