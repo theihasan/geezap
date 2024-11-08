@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Enums\Role;
+use App\Enums\SkillProficiency;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -47,12 +48,15 @@ class UserFactory extends Factory
             'website' => 'https://' . fake()->domainName(),
             'bio' => fake()->paragraph(),
             'skills' => json_encode([
-                'PHP',
-                'Laravel',
-                'MySQL',
-                'Docker',
-                'AWS',
-                'DevOps'
+                'skill' => ['PHP', 'Laravel', 'MySQL', 'Docker', 'AWS', 'DevOps'],
+                'skill_level' => [
+                    SkillProficiency::PROFICIENT->value,
+                    SkillProficiency::PROFICIENT->value,
+                    SkillProficiency::PROFICIENT->value,
+                    SkillProficiency::INTERMEDIATE->value,
+                    SkillProficiency::PROFICIENT->value,
+                    SkillProficiency::INTERMEDIATE->value,
+                ]
             ]),
             'experience' => json_encode([
                 [
