@@ -58,3 +58,5 @@
     }
 </script>
 @stack('extra-js')
+</body>
+</html>
