@@ -21,7 +21,7 @@ Route::get('contact', function () {
 })->name('contact');
 
 Route::get('/dashboard', function () {
-    return view('profile.profile');
+    return view('v2.profile.profile');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/profile-update', [ProfileController::class, 'edit'])->middleware(['auth'])->name('profile.update');
