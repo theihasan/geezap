@@ -30,7 +30,7 @@
                     <i class="las la-user-circle"></i>
                     View Profile
                 </a>
-                <a href="{{route('profile.update')}}" class="flex items-center gap-2 px-4 py-2 text-gray-100 hover:text-pink-500 rounded-lg hover:bg-white/5 transition-all">
+                <a href="{{route('applications')}}" class="flex items-center gap-2 px-4 py-2 text-gray-100 hover:text-pink-500 rounded-lg hover:bg-white/5 transition-all">
                     <i class="las la-briefcase"></i>
                     My Applications
                 </a>
