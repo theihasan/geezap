@@ -74,7 +74,11 @@
                 <div class="md:col-span-1">
                     <div class="bg-[#1a1a3a] p-6 rounded-2xl border border-gray-700">
                         <div class="flex items-center gap-4 mb-6">
+                            @if($job->employer_logo)
                             <img src="{{ $job->employer_logo }}" alt="{{ $job->employer_name }}" class="w-16 h-16 rounded-xl object-cover">
+                            @else
+                            <img src="https://placehold.co/32x32" alt="{{ $job->employer_name }}" class="w-16 h-16 rounded-xl object-cover">
+                            @endif
                             <div>
                                 <h3 class="text-xl font-semibold text-white">{{ $job->employer_name }}</h3>
                                 <p class="text-gray-400">{{ $job->industry ?? 'Technology' }}</p>
@@ -164,7 +168,13 @@
                                 <div class="flex items-center justify-between mb-4">
                                     <div class="flex items-center gap-3">
                                         <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center">
-                                            <img src="{{ $relatedJob->employer_logo }}" alt="{{ $relatedJob->employer_name }}" class="w-8 h-8 object-contain">
+                                            <a href="{{ route('job.show', $relatedJob->slug) }}">
+                                                @if($relatedJob->employer_logo)
+                                                <img src="{{ $relatedJob->employer_logo }}" alt="{{ $relatedJob->employer_name }}" class="w-8 h-8 object-contain">
+                                                @else
+                                                    <img src="https://placehold.co/32x32" alt="{{ $relatedJob->employer_name }}" class="w-8 h-8 object-contain">
+                                                @endif
+                                            </a>
                                         </div>
                                         <div>
                                             <h3 class="text-white font-medium">{{ $relatedJob->employer_name }}</h3>
@@ -175,7 +185,9 @@
                                     {{ $relatedJob->employment_type }}
                                 </span>
                                 </div>
+                                <a href="{{ route('job.show', $relatedJob->slug) }}">
                                 <h4 class="text-lg text-white font-medium mb-2">{{ $relatedJob->job_title }}</h4>
+                                </a>
                                 <div class="flex justify-between items-center">
                                 <span class="text-gray-400">
                                     <i class="las la-map-marker"></i>

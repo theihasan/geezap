@@ -64,10 +64,19 @@
                         <div class="bg-[#1a1a3a] rounded-2xl border border-gray-700 p-6 hover:border-pink-500/50 transition mb-6 font-ubuntu">
                             <div class="flex justify-between items-start">
                                 <div class="flex items-center gap-4">
-                                    <img src="{{ $job->employer_logo }}" alt="{{ $job->employer_name }}"
-                                         class="w-12 h-12 rounded-xl object-contain bg-white/5 p-2">
+                                   <a href="{{ route('job.show', $job->slug) }}">
+                                       @if($job->employer_logo)
+                                       <img src="{{ $job->employer_logo }}" alt="{{ $job->employer_name }}"
+                                            class="w-12 h-12 rounded-xl object-contain bg-white/5 p-2">
+                                       @else
+                                       <img src="https://placehold.co/32x32" alt="{{ $job->employer_name }}"
+                                             class="w-12 h-12 rounded-xl object-contain bg-white/5 p-2">
+                                       @endif
+                                   </a>
                                     <div>
-                                        <h3 class="text-xl font-oxanium-semibold text-white">{{ $job->job_title }}</h3>
+                                        <a href="{{ route('job.show', $job->slug) }}">
+                                            <h3 class="text-xl font-oxanium-semibold text-white">{{ $job->job_title }}</h3>
+                                        </a>
                                         <p class="text-gray-300">{{ $job->employer_name }} • {{ $job->is_remote ? 'Remote' : $job->city }}</p>
                                     </div>
                                 </div>

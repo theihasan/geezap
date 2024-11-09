@@ -140,9 +140,11 @@
                         <div class="flex flex-col md:flex-row gap-6">
                             <!-- Left Side: Company Logo -->
                             <div class="md:w-48 relative">
-                                <img src="{{ $job->employer_logo ?? 'https://placehold.co/400x200/2a2a4a/FFFFFF' }}"
-                                     alt="{{ $job->employer_name }}"
-                                     class="w-full h-32 md:h-full object-cover rounded-xl">
+                                <a href="{{ route('job.show', $job->slug) }}">
+                                    <img src="{{ $job->employer_logo ?? 'https://placehold.co/400x200/2a2a4a/FFFFFF' }}"
+                                         alt="{{ $job->employer_name }}"
+                                         class="w-full h-32 md:h-full object-cover rounded-xl">
+                                </a>
                                 <div class="absolute top-3 right-3 bg-pink-500/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm text-white">
                                     {{ $job->views }} views
                                 </div>
@@ -153,7 +155,9 @@
                                 <!-- Top Section -->
                                 <div class="flex flex-col md:flex-row justify-between gap-4 mb-4">
                                     <div>
-                                        <h3 class="text-xl font-semibold text-white">{{ $job->job_title }}</h3>
+                                        <a href="{{ route('job.show', $job->slug) }}" class="text-white font-medium hover:text-pink-500 transition-colors">
+                                            <h3 class="text-xl font-semibold text-white">{{ $job->job_title }}</h3>
+                                        </a>
                                         <p class="text-gray-300">{{ $job->employer_name }}</p>
                                     </div>
                                     @if($job->min_salary && $job->max_salary)
@@ -241,60 +245,64 @@
         </div>
     </section>
 
-<!-- Job Categories -->
-<section class="py-20 bg-[#12122b]">
-    <div class="max-w-7xl mx-auto px-6">
-        <div class="text-center mb-12">
-            <h2 class="text-3xl font-bold mb-2 text-white">Browse by Category</h2>
-            <p class="text-gray-300">Find your perfect role in these specialized areas</p>
-        </div>
+    <!-- Job Categories -->
+    <section class="py-20 bg-[#12122b]">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-2 text-white">Browse by Category</h2>
+                <p class="text-gray-300">Find your perfect role in these specialized areas</p>
+            </div>
 
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-            @foreach($jobCategories as $category)
-                <div class="group bg-[#1a1a3a] rounded-2xl p-6 hover:bg-[#222250] transition border border-gray-700 hover:border-pink-500/50">
-                    <div class="w-14 h-14 bg-pink-500/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-pink-500/20">
-                        <img src="{{ $category->category_image ?? 'https://placehold.co/50x50/2a2a4a/FFFFFF' }}" class="w-8 h-8" alt="{{ $category->job_category }}">
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2 text-white">{{ ucwords($category->job_category) }}</h3>
-                    <p class="text-gray-300 mb-4">{{ $category->total_jobs }} open positions</p>
-                    <a href="{{ url('jobs?category=' . $category->job_category) }}" class="flex items-center text-pink-300 hover:text-pink-400 transition">
-                        Browse Jobs <i class="fas fa-arrow-right ml-2"></i>
-                    </a>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                @foreach($jobCategories as $category)
+                        <div class="group bg-[#1a1a3a] rounded-2xl p-6 hover:bg-[#222250] transition border border-gray-700 hover:border-pink-500/50">
+                            <div class="w-14 h-14 bg-pink-500/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-pink-500/20">
+                                <a href={{ url('jobs?category=' . $category->job_category) }}>
+                                    <img src="{{ $category->category_image ?? 'https://placehold.co/50x50/2a2a4a/FFFFFF' }}" class="w-8 h-8" alt="{{ $category->job_category }}">
+                                </a>
+                            </div>
+                            <a href="{{ url('jobs?category=' . $category->job_category) }}"">
+                                <h3 class="text-xl font-semibold mb-2 text-white">{{ ucwords($category->job_category) }}</h3>
+                            </a>
+                            <p class="text-gray-300 mb-4">{{ $category->total_jobs }} open positions</p>
+                            <a href="{{ url('jobs?category=' . $category->job_category) }}" class="flex items-center text-pink-300 hover:text-pink-400 transition">
+                                Browse Jobs <i class="fas fa-arrow-right ml-2"></i>
+                            </a>
+                        </div>
+                @endforeach
+            </div>
+
+            <div class="flex justify-center mt-12">
+                <a href="{{route('job.categories')}}" class="font-ubuntu-regular bg-gradient-to-r from-pink-500 to-purple-600 hover:opacity-90 transition-opacity text-white px-8 py-4 rounded-xl font-medium flex items-center gap-2 text-lg">
+                    See All Categories
+                    <i class="las la-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-20 bg-[#0A0A1B]">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div class="bg-[#12122b] rounded-2xl p-8 text-center">
+                    <div class="text-4xl font-oxanium-semibold text-white">{{$lastWeekAddedJobsCount}}</div>
+                    <div class="text-gray-300">Job Added in Last Week</div>
                 </div>
-            @endforeach
+                <div class="bg-[#12122b] rounded-2xl p-8 text-center">
+                    <div class="text-4xl font-oxanium-semibold text-white">{{$todayAddedJobsCount}}</div>
+                    <div class="text-gray-300">Today Added Jobs</div>
+                </div>
+                <div class="bg-[#12122b] rounded-2xl p-8 text-center">
+                    <div class="text-4xl font-oxanium-semibold text-white">{{$availableJobs}}</div>
+                    <div class="text-gray-300">Available Jobs</div>
+                </div>
+                <div class="bg-[#12122b] rounded-2xl p-8 text-center">
+                    <div class="text-4xl font-oxanium-semibold text-white">{{$jobCategoriesCount}}</div>
+                    <div class="text-gray-300">Job Categories</div>
+                </div>
+                <!-- More stat cards... -->
+            </div>
         </div>
-
-        <div class="flex justify-center mt-12">
-            <a href="{{route('job.categories')}}" class="font-ubuntu-regular bg-gradient-to-r from-pink-500 to-purple-600 hover:opacity-90 transition-opacity text-white px-8 py-4 rounded-xl font-medium flex items-center gap-2 text-lg">
-                See All Categories
-                <i class="las la-arrow-right"></i>
-            </a>
-        </div>
-    </div>
-</section>
-
-<!-- Stats Section -->
-<section class="py-20 bg-[#0A0A1B]">
-    <div class="max-w-7xl mx-auto px-6">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div class="bg-[#12122b] rounded-2xl p-8 text-center">
-                <div class="text-4xl font-oxanium-semibold text-white">{{$lastWeekAddedJobsCount}}</div>
-                <div class="text-gray-300">Job Added in Last Week</div>
-            </div>
-            <div class="bg-[#12122b] rounded-2xl p-8 text-center">
-                <div class="text-4xl font-oxanium-semibold text-white">{{$todayAddedJobsCount}}</div>
-                <div class="text-gray-300">Today Added Jobs</div>
-            </div>
-            <div class="bg-[#12122b] rounded-2xl p-8 text-center">
-                <div class="text-4xl font-oxanium-semibold text-white">{{$availableJobs}}</div>
-                <div class="text-gray-300">Available Jobs</div>
-            </div>
-            <div class="bg-[#12122b] rounded-2xl p-8 text-center">
-                <div class="text-4xl font-oxanium-semibold text-white">{{$jobCategoriesCount}}</div>
-                <div class="text-gray-300">Job Categories</div>
-            </div>
-            <!-- More stat cards... -->
-        </div>
-    </div>
-</section>
+    </section>
 @endsection
