@@ -1,30 +1,40 @@
 @extends('v2.layouts.app')
 @section('content')
-    <div class="bg-[#0A0A1B] min-h-screen font-ubuntu">
-        <!-- Profile Header -->
-        <div class="bg-[#12122b] border-b border-gray-800">
-            <div class="max-w-7xl mx-auto px-6 py-8">
-                <div class="flex items-center gap-6">
-                    <!-- Profile Image Upload -->
-                    <div class="relative group">
-                        <img src="{{ auth()->user()->profile_photo_url ?? 'https://placehold.co/120x120' }}" alt="Profile"
-                             class="w-28 h-28 rounded-2xl object-cover border-2 border-pink-500/20">
-                        <label class="absolute inset-0 bg-black/50 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
-                            <input type="file" class="hidden" accept="image/*" id="profile-photo">
-                            <i class="las la-camera text-2xl text-white"></i>
-                        </label>
+    <!-- Profile Header -->
+    <div class="bg-[#12122b] border-b border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+            <div class="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">
+                <!-- Profile Image -->
+                <div class="relative group">
+                    <img src="{{asset('assets/images/profile.jpg')}}" alt="{{ auth()->user()->name }}"
+                         class="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl object-cover border-2 border-pink-500/20">
+                    <div class="absolute inset-0 bg-black/50 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <button class="text-white hover:text-pink-500 transition-colors">
+                            <i class="las la-camera text-2xl"></i>
+                        </button>
                     </div>
+                </div>
 
-                    <!-- Header Info -->
-                    <div>
-                        <h1 class="text-3xl font-bold text-white mb-2 font-oxanium-bold">{{ auth()->user()->name }}</h1>
-                        <p class="text-gray-400 font-ubuntu-light">{{ auth()->user()->occupation }}</p>
-                    </div>
+                <!-- Profile Info -->
+                <div class="flex-1 text-center sm:text-left">
+                    <h1 class="text-2xl sm:text-3xl font-bold text-white mb-2 font-oxanium-bold">{{ auth()->user()->name }}</h1>
+                    <p class="text-gray-400 mb-4 font-ubuntu-regular">{{ auth()->user()->occupation }}</p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex items-center gap-3 mt-4 sm:mt-0">
+                    <a href="{{ route('dashboard') }}" class="bg-gradient-to-r from-pink-500 to-purple-600 hover:opacity-90 text-white px-4 sm:px-6 py-2 rounded-xl transition-all flex items-center gap-2 font-oxanium-semibold text-sm sm:text-base">
+                        <i class="las la-eye"></i>
+                        <span class="hidden sm:inline">View Profile</span>
+                        <span class="sm:hidden">Edit</span>
+                    </a>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Edit Form -->
+
+    <!-- Edit Form -->
         <div class="max-w-7xl mx-auto px-6 py-12">
             <!-- Success Message -->
             @if (session('status'))

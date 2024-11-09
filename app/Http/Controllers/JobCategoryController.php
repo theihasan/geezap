@@ -22,6 +22,6 @@ class JobCategoryController extends Controller
                 ->get();
         });
 
-        return view('job.categories', ['jobCategories' => $jobCategories]);
+        return view('v2.job.categories', ['jobCategories' => $jobCategories]);
     }
 }

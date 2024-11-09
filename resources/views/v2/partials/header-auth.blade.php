@@ -1,11 +1,12 @@
 <div class="hidden md:flex items-center space-x-4">
+   @if(!auth()->check())
     <!-- Login Button -->
-    <a href="login.html" class="bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-xl transition-colors flex items-center gap-2">
+    <a href="{{route('login')}}" class="bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-xl transition-colors flex items-center gap-2">
         <i class="las la-sign-in-alt"></i>
         Login
     </a>
-
-
+    @endif
+    @if(auth()->check())
     <!-- Profile Button with Image -->
     <div class="relative" x-data="{ open: false }">
         <button @click="open = !open" @click.away="open = false"
@@ -41,4 +42,5 @@
             </div>
         </div>
     </div>
+    @endif
 </div>

@@ -7,6 +7,7 @@
      id="mobile-menu">
     <div class="flex flex-col h-full">
         <!-- Mobile Menu Header -->
+        @if(auth()->check())
         <div class="flex justify-between items-center p-6 border-b border-white/10">
             <div class="flex items-center gap-3">
                 <img src="https://placehold.co/40x40" alt="Profile" class="w-10 h-10 rounded-lg object-cover">
@@ -19,7 +20,7 @@
                 <i class="las la-times text-xl"></i>
             </button>
         </div>
-
+        @endif
         <!-- Mobile Menu Links -->
         <div class="flex flex-col p-6 space-y-2">
             <a href="{{route('job.index')}}"
@@ -42,7 +43,7 @@
                     </span>
                 <i class="las la-arrow-right opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all"></i>
             </a>
-
+            @if(auth()->check())
             <!-- Profile Links -->
             <div class="border-t border-white/10 mt-4 pt-4">
                 <a href="{{route('dashboard')}}"
@@ -66,6 +67,13 @@
                     <i class="las la-info opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all"></i>
                 </a>
             </div>
+            @endif
+            @if(!auth()->check())
+                <a href="{{route('login')}}" class="bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-xl transition-colors flex items-center gap-2">
+                    <i class="las la-sign-in-alt"></i>
+                    Login
+                </a>
+            @endif
         </div>
 
         <!-- Mobile Menu Footer -->
