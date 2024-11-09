@@ -38,7 +38,7 @@ class JobController extends Controller
     {
         $jobCacheKey = 'job_' . $slug;
         $relatedJobsCacheKey = 'related_jobs_' . $slug;
-
+        JobListing::where('slug', $slug)->firstOrFail()->increment('views', 20);
         $job = Cache::remember($jobCacheKey, 60 * 24, function () use ($slug) {
             return JobListing::where('slug', $slug)->firstOrFail();
         });
