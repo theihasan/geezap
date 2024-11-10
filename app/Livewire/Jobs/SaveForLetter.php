@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Jobs;
 
+use App\Enums\JobSavedStatus;
 use App\Models\JobListing;
 use App\Models\JobUser;
 use Livewire\Component;
@@ -20,6 +21,7 @@ class SaveForLetter extends Component
         JobUser::updateOrCreate([
             'job_id' => $this->job->id,
             'user_id' => auth()->id(),
+            'status' => JobSavedStatus::SAVED->value,
         ]);
 
         $this->dispatch('notify', [
