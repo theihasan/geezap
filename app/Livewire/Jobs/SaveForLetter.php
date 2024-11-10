@@ -22,7 +22,10 @@ class SaveForLetter extends Component
             'user_id' => auth()->id(),
         ]);
 
-        session()->flash('message', 'Job Saved Successfully');
+        $this->dispatch('notify', [
+            'message' => 'Job Saved Successfully',
+            'type' => 'success'
+        ]);
     }
 
     public function render()
