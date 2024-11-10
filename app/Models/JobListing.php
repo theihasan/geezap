@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 #[ObservedBy([JobListingObserver::class])]
 class JobListing extends Model
@@ -55,6 +56,11 @@ class JobListing extends Model
             'responsibilities' => 'array',
             'skills' => 'array',
         ];
+    }
+
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'job_student', 'user_id');
     }
 
 
