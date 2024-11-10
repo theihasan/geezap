@@ -51,6 +51,6 @@
 </footer>
 
 @livewireScripts
-@stack('scripts')
+@stack('extra-js')
 </body>
 </html>
