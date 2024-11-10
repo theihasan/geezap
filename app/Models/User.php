@@ -70,6 +70,8 @@ class User extends Authenticatable
 
     public function jobs(): BelongsToMany
     {
-        return $this->belongsToMany(JobListing::class, 'job_user',  'job_id');
+        return $this->belongsToMany(JobListing::class, 'job_user', 'user_id', 'job_id');
     }
+
+
 }

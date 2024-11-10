@@ -1,64 +1,119 @@
-<div>
-    <!-- Applications List Section -->
+<div class="min-h-screen">
+    <div wire:loading class="fixed inset-0 z-50">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+        <div class="flex items-center justify-center min-h-screen">
+            <div class="text-center">
+                <div class="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-purple-500 border-r-transparent motion-reduce:animate-[spin_1.5s_linear_infinite] mb-4"></div>
+                <p class="text-white font-ubuntu-medium text-lg">Loading...</p>
+            </div>
+        </div>
+    </div>
+    <x-notification />
     <section class="py-20 font-ubuntu">
         <div class="max-w-4xl mx-auto px-6">
-            <!-- Filter Bar -->
             <div class="w-full mb-8 bg-[#1a1a3a] rounded-2xl border border-gray-700 p-4">
                 <div class="flex justify-center">
                     <div class="flex flex-wrap gap-2 text-center">
-                        <button class="px-4 py-2 rounded-xl font-ubuntu-medium bg-gradient-to-r from-pink-500 to-purple-600 text-white">
+                        <button
+                            wire:click="setTab('all')"
+                            wire:loading.attr="disabled"
+                            class="px-4 py-2 rounded-xl font-ubuntu-medium {{ $activeTab === 'all' ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white' : 'bg-white/5 text-gray-300 hover:bg-white/10' }} transition-all">
                             All Applications
                         </button>
-                        <button class="px-4 py-2 rounded-xl font-ubuntu-medium bg-white/5 text-gray-300 hover:bg-white/10 transition-all">
+                        <button
+                            wire:click="setTab('applied')"
+                            wire:loading.attr="disabled"
+                            class="px-4 py-2 rounded-xl font-ubuntu-medium {{ $activeTab === \App\Enums\JobSavedStatus::APPLIED->value ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white' : 'bg-white/5 text-gray-300 hover:bg-white/10' }} transition-all">
                             Applied
                         </button>
-                        <button class="px-4 py-2 rounded-xl font-ubuntu-medium bg-white/5 text-gray-300 hover:bg-white/10 transition-all">
+                        <button
+                            wire:click="setTab('saved')"
+                            wire:loading.attr="disabled"
+                            class="px-4 py-2 rounded-xl font-ubuntu-medium {{ $activeTab === \App\Enums\JobSavedStatus::SAVED->value ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white' : 'bg-white/5 text-gray-300 hover:bg-white/10' }} transition-all">
                             Saved
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Styled Title -->
-            <h1 class="text-4xl font-bold text-white text-center mb-8 font-oxanium-bold">
-            <span class="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600">
-                My Applications
-            </span>
+            <h1 wire:loading.class="opacity:0" class="text-4xl font-bold text-white text-center mb-8 font-oxanium-bold">
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600">
+                    My Applications
+                </span>
             </h1>
 
-            <!-- Applications List -->
             <div class="space-y-6">
-                <!-- Application Card -->
-                <div class="bg-[#1a1a3a] p-6 rounded-2xl border border-gray-700 font-ubuntu-regular">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <h2 class="text-2xl font-semibold text-white font-oxanium-semibold">Senior React Developer</h2>
-                            <p class="text-gray-300 mb-2 font-ubuntu-light">Google • Remote • Full-Time</p>
-                            <p class="text-gray-400 font-ubuntu-light">Applied on: <span class="text-gray-200">October 10, 2024</span></p>
-                        </div>
-                        <div class="text-right">
-                            <span class="px-4 py-2 bg-gradient-to-r from-green-400 to-green-600 text-white rounded-full font-medium font-ubuntu-medium">Status: Under Review</span>
-                        </div>
+                @if($this->applications->isEmpty())
+                    <div class="text-center text-gray-400 py-8">
+                        No applications found for {{ $activeTab }} status
                     </div>
-                    <div class="mt-4 flex items-center justify-between">
-                        <a href="#" class="text-pink-500 hover:underline font-ubuntu-medium">View Application Details</a>
-                        <button class="text-gray-400 hover:text-pink-500 transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
+                @else
+                    @foreach($this->applications as $application)
+                        <div class="bg-[#1a1a3a] p-6 rounded-2xl border border-gray-700 font-ubuntu-regular">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h2 class="text-2xl font-semibold text-white font-oxanium-semibold">{{ $application->job_title }}</h2>
+                                    <p class="text-gray-300 mb-2 font-ubuntu-light">{{ $application->employer_name }} {{ $application->city }} • {{ $application->country }}</p>
+                                </div>
+                                <button
+                                    wire:click="removeSavedJob({{$application->id}})"
+                                    wire:loading.attr="disabled"
+                                    class="px-4 py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 transition-all text-sm font-ubuntu-medium">
+                                    Remove
+                                </button>
+                            </div>
+                        </div>
+                    @endforeach
+                @endif
             </div>
 
-            <!-- Pagination -->
-            <div class="flex justify-center mt-10 space-x-2 font-ubuntu-medium">
-                <button class="px-4 py-2 rounded-lg bg-white/10 text-gray-300 hover:bg-white/20">Previous</button>
-                <button class="px-4 py-2 rounded-lg bg-gradient-to-r from-pink-500 to-purple-600 text-white">1</button>
-                <button class="px-4 py-2 rounded-lg bg-white/10 text-gray-300 hover:bg-white/20">2</button>
-                <button class="px-4 py-2 rounded-lg bg-white/10 text-gray-300 hover:bg-white/20">3</button>
-                <button class="px-4 py-2 rounded-lg bg-white/10 text-gray-300 hover:bg-white/20">Next</button>
-            </div>
+            <!-- Pagination remains the same -->
+            @if($this->applications->hasPages())
+                <div class="mt-10">
+                    <div class="flex items-center justify-center gap-2 font-ubuntu-medium">
+                        <!-- Previous Page -->
+                        <button
+                            wire:click="previousPage"
+                            wire:loading.attr="disabled"
+                            @if(!$this->applications->onFirstPage())
+                                class="px-4 py-2 rounded-lg bg-white/10 text-gray-300 hover:bg-white/20 transition-all"
+                            @else
+                                class="px-4 py-2 rounded-lg bg-white/5 text-gray-500 cursor-not-allowed"
+                            @endif
+                            {{ $this->applications->onFirstPage() ? 'disabled' : '' }}>
+                            Previous
+                        </button>
+
+                        <!-- Page Numbers -->
+                        @foreach($this->applications->getUrlRange(1, $this->applications->lastPage()) as $page => $url)
+                            <button
+                                wire:click="gotoPage({{ $page }})"
+                                wire:loading.attr="disabled"
+                                class="px-4 py-2 rounded-lg {{ $page == $this->applications->currentPage()
+                                    ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white'
+                                    : 'bg-white/10 text-gray-300 hover:bg-white/20' }} transition-all">
+                                {{ $page }}
+                            </button>
+                        @endforeach
+
+                        <!-- Next Page -->
+                        <button
+                            wire:click="nextPage"
+                            wire:loading.attr="disabled"
+                            @if(!$this->applications->onLastPage())
+                                class="px-4 py-2 rounded-lg bg-white/10 text-gray-300 hover:bg-white/20 transition-all"
+                            @else
+                                class="px-4 py-2 rounded-lg bg-white/5 text-gray-500 cursor-not-allowed"
+                            @endif
+                            {{ $this->applications->onLastPage() ? 'disabled' : '' }}>
+                            Next
+                        </button>
+                    </div>
+                    <div class="text-center mt-4 text-sm text-gray-400">
+                        Showing {{ $this->applications->firstItem() ?? 0 }} to {{ $this->applications->lastItem() ?? 0 }} of {{ $this->applications->total() }} results
+                    </div>
+                </div>
+            @endif
         </div>
     </section>
 </div>
