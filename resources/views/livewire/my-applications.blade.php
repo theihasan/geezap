@@ -1,13 +1,5 @@
 <div class="min-h-screen">
-    <div wire:loading class="fixed inset-0 z-50">
-        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
-        <div class="flex items-center justify-center min-h-screen">
-            <div class="text-center">
-                <div class="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-purple-500 border-r-transparent motion-reduce:animate-[spin_1.5s_linear_infinite] mb-4"></div>
-                <p class="text-white font-ubuntu-medium text-lg">Loading...</p>
-            </div>
-        </div>
-    </div>
+   <x-loading />
     <x-notification />
     <section class="py-20 font-ubuntu">
         <div class="max-w-4xl mx-auto px-6">
@@ -68,52 +60,7 @@
             </div>
 
             <!-- Pagination remains the same -->
-            @if($this->applications->hasPages())
-                <div class="mt-10">
-                    <div class="flex items-center justify-center gap-2 font-ubuntu-medium">
-                        <!-- Previous Page -->
-                        <button
-                            wire:click="previousPage"
-                            wire:loading.attr="disabled"
-                            @if(!$this->applications->onFirstPage())
-                                class="px-4 py-2 rounded-lg bg-white/10 text-gray-300 hover:bg-white/20 transition-all"
-                            @else
-                                class="px-4 py-2 rounded-lg bg-white/5 text-gray-500 cursor-not-allowed"
-                            @endif
-                            {{ $this->applications->onFirstPage() ? 'disabled' : '' }}>
-                            Previous
-                        </button>
-
-                        <!-- Page Numbers -->
-                        @foreach($this->applications->getUrlRange(1, $this->applications->lastPage()) as $page => $url)
-                            <button
-                                wire:click="gotoPage({{ $page }})"
-                                wire:loading.attr="disabled"
-                                class="px-4 py-2 rounded-lg {{ $page == $this->applications->currentPage()
-                                    ? 'bg-gradient-to-r from-pink-500 to-purple-600 text-white'
-                                    : 'bg-white/10 text-gray-300 hover:bg-white/20' }} transition-all">
-                                {{ $page }}
-                            </button>
-                        @endforeach
-
-                        <!-- Next Page -->
-                        <button
-                            wire:click="nextPage"
-                            wire:loading.attr="disabled"
-                            @if(!$this->applications->onLastPage())
-                                class="px-4 py-2 rounded-lg bg-white/10 text-gray-300 hover:bg-white/20 transition-all"
-                            @else
-                                class="px-4 py-2 rounded-lg bg-white/5 text-gray-500 cursor-not-allowed"
-                            @endif
-                            {{ $this->applications->onLastPage() ? 'disabled' : '' }}>
-                            Next
-                        </button>
-                    </div>
-                    <div class="text-center mt-4 text-sm text-gray-400">
-                        Showing {{ $this->applications->firstItem() ?? 0 }} to {{ $this->applications->lastItem() ?? 0 }} of {{ $this->applications->total() }} results
-                    </div>
-                </div>
-            @endif
+           <x-pagination :pages="$this->applications" />
         </div>
     </section>
 </div>
