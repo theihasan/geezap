@@ -24,7 +24,7 @@
                         @if($job->min_salary && $job->max_salary)
                             <span class="text-pink-300 font-semibold text-xl">${{ number_format($job->min_salary) }} - ${{ number_format($job->max_salary) }} / {{ $job->salary_period }}</span>
                         @endif
-                        <a href="{{ $job->apply_link }}" class="mt-2 px-6 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg hover:opacity-90 transition-opacity font-medium flex items-center gap-2">
+                        <a href="#applyjob" class="mt-2 px-6 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg hover:opacity-90 transition-opacity font-medium flex items-center gap-2">
                             <i class="las la-paper-plane text-xl"></i> Apply Now
                         </a>
                     </div>
@@ -145,15 +145,7 @@
             </div>
 
             <!-- Apply Now Section Before Related Jobs -->
-            <div class="bg-[#1a1a3a] mt-8 p-6 rounded-2xl border border-gray-700 text-center">
-                <h3 class="text-2xl font-semibold mb-4 text-white">Ready to Apply?</h3>
-                <p class="text-gray-300 mb-6">Click the button below to start your application process.</p>
-                <div class="flex justify-center">
-                    <a href="{{ $job->apply_link }}" class="px-8 py-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg hover:opacity-90 transition-opacity font-medium text-lg flex items-center gap-2">
-                        <i class="las la-paper-plane text-xl"></i> Apply Now
-                    </a>
-                </div>
-            </div>
+            <livewire:apply-job :job="$job" />
 
             <!-- Related Jobs Section -->
             @if($relatedJobs->count() > 0)

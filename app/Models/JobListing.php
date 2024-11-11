@@ -60,7 +60,8 @@ class JobListing extends Model
 
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'job_user', 'job_id', 'user_id');
+        return $this->belongsToMany(User::class, 'job_user', 'job_id', 'user_id')
+            ->withTimestamps();
     }
 
 
