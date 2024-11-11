@@ -44,7 +44,9 @@
                         <div class="bg-[#1a1a3a] p-6 rounded-2xl border border-gray-700 font-ubuntu-regular">
                             <div class="flex justify-between items-start">
                                 <div>
-                                    <h2 class="text-2xl font-semibold text-white font-oxanium-semibold">{{ $application->job_title }}</h2>
+                                    <a target="__blank" href="{{route('job.show', $application->slug)}}">
+                                        <h2 class="text-2xl font-semibold text-white font-oxanium-semibold">{{ $application->job_title }}</h2>
+                                    </a>
                                     <p class="text-gray-300 mb-2 font-ubuntu-light">{{ $application->employer_name }} {{ $application->city }} • {{ $application->country }}</p>
                                 </div>
                                 <button
