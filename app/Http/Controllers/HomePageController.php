@@ -28,20 +28,24 @@ class HomePageController extends Controller
             return JobListing::whereDate('created_at', today())->count();
         });
 
-        $jobCategoriesJobsCount = Cache::remember('jobCategoriesJobsCount', 24 * 60, function () {
-            return JobListing::count();
+        $lastWeekAddedJobsCount = Cache::remember('lastWeekAddedJobsCount', 24 * 60, function () {
+            return JobListing::whereBetween('created_at', [now()->subWeek(), now()])->count();
         });
 
         $jobCategoriesCount = Cache::remember('jobCategoriesCount', 24 * 60, function () {
             return JobListing::distinct()->count('job_category');
         });
+        $availableJobs = Cache::remember('availableJobs', 24 * 60, function () {
+            return JobListing::count();
+        });
 
-        return view('index', [
+        return view('v2.index', [
             'todayAddedJobsCount' => $todayAddedJobsCount,
-            'jobCategoriesJobsCount' => $jobCategoriesJobsCount,
+            'lastWeekAddedJobsCount' =>  $lastWeekAddedJobsCount,
             'jobCategoriesCount' => $jobCategoriesCount,
             'latestJobs' => $latestJobs,
-            'jobCategories' => $jobCategories
+            'jobCategories' => $jobCategories,
+            'availableJobs' => $availableJobs,
         ]);
     }
 }

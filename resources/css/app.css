@@ -1,3 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&family=Oxanium:wght@200;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    body {
+        @apply antialiased text-gray-200;
+    }
+}
+
+@layer components {
+    .btn-primary {
+        @apply px-6 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg hover:opacity-90 transition-opacity;
+    }
+}
+

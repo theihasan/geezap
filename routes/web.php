@@ -21,7 +21,7 @@ Route::get('contact', function () {
 })->name('contact');
 
 Route::get('/dashboard', function () {
-    return view('profile.profile');
+    return view('v2.profile.profile');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/profile-update', [ProfileController::class, 'edit'])->middleware(['auth'])->name('profile.update');
@@ -34,6 +34,7 @@ Route::middleware('auth')->group(function () {
     Route::post('experience', [ProfileController::class, 'updateExperience'])->name('experience.update');
     Route::post('skill', [ProfileController::class, 'updateSkill'])->name('skill.update');
     Route::post('cover-letter', [CoverLetterController::class, 'coverLetter'])->name('cover-letter.update');
+    Route::view('/applications', 'v2.profile.my-application')->name('applications');
 });
 
 require __DIR__.'/auth.php';

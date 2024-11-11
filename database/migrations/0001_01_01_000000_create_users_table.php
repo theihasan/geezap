@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('country')->nullable();
             $table->string('postcode')->nullable();
             $table->string('occupation')->nullable();
-            $table->string('role')->default('user');
+            $table->string('role')->default(\App\Enums\Role::USER->value);
             $table->string('locale')->default('en');
             $table->string('timezone')->default('UTC');
             $table->string('phone')->nullable();

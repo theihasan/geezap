@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum SkillProfeciency : string
+enum SkillProficiency : string
 {
     CASE PROFICIENT = 'proficient';
     CASE INTERMEDIATE = 'intermediate';
