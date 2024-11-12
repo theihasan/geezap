@@ -7,6 +7,7 @@
     "require": {
         "php": "^8.2",
         "abbasudo/laravel-purity": "^3.3",
+        "filament/filament": "^3.2",
         "laravel/breeze": "^2.0",
         "laravel/framework": "^11.0",
         "laravel/socialite": "^5.16",
@@ -38,7 +39,8 @@
     "scripts": {
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover --ansi"
+            "@php artisan package:discover --ansi",
+            "@php artisan filament:upgrade"
         ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
