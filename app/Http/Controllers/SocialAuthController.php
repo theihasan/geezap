@@ -26,6 +26,7 @@ class SocialAuthController extends Controller
             ['email' => $providerResponse->getEmail()],
             ['password' => Str::password(8)],
         );
+
         $data = [$provider . '_id' => $providerResponse->getId()];
 
         if ($user->wasRecentlyCreated) {
