@@ -63,7 +63,7 @@ class SocialAuthController extends Controller
             return redirect()->intended(route('home'));
         } catch (\Exception $e){
             logger('Error on social login: ' . $e->getMessage());
-            return redirect()->route('login')->withErrors(['status' => 'Something went wrong, please try again later.']);
+            return redirect()->route('login')->with(['status' => 'Something went wrong, please try again later.']);
         }
     }
 }
