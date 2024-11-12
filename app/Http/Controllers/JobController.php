@@ -41,6 +41,7 @@ class JobController extends Controller
         $viewKey = $jobCacheKey . '_view_' . request()->ip() . '_' . now()->format('Y-m-d-H-i');
 
         $jobViews = Cache::remember($viewKey, 1, function() use ($slug) {
+            Cache::forget('mostViewedJobs');
             return JobListing::query()
                 ->where('slug', $slug)
                 ->firstOrFail()

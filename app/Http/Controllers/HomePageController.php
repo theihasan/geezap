@@ -3,15 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\JobListing;
-use Illuminate\Http\Request;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Cache;
 
 class HomePageController extends Controller
 {
-    public function __invoke()
+    public function __invoke(): Factory|Application|View|\Illuminate\Contracts\Foundation\Application
     {
-        $latestJobs = Cache::remember('latestJobs', 60 * 24, function () {
-            return JobListing::orderBy('posted_at', 'desc')->limit(10)->get();
+        $latestJobs = Cache::remember('mostViewedJobs', 60 * 24, function () {
+            return JobListing::query()
+                ->latest('views')
+                ->limit(10)
+                ->get();
         });
 
         $jobCategories = Cache::remember('jobCategories', 24 * 60, function () {
