@@ -38,13 +38,24 @@ class JobController extends Controller
     {
         $jobCacheKey = 'job_' . $slug;
         $relatedJobsCacheKey = 'related_jobs_' . $slug;
-        JobListing::where('slug', $slug)->firstOrFail()->increment('views', 20);
+        $viewKey = $jobCacheKey . '_view_' . request()->ip() . '_' . now()->format('Y-m-d-H-i');
+
+        $jobViews = Cache::remember($viewKey, 1, function() use ($slug) {
+            return JobListing::query()
+                ->where('slug', $slug)
+                ->firstOrFail()
+                ->increment('views', 20);
+        });
+
         $job = Cache::remember($jobCacheKey, 60 * 24, function () use ($slug) {
-            return JobListing::where('slug', $slug)->firstOrFail();
+            return JobListing::query()
+                ->where('slug', $slug)
+                ->firstOrFail();
         });
 
         $relatedJobs = Cache::remember($relatedJobsCacheKey, 60 * 24, function () use ($job) {
-            return JobListing::where('job_category', $job->job_category)
+            return JobListing::query()
+                ->where('job_category', $job->job_category)
                 ->where('id', '!=', $job->id)
                 ->inRandomOrder()
                 ->limit(3)
