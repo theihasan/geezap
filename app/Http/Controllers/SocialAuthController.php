@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -25,7 +26,7 @@ class SocialAuthController extends Controller
 
             $user = User::query()->updateOrCreate(
                 ['email' => $providerResponse->getEmail()],
-                ['password' => Str::password(8)],
+                ['password' => Hash::make(Str::password(8))],
             );
 
             $data = [$provider . '_id' => $providerResponse->getId()];
@@ -39,10 +40,10 @@ class SocialAuthController extends Controller
             $user->update($data);
 
             Auth::login($user, remember: true);
+            return redirect()->intended(route('home'));
         } catch (\Exception $e){
             logger('Error on social login: ' . $e->getMessage());
+            return redirect()->route('login')->withErrors(['status' => 'Something went wrong, please try again later.']);
         }
-
-        return redirect()->intended(route('home'));
     }
 }
