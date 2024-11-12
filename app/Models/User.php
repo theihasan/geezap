@@ -41,6 +41,12 @@ class User extends Authenticatable
         'timezone',
         'experience',
         'role',
+        'facebook_id',
+        'facebook_token',
+        'google_id',
+        'google_token',
+        'github_id',
+        'github_token',
     ];
 
     /**

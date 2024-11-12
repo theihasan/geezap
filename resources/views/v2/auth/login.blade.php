@@ -7,7 +7,11 @@
                 <h2 class="text-3xl font-bold text-white font-oxanium-bold">Welcome Back</h2>
                 <p class="text-gray-400 font-ubuntu-light">Please login to your account</p>
             </div>
-
+            @session('status')
+            <div class="flex justify-center">
+                <span class="text-blue-500">{{$value}}</span>
+            </div>
+            @endsession
             <!-- Social Login Options -->
            <x-social-login/>
 

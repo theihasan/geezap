@@ -9,6 +9,7 @@
         "abbasudo/laravel-purity": "^3.3",
         "laravel/breeze": "^2.0",
         "laravel/framework": "^11.0",
+        "laravel/socialite": "^5.16",
         "laravel/tinker": "^2.9",
         "livewire/livewire": "*"
     },

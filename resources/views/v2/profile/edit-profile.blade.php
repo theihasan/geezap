@@ -36,7 +36,6 @@
 
     <!-- Edit Form -->
         <div class="max-w-7xl mx-auto px-6 py-12">
-            <!-- Success Message -->
             @if (session('status'))
                 <div class="mb-8 bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 px-4 py-3 rounded-xl">
                     {{ session('status') }}
@@ -231,12 +230,10 @@
                                     </div>
                                 @endforeach
                             @else
-                                <!-- Empty state experience form template -->
                                 <div class="experience-form border border-gray-700 rounded-xl p-6 space-y-4 relative">
                                     <button type="button" class="remove-experience absolute -top-3 -right-3 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-full p-1 transition-colors">
                                         <i class="las la-times text-lg"></i>
                                     </button>
-                                    <!-- Rest of your empty form fields -->
                                 </div>
                             @endif
                         </div>
@@ -250,43 +247,44 @@
                     </form>
 
                     <!-- Grid for Skills and Social Media -->
-                    <div class="grid md:grid-cols-2 gap-8">
-                        <!-- Skills Section -->
-                        <form id="skills-form" action="{{ route('skill.update') }}" method="POST" class="bg-[#12122b] rounded-2xl p-6 border border-gray-800">
+                    <div class="grid md:grid-cols-2 gap-8 content-start">
+                        <form id="skills-form" action="{{ route('skill.update') }}" method="POST" class="bg-[#12122b] h-fit rounded-2xl p-6 border border-gray-800">
                             @csrf
                             <h2 class="text-xl font-semibold text-white mb-6 flex items-center gap-2 font-oxanium-semibold">
                                 <i class="las la-tools text-pink-500"></i>
                                 Skills
                             </h2>
                             <div id="skills-container" class="space-y-4">
-                                @foreach ($skills['skill'] as $index => $skill)
-                                    <div class="grid grid-cols-1 gap-4 skill-entry relative">
-                                        <button type="button" class="remove-skill absolute -top-2 -right-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-full p-1 transition-colors">
-                                            <i class="las la-times text-lg"></i>
-                                        </button>
-                                        <div>
-                                            <label class="text-sm text-gray-400 block mb-1">Skill Name</label>
-                                            <input type="text" name="skill[]" value="{{ $skill }}"
-                                                   class="w-full bg-white/5 border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500">
+                                @if(!empty($skills['skill']))
+                                    @foreach ($skills['skill'] as $index => $skill)
+                                        <div class="grid grid-cols-1 gap-4 skill-entry relative">
+                                            <button type="button" class="remove-skill absolute -top-2 -right-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-full p-1 transition-colors">
+                                                <i class="las la-times text-lg"></i>
+                                            </button>
+                                            <div>
+                                                <label class="text-sm text-gray-400 block mb-1">Skill Name</label>
+                                                <input type="text" name="skill[]" value="{{ $skill }}"
+                                                       class="w-full bg-white/5 border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500">
+                                            </div>
+                                            <div>
+                                                <label class="text-sm text-gray-400 block mb-1">Skill Level</label>
+                                                <select name="skill_level[]"
+                                                        class="w-full bg-white/5 border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500">
+                                                    @foreach([
+                                                        App\Enums\SkillProficiency::PROFICIENT->value => 'Proficient',
+                                                        App\Enums\SkillProficiency::INTERMEDIATE->value => 'Intermediate',
+                                                        App\Enums\SkillProficiency::BEGINNER->value => 'Beginner'
+                                                    ] as $value => $label)
+                                                        <option value="{{ $value }}"
+                                                                @if($skills['skill_level'][$index] == $value) selected @endif>
+                                                            {{ $label }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <label class="text-sm text-gray-400 block mb-1">Skill Level</label>
-                                            <select name="skill_level[]"
-                                                    class="w-full bg-white/5 border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500">
-                                                @foreach([
-                                                    App\Enums\SkillProficiency::PROFICIENT->value => 'Proficient',
-                                                    App\Enums\SkillProficiency::INTERMEDIATE->value => 'Intermediate',
-                                                    App\Enums\SkillProficiency::BEGINNER->value => 'Beginner'
-                                                ] as $value => $label)
-                                                    <option value="{{ $value }}"
-                                                            @if($skills['skill_level'][$index] == $value) selected @endif>
-                                                        {{ $label }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-                                @endforeach
+                                    @endforeach
+                                @endif
                             </div>
                             <div class="mt-4 space-y-4">
                                 <button type="button" id="add-skill"
@@ -300,21 +298,14 @@
                             </div>
                         </form>
 
-                        <!-- Social Media Section -->
-                        <form action="{{ route('social-media-info.update') }}" method="POST" class="bg-[#12122b] rounded-2xl p-6 border border-gray-800">
+                        <form action="{{ route('social-media-info.update') }}" method="POST" class="bg-[#12122b] h-fit rounded-2xl p-6 border border-gray-800">
                             @csrf
                             <h2 class="text-xl font-semibold text-white mb-6 flex items-center gap-2 font-oxanium-semibold">
                                 <i class="las la-share-alt text-pink-500"></i>
                                 Social Media
                             </h2>
                             <div class="space-y-4">
-                                @foreach([
-                                    'twitter' => 'Twitter',
-                                    'facebook' => 'Facebook',
-                                    'linkedin' => 'LinkedIn',
-                                    'github' => 'GitHub',
-                                    'website' => 'Website'
-                                ] as $field => $label)
+                                @foreach(\App\Enums\SocialProvider::cases() as $field => $label)
                                     <div>
                                         <label class="text-sm text-gray-400 block mb-1">{{ $label }}</label>
                                         <div class="relative">
@@ -334,73 +325,72 @@
                 </div>
             </div>
         </div>
-    </div>
 
     @push('extra-js')
         <script>
-            // Add Experience
             document.getElementById('add-experience').addEventListener('click', function() {
                 const experienceContainer = document.getElementById('experience-container');
                 const experienceForm = document.querySelector('.experience-form');
                 const newExperienceForm = experienceForm.cloneNode(true);
 
-                // Clear all inputs in the new form
                 const inputs = newExperienceForm.querySelectorAll('input, textarea');
                 inputs.forEach(function(input) {
                     input.value = '';
                 });
 
-                // Ensure remove button is set up
                 setupRemoveExperienceButton(newExperienceForm);
 
                 experienceContainer.appendChild(newExperienceForm);
             });
 
-            // Add Skill
             document.getElementById('add-skill').addEventListener('click', function() {
                 const skillContainer = document.getElementById('skills-container');
-                const skillEntry = document.querySelector('.skill-entry');
+                const skillTemplate = `
+                    <div class="grid grid-cols-1 gap-4 skill-entry relative">
+                        <button type="button" class="remove-skill absolute -top-2 -right-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-full p-1 transition-colors">
+                            <i class="las la-times text-lg"></i>
+                        </button>
+                        <div>
+                            <label class="text-sm text-gray-400 block mb-1">Skill Name</label>
+                            <input type="text" name="skill[]"
+                                class="w-full bg-white/5 border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500">
+                        </div>
+                        <div>
+                            <label class="text-sm text-gray-400 block mb-1">Skill Level</label>
+                            <select name="skill_level[]"
+                                class="w-full bg-white/5 border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500">
+                                <option value="proficient">Proficient</option>
+                                <option value="intermediate">Intermediate</option>
+                                <option value="beginner">Beginner</option>
+                            </select>
+                        </div>
+                    </div>`;
 
-                if (skillEntry) {
-                    const newSkillEntry = skillEntry.cloneNode(true);
+                skillContainer.insertAdjacentHTML('beforeend', skillTemplate);
 
-                    // Clear input value
-                    newSkillEntry.querySelector('input[name="skill[]"]').value = '';
-
-                    // Reset select to default
-                    newSkillEntry.querySelector('select[name="skill_level[]"]').value = '{{ App\Enums\SkillProficiency::PROFICIENT->value }}';
-
-                    // Ensure remove button is set up
-                    setupRemoveSkillButton(newSkillEntry);
-
-                    skillContainer.appendChild(newSkillEntry);
-                }
+                const newSkillEntry = skillContainer.lastElementChild;
+                setupRemoveSkillButton(newSkillEntry);
             });
 
-            // Setup Remove Buttons for Initial Elements
+
             function setupInitialRemoveButtons() {
-                // Setup for skills
                 document.querySelectorAll('.skill-entry').forEach(function(entry) {
                     setupRemoveSkillButton(entry);
                 });
 
-                // Setup for experiences
                 document.querySelectorAll('.experience-form').forEach(function(form) {
                     setupRemoveExperienceButton(form);
                 });
             }
 
-            // Setup Remove Button for Skill
             function setupRemoveSkillButton(skillEntry) {
                 const removeButton = skillEntry.querySelector('.remove-skill');
                 if (removeButton) {
                     removeButton.addEventListener('click', function() {
-                        // Check if this is not the last skill entry
                         const allSkillEntries = document.querySelectorAll('.skill-entry');
                         if (allSkillEntries.length > 1) {
                             skillEntry.remove();
                         } else {
-                            // If last entry, just clear the values
                             skillEntry.querySelector('input[name="skill[]"]').value = '';
                             skillEntry.querySelector('select[name="skill_level[]"]').value = '{{ App\Enums\SkillProficiency::PROFICIENT->value }}';
                         }
@@ -408,17 +398,14 @@
                 }
             }
 
-            // Setup Remove Button for Experience
             function setupRemoveExperienceButton(experienceForm) {
                 const removeButton = experienceForm.querySelector('.remove-experience');
                 if (removeButton) {
                     removeButton.addEventListener('click', function() {
-                        // Check if this is not the last experience form
                         const allExperienceForms = document.querySelectorAll('.experience-form');
                         if (allExperienceForms.length > 1) {
                             experienceForm.remove();
                         } else {
-                            // If last entry, just clear the values
                             const inputs = experienceForm.querySelectorAll('input, textarea');
                             inputs.forEach(input => input.value = '');
                         }
@@ -426,7 +413,6 @@
                 }
             }
 
-            // Initialize remove buttons when the page loads
             document.addEventListener('DOMContentLoaded', setupInitialRemoveButtons);
         </script>
     @endpush
