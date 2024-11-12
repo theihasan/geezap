@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\SocialProvider;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
@@ -31,8 +32,27 @@ class SocialAuthController extends Controller
 
             $data = [$provider . '_id' => $providerResponse->getId()];
 
+            switch ($provider){
+                case SocialProvider::GITHUB->value:
+                    $data['github_token'] = $providerResponse->token ?? '';
+                    $data['twitter'] = $providerResponse->user['twitter_username'] ?? '';
+                    break;
+
+                case SocialProvider::FACEBOOK->value:
+                    $data['facebook_token'] = $providerResponse->token ?? '';
+                    break;
+
+                case SocialProvider::GOOGLE->value:
+                    $data['google_token'] = $providerResponse->token ?? '';
+                    break;
+
+                default: break;
+            }
+
+
             if ($user->wasRecentlyCreated) {
                 $data['name'] = $providerResponse->getName() ?? $providerResponse->getNickname();
+                $data['bio'] = $providerResponse->user['bio'] ?? '';
 
                 event(new Registered($user));
             }
