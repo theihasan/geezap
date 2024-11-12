@@ -20,24 +20,29 @@ class SocialAuthController extends Controller
 
     public function callback(string $provider): \Illuminate\Http\RedirectResponse
     {
-        $providerResponse = Socialite::driver($provider)->user();
+        try{
+            $providerResponse = Socialite::driver($provider)->user();
 
-        $user = User::query()->updateOrCreate(
-            ['email' => $providerResponse->getEmail()],
-            ['password' => Str::password(8)],
-        );
+            $user = User::query()->updateOrCreate(
+                ['email' => $providerResponse->getEmail()],
+                ['password' => Str::password(8)],
+            );
 
-        $data = [$provider . '_id' => $providerResponse->getId()];
+            $data = [$provider . '_id' => $providerResponse->getId()];
 
-        if ($user->wasRecentlyCreated) {
-            $data['name'] = $providerResponse->getName() ?? $providerResponse->getNickname();
+            if ($user->wasRecentlyCreated) {
+                $data['name'] = $providerResponse->getName() ?? $providerResponse->getNickname();
 
-            event(new Registered($user));
+                event(new Registered($user));
+            }
+
+            $user->update($data);
+
+            Auth::login($user, remember: true);
+        } catch (\Exception $e){
+            logger('Error on social login: ' . $e->getMessage());
         }
 
-        $user->update($data);
-
-        Auth::login($user, remember: true);
         return redirect()->intended(route('home'));
     }
 }
