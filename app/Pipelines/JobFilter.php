@@ -2,6 +2,7 @@
 
 namespace App\Pipelines;
 
+use App\Enums\JobType;
 use App\Models\JobListing as Job;
 use Closure;
 
@@ -17,7 +18,7 @@ class JobFilter
             $jobs = $jobs->where('job_category', request('category'));
         }
 
-        $jobTypes = collect(['fulltime', 'contractor', 'parttime'])->filter(function ($type) {
+        $jobTypes = collect([JobType::FULL_TIME->value, JobType::CONTRACTOR->value, JobType::PART_TIME->value])->filter(function ($type) {
             return request()->has($type);
         })->toArray();
 
