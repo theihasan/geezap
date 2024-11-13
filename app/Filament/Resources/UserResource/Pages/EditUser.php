@@ -19,4 +19,19 @@ class EditUser extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+
+    protected function getFormActions(): array
+    {
+        return [
+            Actions\CreateAction::make()
+                ->icon('heroicon-o-user-plus')
+                ->label('Update User Info'),
+
+            Actions\Action::make('cancel')
+                ->label('Cancel')
+                ->icon('heroicon-o-x-circle')
+                ->color('danger')
+                ->url(route('filament.geezap.resources.users.index')),
+        ];
+    }
 }
