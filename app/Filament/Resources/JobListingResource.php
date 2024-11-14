@@ -6,6 +6,7 @@ use App\Enums\JobType;
 use App\Filament\Resources\JobListingResource\Pages;
 use App\Filament\Resources\JobListingResource\RelationManagers;
 use App\Models\JobListing;
+use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -138,10 +139,22 @@ class JobListingResource extends Resource
 
             ])
             ->actions([
-                    Tables\Actions\ViewAction::make(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('view')
+                        ->label('View')
+                        ->icon('heroicon-o-eye')
+                        ->url(function ($record){
+                            return route('job.show', $record->slug);
+                        })
+                        ->openUrlInNewTab(),
+
+                    //Did not decided
+                    //Tables\Actions\ViewAction::make(),
                     Tables\Actions\EditAction::make(),
                     Tables\Actions\DeleteAction::make()
+                ])
             ])
+
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
