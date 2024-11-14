@@ -25,7 +25,9 @@ Route::get('/dashboard', function () {
     return view('v2.profile.profile');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/profile-update', [ProfileController::class, 'edit'])->middleware(['auth'])->name('profile.update');
+Route::get('/profile-update', [ProfileController::class, 'edit'])
+    ->middleware(['auth'])
+    ->name('profile.update');
 
 Route::middleware('auth')->group(function () {
     Route::post('personal-info', [ProfileController::class, 'updatePersonalInfo'])->name('personal-info.update');

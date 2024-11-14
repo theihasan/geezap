@@ -2,7 +2,7 @@
 
 namespace App\Providers;
 
-use App\Constants\ApiName;
+use App\Enums\ApiName;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -23,17 +23,25 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Http::macro('job', function () {
-            $apiKey = DB::table('api_keys')
-                ->where('api_name', '=', ApiName::JOB)
-                ->orderByDesc('request_remaining')
-                ->first();
+        try {
+            Http::macro('job', function () {
+                $apiKey = DB::table('api_keys')
+                    ->where('api_name', '=', ApiName::JOB->value)
+                    ->orderByDesc('request_remaining')
+                    ->first();
 
-            return Http::withHeaders([
-                'X-RapidAPI-Host' => 'jsearch.p.rapidapi.com',
-                'X-RapidAPI-Key' => $apiKey->api_key,
-            ])->baseUrl('https://jsearch.p.rapidapi.com');
-        });
+                return Http::withHeaders([
+                    'X-RapidAPI-Host' => 'jsearch.p.rapidapi.com',
+                    'X-RapidAPI-Key' => $apiKey->api_key,
+                ])->baseUrl('https://jsearch.p.rapidapi.com');
+            });
+        } catch (\Exception $e){
+            logger('Error on app service provider', [
+                'message' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+            ]);
+        }
 
         Carbon::macro('dayWithSuffix', function () {
             $day = $this->day;

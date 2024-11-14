@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 #[ObservedBy([JobListingObserver::class])]
@@ -62,6 +63,11 @@ class JobListing extends Model
     {
         return $this->belongsToMany(User::class, 'job_user', 'job_id', 'user_id')
             ->withTimestamps();
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(JobCategory::class, 'job_category', 'id');
     }
 
 

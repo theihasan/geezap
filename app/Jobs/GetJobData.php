@@ -1,8 +1,13 @@
 <?php
+
 namespace App\Jobs;
 
-use App\Constants\ApiName;
+use App\DTO\JobResponseDTO;
+use App\Enums\ApiName;
+use App\Exceptions\ApiKeyNotFoundException;
 use App\Jobs\Store\StoreJobs;
+use App\Models\ApiKey;
+use App\Models\JobCategory;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -19,52 +24,49 @@ class GetJobData implements ShouldQueue
     public int $tries = 4;
     public array $backoff = [30, 45, 60];
 
-    public function __construct()
-    {
-        //
-    }
-
     public function handle(): void
     {
         try {
-            $apiKey = DB::table('api_keys')
-                ->where('api_name', '=', ApiName::JOB)
+            $apiKey = ApiKey::query()
+                ->where('api_name', ApiName::JOB)
                 ->orderByDesc('request_remaining')
                 ->first();
 
-            if ($apiKey && $apiKey->request_remaining > 0) {
-                $categories = config('geezap');
+            ApiKeyNotFoundException::validateApiKey($apiKey);
 
-                foreach ($categories as $category => $config) {
-                    $this->fetchAndStoreJobs($apiKey, $config, $category);
-                }
-            } else {
-                Log::error('No request remaining for Job API');
+            $categories = JobCategory::all();
+            foreach ($categories as $category) {
+                $this->fetchAndStoreJobs($apiKey, $category);
             }
-        } catch (\Exception $e) {
-            Log::error($e->getMessage());
+
+        } catch (ApiKeyNotFoundException|\Exception $e) {
+            Log::error('Error on job fetching', [
+                'message' => $e->getMessage(),
+                'line' => $e->getLine(),
+                'file' => $e->getFile(),
+            ]);
         }
     }
 
-    protected function fetchAndStoreJobs($apiKey, $config, $category): void
-    {
-        $searchQuery = $config['query'];
-        $numPages = $config['num_pages'];
-        $datePosted = $config['date_posted'];
-        $totalPages = $config['page'];
-        $categoryImage = $config['category_image'];
 
-        for ($page = 1; $page <= $totalPages; $page++) {
+    protected function fetchAndStoreJobs($apiKey, JobCategory $category): void
+    {
+        for ($page = 1; $page <= $category->page; $page++) {
             $response = Http::job()->retry([100, 200])->get('/search', [
-                'query' => $searchQuery,
+                'query' => $category->query_name,
                 'page' => $page,
-                'num_pages' => $numPages,
-                'date_posted' => $datePosted,
+                'num_pages' => $category->num_page,
+                'date_posted' => $category->timeframe,
                 'api_key_id' => $apiKey->id,
             ]);
 
             if ($response->ok()) {
-                StoreJobs::dispatch($response->json(), $category, $categoryImage);
+                $jobResponseDTO = JobResponseDTO::fromResponse(
+                    $response->json(),
+                    $category->id,
+                    $category->category_image
+                );
+                StoreJobs::dispatch($jobResponseDTO);
             } else {
                 Log::error($response['message']);
             }

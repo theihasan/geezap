@@ -255,17 +255,21 @@
 
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                 @foreach($jobCategories as $category)
-                        <div class="group bg-[#1a1a3a] rounded-2xl p-6 hover:bg-[#222250] transition border border-gray-700 hover:border-pink-500/50">
-                            <div class="w-14 h-14 bg-pink-500/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-pink-500/20">
-                                <a href={{ url('jobs?category=' . $category->job_category) }}>
-                                    <img src="{{ $category->category_image ?? 'https://placehold.co/50x50/2a2a4a/FFFFFF' }}" class="w-8 h-8" alt="{{ $category->job_category }}">
+                        <div class="group bg-[#1a1a3a] rounded-2xl
+                        p-6 hover:bg-[#222250] transition border
+                        border-gray-700 hover:border-pink-500/50">
+                            <div class="w-14 h-14 bg-pink-500/10 rounded-xl
+                            flex items-center justify-center mb-4
+                            group-hover:bg-pink-500/20">
+                                <a href={{ url('jobs?category=' . $category->name) }}>
+                                    <img src="{{ url($category->category_image) ?? 'https://placehold.co/50x50/2a2a4a/FFFFFF' }}" class="w-8 h-8" alt="{{ $category->job_category }}">
                                 </a>
                             </div>
-                            <a href="{{ url('jobs?category=' . $category->job_category) }}"">
-                                <h3 class="text-xl font-semibold mb-2 text-white">{{ ucwords($category->job_category) }}</h3>
+                            <a href="{{ url('jobs?category=' . $category->name) }}"">
+                                <h3 class="text-xl font-semibold mb-2 text-white">{{ ucwords($category->name) }}</h3>
                             </a>
-                            <p class="text-gray-300 mb-4">{{ $category->total_jobs }} open positions</p>
-                            <a href="{{ url('jobs?category=' . $category->job_category) }}" class="flex items-center text-pink-300 hover:text-pink-400 transition">
+                            <p class="text-gray-300 mb-4">{{ $category->jobs_count }} open positions</p>
+                            <a href="{{ url('jobs?category=' . $category->name) }}" class="flex items-center text-pink-300 hover:text-pink-400 transition">
                                 Browse Jobs <i class="fas fa-arrow-right ml-2"></i>
                             </a>
                         </div>

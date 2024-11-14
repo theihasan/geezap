@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\JobCategory;
 use App\Models\JobListing;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -19,15 +20,7 @@ class HomePageController extends Controller
                 ->get();
         });
 
-        $jobCategories = Cache::remember('jobCategories', 24 * 60, function () {
-            return JobListing::selectRaw('job_category, country, (SELECT employer_logo FROM job_listings WHERE job_category = j.job_category LIMIT 1) as employer_logo, category_image, COUNT(*) as total_jobs')
-                ->from('job_listings as j')
-                ->groupBy('job_category', 'country', 'category_image')
-                ->orderBy('job_category', 'asc')
-                ->orderBy('country', 'asc')
-                ->take(8)
-                ->get();
-        });
+        $jobCategories = JobCategory::getTopCategories();
 
         $todayAddedJobsCount = Cache::remember('todayAddedJobsCount', 24 * 60, function () {
             return JobListing::whereDate('created_at', today())->count();
