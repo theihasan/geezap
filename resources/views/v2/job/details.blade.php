@@ -22,7 +22,9 @@
                     </div>
                     <div class="mt-4 md:mt-0 flex flex-col items-start md:items-end">
                         @if($job->min_salary && $job->max_salary)
-                            <span class="text-pink-300 font-semibold text-xl">${{ number_format($job->min_salary) }} - ${{ number_format($job->max_salary) }} / {{ $job->salary_period }}</span>
+                            <span class="text-pink-300 font-semibold text-xl">
+                                ${{ number_format($job->min_salary) }} - ${{ number_format($job->max_salary) }} @if($job->salary_period) / {{ $job->salary_period }} @endif
+                            </span>
                         @endif
                         <a href="#applyjob" class="mt-2 px-6 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg hover:opacity-90 transition-opacity font-medium flex items-center gap-2">
                             <i class="las la-paper-plane text-xl"></i> Apply Now
