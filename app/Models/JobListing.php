@@ -64,6 +64,11 @@ class JobListing extends Model
             ->withTimestamps();
     }
 
+    public function category()
+    {
+        return $this->hasOne(JobCategory::class, 'id', 'job_category');
+    }
+
 
 
 
