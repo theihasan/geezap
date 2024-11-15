@@ -10,15 +10,31 @@ class GenerateCoverLetter extends Component
 {
     public JobListing $jobListing;
     public $coverLetter;
+    public $isGenerating = false;
 
-    public function mount(JobListing $job)
+    public function getListeners(): array
+    {
+        return [
+            "echo-private:cover-letter.".auth()->id().",CoverLetterGenerated" => 'coverLetterGenerated'
+        ];
+    }
+    public function mount(JobListing $job): void
     {
         $this->jobListing = $job;
     }
 
-    public function generateCoverLetter()
+
+    public function generateCoverLetter(): void
     {
+        $this->isGenerating = true;
         GenerateCoverLetterJob::dispatch(auth()->user(), $this->jobListing->toArray());
+    }
+
+    public function coverLetterGenerated($data): void
+    {
+        $this->coverLetter = $data['response'] ?? null;
+        $this->dispatch('refreshComponent');
+        $this->isGenerating = false;
     }
 
     public function render()
@@ -26,4 +42,3 @@ class GenerateCoverLetter extends Component
         return view('livewire.generate-cover-letter');
     }
 }
-

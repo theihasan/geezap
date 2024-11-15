@@ -11,7 +11,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
 
 class GenerateCoverLetterJob implements ShouldQueue
 {
@@ -41,15 +40,15 @@ class GenerateCoverLetterJob implements ShouldQueue
 
 
             $response = $this->alternateAIProviders($aiService);
-
+            logger("AI response received", $response);
 
             if ($response['status'] === 200 && !empty($response['data']['response'])) {
-                $this->recordUsage(true);
-                CoverLetterGenerated::dispatch($this->user, $response['data']);
-            } else {
-                $this->recordUsage(false);
+                logger("Broadcasting event for user: {$this->user->id}", [
+                    'data' => $response['data']
+                ]);
+                event(new CoverLetterGenerated($this->user, $response['data']));
             }
-            logger('Response', [$response]);
+
             return $response;
 
 
