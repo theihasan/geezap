@@ -22,19 +22,19 @@
                         </div>
 
                         <!-- Job Category Filter -->
-                        <div>
-                            <label class="text-gray-400 text-sm">Job Category</label>
-                            <select name="category"
-                                    class="w-full bg-[#12122b] border border-gray-700 text-gray-300 rounded-lg px-4 py-2 mt-2 focus:border-pink-500 focus:outline-none">
-                                <option value="">All Categories</option>
-                                @foreach(App\Enums\JobCategory::cases() as $category)
-                                    <option value="{{ $category->value }}"
-                                        {{ request('category') == $category->value ? 'selected' : '' }}>
-                                        {{ $category->name }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
+                            <div>
+                                <label class="text-gray-400 text-sm">Job Category</label>
+                                <select name="category"
+                                        class="w-full bg-[#12122b] border border-gray-700 text-gray-300 rounded-lg px-4 py-2 mt-2 focus:border-pink-500 focus:outline-none">
+                                    <option value="">All Categories</option>
+                                    @foreach(\App\Models\JobCategory::all() as $category)
+                                        <option value="{{ $category->id }}"
+                                            {{ request('category') == $category->id ? 'selected' : '' }}>
+                                            {{ $category->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
 
                         <!-- Job Types Filter -->
                         <div>
@@ -106,7 +106,7 @@
 
                             <div class="flex flex-wrap gap-2 mt-4">
                             <span class="px-3 py-1 bg-pink-500/10 text-pink-300 rounded-full text-sm font-oxanium-semibold">
-                                {{ $job->job_category }}
+                                {{ $job->category->name }}
                             </span>
                                 <span class="px-3 py-1 bg-pink-500/10 text-pink-300 rounded-full text-sm font-oxanium-semibold">
                                 {{ $job->employment_type }}
