@@ -3,27 +3,45 @@
 namespace App\Pipelines;
 
 use App\Enums\JobType;
-use App\Models\JobListing as Job;
 use Closure;
 
 class JobFilter
 {
     public function handle($jobs, Closure $next)
     {
-        if (request()->has('search')) {
-            $jobs = $jobs->where('job_title', 'like', '%' . request('search') . '%');
+
+        if (request()->filled('search')) {
+            //dd($jobs->where('job_title', 'like', '%' . request('search') . '%')->get());
+            $jobs->where('job_title', 'like', '%' . request('search') . '%');
+            //dd($jobs->get());
         }
 
-        if (request()->has('category')) {
-            $jobs = $jobs->where('job_category', request('category'));
+        if (request()->filled('location')) {
+            $jobs->where('city', 'like', '%' . request('location') . '%');
         }
 
-        $jobTypes = collect([JobType::FULL_TIME->value, JobType::CONTRACTOR->value, JobType::PART_TIME->value])->filter(function ($type) {
-            return request()->has($type);
-        })->toArray();
+        if (request()->filled('category')) {
+            $jobs->whereHas('category', function($query) {
+                $query->where('id', request('category'));
+            });
+            //dd($jobs->get());
+        }
+
+        $jobTypes = [];
+        if (request()->filled('fulltime')) {
+            $jobTypes[] = JobType::FULL_TIME->value;
+        }
+
+        if (request()->filled('contractor')) {
+            $jobTypes[] = JobType::CONTRACTOR->value;
+        }
+
+        if (request()->filled('parttime')) {
+            $jobTypes[] = JobType::PART_TIME->value;
+        }
 
         if (!empty($jobTypes)) {
-            $jobs = $jobs->whereIn('employment_type', $jobTypes);
+            $jobs->whereIn('employment_type', $jobTypes);
         }
 
         return $next($jobs);
