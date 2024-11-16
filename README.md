@@ -82,7 +82,7 @@ npm run dev
 - Livewire (Frontend)
 - TailwindCSS
 
-## 🔜 Upcoming Features (Version 2.1.0)
+## 🔜 Upcoming Big Features (Version 3.0.0)
 
 ### Interview Preparation Module
 - **Quiz System**
@@ -92,14 +92,17 @@ npm run dev
     - Customized question sets based on job requirements
 
 ### Additional Planned Features
-- **Enhanced Analytics**
-    - Job market trends analysis
-    - Skill gap analysis
+- **Personalized Job Recommendations**
+    - AI-driven suggestions based on user activity, preferences, and saved searches.
 
 - **Advanced Job Matching**
     - AI-powered job recommendations
     - Skill compatibility scoring
-
+ 
+- **Social Media Sharing**
+    - Share job listings on platforms like LinkedIn, Twitter, and Facebook.
+   
+      
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
