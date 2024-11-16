@@ -82,7 +82,7 @@ npm run dev
 - Livewire (Frontend)
 - TailwindCSS
 
-## 🔜 Upcoming Features (Version 2.0.1)
+## 🔜 Upcoming Features (Version 2.1.0)
 
 ### Interview Preparation Module
 - **Quiz System**
