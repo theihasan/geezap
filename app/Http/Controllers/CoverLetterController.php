@@ -2,17 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\AIService;
-use Illuminate\Http\JsonResponse;
+use App\Jobs\GenerateCoverLetterJob;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class CoverLetterController extends Controller
 {
-    public function coverLetter(Request $request, AIService $service): JsonResponse
+    public function coverLetter(Request $request): void
     {
-        $response = $service->generateCoverLetter($request);
-        return response()->json($response);
-
+        GenerateCoverLetterJob::dispatch(auth()->user(), $request->all());
     }
 }
