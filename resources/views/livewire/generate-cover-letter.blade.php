@@ -9,8 +9,17 @@
         <h3 class="text-2xl font-semibold mb-4">Generate a Tailored CV Before Applying!</h3>
         <p class="text-gray-100 mb-6">A customized CV will make your application stand out. Use your profile and this job description to create the perfect CV!</p>
         <div class="flex justify-center">
-            <button wire:click="generateCoverLetter" class="px-8 py-3 bg-white text-pink-600 rounded-lg hover:bg-gray-200 transition font-medium text-lg flex items-center gap-2">
-                <i class="las la-file-alt text-xl"></i> Generate CV
+            <button
+                wire:click="generateCoverLetter"
+                @disabled($isGenerating)
+                class="px-8 py-3 bg-white text-pink-600 rounded-lg
+                hover:bg-gray-200 transition font-medium text-lg flex
+                items-center gap-2 disabled:opacity-50
+                disabled:cursor-not-allowed" >
+                <i class="las la-file-alt text-xl"></i>
+                <span wire:loading.remove wire:target="generateCoverLetter">
+                    Generate CV
+                </span>
             </button>
         </div>
     </div>
