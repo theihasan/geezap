@@ -28,10 +28,12 @@ class GenerateCoverLetter extends Component
     {
         $this->isGenerating = true;
         GenerateCoverLetterJob::dispatch(auth()->user(), $this->jobListing->toArray());
+        $this->isGenerating = true;
     }
 
     public function coverLetterGenerated($data): void
     {
+        $this->isGenerating = true;
         $this->coverLetter = $data['response'] ?? null;
         $this->dispatch('refreshComponent');
         $this->isGenerating = false;
