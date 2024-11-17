@@ -12,7 +12,7 @@ class CoverLetterGenerated implements ShouldBroadcast
 {
     use Dispatchable, SerializesModels;
 
-    public function __construct(public User $user, public array $coverLetter)
+    public function __construct(public User $user, public array $coverLetter, public int $jobId)
     {
     }
 

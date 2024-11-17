@@ -46,7 +46,8 @@ class GenerateCoverLetterJob implements ShouldQueue
                 logger("Broadcasting event for user: {$this->user->id}", [
                     'data' => $response['data']
                 ]);
-                event(new CoverLetterGenerated($this->user, $response['data']));
+
+                CoverLetterGenerated::dispatch($this->user, $response['data'], $this->requestData['id']);
             }
 
             return $response;
