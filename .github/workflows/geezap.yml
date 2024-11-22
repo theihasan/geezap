@@ -68,8 +68,60 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           password: ${{ secrets.VPS_PASSWORD }}
+          envs:
+            DB_DATABASE: ${{ secrets.DB_DATABASE }}
+            DB_USERNAME: ${{ secrets.DB_USERNAME }}
+            DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           script: |
             cd /var/www/html/geezap
+
+            # Backup existing APP_KEY if .env exists
+            if [ -f .env ]; then
+              EXISTING_APP_KEY=$(grep APP_KEY .env | cut -d '=' -f2)
+            fi
+
+            # Create or update .env file
+            cat > .env << EOL
+            APP_NAME=Geezap
+            APP_ENV=production
+            APP_DEBUG=true
+            APP_URL=http://160.191.163.6
+
+            APP_LOCALE=en
+            APP_FALLBACK_LOCALE=en
+            APP_FAKER_LOCALE=en_US
+
+            APP_MAINTENANCE_DRIVER=file
+            APP_MAINTENANCE_STORE=database
+
+            BCRYPT_ROUNDS=12
+
+            LOG_CHANNEL=stack
+            LOG_STACK=single
+            LOG_DEPRECATIONS_CHANNEL=null
+            LOG_LEVEL=debug
+
+            DB_CONNECTION=mysql
+            DB_HOST=127.0.0.1
+            DB_PORT=3306
+            DB_DATABASE=${DB_DATABASE}
+            DB_USERNAME=${DB_USERNAME}
+            DB_PASSWORD=${DB_PASSWORD}
+            EOL
+
+            # If we had an existing APP_KEY, restore it, otherwise generate new one
+            if [ ! -z "$EXISTING_APP_KEY" ]; then
+              sed -i "s|APP_KEY=|APP_KEY=$EXISTING_APP_KEY|" .env
+            else
+              php artisan key:generate --force
+            fi
+
+            # Install PHP MySQL if not installed
+            sudo apt-get update
+            sudo apt-get install -y php8.3-mysql
+
+            # Restart PHP-FPM
+            sudo systemctl restart php8.3-fpm
 
             # Put application in maintenance mode
             php artisan down --refresh=15
@@ -105,3 +157,6 @@ jobs:
 
             # Optimize
             php artisan optimize
+
+            # Verify database connection
+            php artisan db:monitor
