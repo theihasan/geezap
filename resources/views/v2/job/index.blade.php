@@ -90,7 +90,7 @@
                             <div class="text-gray-400 text-sm space-y-1 mt-4 font-ubuntu">
                                 <div class="flex items-center gap-2">
                                     <i class="las la-calendar-alt text-pink-300"></i>
-                                    <span>Posted: <span class="text-white">{{ $job->posted_at->diffForHumans() }}</span></span>
+                                    <span>Posted: <span class="text-white">{{ $job->posted_at?->diffForHumans() }}</span></span>
                                 </div>
                                 @if($job->state && $job->country)
                                     <div class="flex items-center gap-2">

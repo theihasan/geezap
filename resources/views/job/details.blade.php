@@ -130,7 +130,7 @@
                                     <i data-feather="clock" class="size-5"></i>
                                     <div class="ms-4">
                                         <p class="font-medium">Date posted:</p>
-                                        <span class="text-emerald-600 font-medium text-sm">{{ $job->posted_at->isoFormat('Do MMMM, YYYY') }}</span>
+                                        <span class="text-emerald-600 font-medium text-sm">{{ $job->posted_at?->isoFormat('Do MMMM, YYYY') }}</span>
                                     </div>
                                 </li>
                             </ul>
@@ -156,7 +156,7 @@
                                 </div>
                                 <div class="ms-3">
                                     <a href="{{route('job.show', $relatedJob->slug)}}" class="block text-[16px] font-semibold hover:text-emerald-600 transition-all duration-500">{{$relatedJob->employer_name}}</a>
-                                    <span class="block text-sm text-slate-400">{{$relatedJob->posted_at->diffForHumans()}}</span>
+                                    <span class="block text-sm text-slate-400">{{$relatedJob->posted_at?->diffForHumans()}}</span>
                                 </div>
                             </div>
                             <span class="bg-emerald-600/10 group-hover:bg-emerald-600 inline-block text-emerald-600 group-hover:text-white text-xs px-2.5 py-0.5 font-semibold rounded-full transition-all duration-500">{{$relatedJob->employment_type}}</span>
