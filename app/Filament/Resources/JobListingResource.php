@@ -104,7 +104,7 @@ class JobListingResource extends Resource
                             ->separator(','),
                         Forms\Components\DateTimePicker::make('posted_at')
                             ->required(),
-                        Forms\Components\DateTimePicker::make('expaire_at')
+                        Forms\Components\DateTimePicker::make('expired_at')
                             ->required(),
                     ])->columns(2),
             ])->skippable()
@@ -130,7 +130,7 @@ class JobListingResource extends Resource
                     ->label('Posted Date')
                     ->sortable()
                     ->dateTime('jS M Y'),
-                Tables\Columns\TextColumn::make('expaire_at')
+                Tables\Columns\TextColumn::make('expired_at')
                     ->label('Expired Date')
                     ->sortable()
                     ->dateTime('jS M Y')

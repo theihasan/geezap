@@ -35,7 +35,7 @@ class JobListing extends Model
         'country',
         'google_link',
         'posted_at',
-        'expaire_at',
+        'expired_at',
         'min_salary',
         'max_salary',
         'salary_currency',
@@ -50,7 +50,7 @@ class JobListing extends Model
     {
         return [
             'posted_at' => 'datetime',
-            'expaire_at' => 'datetime',
+            'expired_at' => 'datetime',
             'required_experience' => 'integer',
             'qualifications' => 'array',
             'benefits' => 'array',
