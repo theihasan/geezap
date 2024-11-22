@@ -18,6 +18,12 @@ class SaveForLetter extends Component
 
     public function saveForLetter(): void
     {
+        if(! auth()->check()){
+            $this->dispatch('notify', [
+                'message' => 'You need to login for this action',
+                'type' => 'error'
+            ]);
+        }
         JobUser::updateOrCreate([
             'job_id' => $this->job->id,
             'user_id' => auth()->id(),
