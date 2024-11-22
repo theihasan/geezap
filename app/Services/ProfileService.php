@@ -24,7 +24,6 @@ class ProfileService
             'country' => $data['country'],
             'occupation' => $data['occupation'],
             'timezone' => $data['timezone'],
-            'postcode' => $data['postcode'],
             'phone' => $data['phone'],
             'bio' => $data['bio'],
         ]);
