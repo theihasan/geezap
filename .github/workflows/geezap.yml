@@ -68,10 +68,11 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           password: ${{ secrets.VPS_PASSWORD }}
-          envs:
-            DB_DATABASE: ${{ secrets.DB_DATABASE }}
-            DB_USERNAME: ${{ secrets.DB_USERNAME }}
-            DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          envs: DB_DATABASE,DB_USERNAME,DB_PASSWORD
+          environment: |
+            DB_DATABASE=${{ secrets.DB_DATABASE }}
+            DB_USERNAME=${{ secrets.DB_USERNAME }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
           script: |
             cd /var/www/html/geezap
 
@@ -157,6 +158,3 @@ jobs:
 
             # Optimize
             php artisan optimize
-
-            # Verify database connection
-            php artisan db:monitor
