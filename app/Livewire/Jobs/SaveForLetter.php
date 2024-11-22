@@ -23,6 +23,7 @@ class SaveForLetter extends Component
                 'message' => 'You need to login for this action',
                 'type' => 'error'
             ]);
+            //return user whose are non logged in
             return;
         }
         JobUser::updateOrCreate([
