@@ -69,11 +69,6 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           password: ${{ secrets.VPS_PASSWORD }}
-          envs: DB_DATABASE,DB_USERNAME,DB_PASSWORD
-          environment: |
-            DB_DATABASE=${{ secrets.DB_DATABASE }}
-            DB_USERNAME=${{ secrets.DB_USERNAME }}
-            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
           script: |
             cd /var/www/html/geezap
 
@@ -83,44 +78,53 @@ jobs:
             sudo mysql -e "GRANT ALL PRIVILEGES ON ${{ secrets.DB_DATABASE }}.* TO '${{ secrets.DB_USERNAME }}'@'localhost';"
             sudo mysql -e "FLUSH PRIVILEGES;"
 
-            # Install PHP MySQL if not installed
+            # Install required PHP extensions
             sudo apt-get update
-            sudo apt-get install -y php8.3-mysql
+            sudo apt-get install -y php8.3-mysql php8.3-cli php8.3-common php8.3-fpm php8.3-json php8.3-opcache php8.3-readline php8.3-mbstring php8.3-xml php8.3-bcmath php8.3-curl php8.3-zip
 
             # Restart PHP-FPM
             sudo systemctl restart php8.3-fpm
 
-            # Put application in maintenance mode
-            php artisan down --refresh=15
-
-            # Clear all caches
-            php artisan config:clear
-            php artisan cache:clear
-            php artisan view:clear
-            php artisan route:clear
-
-            # Update database
-            php artisan migrate --force
-
-            # Clear and cache config
-            php artisan config:cache
-            php artisan route:cache
-            php artisan view:cache
-
-            # Install/update dependencies
-            composer install --optimize-autoloader --no-dev --no-interaction
-
-            # Set correct permissions
+            # Fix permissions before operations
             sudo chown -R www-data:www-data .
             sudo find . -type f -exec chmod 644 {} \;
             sudo find . -type d -exec chmod 755 {} \;
             sudo chmod -R 775 storage bootstrap/cache
 
-            # Restart queue workers
-            php artisan queue:restart
+            # Clear everything first
+            php artisan optimize:clear
+            php artisan route:clear
+            php artisan config:clear
+            php artisan cache:clear
+            php artisan view:clear
+
+            # Put application in maintenance mode
+            php artisan down --refresh=15
+
+            # Update composer and clear cache
+            composer clear-cache
+            composer dump-autoload --optimize
+
+            # Install dependencies
+            composer install --optimize-autoloader --no-dev --no-interaction
+
+            # Update database with force flag
+            php artisan migrate --force
+
+            # Cache everything
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+            php artisan event:cache
+
+            # Check route conflicts
+            php artisan route:list
+
+            # Final optimization
+            php artisan optimize
 
             # Take application out of maintenance mode
             php artisan up
 
-            # Optimize
-            php artisan optimize
+            # Verify installation
+            php artisan --version

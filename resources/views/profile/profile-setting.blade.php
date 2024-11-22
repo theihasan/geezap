@@ -389,7 +389,7 @@
 
                                 <div>
                                     <h5 class="text-lg font-semibold mb-4">Change password :</h5>
-                                    <form action="{{route('password.update')}}" method="POST">
+                                    <form action="{{route('userpassword.update')}}" method="POST">
                                         @csrf
                                         <div class="grid grid-cols-1 gap-4">
                                             <div>

@@ -144,7 +144,7 @@
                     </form>
 
                     <!-- Change Password -->
-                    <form action="{{ route('password.update') }}" method="POST" class="bg-[#12122b] rounded-2xl p-6 border border-gray-800">
+                    <form action="{{ route('userpassword.update') }}" method="POST" class="bg-[#12122b] rounded-2xl p-6 border border-gray-800">
                         @csrf
                         <h2 class="text-xl font-semibold text-white mb-6 flex items-center gap-2 font-oxanium-semibold">
                             <i class="las la-lock text-pink-500"></i>
