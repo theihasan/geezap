@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('job_listings', function (Blueprint $table) {
             $table->string('posted_at')->nullable()->change();
-            $table->renameColumn('expired_at', 'expired_at');
+            $table->renameColumn('expaire_at', 'expired_at');
         });
     }
 
@@ -23,7 +23,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('job_listings', function (Blueprint $table) {
-            //
+            $table->renameColumn('expired_at', 'expaire_at');
+            $table->string('posted_at')->nullable(false)->change();
         });
     }
 };
