@@ -184,48 +184,69 @@
                     <!-- Experience Section -->
                     <form action="{{ route('experience.update') }}" method="POST" class="bg-[#12122b] rounded-2xl p-6 border border-gray-800">
                         @csrf
-                        <div class="flex justify-between items-center mb-6">
+                        <div class="flex justify-between items-center mb-6 font-oxanium-semibold">
                             <h2 class="text-xl font-semibold text-white flex items-center gap-2">
                                 <i class="las la-briefcase text-pink-500"></i>
                                 Work Experience
                             </h2>
-                            <button type="button" id="add-experience" class="text-pink-500 hover:text-pink-400">
-                                <i class="las la-plus"></i> Add Experience
+                            <button type="button" id="add-experience" class="text-pink-500 hover:text-pink-400 flex items-center gap-1">
+                                <i class="las la-plus"></i>
+                                Add Experience
                             </button>
                         </div>
 
                         <div id="experience-container" class="space-y-6">
-                            @if(!empty($experiences['job_title']))
-                                @foreach($experiences['job_title'] as $index => $job_title)
+                            @if(!empty($experiences['position']))
+                                @foreach($experiences['position'] as $index => $position)
                                     <div class="experience-form border border-gray-700 rounded-xl p-6 space-y-4 relative">
                                         <button type="button" class="remove-experience absolute -top-3 -right-3 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-full p-1 transition-colors">
                                             <i class="las la-times text-lg"></i>
                                         </button>
+
                                         <div class="grid grid-cols-2 gap-4">
-                                            <div>
-                                                <label class="text-sm text-gray-400 block mb-1">Job Title*</label>
-                                                <input type="text" name="job_title[]" value="{{ $job_title }}"
-                                                       class="w-full bg-white/5 border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500">
-                                            </div>
                                             <div>
                                                 <label class="text-sm text-gray-400 block mb-1">Company Name*</label>
                                                 <input type="text" name="company_name[]" value="{{ $experiences['company_name'][$index] }}"
                                                        class="w-full bg-white/5 border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500">
                                             </div>
+                                            <div>
+                                                <label class="text-sm text-gray-400 block mb-1">Position*</label>
+                                                <input type="text" name="position[]" value="{{ $position }}"
+                                                       class="w-full bg-white/5 border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500">
+                                            </div>
+                                        </div>
+
+                                        <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl">
+                                            <div>
+                                                <h3 class="text-white font-medium">Currently Working Here</h3>
+                                                <p class="text-gray-400 text-sm">Toggle if this is your current job</p>
+                                            </div>
+                                            <label class="relative inline-flex items-center cursor-pointer">
+                                                <input type="checkbox" name="currently_working[]" class="sr-only peer"
+                                                    {{ isset($experiences['currently_working'][$index]) && $experiences['currently_working'][$index] ? 'checked' : '' }}>
+                                                <div class="w-11 h-6 bg-pink-500/10 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-pink-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-2 after:border-pink-500/20 after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-500 peer-checked:after:border-0"></div>
+                                            </label>
                                         </div>
 
                                         <div class="grid grid-cols-2 gap-4">
                                             <div>
-                                                <label class="text-sm text-gray-400 block mb-1">Year*</label>
-                                                <input type="number" name="year[]" value="{{ $experiences['year'][$index] }}"
+                                                <label class="text-sm text-gray-400 block mb-1">Start Date*</label>
+                                                <input type="date" name="start_date[]" value="{{ $experiences['start_date'][$index] ?? '' }}"
                                                        class="w-full bg-white/5 border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500">
+                                            </div>
+                                            <div>
+                                                <label class="text-sm text-gray-400 block mb-1">End Date</label>
+                                                <input type="date" name="end_date[]" value="{{ $experiences['end_date'][$index] ?? '' }}"
+                                                       class="w-full bg-white/5 border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500"
+                                                    {{ isset($experiences['currently_working'][$index]) && $experiences['currently_working'][$index] ? 'disabled' : '' }}>
+                                                <p class="text-sm text-gray-400 mt-1">End date not required for current job</p>
                                             </div>
                                         </div>
 
                                         <div>
                                             <label class="text-sm text-gray-400 block mb-1">Description</label>
                                             <textarea name="description[]"
-                                                      class="w-full bg-white/5 border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500 h-24 resize-none">{{ $experiences['description'][$index] }}</textarea>
+                                                      class="w-full bg-white/5 border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500 h-24 resize-none">{{ $experiences['description'][$index] ?? '' }}</textarea>
                                         </div>
                                     </div>
                                 @endforeach
@@ -234,6 +255,54 @@
                                     <button type="button" class="remove-experience absolute -top-3 -right-3 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-full p-1 transition-colors">
                                         <i class="las la-times text-lg"></i>
                                     </button>
+
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="text-sm text-gray-400 block mb-1">Position*</label>
+                                            <input type="text" name="position[]"
+                                                   class="w-full bg-white/5 border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500">
+                                            @error('position.*') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                                        </div>
+                                        <div>
+                                            <label class="text-sm text-gray-400 block mb-1">Company Name*</label>
+                                            <input type="text" name="company_name[]"
+                                                   class="w-full bg-white/5 border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500">
+                                            @error('company_name.*') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl">
+                                        <div>
+                                            <h3 class="text-white font-medium">Currently Working Here</h3>
+                                            <p class="text-gray-400 text-sm">Toggle if this is your current job</p>
+                                        </div>
+                                        <label class="relative inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" name="currently_working[]" value="1" class="sr-only peer">
+                                            <div class="w-11 h-6 bg-pink-500/10 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-pink-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-2 after:border-pink-500/20 after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-500 peer-checked:after:border-0"></div>
+                                        </label>
+                                    </div>
+
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="text-sm text-gray-400 block mb-1">Start Date*</label>
+                                            <input type="date" name="start_date[]"
+                                                   class="w-full bg-white/5 border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500">
+                                            @error('start_date.*') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                                        </div>
+                                        <div>
+                                            <label class="text-sm text-gray-400 block mb-1">End Date</label>
+                                            <input type="date" name="end_date[]"
+                                                   class="w-full bg-white/5 border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500">
+                                            @error('end_date.*') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                                            <p class="text-sm text-gray-400 mt-1">End date not required for current job</p>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label class="text-sm text-gray-400 block mb-1">Description</label>
+                                        <textarea name="description[]"
+                                                  class="w-full bg-white/5 border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500 h-24 resize-none"></textarea>
+                                    </div>
                                 </div>
                             @endif
                         </div>
@@ -333,72 +402,75 @@
         <script>
             document.getElementById('add-experience').addEventListener('click', function() {
                 const experienceContainer = document.getElementById('experience-container');
-                const experienceForm = document.querySelector('.experience-form');
-                const newExperienceForm = experienceForm.cloneNode(true);
+                const newExperienceTemplate = `
+        <div class="experience-form border border-gray-700 rounded-xl p-6 space-y-4 relative">
+            <button type="button" class="remove-experience absolute -top-3 -right-3 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-full p-1 transition-colors">
+                <i class="las la-times text-lg"></i>
+            </button>
 
-                const inputs = newExperienceForm.querySelectorAll('input, textarea');
-                inputs.forEach(function(input) {
-                    input.value = '';
-                });
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="text-sm text-gray-400 block mb-1">Position*</label>
+                    <input type="text" name="position[]"
+                           class="w-full bg-white/5 border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500">
+                </div>
+                <div>
+                    <label class="text-sm text-gray-400 block mb-1">Company Name*</label>
+                    <input type="text" name="company_name[]"
+                           class="w-full bg-white/5 border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500">
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl">
+                <div>
+                    <h3 class="text-white font-medium">Currently Working Here</h3>
+                    <p class="text-gray-400 text-sm">Toggle if this is your current job</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" name="currently_working[]" value="1" class="sr-only peer">
+                    <div class="w-11 h-6 bg-pink-500/10 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-pink-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-2 after:border-pink-500/20 after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-pink-500 peer-checked:after:border-0"></div>
+                </label>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="text-sm text-gray-400 block mb-1">Start Date*</label>
+                    <input type="date" name="start_date[]"
+                           class="w-full bg-white/5 border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500">
+                </div>
+                <div>
+                    <label class="text-sm text-gray-400 block mb-1">End Date</label>
+                    <input type="date" name="end_date[]"
+                           class="w-full bg-white/5 border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500">
+                    <p class="text-sm text-gray-400 mt-1">End date not required for current job</p>
+                </div>
+            </div>
+
+            <div>
+                <label class="text-sm text-gray-400 block mb-1">Description</label>
+                <textarea name="description[]"
+                          class="w-full bg-white/5 border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500 h-24 resize-none"></textarea>
+            </div>
+        </div>
+    `;
+
+                experienceContainer.insertAdjacentHTML('beforeend', newExperienceTemplate);
+                const newExperienceForm = experienceContainer.lastElementChild;
 
                 setupRemoveExperienceButton(newExperienceForm);
-
-                experienceContainer.appendChild(newExperienceForm);
+                setupDateToggle(newExperienceForm);
             });
 
-            document.getElementById('add-skill').addEventListener('click', function() {
-                const skillContainer = document.getElementById('skills-container');
-                const skillTemplate = `
-                    <div class="grid grid-cols-1 gap-4 skill-entry relative">
-                        <button type="button" class="remove-skill absolute -top-2 -right-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-full p-1 transition-colors">
-                            <i class="las la-times text-lg"></i>
-                        </button>
-                        <div>
-                            <label class="text-sm text-gray-400 block mb-1">Skill Name</label>
-                            <input type="text" name="skill[]"
-                                class="w-full bg-white/5 border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500">
-                        </div>
-                        <div>
-                            <label class="text-sm text-gray-400 block mb-1">Skill Level</label>
-                            <select name="skill_level[]"
-                                class="w-full bg-white/5 border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500">
-                                <option value="proficient">Proficient</option>
-                                <option value="intermediate">Intermediate</option>
-                                <option value="beginner">Beginner</option>
-                            </select>
-                        </div>
-                    </div>`;
+            function setupDateToggle(form) {
+                const checkbox = form.querySelector('input[name="currently_working[]"]');
+                const endDateInput = form.querySelector('input[name="end_date[]"]');
 
-                skillContainer.insertAdjacentHTML('beforeend', skillTemplate);
-
-                const newSkillEntry = skillContainer.lastElementChild;
-                setupRemoveSkillButton(newSkillEntry);
-            });
-
-
-            function setupInitialRemoveButtons() {
-                document.querySelectorAll('.skill-entry').forEach(function(entry) {
-                    setupRemoveSkillButton(entry);
+                checkbox.addEventListener('change', function() {
+                    endDateInput.disabled = this.checked;
+                    if (this.checked) {
+                        endDateInput.value = '';
+                    }
                 });
-
-                document.querySelectorAll('.experience-form').forEach(function(form) {
-                    setupRemoveExperienceButton(form);
-                });
-            }
-
-            function setupRemoveSkillButton(skillEntry) {
-                const removeButton = skillEntry.querySelector('.remove-skill');
-                if (removeButton) {
-                    removeButton.addEventListener('click', function() {
-                        const allSkillEntries = document.querySelectorAll('.skill-entry');
-                        if (allSkillEntries.length > 1) {
-                            skillEntry.remove();
-                        } else {
-                            skillEntry.querySelector('input[name="skill[]"]').value = '';
-                            skillEntry.querySelector('select[name="skill_level[]"]').value = '{{ App\Enums\SkillProficiency::PROFICIENT->value }}';
-                        }
-                    });
-                }
             }
 
             function setupRemoveExperienceButton(experienceForm) {
@@ -410,13 +482,25 @@
                             experienceForm.remove();
                         } else {
                             const inputs = experienceForm.querySelectorAll('input, textarea');
-                            inputs.forEach(input => input.value = '');
+                            inputs.forEach(input => {
+                                if (input.type === 'checkbox') {
+                                    input.checked = false;
+                                } else {
+                                    input.value = '';
+                                    input.disabled = false;
+                                }
+                            });
                         }
                     });
                 }
             }
 
-            document.addEventListener('DOMContentLoaded', setupInitialRemoveButtons);
+            document.addEventListener('DOMContentLoaded', function() {
+                document.querySelectorAll('.experience-form').forEach(function(form) {
+                    setupRemoveExperienceButton(form);
+                    setupDateToggle(form);
+                });
+            });
         </script>
     @endpush
 @endsection

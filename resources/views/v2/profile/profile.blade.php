@@ -107,9 +107,9 @@
                     </h2>
                     <div class="flex flex-wrap gap-2 font-ubuntu-medium">
                         @if(auth()->user()->skills)
-                            @foreach(json_decode(auth()->user()->skills, true)['skill'] as $index => $skill)
+                            @foreach(auth()->user()->skills['skill'] as $index => $skill)
                                 @php
-                                    $skillLevel = json_decode(auth()->user()->skills, true)['skill_level'][$index];
+                                    $skillLevel = auth()->user()->skills['skill_level'][$index];
                                     $percentage = match ($skillLevel) {
                                         App\Enums\SkillProficiency::BEGINNER->value => 'bg-pink-500/30',
                                         App\Enums\SkillProficiency::INTERMEDIATE->value => 'bg-pink-500/50',
@@ -162,32 +162,43 @@
 
                 <!-- Experience -->
                 @if(auth()->user()->experience)
-                    <div class="bg-[#12122b] rounded-2xl p-4 sm:p-6 border border-gray-800">
-                        <h2 class="text-xl font-semibold text-white mb-6 flex items-center gap-2 font-oxanium-semibold">
-                            <i class="las la-briefcase text-pink-500"></i>
-                            Work Experience
-                        </h2>
-                        <div class="space-y-6 font-ubuntu-light">
-                            @foreach(auth()->user()->experience['job_title'] ?? [] as $index => $job_title)
-                                <div class="border-l-2 border-pink-500/20 pl-4 sm:pl-6 {{ !$loop->last ? 'pb-6' : '' }} relative">
-                                    <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full {{ $loop->first ? 'bg-pink-500' : 'bg-pink-500/50' }}"></div>
-                                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1 sm:gap-0">
-                                        <div>
-                                            <h3 class="text-lg font-medium text-white font-ubuntu-medium">{{ $job_title }}</h3>
-                                            <p class="text-pink-400">{{ json_decode(auth()->user()->experience, true)['company_name'][$index] }}</p>
+                        <div class="bg-[#12122b] rounded-2xl p-4 sm:p-6 border border-gray-800">
+                            <h2 class="text-xl font-semibold text-white mb-6 flex items-center gap-2 font-oxanium-semibold">
+                                <i class="las la-briefcase text-pink-500"></i>
+                                Work Experience
+                            </h2>
+                            <div class="space-y-6 font-ubuntu-light">
+                                @foreach(auth()->user()->experience['position'] ?? [] as $index => $position)
+                                    @php
+                                        $experience = auth()->user()->experience;
+                                        $startDate = isset($experience['start_date'][$index]) ? \Carbon\Carbon::parse($experience['start_date'][$index]) : null;
+                                        $endDate = isset($experience['end_date'][$index]) ? \Carbon\Carbon::parse($experience['end_date'][$index]) : null;
+                                        $isCurrentlyWorking = isset($experience['currently_working'][$index]) && $experience['currently_working'][$index];
+                                    @endphp
+
+                                    <div class="border-l-2 border-pink-500/20 pl-4 sm:pl-6 {{ !$loop->last ? 'pb-6' : '' }} relative">
+                                        <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full {{ $loop->first ? 'bg-pink-500' : 'bg-pink-500/50' }}"></div>
+                                        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1 sm:gap-0">
+                                            <div>
+                                                <h3 class="text-lg font-medium text-white font-ubuntu-medium">{{ $position }}</h3>
+                                                <p class="text-pink-400">{{ $experience['company_name'][$index] }}</p>
+                                            </div>
+                                            <span class="text-sm text-gray-400">
+                            {{ $startDate ? $startDate->format('M Y') : '' }}
+                            -
+                            {{ $isCurrentlyWorking ? 'Present' : ($endDate ? $endDate->format('M Y') : '') }}
+                        </span>
                                         </div>
-                                        <span class="text-sm text-gray-400">{{ json_decode(auth()->user()->experience, true)['year'][$index] }}</span>
+                                        @if(isset($experience['description'][$index]))
+                                            <p class="text-gray-300 mt-2 font-ubuntu-regular text-sm sm:text-base">
+                                                {{ $experience['description'][$index] }}
+                                            </p>
+                                        @endif
                                     </div>
-                                    @if(isset(json_decode(auth()->user()->experience, true)['description'][$index]))
-                                        <p class="text-gray-300 mt-2 font-ubuntu-regular text-sm sm:text-base">
-                                            {{ json_decode(auth()->user()->experience, true)['description'][$index] }}
-                                        </p>
-                                    @endif
-                                </div>
-                            @endforeach
+                                @endforeach
+                            </div>
                         </div>
-                    </div>
-                @endif
+                    @endif
             </div>
         </div>
     </div>

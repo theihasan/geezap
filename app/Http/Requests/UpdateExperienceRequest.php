@@ -22,9 +22,11 @@ class UpdateExperienceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'job_title' => ['required', 'array'],
+            'position' => ['required', 'array'],
             'company_name' => ['required', 'array'],
-            'year' => ['required', 'array'],
+            'currently_working' => [],
+            'start_date' => ['required', 'array'],
+            'end_date' => ['sometimes', 'array'],
             'description' => ['sometimes', 'array'],
         ];
     }
