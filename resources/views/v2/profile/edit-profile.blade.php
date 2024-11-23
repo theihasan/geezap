@@ -309,9 +309,12 @@
                                     <div>
                                         <label class="text-sm text-gray-400 block mb-1">{{ $label }}</label>
                                         <div class="relative">
-                                            <i class="las la-{{ $field }} absolute left-4 top-3.5 text-pink-500"></i>
-                                            <input type="text" name="{{ $field }}" value="{{ auth()->user()->$field }}"
-                                                   class="w-full bg-white/5 border border-gray-700 rounded-xl pl-10 pr-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500">
+                                            <i class="las la-{{ $label->value }} absolute left-4 top-3.5 text-pink-500"></i>
+                                            <input type="text" name="{{ $label->value }}" value="{{ auth()->user()->{$label->value} }}"
+                                                   class="w-full bg-white/5 border border-gray-700
+                                                   rounded-xl pl-10 pr-4 py-2.5 text-white focus:border-pink-500
+                                                   focus:outline-none focus:ring-1
+                                                   focus:ring-pink-500" placeholder="Enter {{$label->value}} username only">
                                         </div>
                                     </div>
                                 @endforeach

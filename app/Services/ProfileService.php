@@ -53,10 +53,10 @@ class ProfileService
     {
         $data = $request->validated();
         $user->update([
-            'facebook' => $data['facebook'],
-            'twitter' => $data['twitter'],
-            'linkedin' => $data['linkedin'],
-            'github' => $data['github'],
+            'facebook' => $data['facebook'] ?? '',
+            'twitter' => $data['twitter'] ?? '',
+            'linkedin' => $data['linkedin'] ?? '',
+            'github' => $data['github'] ?? '',
         ]);
     }
 
