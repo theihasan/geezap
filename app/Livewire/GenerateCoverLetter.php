@@ -26,6 +26,14 @@ class GenerateCoverLetter extends Component
 
     public function generateCoverLetter(): void
     {
+        if(! auth()->check()){
+            $this->dispatch('notify', [
+                'message' => 'You need to login and fill up your profile information for this action',
+                'type' => 'error'
+            ]);
+            return;
+        }
+
         $this->isGenerating = true;
         GenerateCoverLetterJob::dispatch(auth()->user(), $this->jobListing->toArray());
         $this->isGenerating = true;
