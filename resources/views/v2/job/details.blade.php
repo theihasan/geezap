@@ -35,7 +35,7 @@
                 <div class="text-gray-400 text-sm space-y-4 border-t border-gray-700 pt-6">
                     <div class="flex items-center gap-2">
                         <i class="las la-calendar-alt text-pink-300"></i>
-                        <span>Posted on: <span class="text-white">{{ $job->posted_at->isoFormat('Do MMMM, YYYY') }}</span></span>
+                        <span>Posted on: <span class="text-white">{{ $job->posted_at?->isoFormat('Do MMMM, YYYY') }}</span></span>
                     </div>
                     <div class="flex items-center gap-2">
                         <i class="las la-clock text-pink-300"></i>
@@ -162,7 +162,7 @@
                                         </div>
                                         <div>
                                             <h3 class="text-white font-medium">{{ $relatedJob->employer_name }}</h3>
-                                            <p class="text-gray-400 text-sm">{{ $relatedJob->posted_at->diffForHumans() }}</p>
+                                            <p class="text-gray-400 text-sm">{{ $relatedJob->posted_at?->diffForHumans() }}</p>
                                         </div>
                                     </div>
                                     <span class="px-3 py-1 text-sm bg-pink-500/10 text-pink-300 rounded-full">

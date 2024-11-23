@@ -109,7 +109,7 @@
                                     <span class="block"><span class="bg-emerald-600/10 inline-block
                                     text-emerald-600 text-xs px-2.5 py-0.5 font-semibold rounded-full">{{$job->employment_type}}</span></span>
                                     <span class="block text-slate-400 text-sm md:mt-1 mt-0">
-                                        <i class="uil uil-clock"></i> {{ $job->posted_at->dayWithSuffix() . '-' . $job->posted_at->format('M-Y') }}</span>
+                                        <i class="uil uil-clock"></i> {{ $job->posted_at?->dayWithSuffix() . '-' . $job->posted_at?->format('M-Y') }}</span>
                                 </div>
 
                                 <div class="lg:block flex justify-between lg:mt-0 mt-2">

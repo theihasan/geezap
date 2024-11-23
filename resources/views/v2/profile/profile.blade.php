@@ -168,7 +168,7 @@
                             Work Experience
                         </h2>
                         <div class="space-y-6 font-ubuntu-light">
-                            @foreach(json_decode(auth()->user()->experience, true)['job_title'] as $index => $job_title)
+                            @foreach(json_decode(auth()->user()->experience, true)['job_title'] ?? [] as $index => $job_title)
                                 <div class="border-l-2 border-pink-500/20 pl-4 sm:pl-6 {{ !$loop->last ? 'pb-6' : '' }} relative">
                                     <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full {{ $loop->first ? 'bg-pink-500' : 'bg-pink-500/50' }}"></div>
                                     <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-1 sm:gap-0">

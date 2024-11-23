@@ -31,8 +31,8 @@ class ViewJob extends ViewRecord
                         TextEntry::make('posted_at')
                             ->visible(fn (): bool => $this->record->posted_at !== null)
                             ->dateTime('jS M Y'),
-                        TextEntry::make('expaire_at')
-                            ->visible(fn (): bool => $this->record->expaire_at !== null)
+                        TextEntry::make('expired_at')
+                            ->visible(fn (): bool => $this->record->expired_at !== null)
                             ->dateTime('jS M Y'),
                     ])->columns(3),
 

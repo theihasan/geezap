@@ -94,7 +94,7 @@
                                 <div class="ms-3">
                                     <a href="{{route('job.show', $latestJob->slug)}}"
                                        class="block text-[16px] font-semibold hover:text-emerald-600 transition-all duration-500">{{$latestJob->employer_name}}</a>
-                                    <span class="block text-sm text-slate-400">{{$latestJob->posted_at->diffForHumans()}}</span>
+                                    <span class="block text-sm text-slate-400">{{$latestJob->posted_at?->diffForHumans()}}</span>
                                 </div>
                             </div>
 
