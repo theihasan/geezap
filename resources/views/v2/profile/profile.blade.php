@@ -168,9 +168,9 @@
                                 Work Experience
                             </h2>
                             <div class="space-y-6 font-ubuntu-light">
-                                @foreach(auth()->user()->experience['position'] ?? [] as $index => $position)
+                                @foreach(json_decode(auth()->user()->experience, true)['position'] ?? [] as $index => $position)
                                     @php
-                                        $experience = auth()->user()->experience;
+                                        $experience = json_decode(auth()->user()->experience, true);
                                         $startDate = isset($experience['start_date'][$index]) ? \Carbon\Carbon::parse($experience['start_date'][$index]) : null;
                                         $endDate = isset($experience['end_date'][$index]) ? \Carbon\Carbon::parse($experience['end_date'][$index]) : null;
                                         $isCurrentlyWorking = isset($experience['currently_working'][$index]) && $experience['currently_working'][$index];
@@ -183,11 +183,10 @@
                                                 <h3 class="text-lg font-medium text-white font-ubuntu-medium">{{ $position }}</h3>
                                                 <p class="text-pink-400">{{ $experience['company_name'][$index] }}</p>
                                             </div>
-                                            <span class="text-sm text-gray-400">
-                            {{ $startDate ? $startDate->format('M Y') : '' }}
-                            -
-                            {{ $isCurrentlyWorking ? 'Present' : ($endDate ? $endDate->format('M Y') : '') }}
-                        </span>
+
+                                            <span class="text-sm text-gray-400">{{ $startDate ? $startDate->format('M Y') : '' }} -
+                                                    {{ $isCurrentlyWorking ? 'Present' : ($endDate ? $endDate->format('M Y') : '') }}
+                                            </span>
                                         </div>
                                         @if(isset($experience['description'][$index]))
                                             <p class="text-gray-300 mt-2 font-ubuntu-regular text-sm sm:text-base">
