@@ -29,14 +29,6 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })->withSchedule(function (Schedule $schedule) {
-//        $schedule->job(new AspJob)->everyMinute();
-//        $schedule->job(new LaravelJob)->everyMinute();
-//        $schedule->job(new NodeJSJob)->everyMinute();
-//        $schedule->job(new PaythonJob)->everyMinute();
-//        $schedule->job(new ReactJob)->everyMinute();
-//        $schedule->job(new SymfonyJob)->everyMinute();
-//        $schedule->job(new VueJsJob)->everyMinute();
-//        $schedule->job(new WordPressJob)->everyMinute();
         $schedule->job(new GetJobData())->everyMinute();
 
     })->create();
