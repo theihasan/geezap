@@ -10,15 +10,15 @@
         <p class="text-gray-100 mb-6">A customized CV will make your application stand out. Use your profile and this job description to create the perfect CV!</p>
         <div class="flex justify-center">
             <button
-                wire:click="generateCoverLetter"
-                @disabled($isGenerating)
+                disabled
                 class="px-8 py-3 bg-white text-pink-600 rounded-lg
-                hover:bg-gray-200 transition font-medium text-lg flex
-                items-center gap-2 disabled:opacity-50
-                disabled:cursor-not-allowed" >
+                font-medium text-lg flex items-center gap-2
+                opacity-50 cursor-not-allowed relative"
+            >
                 <i class="las la-file-alt text-xl"></i>
-                <span wire:loading.remove wire:target="generateCoverLetter">
-                    Generate CV
+                <span>Generate CV</span>
+                <span class="absolute -top-3 -right-3 bg-pink-500 text-white text-xs px-2 py-1 rounded-full">
+                    Coming Soon
                 </span>
             </button>
         </div>
