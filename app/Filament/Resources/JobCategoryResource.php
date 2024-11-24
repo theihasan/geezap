@@ -59,7 +59,6 @@ class JobCategoryResource extends Resource
                     ]),
                 Forms\Components\FileUpload::make('category_image')
                     ->image()
-                    ->required()
                     ->directory('category-images')
             ]);
     }
