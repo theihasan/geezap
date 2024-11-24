@@ -1,4 +1,5 @@
 <div>
+    <x-loading />
     <div class="bg-[#1a1a3a] p-6 rounded-2xl border border-gray-700 mt-6">
         <button
             wire:click="saveForLetter()"
