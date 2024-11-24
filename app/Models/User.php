@@ -53,8 +53,6 @@ class User extends Authenticatable implements FilamentUser
             'experience' => 'array',
             'skills' => 'array',
             'role' => Role::class,
-
-
         ];
     }
 
