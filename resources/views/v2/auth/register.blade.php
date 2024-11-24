@@ -6,6 +6,15 @@
             <p class="text-gray-400 font-ubuntu-light">Join Geezap and start your job search journey.</p>
         </div>
 
+        <div class="flex justify-center mb-4">
+            <a href="{{ route('home') }}" class="text-gray-400 hover:text-pink-500 transition-colors flex items-center gap-2 font-ubuntu">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Back to Home
+            </a>
+        </div>
+
         <!-- Social Login Options -->
         <x-social-login/>
 
