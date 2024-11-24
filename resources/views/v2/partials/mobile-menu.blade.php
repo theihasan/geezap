@@ -12,8 +12,8 @@
             <div class="flex items-center gap-3">
                 <img src="https://placehold.co/40x40" alt="Profile" class="w-10 h-10 rounded-lg object-cover">
                 <div>
-                    <div class="font-medium text-white">John Doe</div>
-                    <div class="text-sm text-gray-400">john@example.com</div>
+                    <div class="font-medium text-white">{{auth()->user()->name}}</div>
+                    <div class="text-sm text-gray-400">{{auth()->user()->email}}</div>
                 </div>
             </div>
             <button onclick="toggleMobileMenu()" class="w-10 h-10 rounded-lg bg-white/5 hover:bg-white/10 transition-colors flex items-center justify-center text-white">
@@ -56,7 +56,7 @@
                         </span>
                     <i class="las la-arrow-right opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all"></i>
                 </a>
-                <a href="{{route('profile.update')}}"
+                <a href="{{route('applications')}}"
                    class="text-gray-100 hover:text-pink-500 py-4 transition-all duration-200 transform translate-x-4 opacity-0 mobile-menu-item group flex items-center justify-between rounded-xl hover:bg-white/5 px-4">
                         <span class="flex items-center gap-3">
                             <div class="w-10 h-10 rounded-lg bg-pink-500/10 flex items-center justify-center group-hover:bg-pink-500/20 transition-colors">
