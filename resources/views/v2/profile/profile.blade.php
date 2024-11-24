@@ -107,7 +107,7 @@
                     </h2>
                     <div class="flex flex-wrap gap-2 font-ubuntu-medium">
                         @if(auth()->user()->skills)
-                            @foreach(auth()->user()->skills['skill'] as $index => $skill)
+                            @foreach(auth()->user()->skills['skill'] ?? [] as $index => $skill)
                                 @php
                                     $skillLevel = auth()->user()->skills['skill_level'][$index];
                                     $percentage = match ($skillLevel) {
