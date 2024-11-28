@@ -26,14 +26,14 @@ class PersonalInfoUpdateRequest extends FormRequest
 
         return [
             'name' => ['required', 'string', 'max:255'],
-            'address' => ['nullable', 'string'],
-            'dob' => ['nullable', 'date'],
-            'state' => ['nullable', 'string'],
-            'country' => ['nullable', 'string'],
-            'occupation' => ['nullable', 'string'],
+            'address' => ['nullable', 'string',],
+            'dob' => ['nullable', 'date', 'max:100'],
+            'state' => ['nullable', 'string', 'max:100'],
+            'country' => ['nullable', 'string', 'max:100'],
+            'occupation' => ['nullable', 'string', 'max:100'],
             'timezone'  => ['nullable', 'string', Rule::in(Timezone::toValues())],
-            'postcode' => ['nullable', 'string'],
-            'phone' => ['nullable', 'string'],
+            'postcode' => ['nullable', 'string', 'max:15'],
+            'phone' => ['nullable', 'string', 'max:20'],
             'bio' => ['nullable', 'string'],
         ];
     }
