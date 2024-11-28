@@ -20,7 +20,7 @@
                     @foreach($jobCategories as $category)
                         <div class="group bg-[#1a1a3a] p-6 rounded-2xl border
                         border-gray-700 hover:border-pink-500/50 transition">
-                            <a href="{{ url('jobs?category=' . $category->name) }}"
+                            <a href="{{ url('jobs?category=' . $category->id) }}"
                                class="flex flex-col items-start text-left font-ubuntu-regular">
                                 <div class="w-14 h-14 bg-pink-500/10 rounded-xl flex
                                 items-center justify-center mb-4 group-hover:bg-pink-500/20">

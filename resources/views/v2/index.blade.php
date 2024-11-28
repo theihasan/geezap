@@ -77,7 +77,7 @@
                             <div class="text-gray-300 text-sm">Categories</div>
                         </div>
                         <div class="text-center">
-                            <div class="text-3xl font-bold text-white mb-1">{{App\Models\User::count()}}+</div>
+                            <div class="text-3xl font-bold text-white mb-1">{{App\Models\User::query()->count()}}+</div>
                             <div class="text-gray-300 text-sm">Developers</div>
                         </div>
                     </div>
@@ -261,15 +261,15 @@
                             <div class="w-14 h-14 bg-pink-500/10 rounded-xl
                             flex items-center justify-center mb-4
                             group-hover:bg-pink-500/20">
-                                <a href={{ url('jobs?category=' . $category->name) }}>
+                                <a href={{ url('jobs?category=' . $category->id) }}>
                                     <img src="{{ url($category->category_image) ?? 'https://placehold.co/50x50/2a2a4a/FFFFFF' }}" class="w-8 h-8" alt="{{ $category->job_category }}">
                                 </a>
                             </div>
-                            <a href="{{ url('jobs?category=' . $category->name) }}"">
+                            <a href="{{ url('jobs?category=' . $category->id) }}"">
                                 <h3 class="text-xl font-semibold mb-2 text-white">{{ ucwords($category->name) }}</h3>
                             </a>
                             <p class="text-gray-300 mb-4">{{ $category->jobs_count }} open positions</p>
-                            <a href="{{ url('jobs?category=' . $category->name) }}" class="flex items-center text-pink-300 hover:text-pink-400 transition">
+                            <a href="{{ url('jobs?category=' . $category->id) }}" class="flex items-center text-pink-300 hover:text-pink-400 transition">
                                 Browse Jobs <i class="fas fa-arrow-right ml-2"></i>
                             </a>
                         </div>
