@@ -26,7 +26,7 @@ class PersonalInfoUpdateRequest extends FormRequest
 
         return [
             'name' => ['required', 'string', 'max:255'],
-            'address' => ['nullable', 'string',],
+            'address' => ['nullable', 'string'],
             'dob' => ['nullable', 'date', 'max:100'],
             'state' => ['nullable', 'string', 'max:100'],
             'country' => ['nullable', 'string', 'max:100'],
