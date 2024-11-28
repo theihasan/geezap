@@ -99,13 +99,14 @@ class JobListingResource extends Resource
                             ->separator(','),
                         Forms\Components\TextInput::make('required_experience')
                             ->numeric()
-                            ->suffix('years'),
+                            ->suffix('month'),
                         Forms\Components\TagsInput::make('skills')
                             ->separator(','),
                         Forms\Components\DateTimePicker::make('posted_at')
+                            ->native(false)
                             ->required(),
                         Forms\Components\DateTimePicker::make('expired_at')
-                            ->required(),
+                            ->native(false),
                     ])->columns(2),
             ])->skippable()
         ])->columns(1);
@@ -179,8 +180,4 @@ class JobListingResource extends Resource
         ];
     }
 
-    public static function canCreate(): bool
-    {
-        return false;
-    }
 }

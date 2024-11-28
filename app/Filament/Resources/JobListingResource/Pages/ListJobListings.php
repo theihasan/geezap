@@ -13,7 +13,9 @@ class ListJobListings extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()
+                ->label('Add New Job')
+                ->icon('heroicon-o-plus-circle'),
         ];
     }
 }
