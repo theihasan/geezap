@@ -22,7 +22,7 @@ class ContactInfoUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'phone' => ['nullable', 'string', 'max:15'],
+            'phone' => ['nullable', 'string', 'max:30'],
             'website' => ['nullable', 'url'],
         ];
     }
