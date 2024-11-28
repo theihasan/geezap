@@ -23,7 +23,7 @@ class UpdateExperienceRequest extends FormRequest
     {
         return [
             'position' => ['required', 'array'],
-            'position.*' => ['required', 'string', 'max:20'],
+            'position.*' => ['required', 'string', 'max:100'],
             'company_name' => ['required', 'array'],
             'currently_working' => [],
             'start_date' => ['required', 'array'],
