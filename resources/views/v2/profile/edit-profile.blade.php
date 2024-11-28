@@ -106,12 +106,12 @@
                                 <div>
                                     <label class="text-sm text-gray-400 block mb-1">State</label>
                                     <input type="text" name="state" value="{{ auth()->user()->state }}"
-                                           class="w-full bg-white/5 border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500">
+                                           class="w-full bg-[#1a1a3a] border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500">
                                 </div>
                                 <div>
                                     <label class="text-sm text-gray-400 block mb-1">Country</label>
                                     <input type="text" name="country" value="{{ auth()->user()->country }}"
-                                           class="w-full bg-white/5 border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500">
+                                           class="w-full bg-[#1a1a3a] border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500">
                                 </div>
                             </div>
 
@@ -119,10 +119,11 @@
                             <div>
                                 <label class="text-sm text-gray-400 block mb-1">Timezone</label>
                                 <select name="timezone"
-                                        class="w-full bg-white/5 border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500">
+                                        class="w-full bg-[#1a1a3a] border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500 appearance-none">
                                     @foreach($timezones as $timezone)
                                         <option value="{{ $timezone->value }}"
-                                                @if(auth()->user()->timezone === $timezone->value) selected @endif>
+                                                @if(auth()->user()->timezone === $timezone->value) selected @endif
+                                                class="bg-[#1a1a3a] text-white">
                                             {{ $timezone->value }}
                                         </option>
                                     @endforeach
