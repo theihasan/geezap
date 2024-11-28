@@ -1,4 +1,5 @@
 @extends('v2.auth.app')
+@section('title') Login - Geezap @endsection
 @section('content')
     <!-- Login Container -->
     <div class="bg-[#12122b] rounded-2xl shadow-lg p-8 max-w-lg w-full space-y-8 border border-gray-800">
