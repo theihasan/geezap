@@ -25,15 +25,15 @@ class PersonalInfoUpdateRequest extends FormRequest
     {
 
         return [
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:100'],
             'address' => ['nullable', 'string'],
-            'dob' => ['nullable', 'date'],
-            'state' => ['nullable', 'string'],
-            'country' => ['nullable', 'string'],
-            'occupation' => ['nullable', 'string'],
+            'dob' => ['nullable', 'date', 'max:100'],
+            'state' => ['nullable', 'string', 'max:100'],
+            'country' => ['nullable', 'string', 'max:100'],
+            'occupation' => ['nullable', 'string', 'max:100'],
             'timezone'  => ['nullable', 'string', Rule::in(Timezone::toValues())],
-            'postcode' => ['nullable', 'string'],
-            'phone' => ['nullable', 'string'],
+            'postcode' => ['nullable', 'string', 'max:15'],
+            'phone' => ['nullable', 'string', 'max:20'],
             'bio' => ['nullable', 'string'],
         ];
     }
@@ -42,6 +42,8 @@ class PersonalInfoUpdateRequest extends FormRequest
     {
         return [
             'name.required' => 'Name is required',
+            'name.string' => 'Name should be string',
+            'name.max' => 'Name can not be more than 100 charcter',
             'email.required' => 'Email is required',
             'email.email' => 'Email must be a valid email address',
             'address.string' => 'Address must be a string',

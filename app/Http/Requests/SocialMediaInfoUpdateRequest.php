@@ -22,10 +22,10 @@ class SocialMediaInfoUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'facebook' => ['nullable', 'string'],
-            'twitter' => ['nullable', 'string'],
-            'linkedin' => ['nullable', 'string'],
-            'github' => ['nullable', 'string'],
+            'facebook' => ['nullable', 'string', 'max:255'],
+            'twitter' => ['nullable', 'string', 'max:255'],
+            'linkedin' => ['nullable', 'string', 'max:255'],
+            'github' => ['nullable', 'string', 'max:255'],
         ];
     }
 
