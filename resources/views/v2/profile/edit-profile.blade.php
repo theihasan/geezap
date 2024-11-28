@@ -502,6 +502,54 @@
                     setupDateToggle(form);
                 });
             });
+
+            document.addEventListener('DOMContentLoaded', function() {
+                document.getElementById('add-skill').addEventListener('click', function() {
+                    const skillsContainer = document.getElementById('skills-container');
+                    const newSkillTemplate = `
+                <div class="grid grid-cols-1 gap-4 skill-entry relative">
+                    <button type="button" class="remove-skill absolute -top-2 -right-2 bg-red-500/10 hover:bg-red-500/20 text-red-500 rounded-full p-1 transition-colors">
+                        <i class="las la-times text-lg"></i>
+                    </button>
+                    <div>
+                        <label class="text-sm text-gray-400 block mb-1">Skill Name</label>
+                        <input type="text" name="skill[]"
+                               class="w-full bg-white/5 border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500">
+                    </div>
+                    <div>
+                        <label class="text-sm text-gray-400 block mb-1">Skill Level</label>
+                        <select name="skill_level[]"
+                                class="w-full bg-white/5 border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500">
+                            <option value="proficient">Proficient</option>
+                            <option value="intermediate">Intermediate</option>
+                            <option value="beginner">Beginner</option>
+                        </select>
+                    </div>
+                </div>
+            `;
+
+                    skillsContainer.insertAdjacentHTML('beforeend', newSkillTemplate);
+                    const newSkillEntry = skillsContainer.lastElementChild;
+                    setupRemoveSkillButton(newSkillEntry);
+                });
+
+                document.querySelectorAll('.skill-entry').forEach(setupRemoveSkillButton);
+
+                function setupRemoveSkillButton(skillEntry) {
+                    const removeButton = skillEntry.querySelector('.remove-skill');
+                    if (removeButton) {
+                        removeButton.addEventListener('click', function() {
+                            const allSkillEntries = document.querySelectorAll('.skill-entry');
+                            if (allSkillEntries.length > 1) {
+                                skillEntry.remove();
+                            } else {
+                                const inputs = skillEntry.querySelectorAll('input, select');
+                                inputs.forEach(input => input.value = '');
+                            }
+                        });
+                    }
+                }
+            });
         </script>
     @endpush
 @endsection
