@@ -6,6 +6,7 @@ use App\Enums\ApiName;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -23,6 +24,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if(config('app.env') === 'production') {
+            URL::forceScheme('https');
+        }
         try {
             Http::macro('job', function () {
                 $apiKey = DB::table('api_keys')
@@ -42,18 +46,6 @@ class AppServiceProvider extends ServiceProvider
                 'file' => $e->getFile(),
             ]);
         }
-
-        Carbon::macro('dayWithSuffix', function () {
-            $day = $this->day;
-            if (!in_array(($day % 100), [11, 12, 13])) {
-                switch ($day % 10) {
-                    case 1: return $day . 'st';
-                    case 2: return $day . 'nd';
-                    case 3: return $day . 'rd';
-                }
-            }
-            return $day . 'th';
-        });
 
     }
 }
