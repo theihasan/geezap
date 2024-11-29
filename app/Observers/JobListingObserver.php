@@ -10,12 +10,12 @@ class JobListingObserver
     public function creating(JobListing $jobListing): void
     {
         $jobListing->uuid = Str::uuid();
-        $jobListing->slug = Str::slug($jobListing->job_title);
+        $jobListing->slug = Str::slug($jobListing->job_title.'-'.time());
     }
 
     public function updating(JobListing $jobListing): void
     {
-        $jobListing->slug = Str::slug($jobListing->job_title);
+
     }
 
     public function created(JobListing $jobListing): void

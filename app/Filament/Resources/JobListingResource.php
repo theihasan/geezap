@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Enums\JobType;
 use App\Filament\Resources\JobListingResource\Pages;
 use App\Filament\Resources\JobListingResource\RelationManagers;
+use App\Models\JobCategory;
 use App\Models\JobListing;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -34,8 +35,8 @@ class JobListingResource extends Resource
                         Forms\Components\Select::make('employment_type')
                             ->options(JobType::class)
                             ->required(),
-                        Forms\Components\TextInput::make('job_category')
-                            ->maxLength(255),
+                        Forms\Components\Select::make('job_category')
+                            ->options(JobCategory::getAllCategories()->pluck('name', 'id')->toArray()),
                         Forms\Components\RichEditor::make('description')
                             ->required()
                             ->columnSpanFull(),
