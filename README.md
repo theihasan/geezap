@@ -56,15 +56,15 @@ php artisan key:generate
 OPENAI_API_KEY=your_openai_api_key
 ```
 
-5. Set up Laravel Reverb for WebSocket:
+5. Run migrations
+```bash
+php artisan migrate
+```
+
+6. Set up Laravel Reverb for WebSocket:
 ```bash
 php artisan reverb:install
 php artisan reverb:start
-```
-
-6. Run migrations
-```bash
-php artisan migrate
 ```
 
 7. Start the development server
@@ -98,11 +98,11 @@ npm run dev
 - **Advanced Job Matching**
     - AI-powered job recommendations
     - Skill compatibility scoring
- 
+
 - **Social Media Sharing**
     - Share job listings on platforms like LinkedIn, Twitter, and Facebook.
-   
-      
+
+
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
