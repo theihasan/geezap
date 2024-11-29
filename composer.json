@@ -13,7 +13,8 @@
         "laravel/reverb": "^1.0",
         "laravel/socialite": "^5.16",
         "laravel/tinker": "^2.9",
-        "livewire/livewire": "*"
+        "livewire/livewire": "*",
+        "sentry/sentry-laravel": "^4.10"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.13",
