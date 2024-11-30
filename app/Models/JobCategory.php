@@ -57,7 +57,7 @@ class JobCategory extends Model
     protected function categoryImage(): Attribute
     {
         return Attribute::make(
-            get: fn (string $value) => 'storage/' . $value
+            get: fn (?string $value) => $value !== null ? 'storage/' . $value : ''
         );
     }
 }

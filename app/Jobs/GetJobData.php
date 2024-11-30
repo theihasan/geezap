@@ -5,11 +5,13 @@ namespace App\Jobs;
 use App\DTO\JobResponseDTO;
 use App\Enums\ApiName;
 use App\Exceptions\ApiKeyNotFoundException;
+use App\Exceptions\CategoryNotFoundException;
 use App\Jobs\Store\StoreJobs;
 use App\Models\ApiKey;
 use App\Models\JobCategory;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -19,7 +21,10 @@ use Illuminate\Support\Facades\Log;
 
 class GetJobData implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     public int $tries = 4;
     public array $backoff = [30, 45, 60];
@@ -35,11 +40,16 @@ class GetJobData implements ShouldQueue
             ApiKeyNotFoundException::validateApiKey($apiKey);
 
             $categories = JobCategory::all();
+
+            if ($categories->count() === 0) {
+                throw new CategoryNotFoundException();
+            }
+
             foreach ($categories as $category) {
                 $this->fetchAndStoreJobs($apiKey, $category);
             }
 
-        } catch (ApiKeyNotFoundException|\Exception $e) {
+        } catch (ApiKeyNotFoundException|CategoryNotFoundException|\Exception $e) {
             Log::error('Error on job fetching', [
                 'message' => $e->getMessage(),
                 'line' => $e->getLine(),
