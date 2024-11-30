@@ -13,7 +13,7 @@ class HomePageController extends Controller
 {
     public function __invoke(): Factory|Application|View|\Illuminate\Contracts\Foundation\Application
     {
-        $latestJobs = Cache::remember('mostViewedJobs', 60 * 24, function () {
+        $mostViewedJobs = Cache::remember('mostViewedJobs', 60 * 24, function () {
             return JobListing::query()
                 ->latest('views')
                 ->limit(10)
@@ -41,7 +41,7 @@ class HomePageController extends Controller
             'todayAddedJobsCount' => $todayAddedJobsCount,
             'lastWeekAddedJobsCount' =>  $lastWeekAddedJobsCount,
             'jobCategoriesCount' => $jobCategoriesCount,
-            'latestJobs' => $latestJobs,
+            'mostViewedJobs' => $mostViewedJobs,
             'jobCategories' => $jobCategories,
             'availableJobs' => $availableJobs,
         ]);

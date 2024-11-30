@@ -135,7 +135,7 @@
 
             <!-- Enhanced Job Listings -->
             <div class="space-y-6">
-                @foreach($latestJobs as $job)
+                @foreach($mostViewedJobs as $job)
                     <div class="bg-[#1a1a3a] rounded-2xl border border-gray-700 group hover:border-pink-500/50 transition p-6 relative">
                         <div class="flex flex-col md:flex-row gap-6">
                             <!-- Left Side: Company Logo -->
