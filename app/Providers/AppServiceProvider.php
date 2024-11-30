@@ -33,7 +33,10 @@ class AppServiceProvider extends ServiceProvider
                     ->where('api_name', '=', ApiName::JOB->value)
                     ->orderByDesc('request_remaining')
                     ->first();
-
+                logger('API Key for request', [
+                    'API Key' => $apiKey->api_key,
+                    'Request Remaining' => $apiKey->request_remaining
+                ]);
                 return Http::withHeaders([
                     'X-RapidAPI-Host' => 'jsearch.p.rapidapi.com',
                     'X-RapidAPI-Key' => $apiKey->api_key,
