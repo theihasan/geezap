@@ -11,9 +11,7 @@ class JobFilter
     {
 
         if (request()->filled('search')) {
-            //dd($jobs->where('job_title', 'like', '%' . request('search') . '%')->get());
             $jobs->where('job_title', 'like', '%' . request('search') . '%');
-            //dd($jobs->get());
         }
 
         if (request()->filled('location')) {
@@ -24,7 +22,6 @@ class JobFilter
             $jobs->whereHas('category', function($query) {
                 $query->where('id', request('category'));
             });
-            //dd($jobs->get());
         }
 
         $jobTypes = [];

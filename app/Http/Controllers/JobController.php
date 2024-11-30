@@ -15,7 +15,8 @@ class JobController extends Controller
     {
         $cacheKey = 'jobs_page_' . $request->get('page', 1) . '_' . md5(serialize($request->all()));
         $jobs = Cache::remember($cacheKey, 60 * 24, function () use ($request) {
-            $jobsQuery = JobListing::query();
+            $jobsQuery = JobListing::query()
+                ->with(['category']);
 
             $jobsQuery = app(Pipeline::class)
                 ->send($jobsQuery)
