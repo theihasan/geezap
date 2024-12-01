@@ -17,13 +17,8 @@ Route::prefix('jobs')->group(function () {
 
 Route::get('/categories', JobCategoryController::class)->name('job.categories');
 
-Route::get('contact', function () {
-    return view('contact');
-})->name('contact');
-
-Route::get('/dashboard', function () {
-    return view('v2.profile.profile');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::view('contact', 'contact')->name('contact');
+Route::view('/dashboard', 'v2.profile.profile')->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/profile-update', [ProfileController::class, 'edit'])
     ->middleware(['auth'])

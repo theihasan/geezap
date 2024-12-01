@@ -36,7 +36,8 @@ class JobListingResource extends Resource
                             ->options(JobType::class)
                             ->required(),
                         Forms\Components\Select::make('job_category')
-                            ->options(JobCategory::getAllCategories()->pluck('name', 'id')->toArray()),
+                            ->options(JobCategory::getAllCategories()->pluck('name', 'id')->toArray())
+                            ->required(),
                         Forms\Components\RichEditor::make('description')
                             ->required()
                             ->columnSpanFull(),
@@ -145,7 +146,7 @@ class JobListingResource extends Resource
                     Tables\Actions\Action::make('view')
                         ->label('View')
                         ->icon('heroicon-o-eye')
-                        ->url(function ($record){
+                        ->url(function ($record) {
                             return route('job.show', $record->slug);
                         })
                         ->openUrlInNewTab(),

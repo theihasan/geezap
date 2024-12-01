@@ -25,7 +25,7 @@ class JobCategoryResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
-                    ->hint('This is the number of the category')
+                    ->hint('This is the name of the category')
                     ->hintColor('info')
                     ->hintIcon('heroicon-o-exclamation-circle')
                     ->required()
