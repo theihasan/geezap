@@ -41,9 +41,7 @@ class GetJobData implements ShouldQueue
 
             $categories = JobCategory::all();
 
-            if ($categories->count() === 0) {
-                throw new CategoryNotFoundException();
-            }
+            CategoryNotFoundException::throwIfNotFound($categories);
 
             foreach ($categories as $category) {
                 $this->fetchAndStoreJobs($apiKey, $category);
