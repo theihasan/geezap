@@ -1,19 +1,20 @@
 <?php
 
 use App\Jobs\AspJob;
+use App\Jobs\ReactJob;
+use App\Jobs\VueJsJob;
+use App\Jobs\NodeJSJob;
 use App\Jobs\GetJobData;
 use App\Jobs\LaravelJob;
-use App\Jobs\NodeJSJob;
 use App\Jobs\PaythonJob;
-use App\Jobs\ReactJob;
 use App\Jobs\SymfonyJob;
-use App\Jobs\VueJsJob;
 use App\Jobs\WordPressJob;
-use Illuminate\Console\Scheduling\Schedule;
+use Sentry\Laravel\Integration;
 use Illuminate\Foundation\Application;
+use Illuminate\Console\Scheduling\Schedule;
+use App\Http\Middleware\VerifyClouflareTurnstile;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Sentry\Laravel\Integration;
 
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -24,7 +25,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        $middleware->alias([
+            'cf-turnstile.verify' => VerifyClouflareTurnstile::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         Integration::handles($exceptions);
