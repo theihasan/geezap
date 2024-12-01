@@ -51,7 +51,6 @@ class AdminPanelProvider extends PanelProvider
                 DispatchServingFilamentEvent::class,
             ])
             ->topNavigation()
-            ->profile()
             ->authMiddleware([
                 Authenticate::class,
             ]);
