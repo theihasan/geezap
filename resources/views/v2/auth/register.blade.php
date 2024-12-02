@@ -143,15 +143,6 @@
                 </div>
             </div>
 
-            <div 
-                id="cf-turnstile-widget" 
-                class="cf-turnstile" 
-                data-sitekey="{{ config('services.cloudflare.turnstile.site_key') }}"
-            ></div>
-            @error('turnstile')
-                <span class="text-red-500 text-xs mt-1">{{ $message }}</span>
-            @enderror
-
             <div class="flex items-center text-sm">
                 <input
                     type="checkbox"
@@ -201,7 +192,5 @@
             }
         }
     </script>
-
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 @endpush
 

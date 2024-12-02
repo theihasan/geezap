@@ -54,12 +54,7 @@ php artisan key:generate
 4. Set up required API keys in `.env`:
 ```bash
 OPENAI_API_KEY=your_openai_api_key
-
-# Cloudflare Turnstile
-CLOUDFLARE_TURNSTILE_SITE_KEY=your_site_key
-CLOUDFLARE_TURNSTILE_SECRET_KEY=your_secret_key
 ```
-> Also you may need to set turnstile widget from cloudflare dashboard
 
 5. Run migrations
 ```bash
