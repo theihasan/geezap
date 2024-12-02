@@ -107,9 +107,9 @@
                     </h2>
                     <div class="flex flex-wrap gap-2 font-ubuntu-medium">
                         @if(auth()->user()->skills)
-                            @foreach(json_decode(auth()->user()->skills, true)['skill'] ?? [] as $index => $skill)
+                            @foreach(auth()->user()->skills['skill'] ?? [] as $index => $skill)
                                 @php
-                                    $skillLevel = json_decode(auth()->user()->skills,true)['skill_level'][$index];
+                                    $skillLevel = auth()->user()->skills['skill_level'][$index];
                                     $percentage = match ($skillLevel) {
                                         App\Enums\SkillProficiency::BEGINNER->value => 'bg-pink-500/30',
                                         App\Enums\SkillProficiency::INTERMEDIATE->value => 'bg-pink-500/50',
@@ -168,9 +168,9 @@
                                 Work Experience
                             </h2>
                             <div class="space-y-6 font-ubuntu-light">
-                                @foreach(json_decode(auth()->user()->experience, true)['position'] ?? [] as $index => $position)
+                                @foreach(auth()->user()->experience['position'] ?? [] as $index => $position)
                                     @php
-                                        $experience = json_decode(auth()->user()->experience, true);
+                                        $experience = auth()->user()->experience;
                                         $startDate = isset($experience['start_date'][$index]) ? \Carbon\Carbon::parse($experience['start_date'][$index]) : null;
                                         $endDate = isset($experience['end_date'][$index]) ? \Carbon\Carbon::parse($experience['end_date'][$index]) : null;
                                         $isCurrentlyWorking = isset($experience['currently_working'][$index]) && $experience['currently_working'][$index];
