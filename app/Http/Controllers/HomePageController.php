@@ -37,13 +37,18 @@ class HomePageController extends Controller
             return JobListing::count();
         });
 
-        return view('v2.index', [
-            'todayAddedJobsCount' => $todayAddedJobsCount,
-            'lastWeekAddedJobsCount' =>  $lastWeekAddedJobsCount,
-            'jobCategoriesCount' => $jobCategoriesCount,
-            'mostViewedJobs' => $mostViewedJobs,
-            'jobCategories' => $jobCategories,
-            'availableJobs' => $availableJobs,
-        ]);
+        $latestJobs = Cache::remember('latestJobs', 60 * 24, function () {
+            return JobListing::latest()->limit(15)->get();
+        });
+
+        return view('v2.index', compact([
+            'todayAddedJobsCount',
+            'lastWeekAddedJobsCount',
+            'jobCategoriesCount',
+            'mostViewedJobs',
+            'jobCategories',
+            'availableJobs',
+            'latestJobs'
+        ]));
     }
 }
