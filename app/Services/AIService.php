@@ -12,16 +12,12 @@ class AIService
     {
         try {
             $prompt = $this->generatePrompt($user, $requestData);
-            $apiKey = config('ai.chat_gpt_api_key');
 
             if (empty($apiKey)) {
                 throw new \Exception('OpenAI API key is not configured');
             }
 
-            $response = Http::withHeaders([
-                'Content-Type' => 'application/json',
-                'Authorization' => 'Bearer ' . $apiKey,
-            ])->post('https://api.openai.com/v1/chat/completions', [
+            $response = Http::openai()->post('/completions', [
                 'model' => 'gpt-3.5-turbo-16k',
                 'messages' => [
                     [
@@ -45,7 +41,6 @@ class AIService
 
 
             if (!isset($responseData)) {
-                //Sentry Implementation
                 throw new \Exception('Unexpected response structure from OpenAI API: ' . json_encode($responseData));
             }
 

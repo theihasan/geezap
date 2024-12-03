@@ -42,6 +42,17 @@ class AppServiceProvider extends ServiceProvider
                     'X-RapidAPI-Key' => $apiKey->api_key,
                 ])->baseUrl('https://jsearch.p.rapidapi.com');
             });
+
+            Http::macro('openai', function () {
+                $apiKey = config('ai.chat_gpt_api_key');
+
+                return Http::withHeaders([
+                    'Content-Type' => 'application/json',
+                    'Authorization' => 'Bearer ' . $apiKey,
+                ])->baseUrl('https://api.openai.com/v1/chat');
+            });
+
+
         } catch (\Exception $e){
             logger('Error on app service provider', [
                 'message' => $e->getMessage(),
