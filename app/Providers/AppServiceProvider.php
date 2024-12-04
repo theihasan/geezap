@@ -24,9 +24,21 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->configureUrl();
+        $this->registerHttpMacros();
+        $this->configureCommand();
+
+    }
+
+    private function configureUrl(): void
+    {
         if(config('app.env') === 'production') {
             URL::forceScheme('https');
         }
+    }
+
+    private function registerHttpMacros(): void
+    {
         try {
             Http::macro('job', function () {
                 $apiKey = DB::table('api_keys')
@@ -60,6 +72,12 @@ class AppServiceProvider extends ServiceProvider
                 'file' => $e->getFile(),
             ]);
         }
-
     }
+
+    private function configureCommand(): void
+    {
+        DB::prohibitDestructiveCommands($this->app->isProduction());
+    }
+
+
 }
