@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\JobListing;
+use App\Services\MetaTagGenerator;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
@@ -35,7 +36,7 @@ class JobController extends Controller
         ]);
     }
 
-    public function job($slug): Factory|Application|View|\Illuminate\Contracts\Foundation\Application
+    public function job(MetaTagGenerator $metaTagGenerator, $slug): Factory|Application|View|\Illuminate\Contracts\Foundation\Application
     {
         $jobCacheKey = 'job_' . $slug;
         $relatedJobsCacheKey = 'related_jobs_' . $slug;
@@ -66,7 +67,8 @@ class JobController extends Controller
 
         return view('v2.job.details', [
             'job' => $job,
-            'relatedJobs' => $relatedJobs
+            'relatedJobs' => $relatedJobs,
+            'meta' => $metaTagGenerator->getJobDetailsMeta($job)
         ]);
     }
 }

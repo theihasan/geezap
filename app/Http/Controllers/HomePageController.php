@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\JobCategory;
 use App\Models\JobListing;
+use App\Services\MetaTagGenerator;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
@@ -11,7 +12,7 @@ use Illuminate\Support\Facades\Cache;
 
 class HomePageController extends Controller
 {
-    public function __invoke(): Factory|Application|View|\Illuminate\Contracts\Foundation\Application
+    public function __invoke(MetaTagGenerator $metaGenerator): Factory|Application|View|\Illuminate\Contracts\Foundation\Application
     {
         $mostViewedJobs = Cache::remember('mostViewedJobs', 60 * 24, function () {
             return JobListing::query()
@@ -41,6 +42,16 @@ class HomePageController extends Controller
             return JobListing::latest()->limit(15)->get();
         });
 
+        $meta = $metaGenerator->getHomePageMeta(
+            $availableJobs,
+            $todayAddedJobsCount,
+            $jobCategoriesCount,
+            $lastWeekAddedJobsCount,
+            $jobCategories
+        );
+
+
+
         return view('v2.index', compact([
             'todayAddedJobsCount',
             'lastWeekAddedJobsCount',
@@ -48,7 +59,8 @@ class HomePageController extends Controller
             'mostViewedJobs',
             'jobCategories',
             'availableJobs',
-            'latestJobs'
+            'latestJobs',
+            'meta',
         ]));
     }
 }
