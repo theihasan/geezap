@@ -25,10 +25,6 @@
                                     alt="{{ $job->employer_name }}"
                                     class="h-32 w-full rounded-xl object-cover md:h-full">
                             </a>
-                            <div
-                                class="absolute right-3 top-3 rounded-full bg-pink-500/90 px-3 py-1 text-sm text-white backdrop-blur-sm">
-                                {{ $job->views }} views
-                            </div>
                         </div>
 
                         <!-- Right Side: Job Details -->
