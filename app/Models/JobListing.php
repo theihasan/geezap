@@ -9,13 +9,14 @@ use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 #[ObservedBy([JobListingObserver::class])]
 class JobListing extends Model
 {
-    use HasFactory, Filterable;
+    use HasFactory, Filterable, Prunable;
 
     protected $fillable = [
         'employer_name',
@@ -68,6 +69,11 @@ class JobListing extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(JobCategory::class, 'job_category', 'id');
+    }
+
+    public function purnable(): Builder
+    {
+        return static::query()->where('created_at', '<=', now()->subMonth());
     }
 
 
