@@ -38,8 +38,11 @@ class HomePageController extends Controller
             return JobListing::count();
         });
 
-        $latestJobs = Cache::remember('latestJobs', 60 * 24, function () {
-            return JobListing::latest()->limit(15)->get();
+        $latestJobs = Cache::remember('latestJobs', 60 * 24, function () use($mostViewedJobs) {
+            return JobListing::latest()
+                ->whereNotIn('id',$mostViewedJobs->pluck('id')->toArray())
+                ->limit(15)
+                ->get();
         });
 
         $meta = $metaGenerator->getHomePageMeta(
