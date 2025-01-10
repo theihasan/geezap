@@ -9,37 +9,26 @@ class JobFilter
 {
     public function handle($jobs, Closure $next)
     {
+        // Search job by keywords
+        $jobs->when(request()->get('search'), function ($query, $keyword) {
+            $query->where('job_title', 'like', '%' . $keyword . '%');
+        });
 
-        if (request()->filled('search')) {
-            $jobs->where('job_title', 'like', '%' . request('search') . '%');
-        }
+        // Filter by city
+        $jobs->when(request()->get('location'), function ($query, $location) {
+            $query->where('city', 'like', '%' . $location . '%');
+        });
 
-        if (request()->filled('location')) {
-            $jobs->where('city', 'like', '%' . request('location') . '%');
-        }
+        // Filter by category
+        $jobs->when(request()->get('category'), function ($query, $category) {
+            $query->whereRelation('category', 'id', $category);
+        });
 
-        if (request()->filled('category')) {
-            $jobs->whereHas('category', function($query) {
-                $query->where('id', request('category'));
-            });
-        }
-
-        $jobTypes = [];
-        if (request()->filled('fulltime')) {
-            $jobTypes[] = JobType::FULL_TIME->value;
-        }
-
-        if (request()->filled('contractor')) {
-            $jobTypes[] = JobType::CONTRACTOR->value;
-        }
-
-        if (request()->filled('parttime')) {
-            $jobTypes[] = JobType::PART_TIME->value;
-        }
-
-        if (!empty($jobTypes)) {
-            $jobs->whereIn('employment_type', $jobTypes);
-        }
+        // Filter by job type
+        $jobs->when(request()->filled('types'), function ($query) {
+            $jobTypes = explode(',', request()->get('types', []));
+            $query->whereIn('employment_type', $jobTypes);
+        });
 
         return $next($jobs);
     }

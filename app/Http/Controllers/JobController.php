@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\JobListing;
@@ -26,7 +27,7 @@ class JobController extends Controller
                 ])
                 ->thenReturn();
 
-            return $jobsQuery->latest()->paginate(10);
+            return $jobsQuery->latest()->paginate(10)->withQueryString();
         });
 
         $currentPage = $jobs->currentPage();
@@ -42,7 +43,7 @@ class JobController extends Controller
         $relatedJobsCacheKey = 'related_jobs_' . $slug;
         $viewKey = $jobCacheKey . '_view_' . request()->ip() . '_' . now()->format('Y-m-d-H-i');
 
-        $jobViews = Cache::remember($viewKey, 1, function() use ($slug) {
+        $jobViews = Cache::remember($viewKey, 1, function () use ($slug) {
             Cache::forget('mostViewedJobs');
             return JobListing::query()
                 ->where('slug', $slug)
