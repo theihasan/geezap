@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Log;
 
 #[ObservedBy([JobListingObserver::class])]
 class JobListing extends Model
@@ -71,9 +72,14 @@ class JobListing extends Model
         return $this->belongsTo(JobCategory::class, 'job_category', 'id');
     }
 
-    public function purnable(): Builder
+    public function prunable(): Builder
     {
         return static::query()->where('created_at', '<=', now()->subMonth());
+    }
+
+    protected function pruning(): void
+    {
+        Log::info('Prepare for removing job: ' . $this->id);
     }
 
 

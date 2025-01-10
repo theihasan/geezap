@@ -33,5 +33,6 @@ return Application::configure(basePath: dirname(__DIR__))
         Integration::handles($exceptions);
     })->withSchedule(function (Schedule $schedule) {
         $schedule->job(new GetJobData())->everyMinute();
+        $schedule->command('model:prune')->everyMinute();
 
     })->create();
