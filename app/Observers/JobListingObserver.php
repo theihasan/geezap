@@ -38,6 +38,7 @@ class JobListingObserver
         Cache::forget('jobs_page_*');
         Cache::forget('mostViewedJobs');
         Cache::forget('lastWeekAddedJobsCount');
+        Cache::forget('availableJobs');
 
         Cache::forget('job_*');
         Cache::forget('related_jobs_*');
