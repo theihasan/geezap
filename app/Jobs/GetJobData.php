@@ -66,11 +66,9 @@ class GetJobData implements ShouldQueue
                 'page' => $page,
                 'num_pages' => $category->num_page,
                 'date_posted' => $category->timeframe,
-                'api_key_id' => $apiKey->id,
             ]);
 
             if ($response->ok()) {
-                logger('Resonse Data', $response->json('data'));
                 $jobResponseDTO = JobResponseDTO::fromResponse(
                     $response->json(),
                     $category->id,
