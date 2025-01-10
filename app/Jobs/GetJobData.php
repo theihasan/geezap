@@ -44,6 +44,7 @@ class GetJobData implements ShouldQueue
             CategoryNotFoundException::throwIfNotFound($categories);
 
             foreach ($categories as $category) {
+                logger('Job category', [$category->name, $category->query_name]);
                 $this->fetchAndStoreJobs($apiKey, $category);
             }
 
@@ -69,6 +70,7 @@ class GetJobData implements ShouldQueue
             ]);
 
             if ($response->ok()) {
+                logger('Resonse Data', $response->json('data'));
                 $jobResponseDTO = JobResponseDTO::fromResponse(
                     $response->json(),
                     $category->id,
