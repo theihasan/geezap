@@ -13,7 +13,7 @@ class AIService
         try {
             $prompt = $this->generatePrompt($user, $requestData);
 
-            if (empty($apiKey)) {
+            if (empty(config('ai.chat_gpt_api_key'))) {
                 throw new \Exception('OpenAI API key is not configured');
             }
 
