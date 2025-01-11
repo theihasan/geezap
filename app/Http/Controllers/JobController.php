@@ -27,7 +27,11 @@ class JobController extends Controller
                 ])
                 ->thenReturn();
 
-            return $jobsQuery->latest()->paginate(10)->withQueryString();
+            return $jobsQuery
+                ->latest('posted_at')
+                ->inrandomOrder()
+                ->paginate(20)
+                ->withQueryString();
         });
 
         $currentPage = $jobs->currentPage();
