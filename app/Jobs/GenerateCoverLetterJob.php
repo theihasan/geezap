@@ -33,7 +33,7 @@ class GenerateCoverLetterJob implements ShouldQueue
                     'status' => 429,
                     'data' => [
                         'daily_requests' => $this->getDailyUsageCount(),
-                        'limit' => self::DAILY_LIMIT
+                        'limit' => static::DAILY_LIMIT
                     ]
                 ];
             }
