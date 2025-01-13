@@ -87,19 +87,19 @@
                     </div>
 
                     <!-- Company Details Tooltip (visible on hover) -->
-                    <div
-                        class="pointer-events-none absolute bottom-0 left-6 z-10 w-72 translate-y-full transform rounded-xl border border-pink-500/50 bg-[#1a1a3a] p-4 opacity-0 shadow-xl transition-all duration-300 group-hover:opacity-100">
-                        <div class="space-y-2 text-sm">
-                            <div class="font-semibold text-white">{{ $job->employer_name }}</div>
-                            <div class="text-gray-300">{{ $job->industry ?? 'Technology' }}</div>
-                            <div class="text-gray-300">{{ $job->company_size ?? 'Company size not specified' }}</div>
-                            @if ($job->benefits)
+                    @if($job->benefits)
+                        <div
+                            class="pointer-events-none absolute bottom-0 left-6 z-10 w-72 translate-y-full transform rounded-xl border border-pink-500/50 bg-[#1a1a3a] p-4 opacity-0 shadow-xl transition-all duration-300 group-hover:opacity-100">
+                            <div class="space-y-2 text-sm">
+                                <div class="font-semibold text-white">{{ $job->employer_name }}</div>
+                                <div class="text-gray-300">{{ ucfirst($job->category->name) ?? 'Technology' }}</div>
                                 @foreach ($job->benefits as $benefit)
                                     <div class="text-gray-300">{{ $benefit }}</div>
                                 @endforeach
-                            @endif
+
+                            </div>
                         </div>
-                    </div>
+                    @endif
                 </div>
             @endforeach
         </div>
