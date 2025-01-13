@@ -13,7 +13,7 @@
                     </a>
                     <div
                         class="absolute right-3 top-3 rounded-full bg-pink-500/90 px-3 py-1 text-sm text-white backdrop-blur-sm">
-                        {{ $job->views }} views
+                        {{ \App\Helpers\NumberFormatter::formatNumber($job->views) }} views
                     </div>
                 </div>
 
@@ -30,7 +30,9 @@
                         </div>
                         @if ($job->min_salary && $job->max_salary)
                             <div class="font-semibold text-pink-300">
-                                ${{ $job->min_salary }} - ${{ $job->max_salary }} / {{ $job->salary_period }}
+                                $ {{ \App\Helpers\NumberFormatter::formatNumber($job->min_salary) }} -
+                                $ {{ \App\Helpers\NumberFormatter::formatNumber($job->max_salary) }} /
+                                {{ $job->salary_period }}
                             </div>
                         @endif
                     </div>
