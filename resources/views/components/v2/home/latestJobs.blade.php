@@ -40,7 +40,9 @@
                                 </div>
                                 @if ($job->min_salary && $job->max_salary)
                                     <div class="font-semibold text-pink-300">
-                                        ${{ $job->min_salary }} - ${{ $job->max_salary }} / {{ $job->salary_period }}
+                                        $ {{ \App\Helpers\NumberFormatter::formatNumber($job->min_salary) }} -
+                                        $ {{ \App\Helpers\NumberFormatter::formatNumber($job->max_salary) }} /
+                                        {{ $job->salary_period }}
                                     </div>
                                 @endif
                             </div>
