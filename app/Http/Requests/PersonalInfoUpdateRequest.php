@@ -3,8 +3,8 @@
 namespace App\Http\Requests;
 
 use App\Enums\Timezone;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Foundation\Http\FormRequest;
 
 class PersonalInfoUpdateRequest extends FormRequest
 {
