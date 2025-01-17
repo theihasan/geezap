@@ -1,46 +1,48 @@
 @extends('v2.layouts.app')
 @section('content')
     <!-- Hero Section -->
-    <section class="relative py-20 bg-[#12122b]">
+    <section class="relative bg-[#12122b] py-20">
         <!-- Background Pattern -->
-        <div class="absolute inset-0 opacity-10" style="background-image: url('https://placehold.co/1920x800/2a2a4a/FFFFFF'); background-size: cover;"></div>
+        <div class="absolute inset-0 opacity-10"
+            style="background-image: url('https://placehold.co/1920x800/2a2a4a/FFFFFF'); background-size: cover;"></div>
 
-        <div class="max-w-7xl mx-auto px-6 relative">
-            <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div class="relative mx-auto max-w-7xl px-6">
+            <div class="grid items-center gap-12 md:grid-cols-2">
                 <!-- Left Content -->
                 <div class="space-y-8">
                     <!-- Stats Banner -->
-                    <div class="inline-block px-4 py-2 bg-pink-500/10 backdrop-blur-sm rounded-full font-ubuntu-light">
-                        <span class="font-oxanium text-pink-300 font-medium">🎯 Over {{$availableJobs}}+ jobs available</span>
+                    <div class="font-ubuntu-light inline-block rounded-full bg-pink-500/10 px-4 py-2 backdrop-blur-sm">
+                        <span class="font-oxanium font-medium text-pink-300">🎯 Over {{ $availableJobs }}+ jobs
+                            available</span>
                     </div>
 
                     <!-- Main Heading -->
-                    <h1 class="text-5xl md:text-6xl font-oxanium-bold text-white leading-tight">
-                        Find Your Next <span class="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-500">
-                        Dream Job
-                    </span> in Tech
+                    <h1 class="font-oxanium-bold text-5xl leading-tight text-white md:text-6xl">
+                        Find Your Next <span
+                            class="bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
+                            Dream Job
+                        </span> in Tech
                     </h1>
 
                     <!-- Subheading -->
-                    <p class="text-xl text-gray-100 font-ubuntu-light leading-relaxed">
-                        Join thousands of developers who have found their perfect roles through our platform. We connect talented developers with top tech companies.
+                    <p class="font-ubuntu-light text-xl leading-relaxed text-gray-100">
+                        Join thousands of developers who have found their perfect roles through our platform. We connect
+                        talented developers with top tech companies.
                     </p>
 
                     <!-- Search Box -->
-                    <div class="bg-white/10 backdrop-blur-md p-3 rounded-2xl border border-white/10">
-                        <form action="{{route('job.index')}}" method="get">
-                            <div class="flex flex-col md:flex-row gap-3">
+                    <div class="rounded-2xl border border-white/10 bg-white/10 p-3 backdrop-blur-md">
+                        <form action="{{ route('job.index') }}" method="get">
+                            <div class="flex flex-col gap-3 md:flex-row">
                                 <!-- Job Search -->
-                                <div class="flex-1 flex items-center gap-3 bg-white/10 rounded-xl px-4 py-3">
+                                <div class="flex flex-1 items-center gap-3 rounded-xl bg-white/10 px-4 py-3">
                                     <i class="las la-search text-pink-500"></i>
-                                    <input
-                                        name="search"
-                                        type="text"
-                                        placeholder="Job title or keyword"
+                                    <input name="search" type="text" placeholder="Job title or keyword"
                                         class="w-full bg-transparent text-white placeholder-gray-400 focus:outline-none">
                                 </div>
                                 <!-- Search Button -->
-                                <button class="font-ubuntu-regular md:w-auto w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white px-8 py-3 rounded-xl hover:opacity-90 transition-opacity font-medium">
+                                <button
+                                    class="font-ubuntu-regular w-full rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 px-8 py-3 font-medium text-white transition-opacity hover:opacity-90 md:w-auto">
                                     Search Jobs
                                 </button>
                             </div>
@@ -49,69 +51,74 @@
 
                     <!-- Popular Searches -->
                     <div class="space-y-3">
-                        <h3 class="text-gray-100 font-medium">Popular Searches:</h3>
+                        <h3 class="font-medium text-gray-100">Popular Searches:</h3>
                         <div class="flex flex-wrap gap-3">
-                        <span class="px-4 py-2 bg-white/5 border border-white/10 hover:border-pink-500 text-gray-100 rounded-full text-sm cursor-pointer transition-colors">
-                            Remote Jobs
-                        </span>
-                            <span class="px-4 py-2 bg-white/5 border border-white/10 hover:border-pink-500 text-gray-100 rounded-full text-sm cursor-pointer transition-colors">
-                            Full Stack Developer
-                        </span>
-                            <span class="px-4 py-2 bg-white/5 border border-white/10 hover:border-pink-500 text-gray-100 rounded-full text-sm cursor-pointer transition-colors">
-                            Frontend Engineer
-                        </span>
-                            <span class="px-4 py-2 bg-white/5 border border-white/10 hover:border-pink-500 text-gray-100 rounded-full text-sm cursor-pointer transition-colors">
-                            React Developer
-                        </span>
+                            <span
+                                class="cursor-pointer rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-gray-100 transition-colors hover:border-pink-500">
+                                Remote Jobs
+                            </span>
+                            <span
+                                class="cursor-pointer rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-gray-100 transition-colors hover:border-pink-500">
+                                Full Stack Developer
+                            </span>
+                            <span
+                                class="cursor-pointer rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-gray-100 transition-colors hover:border-pink-500">
+                                Frontend Engineer
+                            </span>
+                            <span
+                                class="cursor-pointer rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-gray-100 transition-colors hover:border-pink-500">
+                                React Developer
+                            </span>
                         </div>
                     </div>
 
                     <!-- Quick Stats -->
                     <div class="grid grid-cols-3 gap-6 pt-4">
                         <div class="text-center">
-                            <div class="text-3xl font-bold text-white mb-1">{{$availableJobs}}+</div>
-                            <div class="text-gray-300 text-sm">Active Jobs</div>
+                            <div class="mb-1 text-3xl font-bold text-white">{{ $availableJobs }}+</div>
+                            <div class="text-sm text-gray-300">Active Jobs</div>
                         </div>
                         <div class="text-center">
-                            <div class="text-3xl font-bold text-white mb-1">{{$jobCategoriesCount}}+</div>
-                            <div class="text-gray-300 text-sm">Categories</div>
+                            <div class="mb-1 text-3xl font-bold text-white">{{ $jobCategoriesCount }}+</div>
+                            <div class="text-sm text-gray-300">Categories</div>
                         </div>
                         <div class="text-center">
-                            <div class="text-3xl font-bold text-white mb-1">{{App\Models\User::query()->count()}}+</div>
-                            <div class="text-gray-300 text-sm">Developers</div>
+                            <div class="mb-1 text-3xl font-bold text-white">{{ App\Models\User::query()->count() }}+</div>
+                            <div class="text-sm text-gray-300">Developers</div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Right Content -->
-                <div class="hidden md:block relative">
+                <div class="relative hidden md:block">
                     <!-- Main Image -->
-                    <img src="https://placehold.co/600x500/2a2a4a/FFFFFF"
-                         alt="Developer Working"
-                         class="rounded-2xl shadow-2xl">
+                    <img src="https://placehold.co/600x500/2a2a4a/FFFFFF" alt="Developer Working"
+                        class="rounded-2xl shadow-2xl">
 
                     <!-- Floating Card 1 -->
-                    <div class="absolute -top-6 -left-6 bg-[#1a1a3a]/90 backdrop-blur-sm p-4 rounded-xl border border-white/10">
+                    <div
+                        class="absolute -left-6 -top-6 rounded-xl border border-white/10 bg-[#1a1a3a]/90 p-4 backdrop-blur-sm">
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-pink-500/20 rounded-full flex items-center justify-center">
+                            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-pink-500/20">
                                 <i class="las la-code text-pink-500"></i>
                             </div>
                             <div>
-                                <div class="text-white font-medium">1,200+</div>
-                                <div class="text-gray-400 text-sm">Developer Jobs</div>
+                                <div class="font-medium text-white">1,200+</div>
+                                <div class="text-sm text-gray-400">Developer Jobs</div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Floating Card 2 -->
-                    <div class="absolute -bottom-6 -right-6 bg-[#1a1a3a]/90 backdrop-blur-sm p-4 rounded-xl border border-white/10">
+                    <div
+                        class="absolute -bottom-6 -right-6 rounded-xl border border-white/10 bg-[#1a1a3a]/90 p-4 backdrop-blur-sm">
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-purple-500/20 rounded-full flex items-center justify-center">
+                            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-purple-500/20">
                                 <i class="las la-building text-purple-500"></i>
                             </div>
                             <div>
-                                <div class="text-white font-medium">500+</div>
-                                <div class="text-gray-400 text-sm">Tech Companies</div>
+                                <div class="font-medium text-white">500+</div>
+                                <div class="text-sm text-gray-400">Tech Companies</div>
                             </div>
                         </div>
                     </div>
@@ -120,164 +127,66 @@
         </div>
     </section>
     <!-- Hero Section End -->
-    <section class="py-20 bg-[#12122b]">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="flex justify-between items-end mb-12">
+
+    <!-- Latest jobs start -->
+    @if ($latestJobs)
+        <x-v2.home.latestJobs :latestJobs="$latestJobs"></x-v2.home.latestJobs>
+    @endif
+    <!-- Latest jobs end -->
+
+    <section class="bg-[#12122b] py-20">
+        <div class="mx-auto max-w-7xl px-6">
+            <div class="mb-12 flex items-end justify-between">
                 <div>
-                    <h2 class="text-3xl font-bold mb-2 text-white">Most Viewed Jobs</h2>
+                    <h2 class="mb-2 text-3xl font-bold text-white">Most Viewed Jobs</h2>
                     <p class="text-gray-300">Discover the positions developers are exploring</p>
                 </div>
-                <a href="{{route('job.index')}}" class="font-ubuntu-regular bg-gradient-to-r from-pink-500 to-purple-600 hover:opacity-90 transition-opacity text-white px-6 py-3 rounded-xl font-medium flex items-center gap-2">
+                <a href="{{ route('job.index') }}"
+                    class="font-ubuntu-regular flex items-center gap-2 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 px-6 py-3 font-medium text-white transition-opacity hover:opacity-90">
                     See All Jobs
                     <i class="las la-arrow-right"></i>
                 </a>
             </div>
-
-            <!-- Enhanced Job Listings -->
-            <div class="space-y-6">
-                @foreach($latestJobs as $job)
-                    <div class="bg-[#1a1a3a] rounded-2xl border border-gray-700 group hover:border-pink-500/50 transition p-6 relative">
-                        <div class="flex flex-col md:flex-row gap-6">
-                            <!-- Left Side: Company Logo -->
-                            <div class="md:w-48 relative">
-                                <a href="{{ route('job.show', $job->slug) }}">
-                                    <img src="{{ $job->employer_logo ?? 'https://placehold.co/400x200/2a2a4a/FFFFFF' }}"
-                                         alt="{{ $job->employer_name }}"
-                                         class="w-full h-32 md:h-full object-cover rounded-xl">
-                                </a>
-                                <div class="absolute top-3 right-3 bg-pink-500/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm text-white">
-                                    {{ $job->views }} views
-                                </div>
-                            </div>
-
-                            <!-- Right Side: Job Details -->
-                            <div class="flex-1">
-                                <!-- Top Section -->
-                                <div class="flex flex-col md:flex-row justify-between gap-4 mb-4">
-                                    <div>
-                                        <a href="{{ route('job.show', $job->slug) }}" class="text-white font-medium hover:text-pink-500 transition-colors">
-                                            <h3 class="text-xl font-semibold text-white">{{ $job->job_title }}</h3>
-                                        </a>
-                                        <p class="text-gray-300">{{ $job->employer_name }}</p>
-                                    </div>
-                                    @if($job->min_salary && $job->max_salary)
-                                        <div class="text-pink-300 font-semibold">
-                                            ${{ $job->min_salary }} - ${{ $job->max_salary }} / {{$job->salary_period}}
-                                        </div>
-                                    @endif
-                                </div>
-
-                                <!-- Job Details Grid -->
-                                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                                    <!-- Location -->
-                                    <div class="flex items-center gap-2">
-                                        <i class="las la-map-marker text-pink-500"></i>
-                                        <span class="text-gray-300">{{ $job->is_remote ? 'Remote' : $job->city }}</span>
-                                    </div>
-                                    <!-- Posted Date -->
-                                    <div class="flex items-center gap-2">
-                                        <i class="las la-calendar text-pink-500"></i>
-                                        <span class="text-gray-300">Posted {{ $job->created_at->diffForHumans() }}</span>
-                                    </div>
-                                    <!-- Experience -->
-                                    <div class="flex items-center gap-2">
-                                        <i class="las la-briefcase text-pink-500"></i>
-                                        <span class="text-gray-300">{{ $job->experience_level ?? 'Not specified' }}</span>
-                                    </div>
-                                    <!-- Employment Type -->
-                                    <div class="flex items-center gap-2">
-                                        <i class="las la-clock text-pink-500"></i>
-                                        <span class="text-gray-300">{{ $job->employment_type }}</span>
-                                    </div>
-                                </div>
-
-{{--                                <!-- Tags -->--}}
-{{--                                <div class="flex flex-wrap gap-2 mb-4">--}}
-{{--                                    <span class="px-3 py-1 bg-pink-500/10 text-pink-300 rounded-full text-sm">{{ $job->job_category }}</span>--}}
-{{--                                    @if($job->qualifications)--}}
-{{--                                        @foreach($job->qualifications as $qualifications)--}}
-{{--                                            <span class="px-3 py-1 bg-pink-500/10 text-pink-300 rounded-full text-sm">{{ trim($qualifications) }}</span>--}}
-{{--                                        @endforeach--}}
-{{--                                    @endif--}}
-{{--                                </div>--}}
-
-                                <!-- Job Description Preview -->
-                                @if($job->description)
-                                    <p class="text-gray-300 line-clamp-2 mb-4">
-                                        {{ Str::limit(strip_tags($job->description), 300) }}
-                                    </p>
-                                @endif
-                            </div>
-                        </div>
-
-                        <!-- Fixed Apply Button (visible on hover) -->
-                        <div class="absolute bottom-6 right-6 transition-all duration-300 opacity-0 group-hover:opacity-100">
-                            <a href="{{ route('job.show', $job->slug) }}"
-                               class="bg-gradient-to-r from-pink-500 to-purple-600 text-white px-6 py-3 rounded-xl hover:opacity-90 transition-opacity flex items-center gap-2">
-                                <span>Apply Now</span>
-                                <i class="las la-arrow-right"></i>
-                            </a>
-                        </div>
-
-                        <!-- Company Details Tooltip (visible on hover) -->
-                        <div class="absolute left-6 bottom-0 transform translate-y-full opacity-0 group-hover:opacity-100 transition-all duration-300 z-10 bg-[#1a1a3a] p-4 rounded-xl border border-pink-500/50 shadow-xl w-72 pointer-events-none">
-                            <div class="text-sm space-y-2">
-                                <div class="text-white font-semibold">{{ $job->employer_name }}</div>
-                                <div class="text-gray-300">{{ $job->industry ?? 'Technology' }}</div>
-                                <div class="text-gray-300">{{ $job->company_size ?? 'Company size not specified' }}</div>
-                                @if($job->benefits)
-                                    @foreach($job->benefits as $benefit)
-                                        <div class="text-gray-300">{{ $benefit }}</div>
-                                    @endforeach
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-
-            <div class="flex justify-center mt-12">
-                <a href="{{route('job.index')}}" class="bg-gradient-to-r from-pink-500 to-purple-600 hover:opacity-90 transition-opacity text-white px-8 py-4 rounded-xl font-medium flex items-center gap-2 text-lg">
-                    Explore All Job Opportunities
-                    <i class="las la-arrow-right"></i>
-                </a>
-            </div>
+            @if($mostViewedJobs)
+                <x-v2.home.most-viewed-jobs :mostViewedJobs="$mostViewedJobs"></x-v2.home.most-viewed-jobs>
+            @endif
         </div>
     </section>
 
     <!-- Job Categories -->
-    <section class="py-20 bg-[#12122b]">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="text-center mb-12">
-                <h2 class="text-3xl font-bold mb-2 text-white">Browse by Category</h2>
+    <section class="bg-[#12122b] py-20">
+        <div class="mx-auto max-w-7xl px-6">
+            <div class="mb-12 text-center">
+                <h2 class="mb-2 text-3xl font-bold text-white">Browse by Category</h2>
                 <p class="text-gray-300">Find your perfect role in these specialized areas</p>
             </div>
 
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                @foreach($jobCategories as $category)
-                        <div class="group bg-[#1a1a3a] rounded-2xl
-                        p-6 hover:bg-[#222250] transition border
-                        border-gray-700 hover:border-pink-500/50">
-                            <div class="w-14 h-14 bg-pink-500/10 rounded-xl
-                            flex items-center justify-center mb-4
-                            group-hover:bg-pink-500/20">
-                                <a href={{ url('jobs?category=' . $category->id) }}>
-                                    <img src="{{ url($category->category_image) ?? 'https://placehold.co/50x50/2a2a4a/FFFFFF' }}" class="w-8 h-8" alt="{{ $category->job_category }}">
-                                </a>
-                            </div>
-                            <a href="{{ url('jobs?category=' . $category->id) }}"">
-                                <h3 class="text-xl font-semibold mb-2 text-white">{{ ucwords($category->name) }}</h3>
-                            </a>
-                            <p class="text-gray-300 mb-4">{{ $category->jobs_count }} open positions</p>
-                            <a href="{{ url('jobs?category=' . $category->id) }}" class="flex items-center text-pink-300 hover:text-pink-400 transition">
-                                Browse Jobs <i class="fas fa-arrow-right ml-2"></i>
+            <div class="grid grid-cols-2 gap-6 md:grid-cols-4">
+                @foreach ($jobCategories as $category)
+                    <div
+                        class="group rounded-2xl border border-gray-700 bg-[#1a1a3a] p-6 transition hover:border-pink-500/50 hover:bg-[#222250]">
+                        <div
+                            class="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-pink-500/10 group-hover:bg-pink-500/20">
+                            <a href={{ url('jobs?category=' . $category->id) }}>
+                                <img src="{{ url($category->category_image) ?? 'https://placehold.co/50x50/2a2a4a/FFFFFF' }}"
+                                    class="h-8 w-8" alt="{{ $category->job_category }}">
                             </a>
                         </div>
+                        <a href="{{ url('jobs?category=' . $category->id) }}"">
+                            <h3 class="mb-2 text-xl font-semibold text-white">{{ ucwords($category->name) }}</h3>
+                        </a>
+                        <p class="mb-4 text-gray-300">{{ $category->jobs_count }} open positions</p>
+                        <a href="{{ url('jobs?category=' . $category->id) }}"
+                            class="flex items-center text-pink-300 transition hover:text-pink-400">
+                            Browse Jobs <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
                 @endforeach
             </div>
 
-            <div class="flex justify-center mt-12">
-                <a href="{{route('job.categories')}}" class="font-ubuntu-regular bg-gradient-to-r from-pink-500 to-purple-600 hover:opacity-90 transition-opacity text-white px-8 py-4 rounded-xl font-medium flex items-center gap-2 text-lg">
+            <div class="mt-12 flex justify-center">
+                <a href="{{ route('job.categories') }}"
+                    class="font-ubuntu-regular flex items-center gap-2 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 px-8 py-4 text-lg font-medium text-white transition-opacity hover:opacity-90">
                     See All Categories
                     <i class="las la-arrow-right"></i>
                 </a>
@@ -286,23 +195,23 @@
     </section>
 
     <!-- Stats Section -->
-    <section class="py-20 bg-[#0A0A1B]">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-                <div class="bg-[#12122b] rounded-2xl p-8 text-center">
-                    <div class="text-4xl font-oxanium-semibold text-white">{{$lastWeekAddedJobsCount}}</div>
+    <section class="bg-[#0A0A1B] py-20">
+        <div class="mx-auto max-w-7xl px-6">
+            <div class="grid grid-cols-2 gap-8 md:grid-cols-4">
+                <div class="rounded-2xl bg-[#12122b] p-8 text-center">
+                    <div class="font-oxanium-semibold text-4xl text-white">{{ $lastWeekAddedJobsCount }}</div>
                     <div class="text-gray-300">Job Added in Last Week</div>
                 </div>
-                <div class="bg-[#12122b] rounded-2xl p-8 text-center">
-                    <div class="text-4xl font-oxanium-semibold text-white">{{$todayAddedJobsCount}}</div>
+                <div class="rounded-2xl bg-[#12122b] p-8 text-center">
+                    <div class="font-oxanium-semibold text-4xl text-white">{{ $todayAddedJobsCount }}</div>
                     <div class="text-gray-300">Today Added Jobs</div>
                 </div>
-                <div class="bg-[#12122b] rounded-2xl p-8 text-center">
-                    <div class="text-4xl font-oxanium-semibold text-white">{{$availableJobs}}</div>
+                <div class="rounded-2xl bg-[#12122b] p-8 text-center">
+                    <div class="font-oxanium-semibold text-4xl text-white">{{ $availableJobs }}</div>
                     <div class="text-gray-300">Available Jobs</div>
                 </div>
-                <div class="bg-[#12122b] rounded-2xl p-8 text-center">
-                    <div class="text-4xl font-oxanium-semibold text-white">{{$jobCategoriesCount}}</div>
+                <div class="rounded-2xl bg-[#12122b] p-8 text-center">
+                    <div class="font-oxanium-semibold text-4xl text-white">{{ $jobCategoriesCount }}</div>
                     <div class="text-gray-300">Job Categories</div>
                 </div>
                 <!-- More stat cards... -->

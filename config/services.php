@@ -50,7 +50,13 @@ return [
     'google' => [
         'client_id' => env('GOOGLE_CLIENT_ID'),
         'client_secret' => env('GOOGLE_CLIENT_SECRET'),
-        'redirect' => env('GOOGLE_REDIRECT_URI'),
+        'redirect' => 'https://geezap.com/auth/google/callback',
     ],
 
+    'cloudflare' => [
+        'turnstile' => [
+            'site_key' => env('CLOUDFLARE_TURNSTILE_SITE_KEY'),
+            'secret_key' => env('CLOUDFLARE_TURNSTILE_SECRET_KEY'),
+        ],
+    ],
 ];

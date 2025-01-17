@@ -12,6 +12,6 @@ readonly class JobResponseDTO
 
     public static function fromResponse(array $response, int $categoryId, string $categoryImage): self
     {
-        return new self($response['data'], $categoryId, $categoryImage);
+        return new static($response['data'], $categoryId, $categoryImage);
     }
 }

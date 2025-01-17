@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\JobCategory;
 use App\Models\JobListing;
+use App\Services\MetaTagGenerator;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
@@ -11,9 +12,9 @@ use Illuminate\Support\Facades\Cache;
 
 class HomePageController extends Controller
 {
-    public function __invoke(): Factory|Application|View|\Illuminate\Contracts\Foundation\Application
+    public function __invoke(MetaTagGenerator $metaGenerator): Factory|Application|View|\Illuminate\Contracts\Foundation\Application
     {
-        $latestJobs = Cache::remember('mostViewedJobs', 60 * 24, function () {
+        $mostViewedJobs = Cache::remember('mostViewedJobs', 60 * 24, function () {
             return JobListing::query()
                 ->latest('views')
                 ->limit(10)
@@ -37,13 +38,32 @@ class HomePageController extends Controller
             return JobListing::count();
         });
 
-        return view('v2.index', [
-            'todayAddedJobsCount' => $todayAddedJobsCount,
-            'lastWeekAddedJobsCount' =>  $lastWeekAddedJobsCount,
-            'jobCategoriesCount' => $jobCategoriesCount,
-            'latestJobs' => $latestJobs,
-            'jobCategories' => $jobCategories,
-            'availableJobs' => $availableJobs,
-        ]);
+        $latestJobs = Cache::remember('latestJobs', 60 * 24, function () use($mostViewedJobs) {
+            return JobListing::latest()
+                ->whereNotIn('id',$mostViewedJobs->pluck('id')->toArray())
+                ->limit(15)
+                ->get();
+        });
+
+        $meta = $metaGenerator->getHomePageMeta(
+            $availableJobs,
+            $todayAddedJobsCount,
+            $jobCategoriesCount,
+            $lastWeekAddedJobsCount,
+            $jobCategories
+        );
+
+
+
+        return view('v2.index', compact([
+            'todayAddedJobsCount',
+            'lastWeekAddedJobsCount',
+            'jobCategoriesCount',
+            'mostViewedJobs',
+            'jobCategories',
+            'availableJobs',
+            'latestJobs',
+            'meta',
+        ]));
     }
 }

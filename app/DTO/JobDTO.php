@@ -10,7 +10,6 @@ readonly class JobDTO
         public string  $employerName,
         public ?string $employerLogo,
         public ?string $employerWebsite,
-        public ?string $employerCompanyType,
         public string  $publisher,
         public ?string  $employmentType,
         public string  $jobTitle,
@@ -27,12 +26,10 @@ readonly class JobDTO
         public ?string $expiredAt,
         public ?float  $minSalary,
         public ?float  $maxSalary,
-        public ?string $salaryCurrency,
         public ?string $salaryPeriod,
         public ?array  $benefits,
         public ?array  $qualifications,
         public ?array  $responsibilities,
-        public ?int    $requiredExperience,
     ) {}
 
     public static function fromArray(array $data): self
@@ -41,7 +38,6 @@ readonly class JobDTO
             employerName: $data['employer_name'],
             employerLogo: $data['employer_logo'],
             employerWebsite: $data['employer_website'],
-            employerCompanyType: $data['employer_company_type'],
             publisher: $data['job_publisher'],
             employmentType: $data['job_employment_type'],
             jobTitle: $data['job_title'],
@@ -58,12 +54,11 @@ readonly class JobDTO
             expiredAt: isset($data['job_offer_expiration_datetime_utc']) ? Carbon::parse($data['job_offer_expiration_datetime_utc'])->toDateTimeString() : null,
             minSalary: $data['job_min_salary'],
             maxSalary: $data['job_max_salary'],
-            salaryCurrency: $data['job_salary_currency'],
             salaryPeriod: $data['job_salary_period'],
             benefits: $data['job_highlights']['Benefits'] ?? null,
             qualifications: $data['job_highlights']['Qualifications'] ?? null,
             responsibilities: $data['job_highlights']['Responsibilities'] ?? null,
-            requiredExperience: $data['job_required_experience']['required_experience_in_months']
+
         );
     }
 
@@ -73,7 +68,6 @@ readonly class JobDTO
             'employer_name' => $this->employerName,
             'employer_logo' => $this->employerLogo,
             'employer_website' => $this->employerWebsite,
-            'employer_company_type' => $this->employerCompanyType,
             'publisher' => $this->publisher,
             'employment_type' => $this->employmentType,
             'job_title' => $this->jobTitle,
@@ -90,12 +84,10 @@ readonly class JobDTO
             'expired_at' => $this->expiredAt,
             'min_salary' => $this->minSalary,
             'max_salary' => $this->maxSalary,
-            'salary_currency' => $this->salaryCurrency,
             'salary_period' => $this->salaryPeriod,
             'benefits' => $this->benefits,
             'qualifications' => $this->qualifications,
             'responsibilities' => $this->responsibilities,
-            'required_experience' => $this->requiredExperience
         ];
     }
 }

@@ -10,12 +10,12 @@ class JobListingObserver
     public function creating(JobListing $jobListing): void
     {
         $jobListing->uuid = Str::uuid();
-        $jobListing->slug = Str::slug($jobListing->job_title);
+        $jobListing->slug = Str::slug($jobListing->job_title.'-'.time());
     }
 
     public function updating(JobListing $jobListing): void
     {
-        $jobListing->slug = Str::slug($jobListing->job_title);
+
     }
 
     public function created(JobListing $jobListing): void
@@ -36,6 +36,9 @@ class JobListingObserver
     protected function clearCache(): void
     {
         Cache::forget('jobs_page_*');
+        Cache::forget('mostViewedJobs');
+        Cache::forget('lastWeekAddedJobsCount');
+        Cache::forget('availableJobs');
 
         Cache::forget('job_*');
         Cache::forget('related_jobs_*');

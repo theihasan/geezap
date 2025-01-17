@@ -1,52 +1,60 @@
-@extends('auth.app')
-@section('auth-title', 'Reset Password - Geezap')
-@section('auth-content')
-        <section class="h-screen flex items-center justify-center relative overflow-hidden bg-[url('../../assets/images/hero/bg3.html')] bg-no-repeat bg-left-bottom bg-cover">
-            <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black"></div>
-            <div class="container">
-                <div class="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1">
-                    <div class="relative overflow-hidden bg-white dark:bg-slate-900 shadow-md dark:shadow-gray-800 rounded-md">
-                        <div class="p-6">
-                            <a href="#">
-                               <h2 class="text-5xl text-center">Geezap</h2>
-                            </a>
-                            <h5 class="my-6 text-xl font-semibold">Reset Your Password</h5>
-                            <div class="grid grid-cols-1">
-                                <p class="text-slate-400 mb-6">Please enter your email address. You will receive a link to create a new password via email.</p>
-                                <form class="text-start" action="{{ route('password.email') }}" method="POST">
-                                    @csrf
-                                    <div class="grid grid-cols-1">
-                                        <div class="mb-4 text-start">
-                                            <label class="font-semibold" for="LoginEmail">Email Address:</label>
-                                            <input id="LoginEmail" type="email" name="email" value="{{ old('email') }}" class="form-input mt-3 rounded-md @error('email') border-red-500 @enderror" placeholder="name@example.com">
-                                            @error('email')
-                                            <p class="text-red-600 text-xs mt-2">{{ $message }}</p>
-                                            @enderror
-                                        </div>
-
-                                        <div class="mb-4">
-                                            <input type="submit" class="btn bg-emerald-600 hover:bg-emerald-700 border-emerald-600 hover:border-emerald-700 text-white rounded-md w-full" value="Send">
-                                        </div>
-
-                                        <div class="text-center">
-                                            <span class="text-slate-400 me-2">Remember your password ? </span><a href="{{route('login')}}" class="text-black dark:text-white font-bold">Sign in</a>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-
-                        <div class="px-6 py-2 bg-slate-50 dark:bg-slate-800 text-center">
-                            <p class="mb-0 text-gray-400 font-medium">© <script>document.write(new Date().getFullYear())</script>
-                                All right reserved by Geezap</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section><!--end section -->
-
-        <div class="fixed bottom-3 end-3">
-            <a href="#" class="back-button btn btn-icon bg-emerald-600 hover:bg-emerald-700 border-emerald-600 hover:border-emerald-700 text-white rounded-md"><i data-feather="arrow-left" class="size-4"></i></a>
+@extends('v2.auth.app')
+@section('title') Forgot Password - Geezap @endsection
+@section('content')
+    <!-- Forgot Password Container -->
+    <div class="bg-[#12122b] rounded-2xl shadow-lg p-8 max-w-lg w-full space-y-8 border border-gray-800">
+        <div class="text-center space-y-2">
+            <h2 class="text-3xl font-bold text-white font-oxanium-bold">Reset Password</h2>
+            <p class="text-gray-400 font-ubuntu-light">Enter your email to receive reset instructions</p>
         </div>
 
+        @session('status')
+        <div class="flex justify-center">
+            <span class="text-green-500">{{$value}}</span>
+        </div>
+        @endsession
+
+        <div class="flex justify-center mb-4">
+            <a href="{{ route('login') }}" class="text-gray-400 hover:text-pink-500 transition-colors flex items-center gap-2 font-ubuntu">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Back to Login
+            </a>
+        </div>
+
+        <!-- Reset Password Form -->
+        <form action="{{ route('password.email') }}" method="POST" class="space-y-6 font-ubuntu">
+            @csrf
+            <div>
+                <label for="email" class="block text-gray-400 mb-1">Email Address</label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value="{{ old('email') }}"
+                    placeholder="name@example.com"
+                    class="w-full px-4 py-3 rounded-xl bg-[#1a1a3a] text-white placeholder-gray-500 border border-gray-600 focus:border-pink-500 focus:outline-none transition"
+                >
+                @error('email')
+                <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <button
+                type="submit"
+                class="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white px-6 py-3 rounded-xl font-medium hover:opacity-90 transition-all"
+            >
+                Send Reset Link
+            </button>
+        </form>
+
+        <!-- Login Link -->
+        <p class="text-center text-gray-400 mt-6 font-ubuntu-light">
+            Remember your password?
+            <a href="{{ route('login') }}" class="text-pink-500 hover:text-pink-400 transition-colors font-ubuntu-medium">
+                Login here
+            </a>
+        </p>
+    </div>
 @endsection

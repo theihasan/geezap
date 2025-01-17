@@ -1,7 +1,9 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\JobListing;
+use App\Services\MetaTagGenerator;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
@@ -15,7 +17,8 @@ class JobController extends Controller
     {
         $cacheKey = 'jobs_page_' . $request->get('page', 1) . '_' . md5(serialize($request->all()));
         $jobs = Cache::remember($cacheKey, 60 * 24, function () use ($request) {
-            $jobsQuery = JobListing::query();
+            $jobsQuery = JobListing::query()
+                ->with(['category']);
 
             $jobsQuery = app(Pipeline::class)
                 ->send($jobsQuery)
@@ -24,7 +27,11 @@ class JobController extends Controller
                 ])
                 ->thenReturn();
 
-            return $jobsQuery->latest()->paginate(10);
+            return $jobsQuery
+                ->latest('posted_at')
+                ->inrandomOrder()
+                ->paginate(20)
+                ->withQueryString();
         });
 
         $currentPage = $jobs->currentPage();
@@ -34,13 +41,13 @@ class JobController extends Controller
         ]);
     }
 
-    public function job($slug): Factory|Application|View|\Illuminate\Contracts\Foundation\Application
+    public function job(MetaTagGenerator $metaTagGenerator, $slug): Factory|Application|View|\Illuminate\Contracts\Foundation\Application
     {
         $jobCacheKey = 'job_' . $slug;
         $relatedJobsCacheKey = 'related_jobs_' . $slug;
         $viewKey = $jobCacheKey . '_view_' . request()->ip() . '_' . now()->format('Y-m-d-H-i');
 
-        $jobViews = Cache::remember($viewKey, 1, function() use ($slug) {
+        $jobViews = Cache::remember($viewKey, 1, function () use ($slug) {
             Cache::forget('mostViewedJobs');
             return JobListing::query()
                 ->where('slug', $slug)
@@ -65,7 +72,8 @@ class JobController extends Controller
 
         return view('v2.job.details', [
             'job' => $job,
-            'relatedJobs' => $relatedJobs
+            'relatedJobs' => $relatedJobs,
+            'meta' => $metaTagGenerator->getJobDetailsMeta($job)
         ]);
     }
 }

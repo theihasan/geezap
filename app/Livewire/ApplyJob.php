@@ -19,19 +19,9 @@ class ApplyJob extends Component
 
     public function apply()
     {
-        if (!auth()->user()) {
-            return redirect()->route('login');
-        }
-
-        if ($this->hasApplied) {
-            $this->dispatch('notify', [
-                'message' => 'You have already applied for this job',
-                'type' => 'info'
-            ]);
-        }
-
         auth()->user()->jobs()->attach($this->job->id, ['status' => JobSavedStatus::APPLIED->value]);
-        $this->redirect($this->job->apply_link);
+
+        logger('Execution time', [(microtime(true) - LARAVEL_START) * 1000]);
     }
 
     public function alreadyApplied(): void

@@ -116,7 +116,9 @@
                                     <span class="text-slate-400"><i class="uil uil-map-marker"></i> {{$job->country}}</span>
                                     @if($job->min_salary && $job->max_salary)
                                     <span class="block font-semibold lg:mt-1 mt-0">
-                                        <i class="uil uil-dollar-sign"></i> {{$job->min_salary}} - {{$job->max_salary}}/{{$job->salary_period}}
+                                        <i class="uil uil-dollar-sign"></i>
+                                        {{ \App\Helpers\NumberFormatter::formatNumber($job->min_salary) }} -
+                                        {{ \App\Helpers\NumberFormatter::formatNumber($job->max_salary) }} / {{$job->salary_period}}
                                     </span>
                                     @endif
                                 </div>
