@@ -55,11 +55,14 @@ class ApiKeyResource extends Resource
                     }),
                 Tables\Columns\TextColumn::make('request_remaining')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('sent_request')
+                    ->label('Sent Request'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime('jS M Y'),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime('jS M Y'),
             ])
+            ->searchable()
             ->filters([
                 //
             ])
