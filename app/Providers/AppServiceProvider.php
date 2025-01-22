@@ -7,6 +7,7 @@ use App\DTO\MetaTagDTO;
 use App\DTO\OpenGraphDTO;
 use App\DTO\TwitterCardDTO;
 use App\Enums\ApiName;
+use App\Models\ApiKey;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -47,14 +48,17 @@ class AppServiceProvider extends ServiceProvider
     {
         try {
             Http::macro('job', function () {
-                $apiKey = DB::table('api_keys')
-                    ->where('api_name', '=', ApiName::JOB->value)
-                    ->orderByDesc('request_remaining')
+                $apiKey = ApiKey::query()->where('api_name', ApiName::JOB)
+                    ->orderBy('sent_request')
                     ->first();
+
                 logger('API Key for request', [
                     'API Key' => $apiKey->api_key,
                     'Request Remaining' => $apiKey->request_remaining
                 ]);
+
+                $apiKey->increment('sent_request');
+
                 return Http::withHeaders([
                     'X-RapidAPI-Host' => 'jsearch.p.rapidapi.com',
                     'X-RapidAPI-Key' => $apiKey->api_key,
