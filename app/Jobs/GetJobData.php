@@ -21,32 +21,37 @@ use Illuminate\Support\Facades\Log;
 
 class GetJobData implements ShouldQueue
 {
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public int $tries = 4;
     public array $backoff = [30, 45, 60];
 
+    public function __construct(
+        private readonly int $startFromCategory = 1,
+        private readonly int $startFromPage = 1,
+        private readonly bool $isLastCategory = false
+    ) {}
     public function handle(): void
     {
         try {
             $apiKey = ApiKey::query()
                 ->where('api_name', ApiName::JOB)
-                ->orderByDesc('request_remaining')
+                ->where('request_remaining', '>', 0)
+                ->orderBy('sent_request')
                 ->first();
 
             ApiKeyNotFoundException::validateApiKey($apiKey);
 
-            $categories = JobCategory::all();
+            JobCategory::query()
+                ->where('id', '>=', $this->startFromCategory)
+                ->chunk(10, function ($categories) use ($apiKey) {
+                    CategoryNotFoundException::throwIfNotFound($categories);
 
-            CategoryNotFoundException::throwIfNotFound($categories);
-
-            foreach ($categories as $category) {
-                logger('Job category', [$category->name, $category->query_name]);
-                $this->fetchAndStoreJobs($apiKey, $category);
-            }
+                    $categories->each(function ($category) use ($apiKey) {
+                        logger('Job category', [$category->name, $category->query_name]);
+                        $this->fetchAndStoreJobs($apiKey, $category, $this->startFromPage);
+                    });
+                });
 
         } catch (ApiKeyNotFoundException|CategoryNotFoundException|\Exception $e) {
             Log::error('Error on job fetching', [
@@ -54,34 +59,57 @@ class GetJobData implements ShouldQueue
                 'line' => $e->getLine(),
                 'file' => $e->getFile(),
             ]);
+
+           $this->release(60);
+
         }
     }
 
-
-    protected function fetchAndStoreJobs($apiKey, JobCategory $category): void
+    protected function fetchAndStoreJobs($apiKey, JobCategory $category, int $startPage): void
     {
-        for ($page = 1; $page <= $category->page; $page++) {
-            $response = Http::job()->retry([100, 200])->get('/search', [
-                'query' => $category->query_name,
-                'page' => $page,
-                'num_pages' => $category->num_page,
-                'date_posted' => $category->timeframe,
-            ]);
+        for ($page = $startPage; $page <= $category->page; $page++) {
+            try {
+                logger('Processing', [
+                    'category_id' => $category->id,
+                    'page' => $page
+                ]);
 
-            if ($response->ok()) {
-                $jobResponseDTO = JobResponseDTO::fromResponse(
-                    $response->json(),
-                    $category->id,
-                    $category->category_image
-                );
-                StoreJobs::dispatch($jobResponseDTO);
-            } else {
-                Log::error($response['message']);
+                $response = Http::job()->retry([100, 200])->get('/search', [
+                    'query' => $category->query_name,
+                    'page' => $page,
+                    'num_pages' => $category->num_page,
+                    'date_posted' => $category->timeframe,
+                ]);
+
+                DB::table('api_keys')
+                    ->where('id', $apiKey->id)
+                    ->update(['request_remaining' => $response->header('X-RateLimit-Requests-Remaining')]);
+
+                if ($response->status() === 429) {
+                    $isLastCategory = $category->id === JobCategory::max('id') && $page === $category->page;
+                    static::dispatch($category->id, $page, $isLastCategory)->delay(now()->addMinutes(1));
+                    return;
+                }
+
+                if ($response->ok()) {
+                    $jobResponseDTO = JobResponseDTO::fromResponse(
+                        $response->json(),
+                        $category->id,
+                        $category->category_image
+                    );
+                    StoreJobs::dispatch($jobResponseDTO);
+                }
+
+                if ($this->isLastCategory && $page === $category->page) {
+                    logger('Job cycle completed');
+                    return;
+                }
+            } catch (\Exception $e) {
+                $isLastCategory = $category->id === JobCategory::max('id') && $page === $category->page;
+                static::dispatch($category->id, $page, $isLastCategory)->delay(now()->addMinutes(1));
+                throw $e;
             }
-
-            DB::table('api_keys')
-                ->where('id', $apiKey->id)
-                ->update(['request_remaining' => $response->header('X-RateLimit-Requests-Remaining')]);
         }
     }
 }
+
