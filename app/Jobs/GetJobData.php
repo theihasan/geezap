@@ -5,13 +5,11 @@ namespace App\Jobs;
 use App\DTO\JobResponseDTO;
 use App\Enums\ApiName;
 use App\Exceptions\ApiKeyNotFoundException;
-use App\Exceptions\CategoryNotFoundException;
 use App\Jobs\Store\StoreJobs;
 use App\Models\ApiKey;
 use App\Models\JobCategory;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -27,10 +25,11 @@ class GetJobData implements ShouldQueue
     public array $backoff = [30, 45, 60];
 
     public function __construct(
-        private readonly int $startFromCategory = 1,
-        private readonly int $startFromPage = 1,
-        private readonly bool $isLastCategory = false
+        private readonly int $categoryId,
+        private readonly int $totalPages,
+        private readonly bool $isLastCategory
     ) {}
+
     public function handle(): void
     {
         try {
@@ -42,32 +41,23 @@ class GetJobData implements ShouldQueue
 
             ApiKeyNotFoundException::validateApiKey($apiKey);
 
-            JobCategory::query()
-                ->where('id', '>=', $this->startFromCategory)
-                ->chunk(10, function ($categories) use ($apiKey) {
-                    CategoryNotFoundException::throwIfNotFound($categories);
+            $category = JobCategory::findOrFail($this->categoryId);
+            $this->fetchAndStoreJobs($apiKey, $category);
 
-                    $categories->each(function ($category) use ($apiKey) {
-                        logger('Job category', [$category->name, $category->query_name]);
-                        $this->fetchAndStoreJobs($apiKey, $category, $this->startFromPage);
-                    });
-                });
-
-        } catch (ApiKeyNotFoundException|CategoryNotFoundException|\Exception $e) {
+        } catch (\Exception $e) {
             Log::error('Error on job fetching', [
                 'message' => $e->getMessage(),
                 'line' => $e->getLine(),
                 'file' => $e->getFile(),
             ]);
 
-           $this->release(60);
-
+            $this->release(60);
         }
     }
 
-    protected function fetchAndStoreJobs($apiKey, JobCategory $category, int $startPage): void
+    protected function fetchAndStoreJobs($apiKey, JobCategory $category): void
     {
-        for ($page = $startPage; $page <= $category->page; $page++) {
+        for ($page = 1; $page <= $this->totalPages; $page++) {
             try {
                 logger('Processing', [
                     'category_id' => $category->id,
@@ -86,8 +76,8 @@ class GetJobData implements ShouldQueue
                     ->update(['request_remaining' => $response->header('X-RateLimit-Requests-Remaining')]);
 
                 if ($response->status() === 429) {
-                    $isLastCategory = $category->id === JobCategory::max('id') && $page === $category->page;
-                    static::dispatch($category->id, $page, $isLastCategory)->delay(now()->addMinutes(1));
+                    static::dispatch($this->categoryId, $this->totalPages, $this->isLastCategory)
+                        ->delay(now()->addMinutes(1));
                     return;
                 }
 
@@ -100,16 +90,15 @@ class GetJobData implements ShouldQueue
                     StoreJobs::dispatch($jobResponseDTO);
                 }
 
-                if ($this->isLastCategory && $page === $category->page) {
+                if ($this->isLastCategory && $page === $this->totalPages) {
                     logger('Job cycle completed');
                     return;
                 }
             } catch (\Exception $e) {
-                $isLastCategory = $category->id === JobCategory::max('id') && $page === $category->page;
-                static::dispatch($category->id, $page, $isLastCategory)->delay(now()->addMinutes(1));
+                static::dispatch($this->categoryId, $this->totalPages, $this->isLastCategory)
+                    ->delay(now()->addMinutes(1));
                 throw $e;
             }
         }
     }
 }
-

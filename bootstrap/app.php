@@ -1,7 +1,9 @@
 <?php
 
 use App\Jobs\AspJob;
+use App\Jobs\DispatchJobCategories;
 use App\Jobs\ReactJob;
+use App\Jobs\ResetAPIKeyLimit;
 use App\Jobs\VueJsJob;
 use App\Jobs\NodeJSJob;
 use App\Jobs\GetJobData;
@@ -32,8 +34,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
         Integration::handles($exceptions);
     })->withSchedule(function (Schedule $schedule) {
-        $schedule->job(new GetJobData())->everyMinute()->withoutOverlapping(960);
-        $schedule->job(new \App\Jobs\ResetAPIKeyLimit())->monthly()->withoutOverlapping(600);
+        $schedule->job(new DispatchJobCategories())->everyMinute();
+        $schedule->job(new ResetAPIKeyLimit())->monthly()->withoutOverlapping(600);
         $schedule->command('model:prune')->everyMinute();
 
     })->create();
