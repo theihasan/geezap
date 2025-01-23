@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Exceptions\CategoryNotFoundException;
 use App\Models\JobCategory;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -26,10 +27,14 @@ class DispatchJobCategories implements ShouldQueue
      */
     public function handle(): void
     {
-        JobCategory::query()->chunk(5, function ($categories) {
-            $categories->each(function ($category) {
-                GetJobData::dispatch($category->id,$category->page,$category->id === JobCategory::query()->max('id'));
+        try {
+            JobCategory::query()->chunk(5, function ($categories) {
+                $categories->each(function ($category) {
+                    GetJobData::dispatch($category->id,$category->page,$category->id === JobCategory::query()->max('id'));
+                });
             });
-        });
+        } catch (CategoryNotFoundException | \Exception $e) {
+           logger($e->getMessage());
+        }
     }
 }
