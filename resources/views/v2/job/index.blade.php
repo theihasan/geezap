@@ -75,8 +75,10 @@
                                         <p class="text-gray-300 text-sm md:text-base">{{ $job->employer_name }} •
                                             {{ $job->is_remote ? 'Remote' : $job->city }}</p>
                                         @if ($job->min_salary && $job->max_salary)
-                                            <div class="text-pink-300 font-ubuntu-medium text-base md:text-lg mt-2 md:hidden">
-                                                ${{ number_format($job->min_salary) }} - ${{ number_format($job->max_salary) }}
+                                            <div class="font-semibold text-pink-300">
+                                                $ {{ \App\Helpers\NumberFormatter::formatNumber($job->min_salary) }} -
+                                                $ {{ \App\Helpers\NumberFormatter::formatNumber($job->max_salary) }} /
+                                                {{ $job->salary_period }}
                                             </div>
                                         @endif
                                     </div>
