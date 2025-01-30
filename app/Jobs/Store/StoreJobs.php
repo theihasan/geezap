@@ -24,18 +24,23 @@ class StoreJobs implements ShouldQueue
 
     public function handle(): void
     {
-        foreach ($this->responseDTO->data as $jobData) {
-            $jobData['job_category'] = $this->responseDTO->jobCategory;
-            $jobData['category_image'] = $this->responseDTO->categoryImage;
+        try {
+            foreach ($this->responseDTO->data as $jobData) {
+                $jobData['job_category'] = $this->responseDTO->jobCategory;
+                $jobData['category_image'] = $this->responseDTO->categoryImage;
 
-            $jobDTO = JobDTO::fromArray($jobData);
+                $jobDTO = JobDTO::fromArray($jobData);
 
-            if (!JobListing::query()
-                ->where('job_title', $jobDTO->jobTitle)
-                ->exists()
-            ) {
-                JobListing::query()->create($jobDTO->toArray());
+                if (!JobListing::query()
+                    ->where('job_title', $jobDTO->jobTitle)
+                    ->exists()
+                ) {
+                    JobListing::query()->create($jobDTO->toArray());
+                }
             }
+        } catch (\PDOException|\Exception $e){
+            logger()->debug('Exception sent from store job class', $e->getMessage());
+            $this->release(60);
         }
     }
 }
