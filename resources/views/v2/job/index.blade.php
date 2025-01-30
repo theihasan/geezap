@@ -106,12 +106,12 @@
                             </div>
 
                             <div class="flex flex-wrap gap-2 mt-4">
-        <span class="px-3 py-1 bg-pink-500/10 text-pink-300 rounded-full text-sm font-oxanium-semibold">
-            {{ $job->category->name }}
-        </span>
                                 <span class="px-3 py-1 bg-pink-500/10 text-pink-300 rounded-full text-sm font-oxanium-semibold">
-            {{ $job->employment_type }}
-        </span>
+                                    {{ $job->category->name }}
+                                </span>
+                                <span class="px-3 py-1 bg-pink-500/10 text-pink-300 rounded-full text-sm font-oxanium-semibold">
+                                    {{ $job->employment_type }}
+                                </span>
                             </div>
 
                             <div class="flex justify-end mt-6">
