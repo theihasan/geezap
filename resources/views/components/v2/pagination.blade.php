@@ -8,7 +8,7 @@
             Previous
         </button>
     @else
-        <a href="{{ $jobs->previousPageUrl() }}" wire:navigate
+        <a wire:navigate href="{{ $jobs->previousPageUrl() }}"
            class="px-4 py-2 rounded-lg bg-white/10 text-gray-300 hover:bg-white/20">
             Previous
         </a>

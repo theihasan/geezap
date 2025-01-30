@@ -1,5 +1,5 @@
 <div class="min-h-screen">
-   <x-loading />
+    <x-loading />
     <x-notification />
     <section class="py-20 font-ubuntu">
         <div class="max-w-4xl mx-auto px-6">
@@ -41,13 +41,17 @@
                     </div>
                 @else
                     @foreach($this->applications as $application)
-                        <div class="bg-[#1a1a3a] p-6 rounded-2xl border border-gray-700 font-ubuntu-regular">
+                        <div class="bg-[#1a1a3a] p-6 rounded-2xl border border-gray-700 font-ubuntu-regular hover:border-pink-500/50 transition-all">
                             <div class="flex justify-between items-start">
-                                <div>
-                                    <a target="__blank" href="{{route('job.show', $application->slug)}}">
-                                        <h2 class="text-2xl font-semibold text-white font-oxanium-semibold">{{ $application->job_title }}</h2>
+                                <div class="space-y-2">
+                                    <a target="__blank" href="{{route('job.show', $application->slug)}}" class="group">
+                                        <h2 class="text-2xl font-semibold text-white font-oxanium-semibold group-hover:text-pink-400 transition-colors">{{ $application->job_title }}</h2>
                                     </a>
-                                    <p class="text-gray-300 mb-2 font-ubuntu-light">{{ $application->employer_name }} {{ $application->city }} • {{ $application->country }}</p>
+                                    <p class="text-gray-300 font-ubuntu-light">{{ $application->employer_name }} {{ $application->city }} • {{ $application->country }}</p>
+                                    <div class="flex items-center gap-2 text-sm text-gray-400">
+                                        <i class="las la-calendar text-pink-400"></i>
+                                        Applied on {{ $application->created_at->format('jS M Y') }}
+                                    </div>
                                 </div>
                                 <button
                                     wire:click="removeSavedJob({{$application->id}})"
@@ -61,8 +65,8 @@
                 @endif
             </div>
 
-            <!-- Pagination remains the same -->
-           <x-pagination :pages="$this->applications" />
+            <!-- Pagination -->
+            <x-v2.pagination :jobs="$this->applications"></x-v2.pagination>
         </div>
     </section>
 </div>
