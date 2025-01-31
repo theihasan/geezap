@@ -66,6 +66,7 @@
                             <label class="text-sm text-gray-400 block mb-1">Email Address*</label>
                             <input type="email" value="{{ auth()->user()->email }}" disabled
                                    class="w-full bg-white/5 border border-gray-700 rounded-xl px-4 py-2.5 text-white/50">
+                            @error('email') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
 
                         <!-- Date of Birth -->
@@ -106,11 +107,13 @@
                                 <label class="text-sm text-gray-400 block mb-1">State</label>
                                 <input type="text" name="state" value="{{ auth()->user()->state }}"
                                        class="w-full bg-[#1a1a3a] border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500">
+                                @error('state') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                             </div>
                             <div>
                                 <label class="text-sm text-gray-400 block mb-1">Country</label>
                                 <input type="text" name="country" value="{{ auth()->user()->country }}"
                                        class="w-full bg-[#1a1a3a] border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500">
+                                @error('country') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                             </div>
                         </div>
 
@@ -127,6 +130,7 @@
                                     </option>
                                 @endforeach
                             </select>
+                            @error('timezone') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
 
                         <!-- Bio -->
@@ -134,6 +138,7 @@
                             <label class="text-sm text-gray-400 block mb-1">Bio</label>
                             <textarea name="bio"
                                       class="w-full bg-white/5 border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500 h-24 resize-none">{{ auth()->user()->bio }}</textarea>
+                            @error('bio') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
                         </div>
 
                         <button type="submit"
@@ -250,7 +255,10 @@
                                         <div>
                                             <label class="text-sm text-gray-400 block mb-1">Position*</label>
                                             <input type="text" name="position[]" value="{{ $position }}"
-                                                   class="w-full bg-white/5 border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500">
+                                                   class="w-full bg-white/5 border @error('position.'.$index) border-red-500 @else border-gray-700 @enderror rounded-xl px-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500">
+                                            @error('position.'.$index)
+                                            <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
+                                            @enderror
                                         </div>
                                         <div>
                                             <label class="text-sm text-gray-400 block mb-1">Company Name*</label>
@@ -328,7 +336,10 @@
                                         <div>
                                             <label class="text-sm text-gray-400 block mb-1">Skill Name</label>
                                             <input type="text" name="skill[]" value="{{ $skill }}"
-                                                   class="w-full bg-white/5 border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500">
+                                                   class="w-full bg-white/5 border @error('skill.'.$index) border-red-500 @else border-gray-700 @enderror rounded-xl px-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500">
+                                            @error('skill.'.$index)
+                                            <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
+                                            @enderror
                                         </div>
                                         <div>
                                             <label class="text-sm text-gray-400 block mb-1">Skill Level</label>
@@ -378,6 +389,9 @@
                                         <input type="text" name="{{ $label->value }}" value="{{ auth()->user()->{$label->value} }}"
                                                class="w-full bg-white/5 border border-gray-700 rounded-xl pl-10 pr-4 py-2.5 text-white focus:border-pink-500 focus:outline-none focus:ring-1 focus:ring-pink-500"
                                                placeholder="Enter {{$label->value}} username only">
+                                        @error($label->value)
+                                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                                        @enderror
                                     </div>
                                 </div>
                             @endforeach
