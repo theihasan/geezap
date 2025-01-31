@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Redirect;
 
 class ProfileService
 {
-    public function updatePersonalInfo(PersonalInfoUpdateRequest $request, $user): void
+    public function updatePersonalInfo(PersonalInfoUpdateRequest $request, User $user): void
     {
         $data = $request->validated();
         $user->update([
@@ -29,7 +29,7 @@ class ProfileService
         ]);
     }
 
-    public function updateContactInfo(ContactInfoUpdateRequest $request, $user): void
+    public function updateContactInfo(ContactInfoUpdateRequest $request, User $user): void
     {
         $data = $request->validated();
         $user->update([
@@ -38,7 +38,7 @@ class ProfileService
         ]);
     }
 
-    public function updatePassword(PasswordUpdateRequest $request, $user)
+    public function updatePassword(PasswordUpdateRequest $request, User $user)
     {
         $data = $request->validated();
         if(!Hash::check($data['current_password'], $user->password)) {
@@ -49,9 +49,23 @@ class ProfileService
         ]);
     }
 
-    public function updateSocialMediaInfo(SocialMediaInfoUpdateRequest $request, $user): void
+    public function updateSocialMediaInfo(SocialMediaInfoUpdateRequest $request, User $user): void
     {
         $data = $request->validated();
+
+        $socialPlatforms = [
+            'facebook' => 'https://www.facebook.com/',
+            'twitter' => 'https://www.twitter.com/',
+            'linkedin' => 'https://www.linkedin.com/',
+            'github' => 'https://www.github.com/'
+        ];
+
+        foreach ($socialPlatforms as $platform => $baseUrl) {
+            if (!empty($data[$platform]) && !str_contains($data[$platform], "$platform.com")) {
+                $data[$platform] = $baseUrl . $data[$platform];
+            }
+        }
+
         $user->update([
             'facebook' => $data['facebook'] ?? '',
             'twitter' => $data['twitter'] ?? '',
