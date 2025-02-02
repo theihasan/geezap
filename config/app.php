@@ -123,4 +123,6 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'exception_notification_mail' => env('EXCEPTION_NOTIFICATION_MAIL', ''),
+
 ];

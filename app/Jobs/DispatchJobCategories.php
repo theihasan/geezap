@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Events\ExceptionHappenEvent;
 use App\Exceptions\CategoryNotFoundException;
 use App\Models\JobCategory;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -34,7 +35,8 @@ class DispatchJobCategories implements ShouldQueue
                 });
             });
         } catch (CategoryNotFoundException | \Exception $e) {
-           logger($e->getMessage());
+            ExceptionHappenEvent::dispatch($e);
+            logger($e->getMessage());
         }
     }
 }
