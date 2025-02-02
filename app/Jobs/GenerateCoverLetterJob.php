@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Events\CoverLetterGenerated;
+use App\Events\ExceptionHappenEvent;
 use App\Models\User;
 use App\Models\UserApiUsage;
 use App\Services\AIService;
@@ -55,7 +56,7 @@ class GenerateCoverLetterJob implements ShouldQueue
 
 
         } catch (\Exception $e) {
-
+            ExceptionHappenEvent::dispatch($e);
             $this->recordUsage(false);
 
             return [

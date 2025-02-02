@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\DTO\JobResponseDTO;
 use App\Enums\ApiName;
+use App\Events\ExceptionHappenEvent;
 use App\Exceptions\ApiKeyNotFoundException;
 use App\Jobs\Store\StoreJobs;
 use App\Models\ApiKey;
@@ -45,6 +46,7 @@ class GetJobData implements ShouldQueue
             $this->fetchAndStoreJobs($apiKey, $category);
 
         } catch (\Exception $e) {
+            ExceptionHappenEvent::dispatch($e);
             Log::error('Error on job fetching', [
                 'message' => $e->getMessage(),
                 'line' => $e->getLine(),
@@ -95,6 +97,7 @@ class GetJobData implements ShouldQueue
                     return;
                 }
             } catch (\Exception $e) {
+                ExceptionHappenEvent::dispatch($e);
                 static::dispatch($this->categoryId, $this->totalPages, $this->isLastCategory)
                     ->delay(now()->addMinutes(1));
                 throw $e;

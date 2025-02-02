@@ -3,6 +3,7 @@ namespace App\Jobs\Store;
 
 use App\DTO\JobDTO;
 use App\DTO\JobResponseDTO;
+use App\Events\ExceptionHappenEvent;
 use App\Models\JobListing;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -39,6 +40,7 @@ class StoreJobs implements ShouldQueue
                 }
             }
         } catch (\PDOException|\Exception $e){
+            ExceptionHappenEvent::dispatch($e);
             logger()->debug('Exception sent from store job class', $e->getMessage());
             $this->release(60);
         }
