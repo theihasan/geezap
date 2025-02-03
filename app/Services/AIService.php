@@ -2,94 +2,155 @@
 
 namespace App\Services;
 
-use App\Constants\CoverLetterPrompt;
 use App\Models\User;
 use Illuminate\Support\Facades\Http;
 
 class AIService
 {
-    public function getChatGPTResponse(User $user, array $requestData): array
+    public function getChatResponse(User $user, array $jobData, callable $callback, ?string $feedback = null): string
     {
-        try {
-            $prompt = $this->generatePrompt($user, $requestData);
-
-            if (empty(config('ai.chat_gpt_api_key'))) {
-                throw new \Exception('OpenAI API key is not configured');
-            }
-
-            $response = Http::openai()->post('/completions', [
-                'model' => 'gpt-3.5-turbo-16k',
-                'messages' => [
-                    [
-                        'role' => 'system',
-                        'content' => 'You are a helpful assistant.',
-                    ],
-                    [
-                        'role' => 'user',
-                        'content' => $prompt,
-                    ],
-                ],
-                'temperature' => 0.7,
-                'max_tokens' => 1000,
-            ]);
-
-            if (!$response->successful()) {
-                throw new \Exception('OpenAI API returned status code: ' . $response->status() . ' with body: ' . $response->body());
-            }
-
-            $responseData = $response->json('choices.0.message.content');
-
-
-            if (!isset($responseData)) {
-                throw new \Exception('Unexpected response structure from OpenAI API: ' . json_encode($responseData));
-            }
-
-            if (empty($responseData)) {
-                throw new \Exception('Empty content received from OpenAI API');
-            }
-
-            return [
-                'message' => 'Cover letter generated successfully',
-                'status' => 200,
-                'data' => [
-                    'response' => $responseData,
-                ],
-            ];
-
-        } catch (\Exception $e) {
-            return [
-                'message' => 'Failed to generate cover letter: ' . $e->getMessage(),
-                'status' => 500,
-                'error' => $e->getMessage()
-            ];
-        }
-    }
-
-    private function generatePrompt(User $user, array $requestData): string
-    {
-
-        if (empty($requestData['job_title']) ||
-            empty($requestData['employer_name']) ||
-            empty($requestData['description'])) {
-            throw new \Exception('Missing required fields: job_title, employer_name, or job_description');
-        }
-
-        $experience = is_array($user->experience) ? implode(', ', $user->experience) : $user->experience;
-        $skills = is_array($user->skills) ? implode(', ', $user->skills) : $user->skills;
-
-        $prompt = CoverLetterPrompt::getRandomPrompt();
-
-        $replacements = [
-            '[JobTitle]' => $requestData['job_title'],
-            '[CompanyName]' => $requestData['employer_name'],
-            '[JobDescription]' => $requestData['description'],
-            '[Experience]' => $experience,
-            '[Skills]' => $skills,
-            '[Name]' => $user->name
+        $messages = [
+            [
+                'role' => 'system',
+                'content' => 'You are a professional CV writer helping to generate a cover letter. Create compelling, personalized cover letters that highlight the candidate\'s relevant experience and skills.'
+            ]
         ];
 
-        return str_replace(array_keys($replacements), array_values($replacements), $prompt);
+        if ($feedback) {
+            $messages[] = [
+                'role' => 'user',
+                'content' => $this->buildPrompt($user, $jobData)
+            ];
+            $messages[] = [
+                'role' => 'assistant',
+                'content' => $this->answer ?? ''
+            ];
+            $messages[] = [
+                'role' => 'user',
+                'content' => "Please improve the cover letter based on this feedback: {$feedback}. Keep the same professional tone but incorporate these changes."
+            ];
+        } else {
+            $messages[] = [
+                'role' => 'user',
+                'content' => $this->buildPrompt($user, $jobData)
+            ];
+        }
+
+        $response = Http::openai()
+            ->withOptions([
+                'stream' => true,
+            ])
+            ->withHeaders([
+                'Accept' => 'text/event-stream',
+            ])
+            ->post('completions', [
+                'model' => 'gpt-3.5-turbo-16k',
+                'messages' => $messages,
+                'temperature' => 0.7,
+                'stream' => true,
+                'max_tokens' => 1000,
+                'presence_penalty' => 0.6,
+                'frequency_penalty' => 0.5
+            ]);
+
+        $buffer = '';
+        $fullResponse = '';
+
+        $stream = $response->getBody();
+
+        while (!$stream->eof()) {
+            $chunk = $stream->read(1024);
+            $lines = explode("\n", $chunk);
+
+            foreach ($lines as $line) {
+                $line = trim($line);
+                if (empty($line)) continue;
+                if ($line === 'data: [DONE]') break;
+
+                if (str_starts_with($line, 'data: ')) {
+                    $json = substr($line, 6);
+                    $data = json_decode($json, true);
+
+                    if (isset($data['choices'][0]['delta']['content'])) {
+                        $text = $data['choices'][0]['delta']['content'];
+                        $buffer .= $text;
+                        $fullResponse .= $text;
+
+                        if (str_ends_with($buffer, '.') ||
+                            str_ends_with($buffer, '!') ||
+                            str_ends_with($buffer, '?') ||
+                            str_ends_with($buffer, "\n") ||
+                            strlen($buffer) > 100) {
+                            $callback($buffer);
+                            $buffer = '';
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!empty($buffer)) {
+            $callback($buffer);
+        }
+
+        return $fullResponse;
     }
 
+    private function buildPrompt(User $user, array $jobData): string
+    {
+        $skills = is_array($user->skills) ? implode(', ', $user->skills) : '';
 
+        $experience = '';
+        if (is_array($user->experience)) {
+            $experienceItems = [];
+            foreach ($user->experience as $exp) {
+                if (isset($exp['title']) && isset($exp['company'])) {
+                    $duration = '';
+                    if (isset($exp['start_date'])) {
+                        $duration .= $exp['start_date'];
+                        if (isset($exp['end_date'])) {
+                            $duration .= " - " . $exp['end_date'];
+                        }
+                    }
+                    $experienceItems[] = "{$exp['title']} at {$exp['company']} ($duration)";
+                }
+            }
+            $experience = implode("\n", $experienceItems);
+        }
+
+        return <<<EOT
+        Create a professional and engaging cover letter for the following job opportunity. The cover letter should be well-structured and highlight the candidate's relevant experience and skills.
+
+        Job Details:
+        Title: {$jobData['job_title']}
+        Company: {$jobData['employer_name']}
+        Description: {$jobData['description']}
+
+        Candidate Profile:
+        Name: {$user->name}
+        Current Role: {$user->occupation}
+        Location: {$user->state}, {$user->country}
+
+        Key Skills:
+        {$skills}
+
+        Professional Experience:
+        {$experience}
+
+        Additional Information:
+        {$user->bio}
+
+        Guidelines:
+        1. Start with a strong opening paragraph that mentions the specific role and company
+        2. Demonstrate understanding of the company's needs and how the candidate's experience matches them
+        3. Use specific examples from the candidate's experience to demonstrate relevant skills
+        4. Keep a professional yet enthusiastic tone
+        5. Include a strong closing paragraph expressing interest in next steps
+        6. Format the letter properly with appropriate spacing and paragraphs
+        7. Ensure the letter is concise but comprehensive (around 300-400 words)
+        8. Highlight key achievements and skills that directly relate to the job requirements
+
+        Note: Focus on creating a personalized letter that shows why this candidate is uniquely qualified for this specific role.
+        EOT;
+    }
 }
