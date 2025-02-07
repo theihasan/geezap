@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Caches\JobCategoryCache;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
-use JobCategoryCache;
 
 class JobCategoryController extends Controller
 {

@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Caches;
+
 use App\Models\JobListing;
 use Illuminate\Support\Facades\Cache;
 

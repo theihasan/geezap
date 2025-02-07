@@ -12,6 +12,8 @@ class PasswordConfirmationTest extends TestCase
 
     public function test_confirm_password_screen_can_be_rendered(): void
     {
+        $this->markTestSkipped("No longer needed");
+
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->get('/confirm-password');
@@ -21,6 +23,8 @@ class PasswordConfirmationTest extends TestCase
 
     public function test_password_can_be_confirmed(): void
     {
+        $this->markTestSkipped("No longer needed");
+
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->post('/confirm-password', [

@@ -16,17 +16,7 @@ class ProfileService
     public function updatePersonalInfo(PersonalInfoUpdateRequest $request, User $user): void
     {
         $data = $request->validated();
-        $user->update([
-            'name' => $data['name'],
-            'address' => $data['address'],
-            'dob' => $data['dob'],
-            'state' => $data['state'],
-            'country' => $data['country'],
-            'occupation' => $data['occupation'],
-            'timezone' => $data['timezone'],
-            'phone' => $data['phone'],
-            'bio' => $data['bio'],
-        ]);
+        $user->update($data);
     }
 
     public function updateContactInfo(ContactInfoUpdateRequest $request, User $user): void

@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Caches\JobListingCache;
+use App\Caches\JobPageCache;
+use App\Caches\JobViewsCache;
+use App\Caches\RelatedJobListingCache;
 use App\Services\MetaTagGenerator;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
-use JobListingCache;
-use JobPageCache;
-use JobViewsCache;
-use RelatedJobListingCache;
 
 class JobController extends Controller
 {

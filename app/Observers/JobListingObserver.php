@@ -1,16 +1,16 @@
 <?php
 namespace App\Observers;
 
-use App\Enums\JobCategory;
+use App\Caches\JobCategoryCache;
+use App\Caches\JobListingCache;
+use App\Caches\JobPageCache;
+use App\Caches\JobsCountCache;
+use App\Caches\LatestJobsCache;
+use App\Caches\MostViewedJobsCache;
+use App\Caches\RelatedJobListingCache;
 use App\Models\JobListing;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
-use JobCategoryCache;
-use JobPageCache;
-use JobsCountCache;
-use LatestJobsCache;
-use MostViewedJobsCache;
-use RelatedJobListingCache;
 
 class JobListingObserver
 {
@@ -42,10 +42,10 @@ class JobListingObserver
 
     protected function clearCache(): void
     {
-        Cache::forget('job_*');
         Cache::forget('jobCategoriesJobsCount');
         Cache::forget('jobCategoriesAll');
 
+        JobListingCache::invalidate();
         JobPageCache::invalidate();
         MostViewedJobsCache::invalidate();
         JobsCountCache::invalidateLastWeekAdded();
@@ -55,6 +55,6 @@ class JobListingObserver
         LatestJobsCache::invalidate();
         JobCategoryCache::invalidate();
         JobsCountCache::invalidateCategoriesCount();
-        
+
     }
 }

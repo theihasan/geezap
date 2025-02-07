@@ -2,16 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\JobListing;
+use App\Caches\JobCategoryCache;
+use App\Caches\JobsCountCache;
+use App\Caches\LatestJobsCache;
+use App\Caches\MostViewedJobsCache;
 use App\Services\MetaTagGenerator;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Cache;
-use JobCategoryCache;
-use JobsCountCache;
-use LatestJobsCache;
-use MostViewedJobsCache;
 
 class HomePageController extends Controller
 {

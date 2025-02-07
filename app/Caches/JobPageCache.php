@@ -1,4 +1,5 @@
 <?php
+namespace App\Caches;
 
 use App\Models\JobListing;
 use Illuminate\Support\Facades\Cache;
@@ -37,9 +38,9 @@ class JobPageCache{
         return 'jobs_page_' . $request->get('page', 1) . '_' . md5(serialize($request->all()));
     }
 
-    public static function keyPrefix($page)
+    public static function keyPrefix()
     {
-        return 'jobs_page_*' ;
+        return 'jobs_*' ;
     }
 
 }
