@@ -17,14 +17,19 @@ class RelatedJobListingCache{
         });
     }
 
-    public static function invalidate($slug)
+    public static function invalidate()
     {
-        return Cache::forget(self::key($slug));
+        return Cache::forget(self::keyPrefix());
     }
 
     public static function key($slug)
     {
         return 'related_jobs_' . $slug;
+    }
+
+    public static function keyPrefix()
+    {
+        return 'related_jobs_*';
     }
 
 }

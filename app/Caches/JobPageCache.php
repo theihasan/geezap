@@ -27,9 +27,9 @@ class JobPageCache{
         });
     }
 
-    public static function invalidate($page)
+    public static function invalidate()
     {
-        return Cache::forget(self::keyPrefix($page));
+        return Cache::forget(self::keyPrefix());
     }
 
     public static function key($request)
@@ -39,7 +39,7 @@ class JobPageCache{
 
     public static function keyPrefix($page)
     {
-        return 'jobs_page_' . $page . '_*' ;
+        return 'jobs_page_*' ;
     }
 
 }

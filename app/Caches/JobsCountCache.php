@@ -19,7 +19,7 @@ class JobsCountCache{
         });
     }
 
-    public static function availableJobs()
+    public static function availableJobsCount()
     {
         return Cache::remember(self::availableJobsKey(), 24 * 60, function () {
             return JobListing::count();
@@ -28,16 +28,29 @@ class JobsCountCache{
 
     public static function categoriesCount()
     {
-        return Cache::remember(self::jobCategoriesCountKey(), 24 * 60, function () {
+        return Cache::remember(self::categoriesCountKey(), 24 * 60, function () {
             return JobListing::distinct()->count('job_category');
         });
     }
 
-    public static function invalidate()
+    public static function invalidateTodayAdded()
     {
         Cache::forget(self::todayAdded());
+    }
+
+    public static function invalidateLastWeekAdded()
+    {
         Cache::forget(self::lastWeekAdded());
-        Cache::forget(self::categoriesCount());
+    }
+
+    public static function invalidateCategoriesCount()
+    {
+        Cache::forget(self::categoriesCountKey());
+    }
+
+    public static function invalidateAvailableJobsCount()
+    {
+        Cache::forget(self::availableJobsKey());
     }
 
     public static function todayAddedKey()
@@ -55,7 +68,7 @@ class JobsCountCache{
         return 'availableJobs';
     }
 
-    public static function jobCategoriesCountKey()
+    public static function categoriesCountKey()
     {
         return 'jobCategoriesCount';
     }

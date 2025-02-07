@@ -27,7 +27,7 @@ class HomePageController extends Controller
 
         $jobCategoriesCount = JobsCountCache::categoriesCount();
         
-        $availableJobs = JobsCountCache::availableJobs();
+        $availableJobs = JobsCountCache::availableJobsCount();
 
         $latestJobs = LatestJobsCache::get($mostViewedJobs->pluck('id')->toArray());
 
