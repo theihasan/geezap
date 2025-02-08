@@ -30,7 +30,7 @@ class UserFactory extends Factory
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+            'password' => Hash::make('password'), // password
             'address' => fake()->streetAddress(),
             'dob' => fake()->date('Y-m-d', '-25 years'),
             'state' => fake()->state(),
