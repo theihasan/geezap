@@ -2,6 +2,11 @@
 @section('content')
     <section class="py-20 bg-[#12122b]">
         <div class="max-w-7xl mx-auto px-6">
+            <div class="mb-8">
+                <h2 class="text-2xl font-ubuntu-bold text-white">
+                    Available Jobs <span class="text-pink-500">({{ $jobs->total() }})</span>
+                </h2>
+            </div>
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <!-- Left Sidebar Filter Section -->
                 <x-v2.job.filter></x-v2.job.filter>
