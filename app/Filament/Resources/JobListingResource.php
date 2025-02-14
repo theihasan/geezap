@@ -139,7 +139,15 @@ class JobListingResource extends Resource
                     ->dateTime('jS M Y')
             ])
             ->filters([
-
+                Tables\Filters\SelectFilter::make('publisher')
+                    ->label('Source')
+                    ->options(fn () => JobListing::distinct()
+                        ->pluck('publisher', 'publisher')
+                        ->toArray())
+                    ->multiple(),
+                Tables\Filters\TernaryFilter::make('is_remote')
+                    ->label('Remote Only')
+                    ->default(false)
             ])
             ->actions([
                 Tables\Actions\ActionGroup::make([
