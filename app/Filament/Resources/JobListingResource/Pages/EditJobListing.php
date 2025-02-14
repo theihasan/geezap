@@ -40,4 +40,22 @@ class EditJobListing extends EditRecord
                 ->url(route('filament.geezap.resources.job-listings.index')),
         ];
     }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $data['benefits'] = array_map('trim', explode(',', $data['benefits']));
+        $data['qualifications'] = array_map('trim', explode(',', $data['qualifications']));
+        $data['responsibilities'] = array_map('trim', explode(',', $data['responsibilities']));
+
+        return $data;
+    }
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        $data['benefits'] = implode(',', $data['benefits'] ?? []);
+        $data['qualifications'] = implode(',', $data['qualifications'] ?? []);
+        $data['responsibilities'] = implode(',', $data['responsibilities'] ?? []);
+
+        return $data;
+    }
 }
