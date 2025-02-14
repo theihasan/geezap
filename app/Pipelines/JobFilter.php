@@ -30,6 +30,10 @@ class JobFilter
             $query->whereIn('employment_type', $jobTypes);
         });
 
+        $jobs->when(request()->get('source'), function ($query, $source) {
+            $query->where('publisher', $source);
+        });
+
         return $next($jobs);
     }
 }

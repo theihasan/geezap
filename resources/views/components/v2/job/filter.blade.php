@@ -9,6 +9,19 @@
                    placeholder="Search by title..."
                    class="w-full bg-[#12122b] border border-gray-700 text-gray-300 rounded-lg px-4 py-2 mt-2 focus:border-pink-500 focus:outline-none">
         </div>
+        <!-- Source Filter -->
+        <div>
+            <label class="text-gray-400 text-sm">Source</label>
+            <select name="source"
+                    class="w-full bg-[#12122b] border border-gray-700 text-gray-300 rounded-lg px-4 py-2 mt-2 focus:border-pink-500 focus:outline-none">
+                <option value="">All Sources</option>
+                @foreach(App\Models\JobListing::distinct()->pluck('publisher') as $publisher)
+                    <option value="{{ $publisher }}" @selected(request('source') == $publisher)>
+                        {{ $publisher }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
 
         <!-- Job Category Filter -->
         <div>

@@ -4,8 +4,10 @@ namespace App\Models;
 
 use Abbasudo\Purity\Traits\Filterable;
 use App\Filters\JobFilter;
+use App\Models\Scopes\JobListingScope;
 use App\Observers\JobListingObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -15,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Log;
 
 #[ObservedBy([JobListingObserver::class])]
+#[ScopedBy([JobListingScope::class])]
 class JobListing extends Model
 {
     use HasFactory, Filterable, Prunable;
