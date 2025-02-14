@@ -3,7 +3,7 @@ namespace App\Caches;
 
 use App\Models\JobListing;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Pipeline;
+use Illuminate\Pipeline\Pipeline;
 
 class JobPageCache{
 
@@ -13,12 +13,13 @@ class JobPageCache{
             $jobsQuery = JobListing::query()
                 ->with(['category']);
 
-            $jobsQuery = app(Pipeline::class)
+            $jobsQuery = (new Pipeline(app()))
                 ->send($jobsQuery)
                 ->through([
                     \App\Pipelines\JobFilter::class,
                 ])
                 ->thenReturn();
+
 
             return $jobsQuery
                 ->latest('posted_at')
