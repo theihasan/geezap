@@ -17,7 +17,7 @@ class HomePageController extends Controller
         $mostViewedJobs = Cache::remember('mostViewedJobs', 60 * 24, function () {
             return JobListing::query()
                 ->latest('views')
-                ->limit(10)
+                ->limit(3)
                 ->get();
         });
 
@@ -41,7 +41,7 @@ class HomePageController extends Controller
         $latestJobs = Cache::remember('latestJobs', 60 * 24, function () use($mostViewedJobs) {
             return JobListing::latest()
                 ->whereNotIn('id',$mostViewedJobs->pluck('id')->toArray())
-                ->limit(15)
+                ->limit(3)
                 ->get();
         });
 
