@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\DTO\JobResponseDTO;
 use App\Enums\ApiName;
 use App\Events\ExceptionHappenEvent;
+use App\Events\NotifyUserAboutNewJobsEvent;
 use App\Exceptions\ApiKeyNotFoundException;
 use App\Jobs\Store\StoreJobs;
 use App\Models\ApiKey;
@@ -93,7 +94,7 @@ class GetJobData implements ShouldQueue
                 }
 
                 if ($this->isLastCategory && $page === $this->totalPages) {
-                    logger('Job cycle completed');
+                    NotifyUserAboutNewJobsEvent::dispatch();
                     return;
                 }
             } catch (\Exception $e) {
