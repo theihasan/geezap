@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\JobCategory;
-use App\Models\JobListing;
+use App\Caches\JobCategoryCache;
+use App\Caches\JobsCountCache;
+use App\Caches\LatestJobsCache;
+use App\Caches\MostViewedJobsCache;
 use App\Services\MetaTagGenerator;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Cache;
 
 class HomePageController extends Controller
 {
@@ -21,22 +22,19 @@ class HomePageController extends Controller
                 ->get();
         });
 
-        $jobCategories = JobCategory::getTopCategories();
+        $mostViewedJobs = MostViewedJobsCache::get();
 
-        $todayAddedJobsCount = Cache::remember('todayAddedJobsCount', 24 * 60, function () {
-            return JobListing::whereDate('created_at', today())->count();
-        });
 
-        $lastWeekAddedJobsCount = Cache::remember('lastWeekAddedJobsCount', 24 * 60, function () {
-            return JobListing::whereBetween('created_at', [now()->subWeek(), now()])->count();
-        });
+        $jobCategories = JobCategoryCache::getTopCategories();
 
-        $jobCategoriesCount = Cache::remember('jobCategoriesCount', 24 * 60, function () {
-            return JobListing::distinct()->count('job_category');
-        });
-        $availableJobs = Cache::remember('availableJobs', 24 * 60, function () {
-            return JobListing::count();
-        });
+        $todayAddedJobsCount = JobsCountCache::todayAdded();
+
+        $lastWeekAddedJobsCount = JobsCountCache::lastWeekAdded();
+
+        $jobCategoriesCount = JobsCountCache::categoriesCount();
+        
+        $availableJobs = JobsCountCache::availableJobsCount();
+
 
         $latestJobs = Cache::remember('latestJobs', 60 * 24, function () use($mostViewedJobs) {
             return JobListing::latest()
@@ -45,6 +43,9 @@ class HomePageController extends Controller
                 ->get();
         });
 
+        $latestJobs = LatestJobsCache::get($mostViewedJobs->pluck('id')->toArray());
+
+
         $meta = $metaGenerator->getHomePageMeta(
             $availableJobs,
             $todayAddedJobsCount,
@@ -52,8 +53,6 @@ class HomePageController extends Controller
             $lastWeekAddedJobsCount,
             $jobCategories
         );
-
-
 
         return view('v2.index', compact([
             'todayAddedJobsCount',

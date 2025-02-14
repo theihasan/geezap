@@ -1,6 +1,13 @@
 <?php
 namespace App\Observers;
 
+use App\Caches\JobCategoryCache;
+use App\Caches\JobListingCache;
+use App\Caches\JobPageCache;
+use App\Caches\JobsCountCache;
+use App\Caches\LatestJobsCache;
+use App\Caches\MostViewedJobsCache;
+use App\Caches\RelatedJobListingCache;
 use App\Models\JobListing;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
@@ -35,19 +42,19 @@ class JobListingObserver
 
     protected function clearCache(): void
     {
-        Cache::forget('jobs_page_*');
-        Cache::forget('mostViewedJobs');
-        Cache::forget('lastWeekAddedJobsCount');
-        Cache::forget('availableJobs');
-
-        Cache::forget('job_*');
-        Cache::forget('related_jobs_*');
-
-        Cache::forget('latestJobs');
-        Cache::forget('jobCategories');
-        Cache::forget('todayAddedJobsCount');
         Cache::forget('jobCategoriesJobsCount');
-        Cache::forget('jobCategoriesCount');
         Cache::forget('jobCategoriesAll');
+
+        JobListingCache::invalidate();
+        JobPageCache::invalidate();
+        MostViewedJobsCache::invalidate();
+        JobsCountCache::invalidateLastWeekAdded();
+        JobsCountCache::invalidateTodayAdded();
+        JobsCountCache::invalidateAvailableJobsCount();
+        RelatedJobListingCache::invalidate();
+        LatestJobsCache::invalidate();
+        JobCategoryCache::invalidate();
+        JobsCountCache::invalidateCategoriesCount();
+
     }
 }
