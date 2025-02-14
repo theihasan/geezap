@@ -11,7 +11,7 @@ class LatestJobsCache{
         return Cache::remember('latestJobs', 60 * 24, function () use($ids) {
             return JobListing::latest()
                 ->whereNotIn('id', $ids)
-                ->limit(15)
+                ->limit(3)
                 ->get();
         });
     }

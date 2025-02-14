@@ -12,7 +12,7 @@ class MostViewedJobsCache{
         return Cache::remember(self::key(), 60 * 24, function () {
             return JobListing::query()
                 ->latest('views')
-                ->limit(10)
+                ->limit(3)
                 ->get();
         });
     }
