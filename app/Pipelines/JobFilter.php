@@ -30,8 +30,14 @@ class JobFilter
             $query->whereIn('employment_type', $jobTypes);
         });
 
+        //Filter by job source
         $jobs->when(request()->get('source'), function ($query, $source) {
             $query->where('publisher', $source);
+        });
+
+        // Filter by remote status
+        $jobs->when(request()->filled('remote'), function ($query) {
+            $query->where('is_remote', true);
         });
 
         return $next($jobs);

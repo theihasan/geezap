@@ -13,21 +13,21 @@ class JobPageCache{
             $jobsQuery = JobListing::query()
                 ->with(['category']);
 
-            $jobsQuery = (new Pipeline(app()))
+            $jobsQuery = app()->make(Pipeline::class)
                 ->send($jobsQuery)
                 ->through([
                     \App\Pipelines\JobFilter::class,
                 ])
                 ->thenReturn();
 
-
             return $jobsQuery
                 ->latest('posted_at')
-                ->inrandomOrder()
+                ->inRandomOrder()
                 ->paginate(20)
                 ->withQueryString();
         });
     }
+
 
     public static function invalidate()
     {

@@ -36,6 +36,17 @@
                 @endforeach
             </select>
         </div>
+        <!-- Remote Job Filter -->
+        <div>
+            <label class="text-gray-400 text-sm block mb-2">Work Type</label>
+            <div class="space-y-2">
+                <label class="flex items-center gap-3 text-gray-300 cursor-pointer">
+                    <input type="checkbox" name="remote" value="1" @checked(request('remote'))
+                    class="w-5 h-5 bg-[#12122b] text-pink-500 border border-gray-700 rounded-lg focus:ring-pink-500">
+                    <span>Remote Only</span>
+                </label>
+            </div>
+        </div>
 
         <!-- Job Types Filter -->
         <div>
