@@ -25,7 +25,7 @@
                             <img src="{{ $job->employer_logo }}" alt="{{ $job->employer_name }}" style="width: 48px; height: 48px; border-radius: 8px; object-fit: cover;">
                         @endif
                         <div>
-                            <h3 style="margin: 0; font-size: 18px; font-weight: 600; color: #111827;">{{ $job->job_title }}</h3>
+                            <a href="{{route('job.show', ['slug' => $job->slug])}}" style="margin: 0; font-size: 18px; font-weight: 600; color: #111827;">{{ $job->job_title }}</a>
                             <p style="margin: 4px 0 0; color: #4b5563;">{{ $job->employer_name }}</p>
                         </div>
                     </div>

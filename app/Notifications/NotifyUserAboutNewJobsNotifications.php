@@ -36,7 +36,9 @@ class NotifyUserAboutNewJobsNotifications extends Notification implements Should
      */
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)->view(
+        return (new MailMessage)
+            ->subject('New Jobs This Week - Geezap Weekly Digest')
+            ->view(
             'emails.weekly-digest',
             [
                 'user' => $notifiable,
