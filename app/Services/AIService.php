@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Http;
 
 class AIService
 {
-    public function getChatResponse(User $user, array $jobData, callable $callback, ?string $feedback = null): string
+    public function generateCoverLetter(User $user, array $jobData, ?string $feedback = null): string
     {
         $messages = [
             [
@@ -37,63 +37,16 @@ class AIService
         }
 
         $response = Http::openai()
-            ->withOptions([
-                'stream' => true,
-            ])
-            ->withHeaders([
-                'Accept' => 'text/event-stream',
-            ])
             ->post('completions', [
                 'model' => 'gpt-3.5-turbo-16k',
                 'messages' => $messages,
                 'temperature' => 0.7,
-                'stream' => true,
                 'max_tokens' => 1000,
                 'presence_penalty' => 0.6,
                 'frequency_penalty' => 0.5
             ]);
 
-        $buffer = '';
-        $fullResponse = '';
-
-        $stream = $response->getBody();
-
-        while (!$stream->eof()) {
-            $chunk = $stream->read(1024);
-            $lines = explode("\n", $chunk);
-
-            foreach ($lines as $line) {
-                $line = trim($line);
-                if (empty($line)) continue;
-                if ($line === 'data: [DONE]') break;
-
-                if (str_starts_with($line, 'data: ')) {
-                    $json = substr($line, 6);
-                    $data = json_decode($json, true);
-
-                    if (isset($data['choices'][0]['delta']['content'])) {
-                        $text = $data['choices'][0]['delta']['content'];
-                        $buffer .= $text;
-                        $fullResponse .= $text;
-
-                        if (str_ends_with($buffer, '.') ||
-                            str_ends_with($buffer, '!') ||
-                            str_ends_with($buffer, '?') ||
-                            str_ends_with($buffer, "\n") ||
-                            strlen($buffer) > 100) {
-                            $callback($buffer);
-                            $buffer = '';
-                        }
-                    }
-                }
-            }
-        }
-
-        if (!empty($buffer)) {
-            $callback($buffer);
-        }
-
-        return $fullResponse;
+        return $response['choices'][0]['message']['content'];
     }
 
     private function buildPrompt(User $user, array $jobData): string

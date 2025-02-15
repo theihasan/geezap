@@ -18,19 +18,14 @@ class GenerateCoverLetter extends Component
     public function mount(JobListing $job): void
     {
         $this->jobListing = $job;
-        logger()->info('Job Listing Data:', [
-            'job' => $this->jobListing->toArray()
-        ]);
     }
-
 
     private function hasCompleteProfile(mixed $user): bool
     {
         return !empty($user->name) &&
             !empty($user->email) &&
             !empty($user->skills) &&
-            !empty($user->experience) &&
-            !empty($user->occupation);
+            !empty($user->experience);
     }
 
     public function startGeneration(): void
@@ -80,15 +75,12 @@ class GenerateCoverLetter extends Component
     {
         try {
             $aiService = app(AIService::class);
-
-            $response = $aiService->getChatResponse(
+            $this->answer = $aiService->generateCoverLetter(
                 auth()->user(),
                 $this->jobListing->toArray(),
-                null,
                 $isRegeneration ? $this->feedback : null
             );
 
-            $this->answer = $response;
             $this->isGenerating = false;
 
         } catch (\Exception $e) {
@@ -102,8 +94,6 @@ class GenerateCoverLetter extends Component
         }
     }
 
-
-
     public function copyToClipboard(): void
     {
         $this->dispatch('copy-to-clipboard', [
@@ -114,40 +104,6 @@ class GenerateCoverLetter extends Component
             'message' => 'Cover letter copied to clipboard!',
             'type' => 'success'
         ]);
-    }
-
-    public function downloadPDF(): void
-    {
-        try {
-            $pdf = Pdf::loadView('pdfs.cover-letter', [
-                'content' => $this->answer,
-                'user' => auth()->user(),
-                'job' => $this->jobListing
-            ]);
-
-            $filename = 'cover-letter-' . now()->format('Y-m-d-His') . '.pdf';
-            Storage::put('public/cover-letters/' . $filename, $pdf->output());
-
-            $this->dispatch('notify', [
-                'message' => 'Cover letter downloaded successfully!',
-                'type' => 'success'
-            ]);
-
-            $this->dispatch('download-file', [
-                'url' => Storage::url('cover-letters/' . $filename)
-            ]);
-
-        } catch (\Exception $e) {
-            logger()->error('PDF Generation Error', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-
-            $this->dispatch('notify', [
-                'message' => 'Error generating PDF. Please try again.',
-                'type' => 'error'
-            ]);
-        }
     }
 
     public function render()
