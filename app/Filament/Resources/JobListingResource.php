@@ -90,20 +90,20 @@ class JobListingResource extends Resource
                             ->maxLength(255),
                         Forms\Components\TextInput::make('salary_period'),
                         Forms\Components\TagsInput::make('benefits')
-                            ->separator(','),
+                            ->separator(';'),
                     ])->columns(2),
 
                 Forms\Components\Wizard\Step::make('Requirements & Timeline')
                     ->schema([
                         Forms\Components\TagsInput::make('qualifications')
-                            ->separator(','),
+                            ->separator(';'),
                         Forms\Components\TagsInput::make('responsibilities')
-                            ->separator(','),
+                            ->separator(';'),
                         Forms\Components\TextInput::make('required_experience')
                             ->numeric()
                             ->suffix('month'),
                         Forms\Components\TagsInput::make('skills')
-                            ->separator(','),
+                            ->separator(';'),
                         Forms\Components\DateTimePicker::make('posted_at')
                             ->native(false)
                             ->required(),
