@@ -2,6 +2,10 @@
 
 namespace App\Livewire;
 
+use App\Events\ExceptionHappenEvent;
+use App\Exceptions\AIServiceAPIKeyNotFound;
+use App\Exceptions\IncompleteProfileException;
+use App\Exceptions\NonAuthenticatedUser;
 use App\Models\JobListing;
 use App\Services\AIService;
 use Livewire\Component;
@@ -30,30 +34,33 @@ class GenerateCoverLetter extends Component
 
     public function startGeneration(): void
     {
-        if (!auth()->check()) {
+        try {
+            throw_if(!auth()->check(), new NonAuthenticatedUser());
+
+            $user = auth()->user();
+
+            throw_if(!$this->hasCompleteProfile($user), new IncompleteProfileException());
+            throw_if(!config('ai.chat_gpt_api_key'), new AIServiceAPIKeyNotFound());
+
+            $this->isGenerating = true;
+            $this->answer = '';
+            $this->feedback = '';
+            $this->dispatch('open-chat');
+
+            $this->generateCoverLetter();
+        } catch (NonAuthenticatedUser|IncompleteProfileException $e) {
             $this->dispatch('notify', [
-                'message' => 'Please login to generate a cover letter!',
+                'message' => $e->getMessage(),
                 'type' => 'error'
             ]);
-            return;
-        }
-
-        $user = auth()->user();
-
-        if (!$this->hasCompleteProfile($user)) {
+        } catch (AIServiceAPIKeyNotFound $e) {
+            ExceptionHappenEvent::dispatch($e);
             $this->dispatch('notify', [
-                'message' => 'Please complete your profile with skills and experience before generating a cover letter',
+                'message' => 'Something went wrong with ai service. Please try later',
                 'type' => 'error'
             ]);
-            return;
+        } catch (\Throwable $e) {
         }
-
-        $this->isGenerating = true;
-        $this->answer = '';
-        $this->feedback = '';
-        $this->dispatch('open-chat');
-
-        $this->generateCoverLetter();
     }
 
     public function regenerateWithFeedback(): void
