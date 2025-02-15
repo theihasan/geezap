@@ -2,13 +2,33 @@
 
 namespace App\Services;
 
+use App\Exceptions\DailyChatLimitExceededException;
+use App\Models\Airesponse;
 use App\Models\User;
 use Illuminate\Support\Facades\Http;
 
 class AIService
 {
+
+    const DAILY_LIMIT = 5;
+
+    private function checkUserLimit(User $user): bool
+    {
+        $todayResponses = Airesponse::query()
+            ->where('user_id', $user->id)
+            ->whereDate('created_at', today())
+            ->count();
+
+        return $todayResponses < self::DAILY_LIMIT;
+    }
+
+    /**
+     * @throws \Throwable
+     */
     public function getChatResponse(User $user, array $jobData, callable $callback, ?string $feedback = null): string
     {
+        throw_if(! $this->checkUserLimit($user) , new DailyChatLimitExceededException("You've reached your daily limit of " . self::DAILY_LIMIT . " cover letter generations"));
+
         $messages = [
             [
                 'role' => 'system',

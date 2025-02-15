@@ -4,12 +4,13 @@ namespace App\Livewire;
 
 use App\Events\ExceptionHappenEvent;
 use App\Exceptions\AIServiceAPIKeyNotFound;
+use App\Exceptions\DailyChatLimitExceededException;
 use App\Exceptions\IncompleteProfileException;
 use App\Exceptions\NonAuthenticatedUser;
+use App\Models\Airesponse;
 use App\Models\JobListing;
 use App\Services\AIService;
 use Livewire\Component;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
 
 class GenerateCoverLetter extends Component
@@ -83,7 +84,7 @@ class GenerateCoverLetter extends Component
         try {
             $aiService = app(AIService::class);
 
-            $this->answer = $aiService->getChatResponse(
+            $response  = $aiService->getChatResponse(
                 auth()->user(),
                 $this->jobListing->toArray(),
                 function($partial) {
@@ -92,8 +93,23 @@ class GenerateCoverLetter extends Component
                 $isRegeneration ? $this->feedback : null
             );
 
+            Airesponse::query()
+                ->create([
+                'user_id' => auth()->id(),
+                'job_id' => $this->jobListing->id,
+                'response' => $response
+            ]);
+
+            $this->answer = $response;
             $this->isGenerating = false;
 
+        } catch (DailyChatLimitExceededException $e){
+
+            $this->dispatch('notify', [
+                'message' => $e->getMessage(),
+                'type' => 'error'
+            ]);
+            $this->isGenerating = false;
         } catch (\Exception $e) {
             logger()->error('Cover Letter Generation Error', [
                 'error' => $e->getMessage(),
@@ -102,52 +118,7 @@ class GenerateCoverLetter extends Component
 
             $this->answer = 'Sorry, there was an error generating your cover letter. Please try again.';
             $this->isGenerating = false;
-        }
-    }
-
-    public function copyToClipboard(): void
-    {
-        $this->dispatch('copy-to-clipboard', [
-            'text' => $this->answer
-        ]);
-
-        $this->dispatch('notify', [
-            'message' => 'Cover letter copied to clipboard!',
-            'type' => 'success'
-        ]);
-    }
-
-    public function downloadPDF(): void
-    {
-        try {
-            $pdf = Pdf::loadView('pdfs.cover-letter', [
-                'content' => $this->answer,
-                'user' => auth()->user(),
-                'job' => $this->jobListing
-            ]);
-
-            $filename = 'cover-letter-' . now()->format('Y-m-d-His') . '.pdf';
-            Storage::put('public/cover-letters/' . $filename, $pdf->output());
-
-            $this->dispatch('notify', [
-                'message' => 'Cover letter downloaded successfully!',
-                'type' => 'success'
-            ]);
-
-            $this->dispatch('download-file', [
-                'url' => Storage::url('cover-letters/' . $filename)
-            ]);
-
-        } catch (\Exception $e) {
-            logger()->error('PDF Generation Error', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-
-            $this->dispatch('notify', [
-                'message' => 'Error generating PDF. Please try again.',
-                'type' => 'error'
-            ]);
+        } catch (\Throwable $e) {
         }
     }
 
