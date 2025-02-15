@@ -18,7 +18,11 @@ class GenerateCoverLetter extends Component
     public function mount(JobListing $job): void
     {
         $this->jobListing = $job;
+        logger()->info('Job Listing Data:', [
+            'job' => $this->jobListing->toArray()
+        ]);
     }
+
 
     private function hasCompleteProfile(mixed $user): bool
     {
@@ -76,28 +80,29 @@ class GenerateCoverLetter extends Component
     {
         try {
             $aiService = app(AIService::class);
+            logger()->info('Starting Cover Letter Generation', [
+                'user' => auth()->user()->toArray(),
+                'job' => $this->jobListing->toArray()
+            ]);
 
             $this->answer = $aiService->getChatResponse(
                 auth()->user(),
                 $this->jobListing->toArray(),
                 function($partial) {
+                    logger()->info('Streaming Response:', ['partial' => $partial]);
                     $this->stream('answer', $partial);
                 },
                 $isRegeneration ? $this->feedback : null
             );
-
-            $this->isGenerating = false;
-
         } catch (\Exception $e) {
             logger()->error('Cover Letter Generation Error', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-
-            $this->answer = 'Sorry, there was an error generating your cover letter. Please try again.';
-            $this->isGenerating = false;
+            throw $e; // Re-throw to see the error in production
         }
     }
+
 
     public function copyToClipboard(): void
     {
