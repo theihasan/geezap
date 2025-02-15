@@ -39,13 +39,13 @@
                         @endif
 
                         <!-- Generated Content -->
-                            @if(!empty($answer))
-                                <div class="flex justify-start">
-                                    <div class="bg-gray-700 rounded-lg px-4 py-2 max-w-[80%]">
-                                        <p class="text-white whitespace-pre-line">{{ $answer }}</p>
-                                    </div>
+                        @if(!empty($answer))
+                            <div class="flex justify-start">
+                                <div class="bg-gray-700 rounded-lg px-4 py-2 max-w-[80%]">
+                                    <p class="text-white whitespace-pre-line" wire:stream="answer">{{ $answer }}</p>
                                 </div>
-                            @endif
+                            </div>
+                        @endif
 
                         <!-- Loading Indicator -->
                         @if($isGenerating)
@@ -83,6 +83,11 @@
                                                 wire:click="copyToClipboard"
                                                 class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-2">
                                             <i class="las la-copy"></i> Copy
+                                        </button>
+                                        <button type="button"
+                                                wire:click="downloadPDF"
+                                                class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors flex items-center gap-2">
+                                            <i class="las la-download"></i> Download PDF
                                         </button>
                                     </div>
                                     <button type="submit"
