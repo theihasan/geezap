@@ -39,13 +39,13 @@
                         @endif
 
                         <!-- Generated Content -->
-                        @if(!empty($answer))
-                            <div class="flex justify-start">
-                                <div class="bg-gray-700 rounded-lg px-4 py-2 max-w-[80%]">
-                                    <p class="text-white whitespace-pre-line" wire:stream="answer">{{ $answer }}</p>
+                            @if(!empty($answer))
+                                <div class="flex justify-start">
+                                    <div class="bg-gray-700 rounded-lg px-4 py-2 max-w-[80%]">
+                                        <p class="text-white whitespace-pre-line">{{ $answer }}</p>
+                                    </div>
                                 </div>
-                            </div>
-                        @endif
+                            @endif
 
                         <!-- Loading Indicator -->
                         @if($isGenerating)

@@ -80,28 +80,28 @@ class GenerateCoverLetter extends Component
     {
         try {
             $aiService = app(AIService::class);
-            logger()->info('Starting Cover Letter Generation', [
-                'user' => auth()->user()->toArray(),
-                'job' => $this->jobListing->toArray()
-            ]);
 
-            $this->answer = $aiService->getChatResponse(
+            $response = $aiService->getChatResponse(
                 auth()->user(),
                 $this->jobListing->toArray(),
-                function($partial) {
-                    logger()->info('Streaming Response:', ['partial' => $partial]);
-                    $this->stream('answer', $partial);
-                },
+                null,
                 $isRegeneration ? $this->feedback : null
             );
+
+            $this->answer = $response;
+            $this->isGenerating = false;
+
         } catch (\Exception $e) {
             logger()->error('Cover Letter Generation Error', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-            throw $e; // Re-throw to see the error in production
+
+            $this->answer = 'Error generating cover letter. Please try again.';
+            $this->isGenerating = false;
         }
     }
+
 
 
     public function copyToClipboard(): void
