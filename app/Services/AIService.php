@@ -37,7 +37,7 @@ class AIService
         }
 
         $response = Http::openai()
-            ->post('completions', [
+            ->post('/completions', [
                 'model' => 'gpt-3.5-turbo-16k',
                 'messages' => $messages,
                 'temperature' => 0.7,
@@ -46,7 +46,11 @@ class AIService
                 'frequency_penalty' => 0.5
             ]);
 
-        return $response['choices'][0]['message']['content'];
+        if ($response->successful()) {
+            return $response->json('choices.0.message.content');
+        }
+
+        throw new \Exception('Failed to generate cover letter: ' . $response->body());
     }
 
     private function buildPrompt(User $user, array $jobData): string
