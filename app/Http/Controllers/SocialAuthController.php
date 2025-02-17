@@ -64,7 +64,7 @@ class SocialAuthController extends Controller
             $user->update($data);
 
             Auth::login($user, remember: true);
-            return redirect()->intended(session('url.intended', route('home')));
+            return redirect()->to(session('url.intended'));
         } catch (\Exception $e){
             logger('Error on social login: ' . $e->getMessage());
             return redirect()->route('login')->with(['status' => $e->getMessage()]);
