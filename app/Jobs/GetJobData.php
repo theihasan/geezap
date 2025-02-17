@@ -7,17 +7,24 @@ use App\Enums\ApiName;
 use App\Events\ExceptionHappenEvent;
 use App\Events\NotifyUserAboutNewJobsEvent;
 use App\Exceptions\ApiKeyNotFoundException;
+use App\Exceptions\CountryNotFoundException;
 use App\Jobs\Store\StoreJobs;
 use App\Models\ApiKey;
 use App\Models\JobCategory;
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
+use InvalidArgumentException;
+use RuntimeException;
 
 class GetJobData implements ShouldQueue
 {
@@ -41,17 +48,36 @@ class GetJobData implements ShouldQueue
                 ->orderBy('sent_request')
                 ->first();
 
-            ApiKeyNotFoundException::validateApiKey($apiKey);
+            throw_if(
+                !$apiKey,
+                ValidationException::withMessages(['api_key' => 'No valid API key found with remaining requests'])
+            );
+
+            throw_if(
+                $apiKey && $apiKey->request_remaining <= 0,
+                InvalidArgumentException::class,
+                'API key has exhausted its request limit'
+            );
 
             $category = JobCategory::with('countries')->findOrFail($this->categoryId);
 
-            if ($category->countries->isEmpty()) {
-                throw new \Exception('No countries configured for this job category');
-            }
+            throw_if(
+                $category->countries->isEmpty(),
+                ValidationException::withMessages(['countries' => 'No countries configured for category: ' . $category->name])
+            );
+
+            throw_if(
+                $category->page <= 0 || $category->num_page <= 0,
+                InvalidArgumentException::class,
+                'Invalid page configuration for category: ' . $category->name
+            );
+
+            throw_if($category->countries->isEmpty(), new CountryNotFoundException('No countries configured for this job category'));
+
 
             $this->fetchAndStoreJobs($apiKey, $category);
 
-        } catch (\Exception $e) {
+        } catch (ValidationException | InvalidArgumentException| CountryNotFoundException | ModelNotFoundException  | Exception $e) {
             ExceptionHappenEvent::dispatch($e);
             Log::error('Error on job fetching', [
                 'message' => $e->getMessage(),
@@ -83,6 +109,12 @@ class GetJobData implements ShouldQueue
                         'country' => $country->code
                     ]);
 
+                    throw_if($response->status() === 429, new RuntimeException('Rate limit exceeded'));
+
+                    throw_if(!$response->successful(),
+                        new RequestException(sprintf('API request failed with status: %d', $response->status()))
+                    );
+
                     DB::table('api_keys')
                         ->where('id', $apiKey->id)
                         ->update(['request_remaining' => $response->header('X-RateLimit-Requests-Remaining')]);
@@ -106,7 +138,7 @@ class GetJobData implements ShouldQueue
                         NotifyUserAboutNewJobsEvent::dispatch();
                         return;
                     }
-                } catch (\Exception $e) {
+                } catch (RequestException | RuntimeException  | Exception $e) {
                     ExceptionHappenEvent::dispatch($e);
                     static::dispatch($this->categoryId, $this->totalPages, $this->isLastCategory)
                         ->delay(now()->addMinutes(1));
