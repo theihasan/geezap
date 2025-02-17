@@ -1,88 +1,92 @@
-<div
-    class="group relative rounded-2xl border border-gray-700 bg-[#1a1a3a] p-6 transition hover:border-pink-500/50">
-    <div class="flex flex-col gap-6 md:flex-row">
-        <!-- Left Side: Company Logo -->
-        <div class="relative md:w-48">
-            <a href="{{ route('job.show', $job->slug) }}">
-                <img src="{{ $job->employer_logo ?? 'https://placehold.co/400x200/2a2a4a/FFFFFF' }}"
-                     alt="{{ $job->employer_name }}"
-                     class="h-32 w-full rounded-xl object-cover md:h-full">
+@props(['job'])
+
+<div class="relative group rounded-xl bg-[#1a1a3a] border border-gray-800 hover:border-pink-500 transition-colors duration-200">
+    <div class="flex gap-6 p-5">
+        <!-- Left Column -->
+        <div class="flex gap-4 flex-1">
+            <!-- Logo -->
+            <div class="shrink-0">
+                <img
+                    src="{{ $job->employer_logo ?? 'https://placehold.co/100x100/2a2a4a/FFFFFF' }}"
+                    alt="{{ $job->employer_name }}"
+                    class="w-12 h-12 rounded-lg object-cover bg-gray-800/50"
+                >
+            </div>
+
+            <!-- Main Info -->
+            <div class="min-w-0">
+                <h3 class="text-white font-medium truncate hover:text-pink-500 transition-colors">
+                    {{ $job->job_title }}
+                </h3>
+                <p class="text-gray-400 text-sm">{{ $job->employer_name }}</p>
+
+                <!-- Job Meta -->
+                <div class="flex flex-wrap gap-4 mt-3 text-sm text-gray-400">
+                    <div class="flex items-center gap-1.5">
+                        <i class="las la-map-marker"></i>
+                        {{ $job->is_remote ? 'Remote' : $job->city }}
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <i class="las la-clock"></i>
+                        {{ $job->employment_type }}
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <i class="las la-calendar"></i>
+                        {{ $job->created_at->diffForHumans() }}
+                    </div>
+                </div>
+
+                <!-- Tags -->
+                <div class="flex gap-2 mt-3">
+                    <span class="px-2.5 py-1 bg-pink-500/10 text-pink-400 text-xs font-medium rounded-md">
+                        {{ $job->category->name }}
+                    </span>
+                    @if($job->benefits)
+                        <span class="px-2.5 py-1 bg-purple-500/10 text-purple-400 text-xs font-medium rounded-md">
+                            {{ count($job->benefits) }} Benefits
+                        </span>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="flex flex-col items-end justify-between gap-3">
+            <!-- Salary -->
+            @if ($job->min_salary && $job->max_salary)
+                <div class="text-right">
+                    <div class="text-pink-400 font-medium">
+                        ${{ \App\Helpers\NumberFormatter::formatNumber($job->min_salary) }} -
+                        ${{ \App\Helpers\NumberFormatter::formatNumber($job->max_salary) }}
+                    </div>
+                    <div class="text-xs text-gray-500">per {{ $job->salary_period }}</div>
+                </div>
+            @endif
+
+            <!-- Action Button -->
+            <a href="{{ route('job.show', $job->slug) }}"
+               class="inline-flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium text-white
+                      bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500
+                      transition-all duration-200">
+                View Role
+                <i class="las la-arrow-right"></i>
             </a>
         </div>
-
-        <!-- Right Side: Job Details -->
-        <div class="flex-1">
-            <!-- Top Section -->
-            <div class="mb-4 flex flex-col justify-between gap-4 md:flex-row">
-                <div>
-                    <a href="{{ route('job.show', $job->slug) }}"
-                       class="font-medium text-white transition-colors hover:text-pink-500">
-                        <h3 class="text-xl font-semibold text-white">{{ $job->job_title }}</h3>
-                    </a>
-                    <p class="text-gray-300">{{ $job->employer_name }}</p>
-                </div>
-                @if ($job->min_salary && $job->max_salary)
-                    <div class="font-semibold text-pink-300">
-                        $ {{ \App\Helpers\NumberFormatter::formatNumber($job->min_salary) }} -
-                        $ {{ \App\Helpers\NumberFormatter::formatNumber($job->max_salary) }} /
-                        {{ $job->salary_period }}
-                    </div>
-                @endif
-            </div>
-
-            <!-- Job Details Grid -->
-            <div class="mb-6 grid grid-cols-2 gap-4 md:grid-cols-4">
-                <!-- Location -->
-                <div class="flex items-center gap-2">
-                    <i class="las la-map-marker text-pink-500"></i>
-                    <span class="text-gray-300">{{ $job->is_remote ? 'Remote' : $job->city }}</span>
-                </div>
-                <!-- Posted Date -->
-                <div class="flex items-center gap-2">
-                    <i class="las la-calendar text-pink-500"></i>
-                    <span class="text-gray-300">Posted {{ $job->created_at->diffForHumans() }}</span>
-                </div>
-                <!-- Experience -->
-                <div class="flex items-center gap-2">
-                    <i class="las la-briefcase text-pink-500"></i>
-                    <span class="text-gray-300">{{ $job->experience_level ?? 'Not specified' }}</span>
-                </div>
-                <!-- Employment Type -->
-                <div class="flex items-center gap-2">
-                    <i class="las la-clock text-pink-500"></i>
-                    <span class="text-gray-300">{{ $job->employment_type }}</span>
-                </div>
-            </div>
-            @if ($job->description)
-                <p class="mb-4 line-clamp-2 text-gray-300">
-                    {{ Str::limit(strip_tags($job->description), 300) }}
-                </p>
-            @endif
-        </div>
     </div>
 
-    <!-- Fixed Apply Button (visible on hover) -->
-    <div
-        class="absolute bottom-6 right-6 opacity-0 transition-all duration-300 group-hover:opacity-100">
-        <a href="{{ route('job.show', $job->slug) }}"
-           class="flex items-center gap-2 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 px-6 py-3 text-white transition-opacity hover:opacity-90">
-            <span>Apply Now</span>
-            <i class="las la-arrow-right"></i>
-        </a>
-    </div>
-
-    <!-- Company Details Tooltip (visible on hover) -->
+    <!-- Benefits Tooltip -->
     @if($job->benefits)
-        <div
-            class="pointer-events-none absolute bottom-0 left-6 z-10 w-72 translate-y-full transform rounded-xl border border-pink-500/50 bg-[#1a1a3a] p-4 opacity-0 shadow-xl transition-all duration-300 group-hover:opacity-100">
-            <div class="space-y-2 text-sm">
-                <div class="font-semibold text-white">{{ $job->employer_name }}</div>
-                <div class="text-gray-300">{{ ucfirst($job->category->name) ?? 'Technology' }}</div>
+        <div class="absolute top-full left-0 mt-2 w-64 p-4 bg-[#1a1a3a] border border-gray-800 rounded-lg
+                    opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
+            <h4 class="text-sm font-medium text-white mb-2">Benefits</h4>
+            <ul class="space-y-2">
                 @foreach ($job->benefits as $benefit)
-                    <div class="text-gray-300">{{ $benefit }}</div>
+                    <li class="flex items-center gap-2 text-sm text-gray-400">
+                        <i class="las la-check text-green-500"></i>
+                        {{ $benefit }}
+                    </li>
                 @endforeach
-
-            </div>
+            </ul>
         </div>
     @endif
 </div>
