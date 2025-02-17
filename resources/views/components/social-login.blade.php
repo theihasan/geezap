@@ -1,4 +1,7 @@
 <div class="flex flex-col gap-4 font-ubuntu-medium">
+    @php
+        session(['url.intended' => url()->previous()]);
+    @endphp
     <div class="relative">
         <a href="{{route('social.redirect', ['provider' => \App\Enums\SocialProvider::FACEBOOK->value])}}"
            class="pointer-events-none flex items-center gap-3 bg-blue-600/50 text-white px-6 py-3 rounded-xl transition-all font-medium justify-center">

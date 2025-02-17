@@ -16,10 +16,6 @@ class SocialAuthController extends Controller
 {
     public function redirect(string $provider): RedirectResponse|\Illuminate\Http\RedirectResponse
     {
-        if (!session()->has('url.intended')) {
-            session(['url.intended' => url()->previous()]);
-        }
-
         return Socialite::driver($provider)
             ->redirect();
     }
@@ -64,7 +60,7 @@ class SocialAuthController extends Controller
             $user->update($data);
 
             Auth::login($user, remember: true);
-            return redirect()->to(session('url.intended'));
+            return redirect()->intended(route('dashboard'));
         } catch (\Exception $e){
             logger('Error on social login: ' . $e->getMessage());
             return redirect()->route('login')->with(['status' => $e->getMessage()]);
