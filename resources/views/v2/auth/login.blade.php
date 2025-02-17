@@ -49,7 +49,7 @@
                 <span class="text-red-500 text-sm mt-1 block">{{ $message }}</span>
                 @enderror
             </div>
-
+            <input type="hidden" name="intended_url" value="{{ url()->previous() }}">
             <div>
                 <label for="LoginPassword" class="block text-gray-400 mb-1">Password</label>
                 <div class="relative">
