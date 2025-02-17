@@ -48,32 +48,7 @@ class GetJobData implements ShouldQueue
                 ->orderBy('sent_request')
                 ->first();
 
-            throw_if(
-                !$apiKey,
-                ValidationException::withMessages(['api_key' => 'No valid API key found with remaining requests'])
-            );
-
-            throw_if(
-                $apiKey && $apiKey->request_remaining <= 0,
-                InvalidArgumentException::class,
-                'API key has exhausted its request limit'
-            );
-
             $category = JobCategory::with('countries')->findOrFail($this->categoryId);
-
-            throw_if(
-                $category->countries->isEmpty(),
-                ValidationException::withMessages(['countries' => 'No countries configured for category: ' . $category->name])
-            );
-
-            throw_if(
-                $category->page <= 0 || $category->num_page <= 0,
-                InvalidArgumentException::class,
-                'Invalid page configuration for category: ' . $category->name
-            );
-
-            throw_if($category->countries->isEmpty(), new CountryNotFoundException('No countries configured for this job category'));
-
 
             $this->fetchAndStoreJobs($apiKey, $category);
 
