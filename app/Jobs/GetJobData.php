@@ -43,7 +43,12 @@ class GetJobData implements ShouldQueue
 
             ApiKeyNotFoundException::validateApiKey($apiKey);
 
-            $category = JobCategory::findOrFail($this->categoryId);
+            $category = JobCategory::with('countries')->findOrFail($this->categoryId);
+
+            if ($category->countries->isEmpty()) {
+                throw new \Exception('No countries configured for this job category');
+            }
+
             $this->fetchAndStoreJobs($apiKey, $category);
 
         } catch (\Exception $e) {
@@ -60,48 +65,53 @@ class GetJobData implements ShouldQueue
 
     protected function fetchAndStoreJobs($apiKey, JobCategory $category): void
     {
-        for ($page = 1; $page <= $this->totalPages; $page++) {
-            try {
-                logger('Processing', [
-                    'category_id' => $category->id,
-                    'page' => $page
-                ]);
+        foreach ($category->countries as $country) {
+            for ($page = 1; $page <= $this->totalPages; $page++) {
+                try {
+                    logger('Processing', [
+                        'category_id' => $category->id,
+                        'category_name' => $category->name,
+                        'page' => $page,
+                        'country' => $country->code
+                    ]);
 
-                $response = Http::job()->retry([100, 200])->get('/search', [
-                    'query' => $category->query_name,
-                    'page' => $page,
-                    'num_pages' => $category->num_page,
-                    'date_posted' => $category->timeframe,
-                ]);
+                    $response = Http::job()->retry([100, 200])->get('/search', [
+                        'query' => $category->query_name,
+                        'page' => $page,
+                        'num_pages' => $category->num_page,
+                        'date_posted' => $category->timeframe,
+                        'country' => $country->code
+                    ]);
 
-                DB::table('api_keys')
-                    ->where('id', $apiKey->id)
-                    ->update(['request_remaining' => $response->header('X-RateLimit-Requests-Remaining')]);
+                    DB::table('api_keys')
+                        ->where('id', $apiKey->id)
+                        ->update(['request_remaining' => $response->header('X-RateLimit-Requests-Remaining')]);
 
-                if ($response->status() === 429) {
+                    if ($response->status() === 429) {
+                        static::dispatch($this->categoryId, $this->totalPages, $this->isLastCategory)
+                            ->delay(now()->addMinutes(1));
+                        return;
+                    }
+
+                    if ($response->ok()) {
+                        $jobResponseDTO = JobResponseDTO::fromResponse(
+                            $response->json(),
+                            $category->id,
+                            $category->category_image
+                        );
+                        StoreJobs::dispatch($jobResponseDTO);
+                    }
+
+                    if ($this->isLastCategory && $page === $this->totalPages && $country->is($category->countries->last())) {
+                        NotifyUserAboutNewJobsEvent::dispatch();
+                        return;
+                    }
+                } catch (\Exception $e) {
+                    ExceptionHappenEvent::dispatch($e);
                     static::dispatch($this->categoryId, $this->totalPages, $this->isLastCategory)
                         ->delay(now()->addMinutes(1));
-                    return;
+                    throw $e;
                 }
-
-                if ($response->ok()) {
-                    $jobResponseDTO = JobResponseDTO::fromResponse(
-                        $response->json(),
-                        $category->id,
-                        $category->category_image
-                    );
-                    StoreJobs::dispatch($jobResponseDTO);
-                }
-
-                if ($this->isLastCategory && $page === $this->totalPages) {
-                    NotifyUserAboutNewJobsEvent::dispatch();
-                    return;
-                }
-            } catch (\Exception $e) {
-                ExceptionHappenEvent::dispatch($e);
-                static::dispatch($this->categoryId, $this->totalPages, $this->isLastCategory)
-                    ->delay(now()->addMinutes(1));
-                throw $e;
             }
         }
     }
