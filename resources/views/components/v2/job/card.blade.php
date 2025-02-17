@@ -1,63 +1,63 @@
 @props(['job'])
-<div class="bg-[#1a1a3a] rounded-2xl border border-gray-700 p-4 md:p-6 hover:border-pink-500/50 transition mb-6 font-ubuntu">
-    <div class="flex flex-col md:flex-row md:justify-between md:items-start">
-        <div class="flex flex-col md:flex-row md:items-center gap-4">
-            <a href="{{ route('job.show', $job->slug) }}" class="hidden md:block">
-                @if ($job->employer_logo)
-                    <img src="{{ $job->employer_logo }}" alt="{{ $job->employer_name }}"
-                         class="w-12 h-12 rounded-xl object-contain bg-white/5 p-2">
-                @else
-                    <img src="https://placehold.co/32x32" alt="{{ $job->employer_name }}"
-                         class="w-12 h-12 rounded-xl object-contain bg-white/5 p-2">
-                @endif
-            </a>
-            <div>
-                <a href="{{ route('job.show', $job->slug) }}">
-                    <h3 class="text-lg md:text-xl font-oxanium-semibold text-white">{{ $job->job_title }}</h3>
-                </a>
-                <p class="text-gray-300 text-sm md:text-base">{{ $job->employer_name }} •
-                    {{ $job->is_remote ? 'Remote' : $job->city }}</p>
-                @if ($job->min_salary && $job->max_salary)
-                    <div class="font-semibold text-pink-300">
-                        $ {{ \App\Helpers\NumberFormatter::formatNumber($job->min_salary) }} -
-                        $ {{ \App\Helpers\NumberFormatter::formatNumber($job->max_salary) }} /
-                        {{ $job->salary_period }}
-                    </div>
-                @endif
+
+<a href="{{ route('job.show', $job->slug) }}" class="block">
+    <div class="relative bg-[#1a1a3a] rounded-lg border border-gray-700 p-4 hover:border-pink-500/50 transition hover:scale-105 mb-4">
+        {{-- Action Button --}}
+        <div class="absolute top-4 right-4">
+            <span class="px-6 py-2.5 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-md hover:opacity-90 transition text-sm">
+                View Details
+            </span>
+        </div>
+
+        {{-- Header: Logo, Title, Company --}}
+        <div class="flex gap-3 pr-28">
+            @if ($job->employer_logo)
+                <img src="{{ $job->employer_logo }}" alt="{{ $job->employer_name }}" class="w-10 h-10 rounded-lg object-contain bg-white/5 p-1">
+            @else
+                <img src="https://placehold.co/32x32" alt="{{ $job->employer_name }}" class="w-10 h-10 rounded-lg object-contain bg-white/5 p-1">
+            @endif
+
+            <div class="flex-1">
+                <h3 class="text-white font-semibold hover:text-pink-300">{{ $job->job_title }}</h3>
+                <p class="text-gray-400 text-sm">{{ $job->employer_name }} • {{ $job->is_remote ? 'Remote' : $job->city }}</p>
             </div>
         </div>
-    </div>
 
-    <div class="text-gray-400 text-sm space-y-1 mt-4 font-ubuntu">
-        <div class="flex items-center gap-2">
-            <i class="las la-calendar-alt text-pink-300"></i>
-            <span>Posted: <span class="text-white">{{ $job->posted_at?->diffForHumans() }}</span></span>
-        </div>
-        @if ($job->state && $job->country)
-            <div class="flex items-center gap-2">
-                <i class="las la-map-marker-alt text-pink-300"></i>
-                <span>Location: <span class="text-white">{{ $job->state }}, {{ $job->country }}</span></span>
+        {{-- Job Details Grid --}}
+        <div class="grid grid-cols-2 gap-2 mt-3 text-sm">
+            @if ($job->min_salary && $job->max_salary)
+                <div class="text-pink-300 font-medium">
+                    ${{ \App\Helpers\NumberFormatter::formatNumber($job->min_salary) }} -
+                    ${{ \App\Helpers\NumberFormatter::formatNumber($job->max_salary) }} / {{ $job->salary_period }}
+                </div>
+            @endif
+
+            <div class="text-gray-400">
+                <i class="las la-calendar-alt text-pink-300"></i>
+                {{ $job->posted_at?->diffForHumans() }}
             </div>
-        @endif
-        <div class="flex items-center gap-2">
-            <i class="las la-clock text-pink-300"></i>
-            <span>Type: <span class="text-white">{{ $job->employment_type }}</span></span>
+
+            @if ($job->state && $job->country)
+                <div class="text-gray-400">
+                    <i class="las la-map-marker-alt text-pink-300"></i>
+                    {{ $job->state }}, {{ $job->country }}
+                </div>
+            @endif
+
+            <div class="text-gray-400">
+                <i class="las la-clock text-pink-300"></i>
+                {{ $job->employment_type }}
+            </div>
+        </div>
+
+        {{-- Tags --}}
+        <div class="flex flex-wrap gap-2 mt-3">
+            <span class="px-2 py-1 bg-pink-500/10 text-pink-300 rounded-full text-xs">
+                {{ $job->category->name }}
+            </span>
+            <span class="px-2 py-1 bg-pink-500/10 text-pink-300 rounded-full text-xs">
+                {{ $job->employment_type }}
+            </span>
         </div>
     </div>
-
-    <div class="flex flex-wrap gap-2 mt-4">
-                                <span class="px-3 py-1 bg-pink-500/10 text-pink-300 rounded-full text-sm font-oxanium-semibold">
-                                    {{ $job->category->name }}
-                                </span>
-        <span class="px-3 py-1 bg-pink-500/10 text-pink-300 rounded-full text-sm font-oxanium-semibold">
-                                    {{ $job->employment_type }}
-                                </span>
-    </div>
-
-    <div class="flex justify-end mt-6">
-        <a href="{{ route('job.show', $job->slug) }}"
-           class="w-full md:w-auto px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg hover:opacity-90 transition-opacity font-ubuntu-medium text-center">
-            View Details
-        </a>
-    </div>
-</div>
+</a>
