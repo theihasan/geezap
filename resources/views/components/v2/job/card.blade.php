@@ -26,11 +26,6 @@
                 @endif
             </div>
         </div>
-        @if ($job->min_salary && $job->max_salary)
-            <div class="text-pink-300 font-ubuntu-medium text-lg hidden md:block">
-                ${{ number_format($job->min_salary) }} - ${{ number_format($job->max_salary) }}
-            </div>
-        @endif
     </div>
 
     <div class="text-gray-400 text-sm space-y-1 mt-4 font-ubuntu">
