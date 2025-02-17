@@ -47,34 +47,9 @@ class AppServiceProvider extends ServiceProvider
     private function registerHttpMacros(): void
     {
         try {
-            Http::macro('job', function () {
-                $apiKey = ApiKey::query()->where('api_name', ApiName::JOB)
-                    ->orderBy('sent_request')
-                    ->first();
 
-                logger('API Key for request', [
-                    'API Key' => $apiKey->api_key,
-                    'Request Remaining' => $apiKey->request_remaining
-                ]);
-
-                $apiKey->increment('sent_request');
-
-                return Http::withHeaders([
-                    'X-RapidAPI-Host' => 'jsearch.p.rapidapi.com',
-                    'X-RapidAPI-Key' => $apiKey->api_key,
-                ])->baseUrl('https://jsearch.p.rapidapi.com');
-            });
-
-            Http::macro('openai', function () {
-                $apiKey = config('ai.chat_gpt_api_key');
-
-                return Http::withHeaders([
-                    'Content-Type' => 'application/json',
-                    'Authorization' => 'Bearer ' . $apiKey,
-                ])->baseUrl('https://api.openai.com/v1/chat');
-            });
-
-
+            $this->registerJobMacro();
+            $this->registerOpenAIMacro();
         } catch (\Exception $e){
             logger('Error on app service provider', [
                 'message' => $e->getMessage(),
@@ -176,5 +151,37 @@ class AppServiceProvider extends ServiceProvider
         }
     }
 
+    private function registerJobMacro(): void
+    {
+        Http::macro('job', function () {
+            $apiKey = ApiKey::query()->where('api_name', ApiName::JOB)
+                ->orderBy('sent_request')
+                ->first();
+
+            logger('API Key for request', [
+                'API Key' => $apiKey->api_key,
+                'Request Remaining' => $apiKey->request_remaining
+            ]);
+
+            $apiKey->increment('sent_request');
+
+            return Http::withHeaders([
+                'X-RapidAPI-Host' => 'jsearch.p.rapidapi.com',
+                'X-RapidAPI-Key' => $apiKey->api_key,
+            ])->baseUrl('https://jsearch.p.rapidapi.com');
+        });
+    }
+
+    private function registerOpenAIMacro(): void
+    {
+        Http::macro('openai', function () {
+            $apiKey = config('ai.chat_gpt_api_key');
+
+            return Http::withHeaders([
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . $apiKey,
+            ])->baseUrl('https://api.openai.com/v1/chat');
+        });
+    }
 
 }
