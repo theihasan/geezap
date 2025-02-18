@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Model;
@@ -25,6 +26,12 @@ class JobCategory extends Model
         return $this->hasMany(JobListing::class, 'job_category');
     }
 
+    public function countries(): BelongsToMany
+    {
+        return $this->belongsToMany(Country::class, 'job_category_country')
+            ->withTimestamps();
+    }
+
     public static function boot()
     {
         parent::boot();
@@ -38,6 +45,7 @@ class JobCategory extends Model
         return Cache::remember('jobCategories', 24 * 60, function () {
             return static::query()
                 ->withCount('jobs')
+                ->with('countries')
                 ->orderByDesc('jobs_count')
                 ->take(8)
                 ->get();

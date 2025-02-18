@@ -57,6 +57,17 @@ class JobCategoryResource extends Resource
                             ->required()
                             ->options(JobTimeFrame::class),
                     ]),
+                Forms\Components\Section::make('Country Configuration')
+                    ->schema([
+                        Forms\Components\Select::make('countries')
+                            ->multiple()
+                            ->relationship('countries', 'name')
+                            ->preload()
+                            ->searchable()
+                            ->required()
+                            ->helperText('Select countries for this job category')
+                    ]),
+
                 Forms\Components\FileUpload::make('category_image')
                     ->image()
                     ->directory('category-images')
@@ -79,6 +90,10 @@ class JobCategoryResource extends Resource
                     ->numeric(),
                 Tables\Columns\TextColumn::make('timeframe')
                     ->numeric(),
+                Tables\Columns\TextColumn::make('countries.name')
+                    ->badge()
+                    ->separator(',')
+                    ->label('Countries'),
                 Tables\Columns\ImageColumn::make('category_image')
                     ->circular(),
                 Tables\Columns\TextColumn::make('created_at')
