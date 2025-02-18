@@ -10,6 +10,7 @@
                     src="{{ $job->employer_logo ?? 'https://placehold.co/100x100/2a2a4a/FFFFFF' }}"
                     alt="{{ $job->employer_name }}"
                     class="w-12 h-12 rounded-lg object-cover bg-gray-800/50"
+                    loading="lazy"
                 >
             </div>
 

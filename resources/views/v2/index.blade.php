@@ -93,7 +93,7 @@
                 <div class="relative hidden md:block">
                     <!-- Main Image -->
                     <img src="https://placehold.co/600x500/2a2a4a/FFFFFF" alt="Developer Working"
-                        class="rounded-2xl shadow-2xl">
+                        class="rounded-2xl shadow-2xl" loading="lazy">
 
                     <!-- Floating Card 1 -->
                     <div
@@ -169,14 +169,14 @@
                             class="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-pink-500/10 group-hover:bg-pink-500/20">
                             <a href={{ url('jobs?category=' . $category->id) }}>
                                 <img src="{{ url($category->category_image) ?? 'https://placehold.co/50x50/2a2a4a/FFFFFF' }}"
-                                    class="h-8 w-8" alt="{{ $category->job_category }}">
+                                    class="h-8 w-8" alt="{{ $category->job_category }}" loading="lazy">
                             </a>
                         </div>
-                        <a href="{{ url('jobs?category=' . $category->id) }}"">
+                        <a href="{{ route('job.index', ["category" => $category->id]) }}">
                             <h3 class="mb-2 text-xl font-semibold text-white">{{ ucwords($category->name) }}</h3>
                         </a>
                         <p class="mb-4 text-gray-300">{{ $category->jobs_count }} open positions</p>
-                        <a href="{{ url('jobs?category=' . $category->id) }}"
+                        <a href="{{ route('job.index', ["category" => $category->id]) }}"
                             class="flex items-center text-pink-300 transition hover:text-pink-400">
                             Browse Jobs <i class="fas fa-arrow-right ml-2"></i>
                         </a>

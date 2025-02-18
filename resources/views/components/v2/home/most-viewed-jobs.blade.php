@@ -9,7 +9,7 @@
                     <a href="{{ route('job.show', $job->slug) }}">
                         <img src="{{ $job->employer_logo ?? 'https://placehold.co/400x200/2a2a4a/FFFFFF' }}"
                              alt="{{ $job->employer_name }}"
-                             class="h-32 w-full rounded-xl object-cover md:h-full">
+                             class="h-32 w-full rounded-xl object-cover md:h-full" loading="lazy">
                     </a>
                     <div
                         class="absolute right-3 top-3 rounded-full bg-pink-500/90 px-3 py-1 text-sm text-white backdrop-blur-sm">
