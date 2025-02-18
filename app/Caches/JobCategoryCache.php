@@ -21,12 +21,12 @@ class JobCategoryCache{
         return self::get()->take(8);
     }
 
-    public static function invalidate()
+    public static function invalidate(): bool
     {
         return Cache::forget(self::key());
     }
 
-    public static function key()
+    public static function key(): string
     {
         return 'jobCategories';
     }
