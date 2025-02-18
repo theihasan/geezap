@@ -18,7 +18,6 @@ class HomePageController extends Controller
 
         $mostViewedJobs = MostViewedJobsCache::get();
 
-
         $jobCategories = JobCategoryCache::getTopCategories();
 
         $todayAddedJobsCount = JobsCountCache::todayAdded();
@@ -30,7 +29,6 @@ class HomePageController extends Controller
         $availableJobs = JobsCountCache::availableJobsCount();
 
         $latestJobs = LatestJobsCache::get($mostViewedJobs->pluck('id')->toArray());
-
 
         $meta = $metaGenerator->getHomePageMeta(
             $availableJobs,
