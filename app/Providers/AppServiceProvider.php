@@ -8,7 +8,9 @@ use App\DTO\OpenGraphDTO;
 use App\DTO\TwitterCardDTO;
 use App\Enums\ApiName;
 use App\Models\ApiKey;
+use App\Services\ConcurrentJobFetcher;
 use Carbon\Carbon;
+use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\URL;
@@ -22,7 +24,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(ConcurrentJobFetcher::class, function ($app) {
+            return new ConcurrentJobFetcher();
+        });
     }
 
     /**
@@ -49,6 +53,7 @@ class AppServiceProvider extends ServiceProvider
         try {
 
             $this->registerJobMacro();
+            $this->registerSearchApiMacro();
             $this->registerOpenAIMacro();
         } catch (\Exception $e){
             logger('Error on app service provider', [
@@ -153,22 +158,60 @@ class AppServiceProvider extends ServiceProvider
 
     private function registerJobMacro(): void
     {
-        Http::macro('job', function () {
-            $apiKey = ApiKey::query()->where('api_name', ApiName::JOB)
+
+        PendingRequest::macro('job', function () {
+            $apiKey = ApiKey::query()
+                ->where('api_name', ApiName::JOB->value)
+                ->where('request_remaining', '>', 0)
                 ->orderBy('sent_request')
                 ->first();
 
-            logger('API Key for request', [
-                'API Key' => $apiKey->api_key,
-                'Request Remaining' => $apiKey->request_remaining
+            logger('JSearch API Key for request', [
+                'API Key' => $apiKey?->api_key,
+                'Request Remaining' => $apiKey?->request_remaining
             ]);
 
-            $apiKey->increment('sent_request');
+            if ($apiKey) {
+                $apiKey->increment('sent_request');
+            }
 
-            return Http::withHeaders([
+            /** @var PendingRequest $this */
+            return $this->withHeaders([
                 'X-RapidAPI-Host' => 'jsearch.p.rapidapi.com',
-                'X-RapidAPI-Key' => $apiKey->api_key,
+                'X-RapidAPI-Key' => $apiKey?->api_key,
             ])->baseUrl('https://jsearch.p.rapidapi.com');
+        });
+    }
+
+    private function registerSearchApiMacro(): void
+    {
+        PendingRequest::macro('searchapi', function () {
+            $apiKey = ApiKey::query()
+                ->where('api_name', ApiName::SEARCH_API->value)
+                ->where('request_remaining', '>', 0)
+                ->orderBy('sent_request')
+                ->first();
+
+            logger('SearchAPI Key for request', [
+                'API Key' => $apiKey?->api_key,
+                'Request Remaining' => $apiKey?->request_remaining
+            ]);
+
+            if ($apiKey) {
+                $apiKey->increment('sent_request');
+                if ($apiKey->request_remaining > 0) {
+                    $apiKey->decrement('request_remaining');
+                }
+            }
+
+            /** @var PendingRequest $this */
+            return $this->withHeaders([
+                'Accept' => 'application/json',
+            ])->baseUrl(config('ai.search_api.base_url'))
+                ->withQueryParameters([
+                    'api_key' => $apiKey?->api_key,
+                    'engine' => 'google_jobs'
+                ]);
         });
     }
 

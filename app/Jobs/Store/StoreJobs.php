@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Jobs\Store;
 
 use App\DTO\JobDTO;
@@ -22,7 +23,6 @@ class StoreJobs implements ShouldQueue
     {
     }
 
-
     public function handle(): void
     {
         try {
@@ -39,9 +39,13 @@ class StoreJobs implements ShouldQueue
                     JobListing::query()->create($jobDTO->toArray());
                 }
             }
-        } catch (\PDOException|\Exception $e){
+        } catch (\PDOException|\Exception $e) {
             ExceptionHappenEvent::dispatch($e);
-            logger()->debug('Exception sent from store job class', $e->getMessage());
+            logger()->error('Exception in StoreJobs', [
+                'message' => $e->getMessage(),
+                'class' => get_class($e),
+                'trace' => $e->getTraceAsString()
+            ]);
             $this->release(60);
         }
     }
