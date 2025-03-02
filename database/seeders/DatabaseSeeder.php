@@ -17,15 +17,15 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-              Illuminate\Database\Seeder\CountrySeeder::class,      
+              CountrySeeder::class,
         ]);
-  /**
-        User::factory()->create([
-            'name' => 'Admin User',
-            'email' => 'admin@geezap.com',
-            'role' => Role::ADMIN->value,
-            'password' => Hash::make('password'),
-        ]);
+        /*
+                User::factory()->create([
+                    'name' => 'Admin User',
+                    'email' => 'admin@geezap.com',
+                    'role' => Role::ADMIN->value,
+                    'password' => Hash::make('password'),
+                ]);
         */
     }
 
