@@ -86,9 +86,7 @@ class GetJobData implements ShouldQueue
 
                     throw_if($response->status() === 429, new RuntimeException('Rate limit exceeded'));
 
-                    throw_if(!$response->successful(),
-                        new RequestException(sprintf('API request failed with status: %d', $response->status()))
-                    );
+                    throw_if(!$response->successful(), new RequestException($response));
 
                     DB::table('api_keys')
                         ->where('id', $apiKey->id)
