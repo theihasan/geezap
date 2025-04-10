@@ -37,7 +37,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
         Integration::handles($exceptions);
     })->withSchedule(function (Schedule $schedule) {
-        $schedule->job(new DispatchJobCategories())->weekly()->withoutOverlapping(600);
+        $schedule->job(new DispatchJobCategories())->dailyAt('01.00')->withoutOverlapping(600);
         $schedule->job(new ResetAPIKeyLimit())->monthly()->withoutOverlapping(600);
         $schedule->command('model:prune')->everyMinute();
 
