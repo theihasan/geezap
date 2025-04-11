@@ -32,7 +32,7 @@ class GetJobData implements ShouldQueue
 
     public int $tries = 4;
     public array $backoff = [30, 45, 60];
-
+    public $maxExceptions = 3;
     public function __construct(
         private readonly int $categoryId,
         private readonly int $totalPages,
