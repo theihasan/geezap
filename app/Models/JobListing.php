@@ -77,7 +77,7 @@ class JobListing extends Model
 
     public function prunable(): Builder
     {
-        return static::query()->where('created_at', '<=', now()->subMonth());
+        return static::query()->where('created_at', '<=', now()->subDays(14));
     }
 
     protected function pruning(): void
