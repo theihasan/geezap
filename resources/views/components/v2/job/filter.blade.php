@@ -15,9 +15,41 @@
             <select name="source"
                     class="w-full bg-[#12122b] border border-gray-700 text-gray-300 rounded-lg px-4 py-2 mt-2 focus:border-pink-500 focus:outline-none">
                 <option value="">All Sources</option>
-                @foreach(App\Models\JobListing::distinct()->pluck('publisher') as $publisher)
+                @foreach(App\Models\JobListing::query()->distinct()->pluck('publisher') as $publisher)
                     <option value="{{ $publisher }}" @selected(request('source') == $publisher)>
                         {{ $publisher }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <!-- Exclude Source Filter -->
+        <div>
+            <label class="text-gray-400 text-sm">Exclude Source</label>
+            <select name="exclude_source"
+                    class="w-full bg-[#12122b] border border-gray-700 text-gray-300 rounded-lg px-4 py-2 mt-2 focus:border-pink-500 focus:outline-none">
+                <option value="">Don't Exclude Any</option>
+                @foreach(App\Models\JobListing::distinct()->pluck('publisher') as $publisher)
+                    <option value="{{ $publisher }}" @selected(request('exclude_source') == $publisher)>
+                        {{ $publisher }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <!-- Country Filter -->
+        <div>
+            <label class="text-gray-400 text-sm">Country</label>
+            <select name="country"
+                    class="w-full bg-[#12122b] border border-gray-700 text-gray-300 rounded-lg px-4 py-2 mt-2 focus:border-pink-500 focus:outline-none">
+                <option value="">All Countries</option>
+                @php
+                    $countryCodes = App\Models\JobListing::distinct()->whereNotNull('country')->pluck('country');
+                    $countries = App\Models\Country::whereIn('code', $countryCodes)->get()->keyBy('code');
+                @endphp
+                @foreach($countryCodes as $countryCode)
+                    <option value="{{ $countryCode }}" @selected(request('country') == $countryCode)>
+                        {{ $countries[$countryCode]->name ?? $countryCode }}
                     </option>
                 @endforeach
             </select>

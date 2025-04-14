@@ -19,6 +19,12 @@ class JobFilter
             $query->where('city', 'like', '%' . $location . '%');
         });
 
+        // Filter by country
+        $jobs->when(request()->get('country'), function ($query, $country) {
+            $query->where('country', $country);
+        });
+
+
         // Filter by category
         $jobs->when(request()->get('category'), function ($query, $category) {
             $query->whereRelation('category', 'id', $category);
@@ -34,6 +40,12 @@ class JobFilter
         $jobs->when(request()->get('source'), function ($query, $source) {
             $query->where('publisher', $source);
         });
+
+        // Exclude job source
+        $jobs->when(request()->get('exclude_source'), function ($query, $excludeSource) {
+            $query->where('publisher', '!=', $excludeSource);
+        });
+
 
         // Filter by remote status
         $jobs->when(request()->filled('remote'), function ($query) {
