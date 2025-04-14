@@ -2,17 +2,6 @@
 @section('content')
     <section class="py-12">
         <div class="max-w-7xl mx-auto px-6">
-            <!-- CV Generation Call to Action -->
-            <div class="bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-2xl p-6 mb-8 flex flex-col md:flex-row items-center justify-between">
-                <div>
-                    <h3 class="text-xl font-semibold">Generate a CV for this Job!</h3>
-                    <p class="text-white mt-2">Based on your profile and this job description, you can create a tailored CV to apply directly.</p>
-                </div>
-                <button class="mt-4 md:mt-0 px-6 py-2 bg-white text-pink-600 font-medium rounded-lg hover:bg-gray-200 transition flex items-center gap-2" onclick="generateCv()">
-                    <i class="las la-file-alt text-xl"></i> Generate CV
-                </button>
-            </div>
-
             <!-- Job Details Main Section -->
             <div class="bg-[#1a1a3a] p-6 rounded-2xl border border-gray-700 mb-8">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
