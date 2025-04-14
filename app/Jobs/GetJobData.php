@@ -30,9 +30,9 @@ class GetJobData implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public int $tries = 4;
-    public array $backoff = [30, 45, 60];
-    public $maxExceptions = 3;
+    public int $tries = 2;
+    public array $backoff = [60];
+    public int $maxExceptions = 1;
     public function __construct(
         private readonly int $categoryId,
         private readonly int $totalPages,
@@ -59,8 +59,6 @@ class GetJobData implements ShouldQueue
                 'line' => $e->getLine(),
                 'file' => $e->getFile(),
             ]);
-
-            $this->release(60);
         }
     }
 
@@ -92,12 +90,6 @@ class GetJobData implements ShouldQueue
                         ->where('id', $apiKey->id)
                         ->update(['request_remaining' => $response->header('X-RateLimit-Requests-Remaining')]);
 
-                    if ($response->status() === 429) {
-                        static::dispatch($this->categoryId, $this->totalPages, $this->isLastCategory)
-                            ->delay(now()->addMinutes(1));
-                        return;
-                    }
-
                     if ($response->ok()) {
                         $jobResponseDTO = JobResponseDTO::fromResponse(
                             $response->json(),
@@ -113,8 +105,6 @@ class GetJobData implements ShouldQueue
                     }
                 } catch (RequestException | RuntimeException  | Exception $e) {
                     ExceptionHappenEvent::dispatch($e);
-                    static::dispatch($this->categoryId, $this->totalPages, $this->isLastCategory)
-                        ->delay(now()->addMinutes(1));
                     throw $e;
                 }
             }
