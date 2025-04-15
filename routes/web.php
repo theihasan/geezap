@@ -9,11 +9,12 @@ use App\Http\Controllers\SocialAuthController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomePageController::class)->name('home');
+Route::get('about', \App\Http\Controllers\Pages\AboutPageController::class)->name('about');
+
 Route::prefix('jobs')->group(function () {
     Route::get('/', [JobController::class, 'index'])->name('job.index');
     Route::get('/{slug}', [JobController::class, 'job'])->name('job.show');
 });
-
 
 Route::get('/categories', JobCategoryController::class)->name('job.categories');
 
