@@ -24,7 +24,7 @@
         <div class="mx-auto max-w-7xl px-6">
             <div class="grid md:grid-cols-2 gap-12 items-center">
                 <div>
-                    <h2 class="text-3xl font-bold text-white mb-6">Our Mission</h2>
+                    <h2 class="text-3xl font-bold text-white mb-6">Mission</h2>
                     <p class="text-gray-300 text-lg leading-relaxed mb-6">
                         At Geezap, I'm on a mission to empower technology professionals by making the job search smarter, faster, and more personal. Everyone working in tech—from developers and data scientists to designers and CAD engineers—deserves access to the right opportunity.
                     </p>
@@ -52,7 +52,7 @@
         <div class="mx-auto max-w-7xl px-6">
             <div class="grid md:grid-cols-2 gap-12 items-center">
                 <div class="order-2 md:order-1 relative">
-                    <img src="https://placehold.co/600x400/2a2a4a/FFFFFF" alt="Md. Ihasan" class="rounded-2xl shadow-2xl" loading="lazy">
+                    <img src="https://github-production-user-asset-6210df.s3.amazonaws.com/142471724/434040044-ff5979a9-baf8-4cd3-8ebd-306e73647e42.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20250415%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250415T205956Z&X-Amz-Expires=300&X-Amz-Signature=7d651013361bb2150fc601820c470a60423218e20a5cdba4075423bd0dbe5ef4&X-Amz-SignedHeaders=host" alt="Md. Abul Hassan" class="rounded-2xl shadow-2xl" loading="lazy">
                     <div class="absolute -right-6 -bottom-6 rounded-xl border border-white/10 bg-[#1a1a3a]/90 p-4 backdrop-blur-sm">
                         <div class="flex items-center gap-3">
                             <div class="flex h-10 w-10 items-center justify-center rounded-full bg-purple-500/20">
@@ -68,7 +68,7 @@
                 <div class="order-1 md:order-2">
                     <h2 class="text-3xl font-bold text-white mb-6">Who I Am</h2>
                     <p class="text-gray-300 text-lg leading-relaxed mb-6">
-                        I'm Md. Ihasan—software engineer, open‑source enthusiast, and sole creator of Geezap. Frustrated by fragmented job boards and endless keyword searches, I built Geezap to centralize tech‑role listings in one clean, curated experience.
+                        I'm Md. Abul Hassan —software engineer, open‑source enthusiast, and sole creator of Geezap. Frustrated by fragmented job boards and endless keyword searches, I built Geezap to centralize tech‑role listings in one clean, curated experience.
                     </p>
                     <div class="space-y-4">
                         <div class="flex items-center gap-3">
@@ -166,7 +166,7 @@
     <!-- My Values Section -->
     <section class="bg-[#12122b] py-20">
         <div class="mx-auto max-w-7xl px-6">
-            <h2 class="text-3xl font-bold text-white mb-12 text-center">My Values</h2>
+            <h2 class="text-3xl font-bold text-white mb-12 text-center">Geezap Values</h2>
 
             <div class="grid md:grid-cols-3 gap-8">
                 <div class="rounded-2xl bg-[#1a1a3a] p-8 border border-gray-700 hover:border-pink-500/50 transition">
