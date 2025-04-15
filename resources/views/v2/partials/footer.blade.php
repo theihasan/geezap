@@ -4,43 +4,35 @@
             <div>
                 <h4 class="text-lg font-ubuntu-bold mb-4 text-white">For Developers</h4>
                 <ul class="space-y-2 font-ubuntu-medium">
-                    <li><a href="#" class="text-gray-300 hover:text-pink-400 transition">Browse Jobs</a></li>
-                    <li><a href="#" class="text-gray-300 hover:text-pink-400 transition">Companies</a></li>
-                    <li><a href="#" class="text-gray-300 hover:text-pink-400 transition">Salary Guide</a></li>
-                </ul>
-            </div>
-
-            <div>
-                <h4 class="text-lg font-ubuntu-bold mb-4 text-white">For Employers</h4>
-                <ul class="space-y-2 font-ubuntu-medium">
-                    <li><a href="#" class="text-gray-300 hover:text-pink-400 transition">Post a Job</a></li>
-                    <li><a href="#" class="text-gray-300 hover:text-pink-400 transition">Pricing</a></li>
-                    <li><a href="#" class="text-gray-300 hover:text-pink-400 transition">Employer Resources</a></li>
+                    <li><a href="/jobs" class="text-gray-300 hover:text-pink-400 transition">Browse Jobs</a></li>
+                    <li><a href="/categories" class="text-gray-300 hover:text-pink-400 transition">Categories</a></li>
+                    <li><a href="/dashboard" class="text-gray-300 hover:text-pink-400 transition">My Profile</a></li>
                 </ul>
             </div>
 
             <div>
                 <h4 class="text-lg font-ubuntu-bold mb-4 text-white">Company</h4>
                 <ul class="space-y-2 font-ubuntu-medium">
-                    <li><a href="#" class="text-gray-300 hover:text-pink-400 transition">About Us</a></li>
-                    <li><a href="#" class="text-gray-300 hover:text-pink-400 transition">Contact</a></li>
-                    <li><a href="#" class="text-gray-300 hover:text-pink-400 transition">Privacy Policy</a></li>
+                    <li><a href="/" class="text-gray-300 hover:text-pink-400 transition">Home</a></li>
+                    <li><a href="/about" class="text-gray-300 hover:text-pink-400 transition">About Us</a></li>
+                    <li><a href="/contact" class="text-gray-300 hover:text-pink-400 transition">Contact</a></li>
                 </ul>
             </div>
 
             <div>
                 <h4 class="text-lg font-ubuntu-bold mb-4 text-white">Connect</h4>
-                <div class="flex space-x-4">
-                    <a href="#" class="text-gray-300 hover:text-pink-400 transition text-2xl">
-                        <i class="lab la-twitter"></i>
-                    </a>
-                    <a href="#" class="text-gray-300 hover:text-pink-400 transition text-2xl">
-                        <i class="lab la-linkedin"></i>
-                    </a>
-                    <a href="#" class="text-gray-300 hover:text-pink-400 transition text-2xl">
-                        <i class="lab la-github"></i>
-                    </a>
-                </div>
+                <ul class="space-y-2 font-ubuntu-medium">
+                    <li><a href="https://facebook.com/geezap247" target="_blank" class="text-gray-300 hover:text-pink-400 transition">Facebook</a></li>
+                    <li><a href="https://github.com/theihasan/geezap" target="_blank" class="text-gray-300 hover:text-pink-400 transition">GitHub</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="text-lg font-ubuntu-bold mb-4 text-white">Legal</h4>
+                <ul class="space-y-2 font-ubuntu-medium">
+                    <li><a href="/privacy-policy" class="text-gray-300 hover:text-pink-400 transition">Privacy Policy</a></li>
+                    <li><a href="/terms" class="text-gray-300 hover:text-pink-400 transition">Terms of Service</a></li>
+                </ul>
             </div>
         </div>
 
