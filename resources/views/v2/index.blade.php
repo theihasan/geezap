@@ -168,8 +168,12 @@
                         <div
                             class="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-pink-500/10 group-hover:bg-pink-500/20">
                             <a href={{ url('jobs?category=' . $category->id) }}>
-                                <img src="{{ url($category->category_image) ?? 'https://placehold.co/50x50/2a2a4a/FFFFFF' }}"
-                                    class="h-8 w-8" alt="{{ $category->job_category }}" loading="lazy">
+                                @if($category->category_image)
+                                    <img src="{{ url($category->category_image)}}"
+                                         alt="{{ $category->name }}" class="w-8 h-8 object-contain" loading="lazy">
+                                @else
+                                    <i class="las la-briefcase text-2xl text-pink-300"></i>
+                                @endif
                             </a>
                         </div>
                         <a href="{{ route('job.index', ["category" => $category->id]) }}">
