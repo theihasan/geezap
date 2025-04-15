@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomePageController::class)->name('home');
 Route::get('about', \App\Http\Controllers\Pages\AboutPageController::class)->name('about');
-
+Route::get('contact', \App\Http\Controllers\Pages\ContactPageController::class)->name('contact');
 Route::prefix('jobs')->group(function () {
     Route::get('/', [JobController::class, 'index'])->name('job.index');
     Route::get('/{slug}', [JobController::class, 'job'])->name('job.show');
@@ -18,7 +18,6 @@ Route::prefix('jobs')->group(function () {
 
 Route::get('/categories', JobCategoryController::class)->name('job.categories');
 
-Route::view('contact', 'contact')->name('contact');
 Route::view('/dashboard', 'v2.profile.profile')->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/profile-update', [ProfileController::class, 'edit'])
