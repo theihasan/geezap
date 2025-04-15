@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', HomePageController::class)->name('home');
 Route::get('about', \App\Http\Controllers\Pages\AboutPageController::class)->name('about');
 Route::get('contact', \App\Http\Controllers\Pages\ContactPageController::class)->name('contact');
+Route::get('privacy-policy', \App\Http\Controllers\Pages\PrivacyPolicyPageController::class)->name('privacy-policy');
+
 Route::prefix('jobs')->group(function () {
     Route::get('/', [JobController::class, 'index'])->name('job.index');
     Route::get('/{slug}', [JobController::class, 'job'])->name('job.show');
