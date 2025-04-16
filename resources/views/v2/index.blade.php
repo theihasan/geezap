@@ -149,45 +149,57 @@
     </section>
 
     <!-- Job Categories -->
-    <section class="bg-[#12122b] py-20">
-        <div class="mx-auto max-w-7xl px-6">
-            <div class="mb-12 text-center">
+    <section class="bg-[#12122b] py-16 sm:py-20">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6">
+            <div class="mb-8 sm:mb-12 text-center">
                 <h2 class="mb-2 text-3xl font-bold text-white">Browse by Category</h2>
                 <p class="text-gray-300">Find your perfect role in these specialized areas</p>
             </div>
 
-            <div class="grid grid-cols-2 gap-6 md:grid-cols-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                 @foreach ($jobCategories as $category)
-                    <div
-                        class="group rounded-2xl border border-gray-700 bg-[#1a1a3a] p-6 transition hover:border-pink-500/50 hover:bg-[#222250]">
-                        <div
-                            class="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-pink-500/10 group-hover:bg-pink-500/20">
-                            <a href={{ url('jobs?category=' . $category->id) }}>
+                    <div class="group relative overflow-hidden rounded-xl border border-gray-700 bg-[#1a1a3a] transition-all duration-300 hover:border-pink-500/50 hover:shadow-lg hover:shadow-pink-500/10 animate-fadeIn" style="animation-delay: {{ $loop->index * 100 }}ms">
+                        <!-- Category Card Content -->
+                        <div class="p-5 flex items-center gap-4">
+                            <!-- Category Icon -->
+                            <div class="flex-shrink-0 h-14 w-14 flex items-center justify-center rounded-xl bg-pink-500/10 group-hover:bg-pink-500/20 transition-colors">
                                 @if($category->category_image)
-                                    <img src="{{ url($category->category_image)}}"
+                                    <img src="{{ url($category->category_image) }}"
                                          alt="{{ $category->name }}" class="w-8 h-8 object-contain" loading="lazy">
                                 @else
                                     <i class="las la-briefcase text-2xl text-pink-300"></i>
                                 @endif
-                            </a>
+                            </div>
+
+                            <!-- Category Info -->
+                            <div class="flex-1">
+                                <a href="{{ route('job.index', ["category" => $category->id]) }}">
+                                    <h3 class="text-lg font-semibold text-white group-hover:text-pink-400 transition-colors">{{ ucwords($category->name) }}</h3>
+                                </a>
+                                <p class="text-gray-400 text-sm mt-1">{{ $category->jobs_count }} open positions</p>
+                            </div>
+
+                            <!-- Arrow Icon -->
+                            <div class="flex-shrink-0">
+                                <a href="{{ route('job.index', ["category" => $category->id]) }}" class="w-8 h-8 flex items-center justify-center rounded-full bg-[#12122b] group-hover:bg-pink-500/20 transition-colors">
+                                    <i class="las la-arrow-right text-pink-400 group-hover:text-pink-300 transition-colors"></i>
+                                </a>
+                            </div>
                         </div>
-                        <a href="{{ route('job.index', ["category" => $category->id]) }}">
-                            <h3 class="mb-2 text-xl font-semibold text-white">{{ ucwords($category->name) }}</h3>
-                        </a>
-                        <p class="mb-4 text-gray-300">{{ $category->jobs_count }} open positions</p>
-                        <a href="{{ route('job.index', ["category" => $category->id]) }}"
-                            class="flex items-center text-pink-300 transition hover:text-pink-400">
-                            Browse Jobs <i class="fas fa-arrow-right ml-2"></i>
-                        </a>
+
+                        <!-- Bottom Progress Bar (visual element) -->
+                        <div class="h-1 w-full bg-[#12122b]">
+                            <div class="h-full bg-gradient-to-r from-pink-500 to-purple-600" style="width: {{ min(100, max(10, $category->jobs_count)) }}%"></div>
+                        </div>
                     </div>
                 @endforeach
             </div>
 
-            <div class="mt-12 flex justify-center">
+            <div class="mt-10 sm:mt-12 flex justify-center">
                 <a href="{{ route('job.categories') }}"
-                    class="font-ubuntu-regular flex items-center gap-2 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 px-8 py-4 text-lg font-medium text-white transition-opacity hover:opacity-90">
+                   class="group flex items-center gap-2 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 px-6 py-3 sm:px-8 sm:py-4 text-base sm:text-lg font-medium text-white transition-all hover:opacity-90 hover:scale-105 transform">
                     See All Categories
-                    <i class="las la-arrow-right"></i>
+                    <i class="las la-arrow-right transition-transform group-hover:translate-x-1"></i>
                 </a>
             </div>
         </div>
@@ -218,4 +230,16 @@
         </div>
     </section>
 @endsection
+@push('extra-css')
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
+        .animate-fadeIn {
+            animation: fadeIn 0.5s ease-out forwards;
+            opacity: 0;
+        }
+    </style>
+@endpush
