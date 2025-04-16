@@ -42,7 +42,6 @@
                 checkbox.checked = false;
             });
 
-
             document.getElementById('types-hidden-input').value = '';
 
             document.getElementById('jobs-filter-form').submit();
@@ -57,7 +56,7 @@
 
     <form method="GET" action="{{ route('job.index') }}" class="space-y-4 font-ubuntu" id="jobs-filter-form">
         <!-- Basic Filters Section -->
-        <div class="border-b border-gray-700 pb-2">
+        <div class="border-b border-gray-700 pb-4 mb-4">
             <button type="button"
                     @click="sections.basic = !sections.basic"
                     class="flex justify-between items-center w-full text-left text-white font-medium">
@@ -103,7 +102,7 @@
         </div>
 
         <!-- Source Filters Section -->
-        <div class="border-b border-gray-700 pb-2">
+        <div class="border-b border-gray-700 pb-4 mb-4">
             <button type="button"
                     @click="sections.source = !sections.source"
                     class="flex justify-between items-center w-full text-left text-white font-medium">
@@ -145,7 +144,7 @@
         </div>
 
         <!-- Location Filters Section -->
-        <div class="border-b border-gray-700 pb-2">
+        <div class="border-b border-gray-700 pb-4 mb-4">
             <button type="button"
                     @click="sections.location = !sections.location"
                     class="flex justify-between items-center w-full text-left text-white font-medium">
@@ -176,7 +175,7 @@
         </div>
 
         <!-- Job Type Filters Section -->
-        <div class="border-b border-gray-700 pb-2">
+        <div class="border-b border-gray-700 pb-4 mb-4">
             <button type="button"
                     @click="sections.jobType = !sections.jobType"
                     class="flex justify-between items-center w-full text-left text-white font-medium">
