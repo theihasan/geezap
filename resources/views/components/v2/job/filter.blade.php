@@ -11,10 +11,10 @@
             types: '{{ request('types') }}'
         },
         sections: {
-            basic: true,
-            source: false,
-            location: false,
-            jobType: false
+            basic: {{ request('search') || request('category') || request('remote') || (!request('search') && !request('category') && !request('remote') && !request('source') && !request('exclude_source') && !request('country') && !request('types')) ? 'true' : 'false' }},
+            source: {{ request('source') || request('exclude_source') ? 'true' : 'false' }},
+            location: {{ request('country') ? 'true' : 'false' }},
+            jobType: {{ request('types') ? 'true' : 'false' }}
         },
         getActiveFilterCount() {
             let count = 0;
