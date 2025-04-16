@@ -26,6 +26,26 @@
             if (this.activeFilters.remote) count++;
             if (this.activeFilters.types) count++;
             return count;
+        },
+        clearAllFilters() {
+            this.activeFilters = {
+                search: '',
+                source: '',
+                exclude_source: '',
+                country: '',
+                category: '',
+                remote: false,
+                types: ''
+            };
+
+            document.querySelectorAll('.type-checkbox').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+
+
+            document.getElementById('types-hidden-input').value = '';
+
+            document.getElementById('jobs-filter-form').submit();
         }
     }">
     <h3 class="text-xl font-ubuntu-bold text-white mb-4">
@@ -182,19 +202,9 @@
         </div>
 
         <div class="flex items-center justify-between mt-6">
-            <button type="reset"
+            <button type="button"
                     class="px-4 py-2 text-gray-300 hover:text-white transition-colors"
-                    @click="
-                        activeFilters = {
-                            search: '',
-                            source: '',
-                            exclude_source: '',
-                            country: '',
-                            category: '',
-                            remote: false,
-                            types: ''
-                        }
-                    ">
+                    @click="clearAllFilters()">
                 Clear All
             </button>
 
@@ -205,3 +215,4 @@
         </div>
     </form>
 </div>
+
