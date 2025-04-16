@@ -229,11 +229,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Copyright Notice -->
-            <div class="text-center mt-8 text-gray-400">
-                <p>© {{ date('Y') }} Geezap. All rights reserved.</p>
-            </div>
         </div>
     </section>
 @endsection

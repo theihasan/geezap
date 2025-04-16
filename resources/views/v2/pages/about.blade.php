@@ -52,7 +52,7 @@
         <div class="mx-auto max-w-7xl px-6">
             <div class="grid md:grid-cols-2 gap-12 items-center">
                 <div class="order-2 md:order-1 relative">
-                    <img src="https://github-production-user-asset-6210df.s3.amazonaws.com/142471724/434040044-ff5979a9-baf8-4cd3-8ebd-306e73647e42.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20250415%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250415T205956Z&X-Amz-Expires=300&X-Amz-Signature=7d651013361bb2150fc601820c470a60423218e20a5cdba4075423bd0dbe5ef4&X-Amz-SignedHeaders=host" alt="Md. Abul Hassan" class="rounded-2xl shadow-2xl" loading="lazy">
+                    <img src="https://avatars.githubusercontent.com/u/142471724?v=4" alt="Md. Abul Hassan" class="rounded-2xl shadow-2xl" loading="lazy">
                     <div class="absolute -right-6 -bottom-6 rounded-xl border border-white/10 bg-[#1a1a3a]/90 p-4 backdrop-blur-sm">
                         <div class="flex items-center gap-3">
                             <div class="flex h-10 w-10 items-center justify-center rounded-full bg-purple-500/20">
