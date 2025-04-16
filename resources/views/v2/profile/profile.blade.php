@@ -44,10 +44,11 @@
 
                 <!-- Action Buttons -->
                 <div class="flex items-center gap-3 mt-4 sm:mt-0">
-                    <button class="bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-xl transition-colors flex items-center gap-2 font-ubuntu-medium text-sm sm:text-base">
+                    <button class="bg-white/5 hover:bg-white/10 text-white px-4 py-2 rounded-xl transition-colors flex items-center gap-2 font-ubuntu-medium text-sm sm:text-base relative cursor-not-allowed opacity-80">
                         <i class="las la-download"></i>
                         <span class="hidden sm:inline">Download CV</span>
                         <span class="sm:hidden">CV</span>
+                        <span class="absolute -top-2 -right-2 bg-pink-500 text-white text-xs py-1 px-2 rounded-full">Soon</span>
                     </button>
                     <a href="{{ route('profile.update') }}"
                        class="bg-gradient-to-r from-pink-500 to-purple-600 hover:opacity-90 text-white px-4 sm:px-6 py-2 rounded-xl transition-all flex items-center gap-2 font-oxanium-semibold text-sm sm:text-base">
@@ -56,6 +57,8 @@
                         <span class="sm:hidden">Edit</span>
                     </a>
                 </div>
+
+
             </div>
         </div>
     </div>
@@ -65,47 +68,6 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
             <!-- Left Column -->
             <div class="space-y-6 sm:space-y-8">
-                <!-- Skills Section -->
-                <div class="bg-[#12122b] rounded-2xl p-6 border border-gray-800">
-                    <h2 class="text-xl font-semibold text-white mb-6 flex items-center gap-2 font-oxanium-semibold">
-                        <i class="las la-tools text-pink-500"></i>
-                        Skills
-                    </h2>
-                    <div class="space-y-3">
-                        @if(auth()->user()->skills)
-                            @php
-                                $skillsData = json_decode(auth()->user()->skills, true);
-                            @endphp
-                            @if(isset($skillsData['skill']))
-                                @foreach($skillsData['skill'] as $index => $skill)
-                                    <div class="bg-[#1a1a3a] rounded-xl p-4 relative group hover:bg-[#1f1f45] transition-all duration-200">
-                                        <div class="flex items-center justify-between">
-                                            <div class="flex items-center gap-3">
-                                            <span class="px-4 py-1.5 bg-pink-500/20 text-pink-400 rounded-lg text-sm font-medium">
-                                                {{ $skill }}
-                                            </span>
-                                            </div>
-                                            <div class="relative">
-                                                <button type="button" disabled
-                                                        class="flex items-center gap-2 px-4 py-1.5 bg-pink-500/10 text-pink-400 rounded-lg text-sm hover:bg-pink-500/20 transition-all disabled:opacity-50">
-                                                    Take Assessment
-                                                </button>
-                                                <span class="absolute -top-3 -right-2 px-3 py-0.5 bg-pink-500 text-white text-xs rounded-full font-semibold shadow-lg">
-                                    Coming Soon
-                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            @else
-                                <p class="text-gray-400">No skills added yet.</p>
-                            @endif
-                        @else
-                            <p class="text-gray-400">No skills added yet.</p>
-                        @endif
-                    </div>
-                </div>
-
                 <!-- Personal Information -->
                 <div class="bg-[#12122b] rounded-2xl p-4 sm:p-6 border border-gray-800">
                     <h2 class="text-xl font-semibold text-white mb-6 flex items-center gap-2 font-oxanium-semibold">
