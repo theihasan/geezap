@@ -31,46 +31,40 @@
                     </p>
 
                     <!-- Search Box -->
-                    <div class="rounded-2xl border border-white/10 bg-white/10 p-3 backdrop-blur-md">
-                        <form action="{{ route('job.index') }}" method="get">
-                            <div class="flex flex-col gap-3 md:flex-row">
-                                <!-- Job Search -->
-                                <div class="flex flex-1 items-center gap-3 rounded-xl bg-white/10 px-4 py-3">
-                                    <i class="las la-search text-pink-500"></i>
-                                    <input name="search" type="text" placeholder="Job title or keyword"
-                                        class="w-full bg-transparent text-white placeholder-gray-400 focus:outline-none">
+                    <div class="relative z-10 rounded-2xl border border-white/10 bg-white/10 backdrop-blur-md p-4 sm:p-5 shadow-xl">
+                        <form action="{{ route('job.index') }}" method="get" class="relative">
+                            <div class="flex flex-col md:flex-row gap-4">
+                                <!-- Job Search Input -->
+                                <div class="relative flex-1 group">
+                                    <input
+                                        name="search"
+                                        type="text"
+                                        placeholder="Job title, keyword, or company"
+                                        class="w-full h-14 pl-12 pr-4 rounded-xl bg-white/10 border border-white/5 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500/50 focus:border-transparent transition-all"
+                                        autocomplete="off"
+                                    >
+                                    <div class="absolute inset-0 rounded-xl bg-gradient-to-r from-pink-500/5 to-purple-600/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
                                 </div>
+
                                 <!-- Search Button -->
-                                <button
-                                    class="font-ubuntu-regular w-full rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 px-8 py-3 font-medium text-white transition-opacity hover:opacity-90 md:w-auto">
-                                    Search Jobs
+                                <button type="submit" class="h-14 px-8 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 text-white font-medium transition-all hover:shadow-lg hover:shadow-pink-500/20 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-pink-500/50 flex items-center justify-center gap-2">
+                                    <span>Find Jobs</span>
+                                    <i class="las la-search-location"></i>
                                 </button>
+                            </div>
+
+                            <!-- Advanced Filters (Optional) -->
+                            <div class="flex flex-wrap items-center gap-3 mt-4 text-sm text-gray-300">
+                                <span class="font-medium">Popular:</span>
+                                <a href="{{ route('job.index', ['search' => 'development']) }}" class="px-3 py-1 rounded-full bg-white/5 hover:bg-white/10 transition-colors">Development</a>
+                                <a href="{{ route('job.index', ['search' => 'design']) }}" class="px-3 py-1 rounded-full bg-white/5 hover:bg-white/10 transition-colors">Design</a>
+                                <a href="{{ route('job.index', ['remote' => '1']) }}" class="px-3 py-1 rounded-full bg-white/5 hover:bg-white/10 transition-colors">Remote</a>
+                                <a href="{{ route('job.index', ['source' => 'LinkedIn']) }}" class="px-3 py-1 rounded-full bg-white/5 hover:bg-white/10 transition-colors">LinkedIn</a>
+                                <a href="{{ route('job.index', ['category' => '1']) }}" class="px-3 py-1 rounded-full bg-white/5 hover:bg-white/10 transition-colors">Laravel</a>
                             </div>
                         </form>
                     </div>
 
-                    <!-- Popular Searches -->
-                    <div class="space-y-3">
-                        <h3 class="font-medium text-gray-100">Popular Searches:</h3>
-                        <div class="flex flex-wrap gap-3">
-                            <span
-                                class="cursor-pointer rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-gray-100 transition-colors hover:border-pink-500">
-                                Remote Jobs
-                            </span>
-                            <span
-                                class="cursor-pointer rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-gray-100 transition-colors hover:border-pink-500">
-                                Full Stack Developer
-                            </span>
-                            <span
-                                class="cursor-pointer rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-gray-100 transition-colors hover:border-pink-500">
-                                Frontend Engineer
-                            </span>
-                            <span
-                                class="cursor-pointer rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-gray-100 transition-colors hover:border-pink-500">
-                                React Developer
-                            </span>
-                        </div>
-                    </div>
 
                     <!-- Quick Stats -->
                     <div class="grid grid-cols-3 gap-6 pt-4">
