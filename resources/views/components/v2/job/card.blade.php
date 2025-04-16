@@ -2,15 +2,8 @@
 
 <a href="{{ route('job.show', $job->slug) }}" class="block">
     <div class="relative bg-[#1a1a3a] rounded-lg border border-gray-700 p-4 hover:border-pink-500/50 transition hover:scale-105 mb-4">
-        {{-- Action Button --}}
-        <div class="absolute top-4 right-4">
-            <span class="px-6 py-2.5 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-md hover:opacity-90 transition text-sm">
-                View Details
-            </span>
-        </div>
-
         {{-- Header: Logo, Title, Company --}}
-        <div class="flex gap-3 pr-28">
+        <div class="flex gap-3">
             @if ($job->employer_logo)
                 <img src="{{ $job->employer_logo }}" alt="{{ $job->employer_name }}" class="w-10 h-10 rounded-lg object-contain bg-white/5 p-1">
             @else
@@ -57,6 +50,13 @@
             </span>
             <span class="px-2 py-1 bg-pink-500/10 text-pink-300 rounded-full text-xs">
                 {{ $job->employment_type }}
+            </span>
+        </div>
+
+        {{-- View Details Button (Moved to bottom) --}}
+        <div class="flex justify-end mt-4">
+            <span class="px-6 py-2.5 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-md hover:opacity-90 transition text-sm">
+                View Details
             </span>
         </div>
     </div>
