@@ -141,11 +141,6 @@
                     <h2 class="mb-2 text-3xl font-bold text-white">Most Viewed Jobs</h2>
                     <p class="text-gray-300">Discover the positions developers are exploring</p>
                 </div>
-                <a href="{{ route('job.index') }}"
-                    class="font-ubuntu-regular flex items-center gap-2 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 px-6 py-3 font-medium text-white transition-opacity hover:opacity-90">
-                    See All Jobs
-                    <i class="las la-arrow-right"></i>
-                </a>
             </div>
             @if($mostViewedJobs)
                 <x-v2.home.most-viewed-jobs :mostViewedJobs="$mostViewedJobs"></x-v2.home.most-viewed-jobs>
