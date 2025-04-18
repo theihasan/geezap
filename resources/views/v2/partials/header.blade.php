@@ -13,10 +13,13 @@
     <link rel="apple-touch-icon" sizes="180x180" href="{{asset('assets/images/favicon.ico')}}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{asset('assets/images/favicon.ico')}}">
     <link rel="icon" type="image/png" sizes="16x16" href="{{asset('assets/images/favicon.ico')}}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/line-awesome/1.3.0/line-awesome/css/line-awesome.min.css" 
-        integrity="sha512-vebUliqxrVkBy3gucMhClmyQP9On/HAWQdKDXRaAlb/FKuTbxkjPKUyqVOxAcGwFDka79eTF+YXwfke1h3/wfg==" 
-        crossorigin="anonymous" 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/line-awesome/1.3.0/line-awesome/css/line-awesome.min.css"
+        integrity="sha512-vebUliqxrVkBy3gucMhClmyQP9On/HAWQdKDXRaAlb/FKuTbxkjPKUyqVOxAcGwFDka79eTF+YXwfke1h3/wfg=="
+        crossorigin="anonymous"
         referrerpolicy="no-referrer" />
+
+    <script charset="UTF-8" src="//web.webpushs.com/js/push/03b87feb48aa4902b24d437f1551c5c8_1.js" async></script>
+
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="{{ $meta->og->type }}">
