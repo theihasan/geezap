@@ -100,7 +100,6 @@ class GetJobData implements ShouldQueue
                     }
 
                     if ($this->isLastCategory && $page === $this->totalPages && $country->is($category->countries->last())) {
-                        NotifyUserAboutNewJobsEvent::dispatch();
                         return;
                     }
                 } catch (RequestException | RuntimeException  | Exception $e) {
