@@ -9,8 +9,12 @@ use App\DTO\TwitterCardDTO;
 use App\Enums\ApiName;
 use App\Models\ApiKey;
 use Carbon\Carbon;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -34,6 +38,7 @@ class AppServiceProvider extends ServiceProvider
         $this->registerHttpMacros();
         $this->configureCommand();
         $this->configureMetaTags();
+        $this->configureRateLimiter();
 
     }
 
@@ -183,5 +188,15 @@ class AppServiceProvider extends ServiceProvider
             ])->baseUrl('https://api.openai.com/v1/chat');
         });
     }
+
+    private function configureRateLimiter(): void
+    {
+        RateLimiter::for('weeklyemail', function () {
+            return Limit::perMinute(50);
+        });
+    }
+
+
+
 
 }
