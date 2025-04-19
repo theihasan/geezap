@@ -7,6 +7,7 @@ use App\Jobs\DispatchJobCategories;
 use App\Jobs\GetJobData;
 use App\Jobs\LaravelJob;
 use App\Jobs\NodeJSJob;
+use App\Jobs\NotifyUserAboutNewJobs;
 use App\Jobs\PaythonJob;
 use App\Jobs\ReactJob;
 use App\Jobs\ResetAPIKeyLimit;
@@ -39,6 +40,7 @@ return Application::configure(basePath: dirname(__DIR__))
     })->withSchedule(function (Schedule $schedule) {
         $schedule->job(new DispatchJobCategories())->days([0,3])->withoutOverlapping(600);
         $schedule->job(new ResetAPIKeyLimit())->monthly()->withoutOverlapping(600);
+        $schedule->job(new NotifyUserAboutNewJobs())->daily()->withoutOverlapping(600);
         $schedule->command('model:prune')->everyMinute();
 
     })->create();

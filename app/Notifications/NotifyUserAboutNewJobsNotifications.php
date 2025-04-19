@@ -13,12 +13,21 @@ class NotifyUserAboutNewJobsNotifications extends Notification implements Should
 {
     use Queueable;
 
+    public $tries = 3;
+    public $timeout = 120;
+    public $backoff = [60, 120];
+    public int $maxExceptions = 2;
+
     /**
      * Create a new notification instance.
      */
-    public function __construct(protected Collection | JobListing $todayAddedJobs)
+    public function __construct(protected Collection $todayAddedJobs)
     {
-        //
+    }
+
+    public function onQueue($queue)
+    {
+        return 'digest';
     }
 
     /**
@@ -39,15 +48,15 @@ class NotifyUserAboutNewJobsNotifications extends Notification implements Should
         return (new MailMessage)
             ->subject('New Jobs This Week - Geezap Weekly Digest')
             ->view(
-            'emails.weekly-digest',
-            [
-                'user' => $notifiable,
-                'jobs' => $this->todayAddedJobs,
-                'jobCount' => $this->todayAddedJobs instanceof Collection
-                    ? $this->todayAddedJobs->count()
-                    : 1
-            ]
-        );
+                'emails.weekly-digest',
+                [
+                    'user' => $notifiable,
+                    'jobs' => $this->todayAddedJobs,
+                    'jobCount' => $this->todayAddedJobs instanceof Collection
+                        ? $this->todayAddedJobs->count()
+                        : 1
+                ]
+            );
     }
 
     /**
