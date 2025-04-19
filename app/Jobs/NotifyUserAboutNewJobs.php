@@ -20,7 +20,7 @@ class NotifyUserAboutNewJobs implements ShouldQueue
     public int $tries = 3;
     public int $maxExceptions = 3;
     public int $timeout = 3600;
-    public array $backoff = [60,120,180]
+    public array $backoff = [60,120,180];
 
     /**
      * Create a new job instance.
