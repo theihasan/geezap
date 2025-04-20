@@ -69,9 +69,6 @@ CLOUDFLARE_TURNSTILE_SECRET_KEY=your_secret_key
 ```bash
 php artisan migrate
 ```
-```bash
-php artisan key:generate
-```
 
 6. Set up Laravel Reverb for WebSocket:
 ```bash
