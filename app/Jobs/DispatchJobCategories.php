@@ -35,7 +35,6 @@ class DispatchJobCategories implements ShouldQueue
                 });
             });
         } catch (CategoryNotFoundException | \Exception $e) {
-            ExceptionHappenEvent::dispatch($e);
             logger($e->getMessage());
         }
     }

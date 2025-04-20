@@ -103,7 +103,6 @@ class GetJobData implements ShouldQueue
                         return;
                     }
                 } catch (RequestException | RuntimeException  | Exception $e) {
-                    ExceptionHappenEvent::dispatch($e);
                     throw $e;
                 }
             }

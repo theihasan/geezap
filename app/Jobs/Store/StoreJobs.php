@@ -40,7 +40,6 @@ class StoreJobs implements ShouldQueue
                 }
             }
         } catch (\PDOException|\Exception $e){
-            ExceptionHappenEvent::dispatch($e);
             logger()->debug('Exception sent from store job class', $e->getMessage());
             $this->release(60);
         }
