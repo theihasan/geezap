@@ -65,9 +65,12 @@ CLOUDFLARE_TURNSTILE_SECRET_KEY=your_secret_key
 ```
 > Also you may need to set turnstile widget from cloudflare dashboard
 
-5. Run migrations
+5. Run migrations and generate application key
 ```bash
 php artisan migrate
+```
+```bash
+php artisan key:generate
 ```
 
 6. Set up Laravel Reverb for WebSocket:
@@ -114,26 +117,29 @@ php artisan cache:clear
 - MySQL
 - Livewire (Frontend)
 - TailwindCSS
-
-## 🔜 Upcoming Big Features (Version 3.0.0)
-
-### Interview Preparation Module
-- **Quiz System**
-    - Generate relevant interview questions based on job descriptions
-    - Practice mode with instant feedback
-    - Track quiz performance and progress
-    - Customized question sets based on job requirements
-
-### Additional Planned Features
+## Current Feature
+ - It collect techical jobs from Bangladesh, India, Australia, UK, USA, Thailand and show this portal
+ - User can generate a darft cover letter from job details page.
+ - User get weekly digest in their email.
+ - User get push notification.
+ - Apply button click history.
+ - Save job for letter apply.
+ - Social Authentication via Github, Google. Facebook ongoing.
+ - Bot protection using Cloudflare turnstile.
+ - Better filtering options in browse job page.
+## 🔜 Upcoming Features
 - **Personalized Job Recommendations**
     - AI-driven suggestions based on user activity, preferences, and saved searches.
-
-- **Advanced Job Matching**
     - AI-powered job recommendations
     - Skill compatibility scoring
 
 - **Social Media Sharing**
     - Share job listings on platforms like LinkedIn, Twitter, and Facebook.
+    - Auto posting to facebook
+
+- **Reminder Notification for Saved for Latter Job**
+    - When user saved a job for letter application then he will get a email notification before 2days of deadline of this job
+    - Job preference
 
 
 ## 🤝 Contributing
