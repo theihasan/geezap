@@ -38,6 +38,8 @@ class NotifyUserAboutNewJobs implements ShouldQueue
     {
         $todayAddedJobs = JobListing::query()
             ->whereDate('created_at', '>=', now()->subWeeks(2))
+            ->inRandomOrder()
+            ->limit(6)
             ->get();
 
         if ($todayAddedJobs->isEmpty()) {
