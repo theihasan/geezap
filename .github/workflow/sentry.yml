@@ -1,0 +1,13 @@
+# Install the cli
+curl -sL https://sentry.io/get-cli/ | bash
+
+  # Setup configuration values
+SENTRY_AUTH_TOKEN=0a273cf13b9c071531bd11ca51ca962a6cba7f800db6cc401be82b808f14eb94 # From internal integration: geezap Release Integration
+SENTRY_ORG=geezap-m7
+SENTRY_PROJECT=geezap
+VERSION=`sentry-cli releases propose-version`
+
+  # Workflow to create releases
+sentry-cli releases new "$VERSION"
+sentry-cli releases set-commits "$VERSION" --auto
+sentry-cli releases finalize "$VERSION"
