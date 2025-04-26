@@ -69,7 +69,7 @@ class LinkedInJobDataJob extends GetJobDataJob
                     'job_employment_type' => $employmentType,
                     'job_title' => $job['title'] ?? '',
                     'job_apply_link' => $job['url'] ?? '',
-                    'job_description' => $job['description'] ?? '',
+                    'job_description' => $job['linkedin_org_description'] ?? '',
                     'job_is_remote' => $job['remote_derived'] ?? false,
                     'job_city' => $city,
                     'job_state' => $state,
