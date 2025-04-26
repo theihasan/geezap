@@ -1,8 +1,11 @@
 <?php
 
-namespace App\Jobs\Store;
+namespace App\Jobs;
 
+use App\DTO\JobResponseDTO;
+use App\Jobs\Store\StoreJobs;
 use App\Models\ApiKey;
+use App\Models\Country;
 use App\Models\JobCategory;
 use Exception;
 use Illuminate\Bus\Queueable;
@@ -63,7 +66,7 @@ abstract class GetJobDataJob implements ShouldQueue
                 try {
                     $this->logProcessing($category, $page, $country->code);
 
-                    $responseData = $this->makeApiRequest($apiKey, $category, $country->code, $page);
+                    $responseData = $this->makeApiRequest($apiKey, $category, $country, $page);
                     $jobResponseDTO = $this->transformResponseToJobDTO($responseData, $category->id,
                         $category->category_image);
 
@@ -92,7 +95,7 @@ abstract class GetJobDataJob implements ShouldQueue
     abstract protected function makeApiRequest(
         ApiKey $apiKey,
         JobCategory $category,
-        string $countryCode,
+        Country $countryCode,
         int $page
     ): array;
 
