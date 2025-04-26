@@ -2,8 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Events\ExceptionHappenEvent;
-use App\Exceptions\CategoryNotFoundException;
 use App\Models\JobCategory;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -31,11 +29,15 @@ class DispatchJobCategories implements ShouldQueue
         try {
             JobCategory::query()->chunk(5, function ($categories) {
                 $categories->each(function ($category) {
-                    GetJobData::dispatch($category->id,$category->page,$category->id === JobCategory::query()->max('id'));
+                    $isLast = $category->id === JobCategory::query()->max('id');
+
+                    JSearchJobDataJob::dispatch($category->id, $category->page, $isLast);
+                    LinkedInJobDataJob::dispatch($category->id, $category->page, $isLast);
                 });
             });
-        } catch (CategoryNotFoundException | \Exception $e) {
+        } catch (Exception $e) {
             logger($e->getMessage());
         }
+
     }
 }
