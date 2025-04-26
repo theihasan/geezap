@@ -8,24 +8,18 @@ use App\Models\ApiKey;
 use App\Models\Country;
 use App\Models\JobCategory;
 use GuzzleHttp\Exception\RequestException;
-use Illuminate\Bus\Queueable;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use RuntimeException;
 
 class JSearchJobDataJob extends GetJobDataJob
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
-    public function __construct()
-    {
-    }
-
-    public function handle(): void
-    {
+    public function __construct(
+        int $categoryId,
+        int $totalPages,
+        bool $isLastCategory
+    ) {
+        parent::__construct($categoryId, $totalPages, $isLastCategory);
     }
 
     protected function getApiName(): string

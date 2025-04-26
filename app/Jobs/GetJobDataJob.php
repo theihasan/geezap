@@ -14,6 +14,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use RuntimeException;
 
 abstract class GetJobDataJob implements ShouldQueue
 {
@@ -27,37 +28,65 @@ abstract class GetJobDataJob implements ShouldQueue
     public int $maxExceptions = 1;
 
     public function __construct(
-        protected readonly int $categoryId,
-        protected readonly int $totalPages,
-        protected readonly bool $isLastCategory
+        protected int $categoryId,
+        protected int $totalPages,
+        protected bool $isLastCategory
     ) {
+        logger('Job constructed', [
+            'job' => get_class($this),
+            'category_id' => $categoryId,
+            'total_pages' => $totalPages,
+            'is_last' => $isLastCategory
+        ]);
     }
+
 
     public function handle(): void
     {
         try {
+            logger('Finding API key for '.$this->getApiName());
             $apiKey = $this->getApiKey();
+
+            logger('Finding category', ['category_id' => $this->categoryId]);
             $category = JobCategory::with('countries')->findOrFail($this->categoryId);
+            logger('Category found in abstract class', ['category_id' => $category]);
+            logger('Starting job execution', [
+                'api_key_found' => (bool) $apiKey,
+                'category_found' => (bool) $category,
+                'countries_count' => $category->countries->count()
+            ]);
+
             $this->fetchAndStoreJobs($apiKey, $category);
         } catch (Exception $e) {
             Log::error('Error on job fetching', [
                 'message' => $e->getMessage(),
                 'line' => $e->getLine(),
                 'file' => $e->getFile(),
+                'job_class' => get_class($this),
+                'api_name' => $this->getApiName()
             ]);
         }
     }
 
+    abstract protected function getApiName(): string;
+
     protected function getApiKey(): ApiKey
     {
-        return ApiKey::query()
+        $apiKey = ApiKey::query()
             ->where('api_name', $this->getApiName())
             ->where('request_remaining', '>', 0)
             ->orderBy('sent_request')
-            ->firstOrFail();
-    }
+            ->first();
 
-    abstract protected function getApiName(): string;
+        if (! $apiKey) {
+            logger('No API key found or no requests remaining', [
+                'api_name' => $this->getApiName()
+            ]);
+            throw new RuntimeException('No valid API key found for '.$this->getApiName());
+        }
+
+        return $apiKey;
+    }
 
     protected function fetchAndStoreJobs(ApiKey $apiKey, JobCategory $category): void
     {

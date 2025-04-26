@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Jobs\JobApis;
+namespace App\Jobs;
 
 use App\DTO\JobResponseDTO;
 use App\Enums\ApiName;
-use App\Jobs\GetJobDataJob;
 use App\Models\ApiKey;
 use App\Models\Country;
 use App\Models\JobCategory;
@@ -15,6 +14,14 @@ use RuntimeException;
 
 class LinkedInJobDataJob extends GetJobDataJob
 {
+    public function __construct(
+        int $categoryId,
+        int $totalPages,
+        bool $isLastCategory
+    ) {
+        parent::__construct($categoryId, $totalPages, $isLastCategory);
+    }
+
     protected function getApiName(): string
     {
         return ApiName::LINKEDIN->value;
@@ -22,7 +29,7 @@ class LinkedInJobDataJob extends GetJobDataJob
 
     protected function makeApiRequest(ApiKey $apiKey, JobCategory $category, Country $country, int $page): array
     {
-        $response = Http::linkedinjob()->retry([100, 200])->get('/active-jb-1h', [
+        $response = Http::linkedinjob()->retry([100, 200])->get('/active-jb-24h', [
             'offset' => ($page - 1) * 10,
             'title_filter' => $category->query_name,
             'location_filter' => $country->name,
