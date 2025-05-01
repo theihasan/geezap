@@ -2,22 +2,31 @@
 
 namespace App\Livewire;
 
+use App\Caches\JobFilterCache;
 use App\Models\Country;
 use App\Models\JobCategory;
 use App\Models\JobListing;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Livewire\Attributes\Url;
 
 class JobFilter extends Component
 {
     use WithPagination;
 
+    #[Url]
     public $search = '';
+    #[Url]
     public $source = '';
+    #[Url]
     public $exclude_source = '';
+    #[Url]
     public $country = '';
+    #[Url]
     public $category = '';
+    #[Url]
     public $remote = false;
+    #[Url]
     public $types = [];
 
     public $sections = [
@@ -27,24 +36,14 @@ class JobFilter extends Component
         'jobType' => false
     ];
 
-    protected $queryString = [
-        'search' => ['except' => ''],
-        'source' => ['except' => ''],
-        'exclude_source' => ['except' => ''],
-        'country' => ['except' => ''],
-        'category' => ['except' => ''],
-        'remote' => ['except' => false],
-        'types' => ['except' => []]
+    protected $jobTypes = [
+        'fulltime' => 'Full Time',
+        'contractor' => 'Contractor',
+        'parttime' => 'Part Time'
     ];
 
     public function updatedSearch()
     {
-        $this->resetPage();
-    }
-
-    public function clearAllFilters()
-    {
-        $this->reset(['search', 'source', 'exclude_source', 'country', 'category', 'remote', 'types']);
         $this->resetPage();
     }
 
@@ -60,9 +59,41 @@ class JobFilter extends Component
             ])->filter()->count() + count($this->types);
     }
 
-    public function getFilteredJobsProperty()
+    protected function getCategories()
     {
-        return JobListing::query()
+        return JobFilterCache::getCategories();
+    }
+
+
+    protected function getPublishers()
+    {
+        return JobFilterCache::getPublishers();
+    }
+
+
+    protected function getCountries()
+    {
+        return JobFilterCache::getCountries();
+    }
+
+
+    public function clearAllFilters()
+    {
+        $this->reset([
+            'search',
+            'source',
+            'exclude_source',
+            'country',
+            'category',
+            'remote',
+            'types'
+        ]);
+        $this->resetPage();
+    }
+
+    public function render()
+    {
+        $jobs = JobListing::query()
             ->when($this->search, fn($query, $search) =>
             $query->where('job_title', 'like', '%' . $search . '%'))
             ->when($this->source, fn($query, $source) =>
@@ -79,22 +110,13 @@ class JobFilter extends Component
             $query->whereIn('employment_type', $this->types))
             ->latest()
             ->paginate(10);
-    }
 
-    public function render()
-    {
         return view('livewire.job-filter', [
-            'jobs' => $this->filteredJobs,
-            'categories' => JobCategory::all(),
-            'publishers' => JobListing::distinct()->pluck('publisher'),
-            'countries' => Country::whereIn('code',
-                JobListing::distinct()->whereNotNull('country')->pluck('country')
-            )->get()->keyBy('code'),
-            'jobTypes' => [
-                'fulltime' => 'Full Time',
-                'contractor' => 'Contractor',
-                'parttime' => 'Part Time'
-            ]
+            'jobs' => $jobs,
+            'categories' => $this->getCategories(),
+            'publishers' => $this->getPublishers(),
+            'countries' => $this->getCountries(),
+            'jobTypes' => $this->jobTypes
         ]);
     }
 }

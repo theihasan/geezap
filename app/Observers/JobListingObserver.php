@@ -2,6 +2,7 @@
 namespace App\Observers;
 
 use App\Caches\JobCategoryCache;
+use App\Caches\JobFilterCache;
 use App\Caches\JobListingCache;
 use App\Caches\JobPageCache;
 use App\Caches\JobsCountCache;
@@ -55,6 +56,7 @@ class JobListingObserver
         LatestJobsCache::invalidate();
         JobCategoryCache::invalidate();
         JobsCountCache::invalidateCategoriesCount();
+        JobFilterCache::invalidate();
 
     }
 }
