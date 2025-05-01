@@ -7,6 +7,7 @@ use App\Exceptions\AIServiceAPIKeyNotFound;
 use App\Exceptions\DailyChatLimitExceededException;
 use App\Exceptions\IncompleteProfileException;
 use App\Exceptions\NonAuthenticatedUser;
+use App\Exceptions\OpenAPICreditExceedException;
 use App\Models\Airesponse;
 use App\Models\JobListing;
 use App\Services\AIService;
@@ -74,12 +75,13 @@ class GenerateCoverLetter extends Component
             return;
         }
 
+        $originalAnswer = $this->answer;
         $this->isGenerating = true;
         $this->answer = '';
-        $this->generateCoverLetter(true);
+        $this->generateCoverLetter(true, $originalAnswer);
     }
 
-    private function generateCoverLetter(bool $isRegeneration = false): void
+    private function generateCoverLetter(bool $isRegeneration = false, ?string $previousAnswer = null): void
     {
         try {
             $aiService = app(AIService::class);
@@ -91,7 +93,7 @@ class GenerateCoverLetter extends Component
                     $this->stream('answer', $partial);
                 },
                 $isRegeneration ? $this->feedback : null,
-                $isRegeneration ? $this->answer : null
+                $previousAnswer
             );
 
             Airesponse::query()
@@ -106,18 +108,12 @@ class GenerateCoverLetter extends Component
 
 
         } catch (DailyChatLimitExceededException $e){
-
-            $this->dispatch('notify', [
-                'message' => $e->getMessage(),
-                'type' => 'error'
-            ]);
+            $this->answer = 'Sorry, you have exceeded the daily limit for chat requests. Please try again later.';
             $this->isGenerating = false;
-        } catch (\Exception $e) {
-            logger()->error('Cover Letter Generation Error', [
-                'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
-            ]);
-
+        } catch (OpenAPICreditExceedException $e) {
+            $this->answer = 'Something went wrong with ai service. Please try later';
+            $this->isGenerating = false;
+        }  catch (\Exception $e) {
             $this->answer = 'Sorry, there was an error generating your cover letter. Please try again.';
             $this->isGenerating = false;
         } catch (\Throwable $e) {

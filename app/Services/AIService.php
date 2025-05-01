@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Exceptions\DailyChatLimitExceededException;
+use App\Exceptions\OpenAPICreditExceedException;
 use App\Models\Airesponse;
 use App\Models\User;
 use Illuminate\Support\Facades\Http;
@@ -25,7 +26,7 @@ class AIService
     /**
      * @throws \Throwable
      */
-    public function getChatResponse(User $user, array $jobData, callable $callback, ?string $feedback = null): string
+    public function getChatResponse(User $user, array $jobData, callable $callback, ?string $feedback = null, ?string $previousAnswer = null): string
     {
         throw_if(! $this->checkUserLimit($user) , new DailyChatLimitExceededException("You've reached your daily limit of " . self::DAILY_LIMIT . " cover letter generations"));
 
@@ -72,9 +73,11 @@ class AIService
                 'presence_penalty' => 0.6,
                 'frequency_penalty' => 0.5
             ]);
-
+        throw_if($response->status() === 429, new OpenAPICreditExceedException());
         $buffer = '';
         $fullResponse = '';
+
+
 
         $stream = $response->getBody();
 
