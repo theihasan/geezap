@@ -201,8 +201,8 @@ class AppServiceProvider extends ServiceProvider
 
     private function configureLogViewer()
     {
-        LogViewer::auth(function ($request) {
-            return auth()->user()->role === Role::ADMIN->value;
+        LogViewer::auth(function () {
+            return auth()->user()->role === Role::ADMIN;
         });
     }
 
