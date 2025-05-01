@@ -29,6 +29,9 @@ class JobFilter extends Component
     #[Url]
     public $types = [];
 
+    public $perPage = 10;
+    public $hasMorePages = false;
+
     public $sections = [
         'basic' => true,
         'source' => false,
@@ -46,6 +49,12 @@ class JobFilter extends Component
     {
         $this->resetPage();
     }
+
+    public function loadMore()
+    {
+        $this->perPage += 10;
+    }
+
 
     public function getActiveFilterCount()
     {
@@ -75,7 +84,36 @@ class JobFilter extends Component
     {
         return JobFilterCache::getCountries();
     }
+    public function updatedSource()
+    {
+        $this->resetList();
+    }
+    public function updatedExcludeSource()
+    {
+        $this->resetList();
+    }
+    public function updatedCountry()
+    {
+        $this->resetList();
+    }
+    public function updatedCategory()
+    {
+        $this->resetList();
+    }
+    public function updatedRemote()
+    {
+        $this->resetList();
+    }
+    public function updatedTypes()
+    {
+        $this->resetList();
+    }
 
+
+    protected function resetList()
+    {
+        $this->perPage = 10;
+    }
 
     public function clearAllFilters()
     {
@@ -86,7 +124,8 @@ class JobFilter extends Component
             'country',
             'category',
             'remote',
-            'types'
+            'types',
+            'perPage'
         ]);
         $this->resetPage();
     }
@@ -108,8 +147,12 @@ class JobFilter extends Component
             $query->where('is_remote', true))
             ->when(!empty($this->types), fn($query) =>
             $query->whereIn('employment_type', $this->types))
-            ->latest()
-            ->paginate(10);
+            ->latest();
+
+        $total = $jobs->count();
+        $jobs = $jobs->take($this->perPage)->get();
+
+        $this->hasMorePages = $total > $this->perPage;
 
         return view('livewire.job-filter', [
             'jobs' => $jobs,
@@ -119,4 +162,5 @@ class JobFilter extends Component
             'jobTypes' => $this->jobTypes
         ]);
     }
+
 }

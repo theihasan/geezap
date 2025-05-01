@@ -161,7 +161,6 @@
                 <p class="text-gray-300">Loading results...</p>
             </div>
 
-            <!-- Results (Only visible when not loading) -->
             <div wire:loading.remove wire:target="search, source, exclude_source, country, category, remote, types, clearAllFilters"
                  class="space-y-4">
                 @forelse($jobs as $job)
@@ -172,17 +171,15 @@
                     </div>
                 @endforelse
 
-                    <div class="mt-6 text-center">
-                        <button
-                            wire:click="loadMore"
-                            wire:loading.attr="disabled"
-                            wire:target="loadMore"
-                            class="px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition-colors disabled:opacity-50"
-                        >
-                            <span wire:loading.remove wire:target="loadMore">Load More</span>
-                            <span wire:loading wire:target="loadMore">Loading...</span>
-                        </button>
-                    </div>
+                    @if($hasMorePages)
+                        <div x-init="observe"
+                             class="flex justify-center p-4">
+                            <div wire:loading wire:target="loadMore" class="flex items-center gap-2">
+                                <div class="inline-block h-6 w-6 animate-spin rounded-full border-2 border-solid border-purple-500 border-r-transparent"></div>
+                                <span class="text-gray-400">Loading more...</span>
+                            </div>
+                        </div>
+                    @endif
 
             </div>
         </div>
