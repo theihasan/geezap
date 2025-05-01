@@ -154,23 +154,36 @@
 
         <!-- Job Listings -->
         <div class="col-span-full md:col-span-3">
-            <div wire:loading.remove wire:target="search, source, exclude_source, country, category, remote, types"
-                 class="mb-4">
-                <div wire:loading.block wire:target="search, source, exclude_source, country, category, remote, types"
-                     class="bg-[#1a1a3a] rounded-2xl border border-gray-700 p-4 text-center text-gray-300">
-                    Loading results...
-                </div>
+            <!-- Loading State -->
+            <div wire:loading wire:target="search, source, exclude_source, country, category, remote, types, clearAllFilters"
+                 class="bg-[#1a1a3a] rounded-2xl border border-gray-700 p-6 text-center">
+                <div class="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-purple-500 border-r-transparent motion-reduce:animate-[spin_1.5s_linear_infinite] mb-4"></div>
+                <p class="text-gray-300">Loading results...</p>
             </div>
-            @forelse($jobs as $job)
-                <x-v2.job.card :job="$job"/>
-            @empty
-                <div class="bg-[#1a1a3a] rounded-2xl border border-gray-700 p-6 text-center">
-                    <p class="text-gray-400">No jobs found matching your criteria.</p>
-                </div>
-            @endforelse
 
-            <div class="mt-6">
-                {{ $jobs->links() }}
+            <!-- Results (Only visible when not loading) -->
+            <div wire:loading.remove wire:target="search, source, exclude_source, country, category, remote, types, clearAllFilters"
+                 class="space-y-4">
+                @forelse($jobs as $job)
+                    <x-v2.job.card :job="$job"/>
+                @empty
+                    <div class="bg-[#1a1a3a] rounded-2xl border border-gray-700 p-6 text-center">
+                        <p class="text-gray-400">No jobs found matching your criteria.</p>
+                    </div>
+                @endforelse
+
+                    <div class="mt-6 text-center">
+                        <button
+                            wire:click="loadMore"
+                            wire:loading.attr="disabled"
+                            wire:target="loadMore"
+                            class="px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition-colors disabled:opacity-50"
+                        >
+                            <span wire:loading.remove wire:target="loadMore">Load More</span>
+                            <span wire:loading wire:target="loadMore">Loading...</span>
+                        </button>
+                    </div>
+
             </div>
         </div>
     </div>
