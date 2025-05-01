@@ -154,8 +154,10 @@
 
         <!-- Job Listings -->
         <div class="col-span-full md:col-span-3">
-            <div wire:loading.delay class="mb-4">
-                <div class="bg-[#1a1a3a] rounded-2xl border border-gray-700 p-4 text-center text-gray-300">
+            <div wire:loading.remove wire:target="search, source, exclude_source, country, category, remote, types"
+                 class="mb-4">
+                <div wire:loading.block wire:target="search, source, exclude_source, country, category, remote, types"
+                     class="bg-[#1a1a3a] rounded-2xl border border-gray-700 p-4 text-center text-gray-300">
                     Loading results...
                 </div>
             </div>
