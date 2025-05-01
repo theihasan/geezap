@@ -7,6 +7,7 @@ use App\DTO\MetaTagDTO;
 use App\DTO\OpenGraphDTO;
 use App\DTO\TwitterCardDTO;
 use App\Enums\ApiName;
+use App\Enums\Role;
 use App\Models\ApiKey;
 use Carbon\Carbon;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -18,6 +19,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Opcodes\LogViewer\Facades\LogViewer;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -39,6 +41,7 @@ class AppServiceProvider extends ServiceProvider
         $this->configureCommand();
         $this->configureMetaTags();
         $this->configureRateLimiter();
+        $this->configureLogViewer();
 
     }
 
@@ -196,7 +199,12 @@ class AppServiceProvider extends ServiceProvider
         });
     }
 
-
+    private function configureLogViewer()
+    {
+        LogViewer::auth(function ($request) {
+            return $request->user() && $request->user()->role === Role::ADMIN->value;
+        });
+    }
 
 
 }
