@@ -43,7 +43,7 @@ class AIService
             ];
             $messages[] = [
                 'role' => 'assistant',
-                'content' => $this->answer ?? ''
+                'content' => $previousAnswer ?? ''
             ];
             $messages[] = [
                 'role' => 'user',

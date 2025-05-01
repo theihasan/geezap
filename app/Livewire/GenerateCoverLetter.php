@@ -84,24 +84,26 @@ class GenerateCoverLetter extends Component
         try {
             $aiService = app(AIService::class);
 
-            $response  = $aiService->getChatResponse(
+            $response = $aiService->getChatResponse(
                 auth()->user(),
                 $this->jobListing->toArray(),
                 function($partial) {
                     $this->stream('answer', $partial);
                 },
-                $isRegeneration ? $this->feedback : null
+                $isRegeneration ? $this->feedback : null,
+                $isRegeneration ? $this->answer : null
             );
 
             Airesponse::query()
                 ->create([
-                'user_id' => auth()->id(),
-                'job_id' => $this->jobListing->id,
-                'response' => $response
-            ]);
+                    'user_id' => auth()->id(),
+                    'job_id' => $this->jobListing->id,
+                    'response' => $response
+                ]);
 
             $this->answer = $response;
             $this->isGenerating = false;
+
 
         } catch (DailyChatLimitExceededException $e){
 
