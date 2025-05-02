@@ -11,6 +11,7 @@ use App\Exceptions\CountryNotFoundException;
 use App\Jobs\Store\StoreJobs;
 use App\Models\ApiKey;
 use App\Models\JobCategory;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -88,7 +89,12 @@ class GetJobData implements ShouldQueue
 
                     DB::table('api_keys')
                         ->where('id', $apiKey->id)
-                        ->update(['request_remaining' => $response->header('X-RateLimit-Requests-Remaining')]);
+                        ->update(
+                            [
+                                'request_remaining' => $response->header('X-RateLimit-Requests-Remaining'),
+                                'rate_limit_reset' => Carbon::createFromTimestamp($response->header('X-RateLimit-Reset'))
+                            ]
+                        );
 
                     if ($response->ok()) {
                         $jobResponseDTO = JobResponseDTO::fromResponse(
