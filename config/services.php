@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Third Party Services
@@ -58,5 +57,9 @@ return [
             'site_key' => env('CLOUDFLARE_TURNSTILE_SITE_KEY'),
             'secret_key' => env('CLOUDFLARE_TURNSTILE_SECRET_KEY'),
         ],
+    ],
+
+    'brevo' => [
+        'key' => env('BREVO_API_KEY'),
     ],
 ];

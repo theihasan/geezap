@@ -49,6 +49,17 @@ return [
             'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url(env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
         ],
 
+        'brevo' => [
+            'transport' => 'smtp',
+            'host' => env('BREVO_SMTP_HOST', 'smtp-relay.brevo.com'),
+            'port' => env('BREVO_SMTP_PORT', 587),
+            'encryption' => env('BREVO_SMTP_ENCRYPTION', 'tls'),
+            'username' => env('BREVO_SMTP_USERNAME'),
+            'password' => env('BREVO_SMTP_PASSWORD'),
+            'timeout' => null,
+            'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url(env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
+        ],
+
         'ses' => [
             'transport' => 'ses',
         ],
@@ -82,7 +93,8 @@ return [
         'failover' => [
             'transport' => 'failover',
             'mailers' => [
-                'smtp',
+                'brevo',
+                'resend',
                 'log',
             ],
         ],
@@ -96,7 +108,6 @@ return [
         ],
 
     ],
-
     /*
     |--------------------------------------------------------------------------
     | Global "From" Address
