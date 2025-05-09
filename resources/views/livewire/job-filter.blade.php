@@ -152,17 +152,16 @@
         </div>
 
         <!-- Job Listings -->
-        <div class="col-span-full md:col-span-3">
-            <!-- Loading State for Filters -->
+        <div class="col-span-full md:col-span-3 relative">
+            <!-- Improved Loading State for Filters -->
             <div wire:loading wire:target="search, source, exclude_source, country, category, remote, types, clearAllFilters"
-                 class="bg-[#1a1a3a] rounded-2xl border border-gray-700 p-6 text-center">
-                <div class="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-purple-500 border-r-transparent motion-reduce:animate-[spin_1.5s_linear_infinite] mb-4"></div>
-                <p class="text-gray-300">Loading results...</p>
+                 class="absolute inset-0 bg-[#1a1a3a] bg-opacity-90 rounded-2xl border border-gray-700 flex flex-col items-center justify-center z-10">
+                <div class="inline-block h-16 w-16 animate-spin rounded-full border-4 border-solid border-purple-500 border-r-transparent motion-reduce:animate-[spin_1.5s_linear_infinite] mb-4"></div>
+                <p class="text-gray-300 text-lg font-medium">Loading results...</p>
             </div>
 
             <!-- Results -->
-            <div wire:loading.remove wire:target="search, source, exclude_source, country, category, remote, types, clearAllFilters"
-                 class="space-y-4">
+            <div class="space-y-4">
                 @forelse($jobs as $job)
                     <x-v2.job.card :job="$job"/>
                 @empty
@@ -177,11 +176,11 @@
                         <button wire:click="loadMore"
                                 wire:loading.attr="disabled"
                                 wire:target="loadMore"
-                                class="px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition-colors disabled:opacity-50">
-                            <span wire:loading.remove wire:target="loadMore">Load More</span>
-                            <span wire:loading wire:target="loadMore">
-                                <div class="inline-block h-4 w-4 mr-2 animate-spin rounded-full border-2 border-solid border-white border-r-transparent"></div>
-                                Loading...
+                                class="px-6 py-3 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition-colors disabled:opacity-50">
+                            <span wire:loading.remove wire:target="loadMore">Load More Jobs</span>
+                            <span wire:loading wire:target="loadMore" class="flex items-center justify-center">
+                                <div class="inline-block h-5 w-5 mr-3 animate-spin rounded-full border-2 border-solid border-white border-r-transparent"></div>
+                                Loading more jobs...
                             </span>
                         </button>
                     </div>
