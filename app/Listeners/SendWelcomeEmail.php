@@ -2,12 +2,13 @@
 
 namespace App\Listeners;
 
-use App\Mail\WelcomeEmail;
+use App\Notifications\WelcomeNotification;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 
-class SendWelcomeEmail
+class SendWelcomeEmail implements ShouldQueue
 {
     use InteractsWithQueue;
 
@@ -26,6 +27,12 @@ class SendWelcomeEmail
     {
         $user = $event->user;
 
-        Mail::to($user->email)->send(new WelcomeEmail($user));
+        try {
+            Log::info('Sending welcome notification to: ' . $user->email);
+            $user->notify(new WelcomeNotification());
+            Log::info('Welcome notification sent successfully');
+        } catch (\Exception $e) {
+            Log::error('Failed to send welcome notification: ' . $e->getMessage());
+        }
     }
 }
