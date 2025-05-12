@@ -60,6 +60,17 @@ return [
             'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url(env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
         ],
 
+        'zepto' => [
+            'transport' => 'smtp',
+            'host' => env('ZEPTO_SMTP_HOST', 'smtp.zepto.com'),
+            'port' => env('ZEPTO_SMTP_PORT', 587),
+            'encryption' => env('ZEPTO_SMTP_ENCRYPTION', 'tls'),
+            'username' => env('ZEPTO_SMTP_USERNAME'),
+            'password' => env('ZEPTO_SMTP_PASSWORD'),
+            'timeout' => null,
+            'local_domain' => env('MAIL_EHLO_DOMAIN', parse_url(env('APP_URL', 'http://localhost'), PHP_URL_HOST)),
+        ],
+
         'ses' => [
             'transport' => 'ses',
         ],
@@ -94,6 +105,7 @@ return [
             'transport' => 'failover',
             'mailers' => [
                 'brevo',
+                'zepto',
                 'resend',
                 'log',
             ],
