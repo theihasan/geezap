@@ -1,4 +1,3 @@
-
 ![Free Palestine](https://github.com/user-attachments/assets/2b796609-c819-4cf6-b454-993e47a6e0f2)
 
 
@@ -114,16 +113,32 @@ php artisan cache:clear
 - MySQL
 - Livewire (Frontend)
 - TailwindCSS
+
+## 📧 Email Communications
+
+Geezap sends emails to users at various touchpoints throughout their journey:
+
+1. **User Registration**
+    - Welcome email when a new user signs up
+
+2. **Password Management**
+    - Password reset links when requested
+
+3. **Job Alerts**
+    - Weekly job digest with personalized job recommendations
+
+All emails are sent using a failover configuration that ensures reliable delivery through multiple providers. Users can manage their email preferences through their account settings.
+
 ## Current Feature
- - It collect techical jobs from Bangladesh, India, Australia, UK, USA, Thailand and show this portal
- - User can generate a darft cover letter from job details page.
- - User get weekly digest in their email.
- - User get push notification.
- - Apply button click history.
- - Save job for letter apply.
- - Social Authentication via Github, Google. Facebook ongoing.
- - Bot protection using Cloudflare turnstile.
- - Better filtering options in browse job page.
+  - It collect techical jobs from Bangladesh, India, Australia, UK, USA, Thailand and show this portal
+  - User can generate a darft cover letter from job details page.
+  - User get weekly digest in their email.
+  - User get push notification.
+  - Apply button click history.
+  - Save job for letter apply.
+  - Social Authentication via Github, Google. Facebook ongoing.
+  - Bot protection using Cloudflare turnstile.
+  - Better filtering options in browse job page.
 ## 🔜 Upcoming Features
 - **Personalized Job Recommendations**
     - AI-driven suggestions based on user activity, preferences, and saved searches.
