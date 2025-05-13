@@ -2,16 +2,17 @@
 
 namespace App\Jobs;
 
-use App\Models\JobListing;
 use App\Models\User;
-use App\Notifications\NotifyUserAboutNewJobsNotifications;
+use App\Models\JobListing;
 use Illuminate\Bus\Queueable;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\NotifyUserAboutNewJobsNotifications;
 
 class NotifyUserAboutNewJobs implements ShouldQueue
 {
@@ -36,19 +37,24 @@ class NotifyUserAboutNewJobs implements ShouldQueue
      */
     public function handle(): void
     {
-        $todayAddedJobs = JobListing::query()
-            ->whereDate('created_at', '>=', now()->subWeeks(2))
-            ->inRandomOrder()
-            ->limit(6)
-            ->get();
+        User::query()->chunkById(20, function ($users) {
+            $users->each(function(User $user) {
+                if (!$user->country) {
+                    return;
+                }
 
-        if ($todayAddedJobs->isEmpty()) {
-            return;
-        }
+                $countryJobs = JobListing::query()
+                    ->whereDate('created_at', '>=', now()->subWeeks(2))
+                    ->where('country', $user->country)
+                    ->inRandomOrder()
+                    ->limit(6)
+                    ->get();
 
-        User::query()->chunkById(20, function ($users) use ($todayAddedJobs) {
-            $users->each(function($user) use ($todayAddedJobs){
-                \Illuminate\Support\Facades\Notification::send($user, new NotifyUserAboutNewJobsNotifications($todayAddedJobs));
+                if ($countryJobs->isEmpty()) {
+                    return;
+                }
+
+                Notification::send($user, new NotifyUserAboutNewJobsNotifications($countryJobs));
             });
         });
     }
