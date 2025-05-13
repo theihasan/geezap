@@ -11,7 +11,7 @@ class CaptureCloudflareCountry
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (auth()->check() && $request->header('CF-IPCountry')) {
+        if (auth()->check()) {
             UpdateUserCountryFromCloudflare::dispatch(
                 userId: auth()->id(),
                 cfCountry: $request->header('CF-IPCountry')

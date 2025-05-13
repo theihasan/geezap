@@ -32,7 +32,9 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         //$middleware->append(BlockCrawlerMiddleware::class);
-        $middleware->append(CaptureCloudflareCountry::class);
+        $middleware->web(append: [
+            CaptureCloudflareCountry::class,
+        ]);
         $middleware->alias([
             'cf-turnstile.verify' => VerifyClouflareTurnstile::class,
         ]);
