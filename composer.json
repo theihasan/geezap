@@ -10,6 +10,7 @@
         "filament/filament": "^3.2",
         "laravel/breeze": "^2.0",
         "laravel/framework": "^11.0",
+        "laravel/horizon": "^5.32",
         "laravel/reverb": "^1.0",
         "laravel/sanctum": "^4.0",
         "laravel/socialite": "^5.16",
