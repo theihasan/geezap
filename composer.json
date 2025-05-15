@@ -16,6 +16,7 @@
         "laravel/tinker": "^2.9",
         "livewire/livewire": "*",
         "opcodesio/log-viewer": "^3.15",
+        "predis/predis": "^3.0",
         "resend/resend-php": "^0.18.0",
         "sentry/sentry-laravel": "^4.10"
     },
