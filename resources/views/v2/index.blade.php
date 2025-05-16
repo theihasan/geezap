@@ -98,12 +98,12 @@
                                         <i class="las la-building text-gray-400"></i>
                                     </div>
                                     <select
-                                        name="remote"
+                                        name="is_remote"
                                         class="w-full h-12 pl-12 pr-10 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500/50 focus:border-transparent transition-all appearance-none"
                                     >
                                         <option value="">Work Type</option>
                                         <option value="1" class="bg-[#1a1a3a] text-white">Remote Only</option>
-                                        <option value="0" class="bg-[#1a1a3a] text-white">On-site</option>
+                                        <option value="0" class="bg-[#1a1a3a] text-white">On-site Only</option>
                                     </select>
                                     <div class="absolute inset-y-0 right-4 flex items-center pointer-events-none">
                                         <i class="las la-angle-down text-gray-400"></i>
