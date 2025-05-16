@@ -132,10 +132,13 @@ class JobFilter extends Component
 
     public function render()
     {
-        $jobs = JobListing::query()
-            ->when($this->search, fn($query, $search) =>
-            $query->where('job_title', 'like', '%' . $search . '%'))
-            ->when($this->source, fn($query, $source) =>
+        $jobs = JobListing::query();
+        
+        if ($this->search) {
+            $jobs = JobListing::search($this->search);
+        }
+
+        $jobs = $jobs->when($this->source, fn($query, $source) =>
             $query->where('publisher', $source))
             ->when($this->exclude_source, fn($query, $exclude_source) =>
             $query->where('publisher', '!=', $exclude_source))
@@ -146,11 +149,16 @@ class JobFilter extends Component
             ->when($this->remote, fn($query) =>
             $query->where('is_remote', true))
             ->when(!empty($this->types), fn($query) =>
-            $query->whereIn('employment_type', $this->types))
-            ->latest();
+            $query->whereIn('employment_type', $this->types));
 
-        $total = $jobs->count();
-        $jobs = $jobs->take($this->perPage)->get();
+        if ($this->search) {
+            $total = $jobs->raw()['found'];
+            $jobs = $jobs->take($this->perPage)->get();
+        } else {
+            $jobs = $jobs->latest();
+            $total = $jobs->count();
+            $jobs = $jobs->take($this->perPage)->get();
+        }
 
         $this->hasMorePages = $total > $this->perPage;
 
@@ -162,5 +170,4 @@ class JobFilter extends Component
             'jobTypes' => $this->jobTypes
         ]);
     }
-
 }
