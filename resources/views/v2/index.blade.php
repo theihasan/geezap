@@ -210,58 +210,65 @@ function toggleFilters() {
         </div>
     </section>
 
-    <!-- Job Categories -->
-    <section class="bg-[#12122b] py-16 sm:py-20">
+    <!-- Job Categories -->    
+    <section class="bg-[#12122b] py-16 sm:py-24">
         <div class="mx-auto max-w-7xl px-4 sm:px-6">
-            <div class="mb-8 sm:mb-12 text-center">
-                <h2 class="mb-2 text-3xl font-bold text-white">Browse by Category</h2>
-                <p class="text-gray-300">Find your perfect role in these specialized areas</p>
+            <div class="mb-12 sm:mb-16">
+                <div class="relative inline-block">
+                    <h2 class="text-3xl sm:text-4xl font-bold text-white tracking-tight">Browse by Category</h2>
+                    <div class="absolute -bottom-2 left-0 w-1/2 h-px bg-gradient-to-r from-pink-500 to-transparent"></div>
+                </div>
+                <p class="mt-4 text-gray-300 text-lg">Find your perfect role in these specialized areas</p>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                 @foreach ($jobCategories as $category)
-                    <div class="group relative overflow-hidden rounded-xl border border-gray-700 bg-[#1a1a3a] transition-all duration-300 hover:border-pink-500/50 hover:shadow-lg hover:shadow-pink-500/10 animate-fadeIn" style="animation-delay: {{ $loop->index * 100 }}ms">
-                        <!-- Category Card Content -->
-                        <div class="p-5 flex items-center gap-4">
-                            <!-- Category Icon -->
-                            <div class="flex-shrink-0 h-14 w-14 flex items-center justify-center rounded-xl bg-pink-500/10 group-hover:bg-pink-500/20 transition-colors">
+                    <a href="{{ route('job.index', ['category' => $category->id]) }}" 
+                       class="group relative overflow-hidden bg-[#1a1a3a]/50 backdrop-blur-sm rounded-2xl transition-all duration-300 hover:bg-[#1a1a3a] hover:scale-[1.02]">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-pink-500/0 via-pink-500 to-pink-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        
+                        <div class="p-6 sm:p-8">
+                            <!-- Category Icon with Gradient Background -->
+                            <div class="inline-flex items-center justify-center rounded-xl bg-gradient-to-br from-pink-500/10 to-purple-500/10 p-3 mb-6">
                                 @if($category->category_image)
                                     <img src="{{ url($category->category_image) }}"
-                                         alt="{{ $category->name }}" class="w-8 h-8 object-contain" loading="lazy">
+                                         alt="{{ $category->name }}" 
+                                         class="w-8 h-8 object-contain transform group-hover:scale-110 transition-transform duration-300" 
+                                         loading="lazy">
                                 @else
-                                    <i class="las la-briefcase text-2xl text-pink-300"></i>
+                                    <i class="las la-briefcase text-2xl text-pink-300 transform group-hover:scale-110 transition-transform duration-300"></i>
                                 @endif
                             </div>
 
-                            <!-- Category Info -->
-                            <div class="flex-1">
-                                <a href="{{ route('job.index', ["category" => $category->id]) }}">
-                                    <h3 class="text-lg font-semibold text-white group-hover:text-pink-400 transition-colors">{{ ucwords($category->name) }}</h3>
-                                </a>
-                                <p class="text-gray-400 text-sm mt-1">{{ $category->jobs_count }} open positions</p>
-                            </div>
-
-                            <!-- Arrow Icon -->
-                            <div class="flex-shrink-0">
-                                <a href="{{ route('job.index', ["category" => $category->id]) }}" class="w-8 h-8 flex items-center justify-center rounded-full bg-[#12122b] group-hover:bg-pink-500/20 transition-colors">
-                                    <i class="las la-arrow-right text-pink-400 group-hover:text-pink-300 transition-colors"></i>
-                                </a>
+                            <!-- Category Info with Improved Typography -->
+                            <div class="space-y-3">
+                                <h3 class="text-xl font-semibold text-white tracking-tight group-hover:text-pink-400 transition-colors">
+                                    {{ ucwords($category->name) }}
+                                </h3>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-400 font-mono text-sm">{{ $category->jobs_count }} positions</span>
+                                    <span class="text-pink-400 opacity-0 transform translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">→</span>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Bottom Progress Bar (visual element) -->
-                        <div class="h-1 w-full bg-[#12122b]">
-                            <div class="h-full bg-gradient-to-r from-pink-500 to-purple-600" style="width: {{ min(100, max(10, $category->jobs_count)) }}%"></div>
+                        <!-- Minimal Progress Indicator -->
+                        <div class="absolute bottom-0 left-0 w-full h-px bg-pink-500/10">
+                            <div class="h-full bg-gradient-to-r from-pink-500 to-purple-500 transition-all duration-500 group-hover:opacity-100 opacity-50" 
+                                 style="width: {{ min(100, max(10, $category->jobs_count)) }}%"></div>
                         </div>
-                    </div>
+                    </a>
                 @endforeach
             </div>
 
-            <div class="mt-10 sm:mt-12 flex justify-center">
+            <!-- Minimalist View All Button -->
+            <div class="mt-12 sm:mt-16 flex justify-center">
                 <a href="{{ route('job.categories') }}"
-                   class="group flex items-center gap-2 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 px-6 py-3 sm:px-8 sm:py-4 text-base sm:text-lg font-medium text-white transition-all hover:opacity-90 hover:scale-105 transform">
-                    See All Categories
-                    <i class="las la-arrow-right transition-transform group-hover:translate-x-1"></i>
+                   class="group relative overflow-hidden px-8 py-4 rounded-xl bg-[#1a1a3a]/50 backdrop-blur-sm border border-pink-500/20 text-white font-medium transition-all duration-300 hover:bg-[#1a1a3a] hover:border-pink-500/40">
+                    <span class="relative z-10 flex items-center gap-3">
+                        <span>View All Categories</span>
+                        <span class="transform group-hover:translate-x-1 transition-transform">→</span>
+                    </span>
                 </a>
             </div>
         </div>
