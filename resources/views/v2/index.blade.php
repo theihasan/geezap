@@ -143,17 +143,17 @@
                         <a href="{{ route('job.index', ['country' => 'US']) }}" 
                         class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all group">
                             <span>🇺🇸 USA</span>
-                            <span class="text-pink-500 group-hover:text-pink-400">2,500+</span>
+                            <span class="text-pink-500 group-hover:text-pink-400">{{ App\Models\JobListing::where('country', 'US')->count() }}+</span>
                         </a>
                         <a href="{{ route('job.index', ['country' => 'IN']) }}" 
                         class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all group">
                             <span>🇮🇳 India</span>
-                            <span class="text-pink-500 group-hover:text-pink-400">1,200+</span>
+                            <span class="text-pink-500 group-hover:text-pink-400">{{ App\Models\JobListing::where('country', 'IN')->count() }}+</span>
                         </a>
                         <a href="{{ route('job.index', ['country' => 'BD']) }}" 
                         class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all group">
                             <span>🇧🇩 Bangladesh</span>
-                            <span class="text-pink-500 group-hover:text-pink-400">650+</span>
+                            <span class="text-pink-500 group-hover:text-pink-400">{{ App\Models\JobListing::where('country', 'BD')->count() }}+</span>
                         </a>
                         <a href="{{ route('job.index') }}" 
                         class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all group">
