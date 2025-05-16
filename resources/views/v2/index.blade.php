@@ -3,124 +3,192 @@
     <!-- Hero Section -->
     <section class="relative bg-[#12122b] py-20">
         <!-- Background Pattern -->
-        <div class="absolute inset-0 opacity-10"
-            style="background-image: url('https://placehold.co/1920x800/2a2a4a/FFFFFF'); background-size: cover;"></div>
+        <div class="absolute inset-0 opacity-10 bg-gradient-to-b from-purple-500/10 to-transparent">
+            <div class="absolute inset-0 bg-[url('/assets/grid-pattern.svg')] bg-center opacity-20"></div>
+        </div>
 
-        <div class="relative mx-auto max-w-7xl px-6">
-            <div class="grid items-center gap-12 md:grid-cols-2">
-                <!-- Left Content -->
-                <div class="space-y-8">
-                    <!-- Stats Banner -->
-                    <div class="font-ubuntu-light inline-block rounded-full bg-pink-500/10 px-4 py-2 backdrop-blur-sm">
-                        <span class="font-oxanium font-medium text-pink-300">🎯 Over {{ $availableJobs }}+ jobs
-                            available</span>
-                    </div>
+        <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <!-- Stats Banner -->
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center gap-2 rounded-full bg-pink-500/10 px-4 py-2 backdrop-blur-sm border border-pink-500/20">
+                    <span class="flex h-2 w-2 rounded-full bg-pink-500 animate-pulse"></span>
+                    <span class="font-oxanium font-medium text-pink-300">{{ $availableJobs }}+ jobs available</span>
+                </div>
+            </div>
 
-                    <!-- Main Heading -->
-                    <h1 class="font-oxanium-bold text-5xl leading-tight text-white md:text-6xl">
-                        Find Your Next <span
-                            class="bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
-                            Dream Job
-                        </span> in Tech
-                    </h1>
+            <!-- Main Content -->
+            <div class="mx-auto max-w-4xl text-center space-y-6">
+                <h1 class="font-oxanium-bold text-4xl sm:text-5xl md:text-6xl leading-tight text-white">
+                    Find Your Next <span class="bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">Dream Job</span> in
+                    <span class="relative inline-block">Tech
+                        <div class="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-pink-500 to-purple-500 rounded-full"></div>
+                    </span>
+                </h1>
 
-                    <!-- Subheading -->
-                    <p class="font-ubuntu-light text-xl leading-relaxed text-gray-100">
-                        Join thousands of developers who have found their perfect roles through our platform. We connect
-                        talented developers with top tech companies.
-                    </p>
+                <p class="font-ubuntu-light text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto">
+                    Join thousands of developers who have found their perfect roles through our platform.
+                </p>
+                <!-- Enhanced Search Box -->
+                <div class="mt-8 w-full">
+                    <form action="{{ route('job.index') }}" method="get" class="relative">
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <!-- Main Search Input -->
+                            <div class="flex-1 relative group">
+                                <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                                    <i class="las la-search text-gray-400 text-lg"></i>
+                                </div>
+                                <input
+                                    name="search"
+                                    type="text"
+                                    placeholder="Search by job title, company, or keyword"
+                                    class="w-full h-14 pl-12 pr-4 rounded-xl bg-white/10 border border-white/10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500/50 focus:border-transparent transition-all backdrop-blur-sm"
+                                    autocomplete="off"
+                                >
+                            </div>
 
-                    <!-- Search Box -->
-                    <div class="relative z-10 rounded-2xl border border-white/10 bg-white/10 backdrop-blur-md p-4 sm:p-5 shadow-xl">
-                        <form action="{{ route('job.index') }}" method="get" class="relative">
-                            <div class="flex flex-col md:flex-row gap-4">
-                                <!-- Job Search Input -->
-                                <div class="relative flex-1 group">
-                                    <input
-                                        name="search"
-                                        type="text"
-                                        placeholder="Job title, keyword, or company"
-                                        class="w-full h-14 pl-12 pr-4 rounded-xl bg-white/10 border border-white/5 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500/50 focus:border-transparent transition-all"
-                                        autocomplete="off"
+                            <!-- Filters Button -->
+                            <div class="flex gap-3">
+                                <div class="relative">
+                                    <button
+                                        type="button"
+                                        onclick="toggleFilters()"
+                                        class="h-14 px-6 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-white transition-all flex items-center gap-2 backdrop-blur-sm"
                                     >
-                                    <div class="absolute inset-0 rounded-xl bg-gradient-to-r from-pink-500/5 to-purple-600/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                                        <i class="las la-filter"></i>
+                                        <span>Filters</span>
+                                    </button>
                                 </div>
 
                                 <!-- Search Button -->
-                                <button type="submit" class="h-14 px-8 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 text-white font-medium transition-all hover:shadow-lg hover:shadow-pink-500/20 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-pink-500/50 flex items-center justify-center gap-2">
-                                    <span>Find Jobs</span>
-                                    <i class="las la-search-location"></i>
+                                <button
+                                    type="submit"
+                                    class="h-14 px-8 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 text-white font-medium transition-all hover:shadow-lg hover:shadow-pink-500/20 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-pink-500/50 flex items-center gap-2"
+                                >
+                                    <span>Search</span>
+                                    <i class="las la-arrow-right"></i>
                                 </button>
                             </div>
+                        </div>
 
-                            <!-- Advanced Filters (Optional) -->
-                            <div class="flex flex-wrap items-center gap-3 mt-4 text-sm text-gray-300">
-                                <span class="font-medium">Popular:</span>
-                                <a href="{{ route('job.index', ['search' => 'development']) }}" class="px-3 py-1 rounded-full bg-white/5 hover:bg-white/10 transition-colors">Development</a>
-                                <a href="{{ route('job.index', ['search' => 'design']) }}" class="px-3 py-1 rounded-full bg-white/5 hover:bg-white/10 transition-colors">Design</a>
-                                <a href="{{ route('job.index', ['remote' => '1']) }}" class="px-3 py-1 rounded-full bg-white/5 hover:bg-white/10 transition-colors">Remote</a>
-                                <a href="{{ route('job.index', ['source' => 'LinkedIn']) }}" class="px-3 py-1 rounded-full bg-white/5 hover:bg-white/10 transition-colors">LinkedIn</a>
-                                <a href="{{ route('job.index', ['category' => '1']) }}" class="px-3 py-1 rounded-full bg-white/5 hover:bg-white/10 transition-colors">Laravel</a>
+                        <!-- Expandable Filters -->
+                        <div id="filters" class="hidden mt-3 p-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <!-- Location Filter -->
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                                        <i class="las la-globe text-gray-400"></i>
+                                    </div>
+                                    <select
+                                        name="country"
+                                        class="w-full h-12 pl-12 pr-10 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500/50 focus:border-transparent transition-all appearance-none"
+                                    >
+                                        <option value="">Select Location</option>
+                                        @foreach($countries as $code => $name)
+                                            <option value="{{ $name->code }}" class="bg-[#1a1a3a] text-white">{{ $name->name }}</option>
+                                        @endforeach
+                                    </select>
+                                    <div class="absolute inset-y-0 right-4 flex items-center pointer-events-none">
+                                        <i class="las la-angle-down text-gray-400"></i>
+                                    </div>
+                                </div>
+
+                                <!-- Work Type Filter -->
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                                        <i class="las la-building text-gray-400"></i>
+                                    </div>
+                                    <select
+                                        name="remote"
+                                        class="w-full h-12 pl-12 pr-10 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500/50 focus:border-transparent transition-all appearance-none"
+                                    >
+                                        <option value="">Work Type</option>
+                                        <option value="1" class="bg-[#1a1a3a] text-white">Remote Only</option>
+                                        <option value="0" class="bg-[#1a1a3a] text-white">On-site</option>
+                                    </select>
+                                    <div class="absolute inset-y-0 right-4 flex items-center pointer-events-none">
+                                        <i class="las la-angle-down text-gray-400"></i>
+                                    </div>
+                                </div>
                             </div>
-                        </form>
+                        </div>
+                    </form>
+
+                    <!-- Popular Searches -->
+                    <div class="flex flex-wrap items-center gap-3 mt-6 text-sm text-gray-400 text-center mb-8">
+                        <span class="font-medium">Popular:</span>
+                        <a href="{{ route('job.index', ['search' => 'development']) }}" 
+                           class="px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all">
+                           Development
+                        </a>
+                        <a href="{{ route('job.index', ['search' => 'design']) }}" 
+                           class="px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all">
+                           Design
+                        </a>
+                        <a href="{{ route('job.index', ['remote' => '1']) }}" 
+                           class="px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all">
+                           Remote
+                        </a>
+                        <a href="{{ route('job.index', ['source' => 'LinkedIn']) }}" 
+                           class="px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all">
+                           LinkedIn
+                        </a>
+                        <a href="{{ route('job.index', ['category' => '1']) }}" 
+                           class="px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all">
+                           Laravel
+                        </a>
                     </div>
-
-
-                    <!-- Quick Stats -->
-                    <div class="grid grid-cols-3 gap-6 pt-4">
-                        <div class="text-center">
-                            <div class="mb-1 text-3xl font-bold text-white">{{ $availableJobs }}+</div>
-                            <div class="text-sm text-gray-300">Active Jobs</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="mb-1 text-3xl font-bold text-white">{{ $jobCategoriesCount }}+</div>
-                            <div class="text-sm text-gray-300">Categories</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="mb-1 text-3xl font-bold text-white">{{ App\Models\User::query()->count() }}+</div>
-                            <div class="text-sm text-gray-300">Developers</div>
-                        </div>
+                         <!-- Popular Jobs by Country -->
+                    <div class="flex flex-wrap items-center gap-3 pt-4 text-sm text-gray-300">
+                        <span class="font-medium">Top Countries:</span>
+                        <a href="{{ route('job.index', ['country' => 'US']) }}" 
+                        class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all group">
+                            <span>🇺🇸 USA</span>
+                            <span class="text-pink-500 group-hover:text-pink-400">2,500+</span>
+                        </a>
+                        <a href="{{ route('job.index', ['country' => 'IN']) }}" 
+                        class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all group">
+                            <span>🇮🇳 India</span>
+                            <span class="text-pink-500 group-hover:text-pink-400">1,200+</span>
+                        </a>
+                        <a href="{{ route('job.index', ['country' => 'BD']) }}" 
+                        class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all group">
+                            <span>🇧🇩 Bangladesh</span>
+                            <span class="text-pink-500 group-hover:text-pink-400">650+</span>
+                        </a>
+                        <a href="{{ route('job.index') }}" 
+                        class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all group">
+                            <i class="las la-globe text-gray-400 group-hover:text-white"></i>
+                            <span>All Countries</span>
+                        </a>
                     </div>
                 </div>
+        </div>
 
-                <!-- Right Content -->
-                <div class="relative hidden md:block">
-                    <!-- Main Image -->
-                    <img src="https://placehold.co/600x500/2a2a4a/FFFFFF" alt="Developer Working"
-                        class="rounded-2xl shadow-2xl" loading="lazy">
-
-                    <!-- Floating Card 1 -->
-                    <div
-                        class="absolute -left-6 -top-6 rounded-xl border border-white/10 bg-[#1a1a3a]/90 p-4 backdrop-blur-sm">
-                        <div class="flex items-center gap-3">
-                            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-pink-500/20">
-                                <i class="las la-code text-pink-500"></i>
-                            </div>
-                            <div>
-                                <div class="font-medium text-white">1,200+</div>
-                                <div class="text-sm text-gray-400">Developer Jobs</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Floating Card 2 -->
-                    <div
-                        class="absolute -bottom-6 -right-6 rounded-xl border border-white/10 bg-[#1a1a3a]/90 p-4 backdrop-blur-sm">
-                        <div class="flex items-center gap-3">
-                            <div class="flex h-10 w-10 items-center justify-center rounded-full bg-purple-500/20">
-                                <i class="las la-building text-purple-500"></i>
-                            </div>
-                            <div>
-                                <div class="font-medium text-white">500+</div>
-                                <div class="text-sm text-gray-400">Tech Companies</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <!-- Stats Section -->
+        <div class="grid grid-cols-3 gap-4 sm:gap-8 max-w-2xl mx-auto mt-16 text-center">
+            <div class="space-y-2">
+                <h3 class="font-oxanium-bold text-3xl sm:text-4xl text-white">{{$availableJobs}}</h3>
+                <p class="text-gray-400 text-sm sm:text-base">Active Jobs</p>
+            </div>
+            <div class="space-y-2">
+                <h3 class="font-oxanium-bold text-3xl sm:text-4xl text-white">{{ $jobCategoriesCount }}</h3>
+                <p class="text-gray-400 text-sm sm:text-base">Categories</p>
+            </div>
+            <div class="space-y-2">
+                <h3 class="font-oxanium-bold text-3xl sm:text-4xl text-white">{{App\Models\User::count()}}</h3>
+                <p class="text-gray-400 text-sm sm:text-base">Developers</p>
             </div>
         </div>
-    </section>
-    <!-- Hero Section End -->
+    </div>
+</section>
+
+<!-- Add this script at the end of your blade file or in your JS bundle -->
+<script>
+function toggleFilters() {
+    const filters = document.getElementById('filters');
+    filters.classList.toggle('hidden');
+}
+</script>
 
     <!-- Latest jobs start -->
     @if ($latestJobs)
@@ -237,3 +305,5 @@
         }
     </style>
 @endpush
+
+           
