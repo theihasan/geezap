@@ -190,6 +190,8 @@ return [
         'password' => env('REDIS_CACHE_PASSWORD'),
         'port' => env('REDIS_CACHE_PORT', 6379),
         'database' => env('REDIS_CACHE_DB', 1),
+        'read_timeout' => 60,
+        'timeout' => 60,
     ],
 ],
 
