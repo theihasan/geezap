@@ -31,11 +31,11 @@ class DispatchJobCategories implements ShouldQueue
         try {
             JobCategory::query()->chunk(5, function ($categories) {
                 $categories->each(function ($category) {
-                    GetJobData::dispatch($category->id,$category->page,$category->id === JobCategory::query()->max('id'));
+                    GetJobData::dispatch($category->id,$category->page,$category->id === JobCategory::query()->max('id'))->delay(now()->addSeconds(5));
                 });
             });
         } catch (CategoryNotFoundException | \Exception $e) {
-            logger($e->getMessage());
+            logger()->error('Something went wrong in Job dispatching in DispatchJobCategories class', [$e->getMessage()]);
         }
     }
 }
