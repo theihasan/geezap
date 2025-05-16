@@ -2,25 +2,26 @@
 
 namespace App\Models;
 
-use Abbasudo\Purity\Traits\Filterable;
 use App\Filters\JobFilter;
-use App\Models\Scopes\JobListingScope;
-use App\Observers\JobListingObserver;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Attributes\ScopedBy;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Prunable;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Laravel\Scout\Searchable;
 use Illuminate\Support\Facades\Log;
+use App\Observers\JobListingObserver;
+use Abbasudo\Purity\Traits\Filterable;
+use App\Models\Scopes\JobListingScope;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Prunable;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 #[ObservedBy([JobListingObserver::class])]
 #[ScopedBy([JobListingScope::class])]
 class JobListing extends Model
 {
-    use HasFactory, Filterable, Prunable;
+    use HasFactory, Filterable, Prunable, Searchable;
 
     protected $fillable = [
         'employer_name',
@@ -83,6 +84,21 @@ class JobListing extends Model
     protected function pruning(): void
     {
         Log::info('Prepare for removing job: ' . $this->id);
+    }
+
+    public function toSearchableArray(): array
+    {
+        $array = $this->toArray();
+        return array_merge($array, [
+            'id' => (string) $this->id,
+            'created_at' => $this->created_at->timestamp,
+            'job_category' => (string) $this->job_category, 
+        ]);
+    }
+
+    public function searchableAs(): string
+    {
+        return 'listing_index';
     }
 
 
