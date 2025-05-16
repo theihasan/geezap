@@ -132,36 +132,54 @@ class JobFilter extends Component
 
     public function render()
     {
-        $jobs = JobListing::query();
-        
         if ($this->search) {
             $jobs = JobListing::search($this->search);
-        }
-
-        $jobs = $jobs->when($this->source, fn($query, $source) =>
-            $query->where('publisher', $source))
-            ->when($this->exclude_source, fn($query, $exclude_source) =>
-            $query->where('publisher', '!=', $exclude_source))
-            ->when($this->country, fn($query, $country) =>
-            $query->where('country', $country))
-            ->when($this->category, fn($query, $category) =>
-            $query->whereRelation('category', 'id', $category))
-            ->when($this->remote, fn($query) =>
-            $query->where('is_remote', true))
-            ->when(!empty($this->types), fn($query) =>
-            $query->whereIn('employment_type', $this->types));
-
-        if ($this->search) {
+           
+            $jobs = $jobs->when($this->source, fn($query, $source) =>
+                $query->where('publisher', $source))
+                ->when($this->exclude_source, fn($query, $exclude_source) =>
+                $query->where('publisher', '!=', $exclude_source))
+                ->when($this->country, fn($query, $country) =>
+                $query->where('country', $country))
+                ->when($this->remote, fn($query) =>
+                $query->where('is_remote', true))
+                ->when(!empty($this->types), fn($query) =>
+                $query->whereIn('employment_type', $this->types));
+        
             $total = $jobs->raw()['found'];
-            $jobs = $jobs->take($this->perPage)->get();
+            $baseQuery = JobListing::whereIn('id', $jobs->keys());
+            
+            if ($this->category) {
+                $baseQuery->whereHas('category', function($query) {
+                    $query->where('id', $this->category);
+                });
+            }
+            
+            $jobs = $baseQuery->take($this->perPage)->get();
         } else {
-            $jobs = $jobs->latest();
+            $jobs = JobListing::query()
+                ->when($this->source, fn($query, $source) =>
+                    $query->where('publisher', $source))
+                ->when($this->exclude_source, fn($query, $exclude_source) =>
+                    $query->where('publisher', '!=', $exclude_source))
+                ->when($this->country, fn($query, $country) =>
+                    $query->where('country', $country))
+                ->when($this->category, fn($query, $category) =>
+                    $query->whereHas('category', function($query) use ($category) {
+                        $query->where('id', $category);
+                    }))
+                ->when($this->remote, fn($query) =>
+                    $query->where('is_remote', true))
+                ->when(!empty($this->types), fn($query) =>
+                    $query->whereIn('employment_type', $this->types))
+                ->latest();
+        
             $total = $jobs->count();
             $jobs = $jobs->take($this->perPage)->get();
         }
-
+    
         $this->hasMorePages = $total > $this->perPage;
-
+    
         return view('livewire.job-filter', [
             'jobs' => $jobs,
             'categories' => $this->getCategories(),
