@@ -105,8 +105,8 @@ return [
             'transport' => 'failover',
             'mailers' => [
                 'brevo',
-                'zepto',
                 'resend',
+                'zepto',
                 'log',
             ],
         ],
