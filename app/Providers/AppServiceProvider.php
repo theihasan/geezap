@@ -57,7 +57,6 @@ class AppServiceProvider extends ServiceProvider
         try {
 
             $this->registerJobMacro();
-            $this->registerOpenAIMacro();
         } catch (\Exception $e){
             logger('Error on app service provider', [
                 'message' => $e->getMessage(),
@@ -180,17 +179,7 @@ class AppServiceProvider extends ServiceProvider
         });
     }
 
-    private function registerOpenAIMacro(): void
-    {
-        Http::macro('openai', function () {
-            $apiKey = config('ai.chat_gpt_api_key');
 
-            return Http::withHeaders([
-                'Content-Type' => 'application/json',
-                'Authorization' => 'Bearer ' . $apiKey,
-            ])->baseUrl('https://api.openai.com/v1/chat');
-        });
-    }
 
     private function configureRateLimiter(): void
     {
