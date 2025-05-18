@@ -9,10 +9,22 @@ class MostViewedJobsCache{
 
     public static function get()
     {
-        return Cache::remember(self::key(), 60 * 24, function () {
+        return Cache::remember(self::key(), 60 * 24 * 7, function () {
             return JobListing::query()
-                ->latest('views')
-                ->limit(4)
+                ->select('id',
+                    'employer_name',
+                    'slug','state',
+                    'employment_type',
+                    'job_title',
+                    'views',
+                    'min_salary',
+                    'max_salary',
+                    'salary_period',
+                    'created_at',
+                    'description'
+                )
+                ->orderByDesc('views')
+                ->take(4)
                 ->get();
         });
     }

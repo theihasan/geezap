@@ -2,7 +2,7 @@
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
     @foreach ($mostViewedJobs as $job)
-        <div class="group relative bg-[#1a1a3a] rounded-2xl overflow-hidden transition-all duration-300 hover:bg-[#1e1e4a]" 
+        <div class="group relative bg-[#1a1a3a] rounded-2xl overflow-hidden transition-all duration-300 hover:bg-[#1e1e4a]"
              style="animation-delay: {{ $loop->index * 100 }}ms">
             <!-- Accent Line -->
             <div class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-pink-500 to-purple-600 transform origin-top scale-y-0 group-hover:scale-y-100 transition-transform duration-500"></div>
@@ -27,7 +27,7 @@
                     </div>
                     <div>
                         <h4 class="text-white font-medium">{{ $job->employer_name }}</h4>
-                        <span class="text-sm text-gray-400">{{ $job->category->name }}</span>
+                        <span class="text-sm text-gray-400">{{ $job->category?->name }}</span>
                     </div>
                 </div>
 
@@ -49,13 +49,6 @@
                         <i class="las la-clock text-purple-500/70"></i>
                         <span>{{ $job->employment_type }}</span>
                     </div>
-
-                    @if($job->experience_level)
-                        <div class="flex items-center gap-2 text-gray-400">
-                            <i class="las la-briefcase text-blue-500/70"></i>
-                            <span>{{ $job->experience_level }}</span>
-                        </div>
-                    @endif
 
                     <div class="flex items-center gap-2 text-gray-400">
                         <i class="las la-calendar text-green-500/70"></i>
@@ -80,7 +73,7 @@
                         <p class="text-gray-400 text-sm line-clamp-1 max-w-[60%]">{{ Str::limit(strip_tags($job->description), 80) }}</p>
                     @endif
 
-                    <a href="{{ route('job.show', $job->slug) }}" 
+                    <a href="{{ route('job.show', $job->slug) }}"
                        class="relative inline-flex items-center gap-2 text-white">
                         <span class="group-hover:mr-2 transition-all duration-300">View</span>
                         <i class="las la-arrow-right opacity-0 group-hover:opacity-100 transition-all duration-300"></i>
@@ -93,7 +86,7 @@
 
 <!-- Minimal Explore Button -->
 <div class="mt-12 text-center">
-    <a href="{{ route('job.index') }}" 
+    <a href="{{ route('job.index') }}"
        class="inline-flex items-center gap-3 px-8 py-3 rounded-xl text-white hover:text-pink-400 transition-colors">
         <span class="text-lg">View All Jobs</span>
         <i class="las la-arrow-right"></i>

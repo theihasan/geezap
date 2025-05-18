@@ -74,23 +74,23 @@
                         <div id="filters" class="hidden mt-3 p-4 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm">
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <!-- Location Filter -->
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-                                        <i class="las la-globe text-gray-400"></i>
-                                    </div>
-                                    <select
-                                        name="country"
-                                        class="w-full h-12 pl-12 pr-10 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500/50 focus:border-transparent transition-all appearance-none"
-                                    >
-                                        <option value="">Select Location</option>
-                                        @foreach($countries as $code => $name)
-                                            <option value="{{ $name->code }}" class="bg-[#1a1a3a] text-white">{{ $name->name }}</option>
-                                        @endforeach
-                                    </select>
-                                    <div class="absolute inset-y-0 right-4 flex items-center pointer-events-none">
-                                        <i class="las la-angle-down text-gray-400"></i>
-                                    </div>
-                                </div>
+{{--                                <div class="relative">--}}
+{{--                                    <div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">--}}
+{{--                                        <i class="las la-globe text-gray-400"></i>--}}
+{{--                                    </div>--}}
+{{--                                    <select--}}
+{{--                                        name="country"--}}
+{{--                                        class="w-full h-12 pl-12 pr-10 rounded-lg bg-white/5 border border-white/10 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500/50 focus:border-transparent transition-all appearance-none"--}}
+{{--                                    >--}}
+{{--                                        <option value="">Select Location</option>--}}
+{{--                                        @foreach($countries as $code => $name)--}}
+{{--                                            <option value="{{ $name->code }}" class="bg-[#1a1a3a] text-white">{{ $name->name }}</option>--}}
+{{--                                        @endforeach--}}
+{{--                                    </select>--}}
+{{--                                    <div class="absolute inset-y-0 right-4 flex items-center pointer-events-none">--}}
+{{--                                        <i class="las la-angle-down text-gray-400"></i>--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
 
                                 <!-- Work Type Filter -->
                                 <div class="relative">
@@ -116,23 +116,23 @@
                     <!-- Popular Searches -->
                     <div class="flex flex-wrap items-center gap-3 mt-6 text-sm text-gray-400 text-center mb-8">
                         <span class="font-medium">Popular:</span>
-                        <a href="{{ route('job.index', ['search' => 'development']) }}" 
+                        <a href="{{ route('job.index', ['search' => 'development']) }}"
                            class="px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all">
                            Development
                         </a>
-                        <a href="{{ route('job.index', ['search' => 'design']) }}" 
+                        <a href="{{ route('job.index', ['search' => 'design']) }}"
                            class="px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all">
                            Design
                         </a>
-                        <a href="{{ route('job.index', ['remote' => '1']) }}" 
+                        <a href="{{ route('job.index', ['remote' => '1']) }}"
                            class="px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all">
                            Remote
                         </a>
-                        <a href="{{ route('job.index', ['source' => 'LinkedIn']) }}" 
+                        <a href="{{ route('job.index', ['source' => 'LinkedIn']) }}"
                            class="px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all">
                            LinkedIn
                         </a>
-                        <a href="{{ route('job.index', ['category' => '1']) }}" 
+                        <a href="{{ route('job.index', ['category' => '1']) }}"
                            class="px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all">
                            Laravel
                         </a>
@@ -140,22 +140,22 @@
                          <!-- Popular Jobs by Country -->
                     <div class="flex flex-wrap items-center gap-3 pt-4 text-sm text-gray-300">
                         <span class="font-medium">Top Countries:</span>
-                        <a href="{{ route('job.index', ['country' => 'US']) }}" 
+                        <a href="{{ route('job.index', ['country' => 'US']) }}"
                         class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all group">
                             <span>🇺🇸 USA</span>
-                            <span class="text-pink-500 group-hover:text-pink-400">{{ App\Models\JobListing::where('country', 'US')->count() }}+</span>
+                            <span class="text-pink-500 group-hover:text-pink-400">{{ $countryJobCounts['US'] ?? 0 }}+</span>
                         </a>
-                        <a href="{{ route('job.index', ['country' => 'IN']) }}" 
+                        <a href="{{ route('job.index', ['country' => 'IN']) }}"
                         class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all group">
                             <span>🇮🇳 India</span>
-                            <span class="text-pink-500 group-hover:text-pink-400">{{ App\Models\JobListing::where('country', 'IN')->count() }}+</span>
+                            <span class="text-pink-500 group-hover:text-pink-400">{{ $countryJobCounts['IN'] ?? 0 }}+</span>
                         </a>
-                        <a href="{{ route('job.index', ['country' => 'BD']) }}" 
+                        <a href="{{ route('job.index', ['country' => 'BD']) }}"
                         class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all group">
                             <span>🇧🇩 Bangladesh</span>
-                            <span class="text-pink-500 group-hover:text-pink-400">{{ App\Models\JobListing::where('country', 'BD')->count() }}+</span>
+                            <span class="text-pink-500 group-hover:text-pink-400">{{ $countryJobCounts['IN'] ?? 0 }}+</span>
                         </a>
-                        <a href="{{ route('job.index') }}" 
+                        <a href="{{ route('job.index') }}"
                         class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all group">
                             <i class="las la-globe text-gray-400 group-hover:text-white"></i>
                             <span>All Countries</span>
@@ -210,7 +210,7 @@ function toggleFilters() {
         </div>
     </section>
 
-    <!-- Job Categories -->    
+    <!-- Job Categories -->
     <section class="bg-[#12122b] py-16 sm:py-24">
         <div class="mx-auto max-w-7xl px-4 sm:px-6">
             <div class="mb-12 sm:mb-16">
@@ -223,17 +223,17 @@ function toggleFilters() {
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
                 @foreach ($jobCategories as $category)
-                    <a href="{{ route('job.index', ['category' => $category->id]) }}" 
+                    <a href="{{ route('job.index', ['category' => $category->id]) }}"
                        class="group relative overflow-hidden bg-[#1a1a3a]/50 backdrop-blur-sm rounded-2xl transition-all duration-300 hover:bg-[#1a1a3a] hover:scale-[1.02]">
                         <div class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-pink-500/0 via-pink-500 to-pink-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                        
+
                         <div class="p-6 sm:p-8">
                             <!-- Category Icon with Gradient Background -->
                             <div class="inline-flex items-center justify-center rounded-xl bg-gradient-to-br from-pink-500/10 to-purple-500/10 p-3 mb-6">
                                 @if($category->category_image)
                                     <img src="{{ url($category->category_image) }}"
-                                         alt="{{ $category->name }}" 
-                                         class="w-8 h-8 object-contain transform group-hover:scale-110 transition-transform duration-300" 
+                                         alt="{{ $category->name }}"
+                                         class="w-8 h-8 object-contain transform group-hover:scale-110 transition-transform duration-300"
                                          loading="lazy">
                                 @else
                                     <i class="las la-briefcase text-2xl text-pink-300 transform group-hover:scale-110 transition-transform duration-300"></i>
@@ -254,7 +254,7 @@ function toggleFilters() {
 
                         <!-- Minimal Progress Indicator -->
                         <div class="absolute bottom-0 left-0 w-full h-px bg-pink-500/10">
-                            <div class="h-full bg-gradient-to-r from-pink-500 to-purple-500 transition-all duration-500 group-hover:opacity-100 opacity-50" 
+                            <div class="h-full bg-gradient-to-r from-pink-500 to-purple-500 transition-all duration-500 group-hover:opacity-100 opacity-50"
                                  style="width: {{ min(100, max(10, $category->jobs_count)) }}%"></div>
                         </div>
                     </a>
@@ -313,4 +313,4 @@ function toggleFilters() {
     </style>
 @endpush
 
-           
+

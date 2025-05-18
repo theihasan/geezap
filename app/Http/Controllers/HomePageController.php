@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Caches\CountriesCache;
+use App\Caches\CountryJobCountCache;
 use App\Caches\JobCategoryCache;
 use App\Caches\JobsCountCache;
 use App\Caches\LatestJobsCache;
@@ -31,7 +32,8 @@ class HomePageController extends Controller
 
         $latestJobs = LatestJobsCache::get($mostViewedJobs->pluck('id')->toArray());
 
-        $countries = CountriesCache::get();
+       // $countries = CountriesCache::get();
+        $countryJobCounts = CountryJobCountCache::getAll();
 
         $meta = $metaGenerator->getHomePageMeta(
             $availableJobs,
@@ -50,7 +52,8 @@ class HomePageController extends Controller
             'availableJobs',
             'latestJobs',
             'meta',
-           'countries',
+           //'countries',
+           'countryJobCounts',
         ]));
     }
 }
