@@ -40,7 +40,7 @@ class AppServiceProvider extends ServiceProvider
         $this->registerHttpMacros();
         $this->configureCommand();
         $this->configureMetaTags();
-        $this->configureRateLimiter();
+        //$this->configureRateLimiter();
         $this->configureLogViewer();
 
     }
