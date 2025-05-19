@@ -1,3 +1,5 @@
+[![Details Documentation](https://deepwiki.com/badge.svg)](https://deepwiki.com/theihasan/geezap)
+
 ![Free Palestine](https://github.com/user-attachments/assets/2b796609-c819-4cf6-b454-993e47a6e0f2)
 
 
