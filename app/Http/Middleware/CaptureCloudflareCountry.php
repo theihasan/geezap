@@ -12,7 +12,7 @@ class CaptureCloudflareCountry
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (auth()->check() && Route::currentRouteName() === 'home') {
+        if (auth()->check() && request()->route()->getName() === 'home') {
             UpdateUserCountryFromCloudflare::dispatch(
                 userId: auth()->id(),
                 cfCountry: $request->header('CF-IPCountry')
