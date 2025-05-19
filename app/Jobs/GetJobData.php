@@ -54,7 +54,6 @@ class GetJobData implements ShouldQueue
             $this->fetchAndStoreJobs($apiKey, $category);
 
         } catch (ValidationException | InvalidArgumentException| CountryNotFoundException | ModelNotFoundException  | Exception $e) {
-            ExceptionHappenEvent::dispatch($e);
             Log::error('Error on job fetching', [
                 'message' => $e->getMessage(),
                 'line' => $e->getLine(),
