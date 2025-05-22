@@ -39,6 +39,20 @@ return [
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
         ],
 
+        'backeup' => [
+            'driver' => 'mysql',
+            'host' => env('SYNC_DB_HOST'),
+            'port' => env('SYNC_DB_PORT'),
+            'database' => env('SYNC_DB_DATABASE'),
+            'username' => env('SYNC_DB_USERNAME'),
+            'password' => env('SYNC_DB_PASSWORD'),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'strict' => true,
+            'engine' => null,
+        ],
+
         'mysql' => [
             'driver' => 'mysql',
             'url' => env('DB_URL'),
