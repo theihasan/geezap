@@ -6,6 +6,7 @@ use App\Caches\JobFilterCache;
 use App\Models\Country;
 use App\Models\JobCategory;
 use App\Models\JobListing;
+use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\Url;
@@ -132,10 +133,15 @@ class JobFilter extends Component
 
     public function render()
     {
+        // Use Laravel's built-in pagination instead of manual pagination
+        $perPage = $this->perPage;
+
         if ($this->search) {
-            $jobs = JobListing::search($this->search);
-           
-            $jobs = $jobs->when($this->source, fn($query, $source) =>
+            // Optimize search query by using Scout's query builder more efficiently
+            $searchQuery = JobListing::search($this->search);
+
+            // Apply filters to the search query
+            $searchQuery = $searchQuery->when($this->source, fn($query, $source) =>
                 $query->where('publisher', $source))
                 ->when($this->exclude_source, fn($query, $exclude_source) =>
                 $query->where('publisher', '!=', $exclude_source))
@@ -145,19 +151,40 @@ class JobFilter extends Component
                 $query->where('is_remote', true))
                 ->when(!empty($this->types), fn($query) =>
                 $query->whereIn('employment_type', $this->types));
-        
-            $total = $jobs->raw()['found'];
-            $baseQuery = JobListing::whereIn('id', $jobs->keys());
-            
+
+            // Get the category filter working with Scout
             if ($this->category) {
-                $baseQuery->whereHas('category', function($query) {
-                    $query->where('id', $this->category);
-                });
+                // Since category filtering might not work directly with Scout,
+                // we'll get all IDs that match the search criteria first
+                $jobIds = $searchQuery->keys();
+
+                // Then filter by category using Eloquent
+                $jobs = JobListing::whereIn('id', $jobIds)
+                    ->when($this->category, fn($query, $category) =>
+                        $query->whereHas('category', function($query) use ($category) {
+                            $query->where('id', $category);
+                        }))
+                    ->latest()
+                    ->take($perPage)
+                    ->get();
+
+                // Get total for pagination
+                $total = JobListing::whereIn('id', $jobIds)
+                    ->when($this->category, fn($query, $category) =>
+                        $query->whereHas('category', function($query) use ($category) {
+                            $query->where('id', $category);
+                        }))
+                    ->count();
+            } else {
+                // If no category filter, we can use Scout's paginate directly
+                // But we need to get the models with all their relations
+                $searchResults = $searchQuery->paginate($perPage);
+                $jobs = $searchResults->items();
+                $total = $searchResults->total();
             }
-            
-            $jobs = $baseQuery->take($this->perPage)->get();
         } else {
-            $jobs = JobListing::query()
+            // Optimize regular query by using eager loading and query caching
+            $query = JobListing::query()
                 ->when($this->source, fn($query, $source) =>
                     $query->where('publisher', $source))
                 ->when($this->exclude_source, fn($query, $exclude_source) =>
@@ -173,13 +200,29 @@ class JobFilter extends Component
                 ->when(!empty($this->types), fn($query) =>
                     $query->whereIn('employment_type', $this->types))
                 ->latest();
-        
-            $total = $jobs->count();
-            $jobs = $jobs->take($this->perPage)->get();
+
+            // Use a more efficient approach to get both the count and the results
+            // Cache the count query result for 5 minutes to improve performance
+            $cacheKey = 'job_filter_count_' . md5(json_encode([
+                $this->source,
+                $this->exclude_source,
+                $this->country,
+                $this->category,
+                $this->remote,
+                $this->types
+            ]));
+
+            $total = Cache::remember($cacheKey, now()->addMinutes(5), function() use ($query) {
+                return $query->count();
+            });
+
+            $jobs = $query->with('category') // Eager load the category relationship
+                ->take($perPage)
+                ->get();
         }
-    
-        $this->hasMorePages = $total > $this->perPage;
-    
+
+        $this->hasMorePages = $total > $perPage;
+
         return view('livewire.job-filter', [
             'jobs' => $jobs,
             'categories' => $this->getCategories(),
