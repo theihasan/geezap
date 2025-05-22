@@ -10,9 +10,9 @@ use App\Exceptions\NonAuthenticatedUser;
 use App\Exceptions\OpenAPICreditExceedException;
 use App\Models\Airesponse;
 use App\Models\JobListing;
-use App\Services\AIService;
+use App\Services\AI\BaseAIService;
+use Illuminate\Support\Facades\Log;
 use Livewire\Component;
-use Illuminate\Support\Facades\Storage;
 
 class GenerateCoverLetter extends Component
 {
@@ -50,17 +50,8 @@ class GenerateCoverLetter extends Component
             $this->dispatch('open-chat');
 
             $this->generateCoverLetter();
-        } catch (NonAuthenticatedUser|IncompleteProfileException $e) {
-            $this->dispatch('notify', [
-                'message' => $e->getMessage(),
-                'type' => 'error'
-            ]);
-        } catch (AIServiceAPIKeyNotFound $e) {
-            ExceptionHappenEvent::dispatch($e);
-            $this->dispatch('notify', [
-                'message' => 'Something went wrong with ai service. Please try later',
-                'type' => 'error'
-            ]);
+        } catch (NonAuthenticatedUser|IncompleteProfileException | AIServiceAPIKeyNotFound $e) {
+            $this->handleError($e->getMessage());
         } catch (\Throwable $e) {
         }
     }
@@ -84,17 +75,28 @@ class GenerateCoverLetter extends Component
     private function generateCoverLetter(bool $isRegeneration = false, ?string $previousAnswer = null): void
     {
         try {
-            $aiService = app(AIService::class);
-
-            $response = $aiService->getChatResponse(
-                auth()->user(),
-                $this->jobListing->toArray(),
-                function($partial) {
-                    $this->stream('answer', $partial);
-                },
-                $isRegeneration ? $this->feedback : null,
-                $previousAnswer
-            );
+            $aiService = app(BaseAIService::class);
+            try {
+                $response = $aiService->getChatResponse(
+                    auth()->user(),
+                    $this->jobListing->toArray(),
+                    function($partial) {
+                        Illuminate\Support\Facades\Log::info('Streaming partial response', ['length' => strlen($partial)]);
+                        $this->stream('answer', $partial);
+                    },
+                    $isRegeneration ? $this->feedback : null,
+                    $previousAnswer
+                );
+            } catch (\Throwable $e) {
+                Log::error('Error in getChatResponse', [
+                    'message' => $e->getMessage(),
+                    'class' => get_class($e),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                    'trace' => $e->getTraceAsString()
+                ]);
+                throw $e;
+            }
 
             Airesponse::query()
                 ->create([
@@ -106,20 +108,27 @@ class GenerateCoverLetter extends Component
             $this->answer = $response;
             $this->isGenerating = false;
 
-
-        } catch (DailyChatLimitExceededException $e){
-            $this->answer = 'Sorry, you have exceeded the daily limit for chat requests. Please try again later.';
-            $this->isGenerating = false;
+        } catch (DailyChatLimitExceededException $e) {
+            $this->handleError('Sorry, you have exceeded the daily limit for chat requests. Please try again later.');
         } catch (OpenAPICreditExceedException $e) {
-            $this->answer = 'Something went wrong with ai service. Please try later';
+            Log::error('OpenAI credits exceeded');
+            $this->handleError('Our AI service is currently unavailable. Please try again later.');
+        } catch (\Exception $e) {
+            Log::error('Cover Letter Generation Error', [
+                'error' => $e->getMessage(),
+                'class' => get_class($e),
+                'trace' => $e->getTraceAsString()
+            ]);
+            $this->handleError('An error occurred while generating your cover letter. Please try again.');
+        } finally {
             $this->isGenerating = false;
-        }  catch (\Exception $e) {
-            $this->answer = 'Sorry, there was an error generating your cover letter. Please try again.';
-            $this->isGenerating = false;
-        } catch (\Throwable $e) {
         }
     }
 
+    private function handleError(string $message): void
+    {
+        $this->answer = $message;
+    }
     public function render()
     {
         return view('livewire.generate-cover-letter');
