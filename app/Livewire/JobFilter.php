@@ -133,14 +133,11 @@ class JobFilter extends Component
 
     public function render()
     {
-        // Use Laravel's built-in pagination instead of manual pagination
         $perPage = $this->perPage;
 
         if ($this->search) {
-            // Optimize search query by using Scout's query builder more efficiently
             $searchQuery = JobListing::search($this->search);
 
-            // Apply filters to the search query
             $searchQuery = $searchQuery->when($this->source, fn($query, $source) =>
                 $query->where('publisher', $source))
                 ->when($this->exclude_source, fn($query, $exclude_source) =>
@@ -152,13 +149,9 @@ class JobFilter extends Component
                 ->when(!empty($this->types), fn($query) =>
                 $query->whereIn('employment_type', $this->types));
 
-            // Get the category filter working with Scout
             if ($this->category) {
-                // Since category filtering might not work directly with Scout,
-                // we'll get all IDs that match the search criteria first
                 $jobIds = $searchQuery->keys();
 
-                // Then filter by category using Eloquent
                 $jobs = JobListing::whereIn('id', $jobIds)
                     ->when($this->category, fn($query, $category) =>
                         $query->whereHas('category', function($query) use ($category) {
@@ -168,7 +161,6 @@ class JobFilter extends Component
                     ->take($perPage)
                     ->get();
 
-                // Get total for pagination
                 $total = JobListing::whereIn('id', $jobIds)
                     ->when($this->category, fn($query, $category) =>
                         $query->whereHas('category', function($query) use ($category) {
@@ -176,14 +168,11 @@ class JobFilter extends Component
                         }))
                     ->count();
             } else {
-                // If no category filter, we can use Scout's paginate directly
-                // But we need to get the models with all their relations
                 $searchResults = $searchQuery->paginate($perPage);
                 $jobs = $searchResults->items();
                 $total = $searchResults->total();
             }
         } else {
-            // Optimize regular query by using eager loading and query caching
             $query = JobListing::query()
                 ->when($this->source, fn($query, $source) =>
                     $query->where('publisher', $source))
@@ -201,8 +190,6 @@ class JobFilter extends Component
                     $query->whereIn('employment_type', $this->types))
                 ->latest();
 
-            // Use a more efficient approach to get both the count and the results
-            // Cache the count query result for 5 minutes to improve performance
             $cacheKey = 'job_filter_count_' . md5(json_encode([
                 $this->source,
                 $this->exclude_source,
@@ -216,7 +203,7 @@ class JobFilter extends Component
                 return $query->count();
             });
 
-            $jobs = $query->with('category') // Eager load the category relationship
+            $jobs = $query->with('category')
                 ->take($perPage)
                 ->get();
         }
