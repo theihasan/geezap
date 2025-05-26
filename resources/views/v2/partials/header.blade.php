@@ -18,6 +18,11 @@
         crossorigin="anonymous"
         referrerpolicy="no-referrer" />
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&family=Oxanium:wght@200;600;700&display=swap" rel="stylesheet">
+
     <script charset="UTF-8" src="//web.webpushs.com/js/push/03b87feb48aa4902b24d437f1551c5c8_1.js" async></script>
 
 
