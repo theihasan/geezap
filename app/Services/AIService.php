@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Http;
 class AIService
 {
 
-    const DAILY_LIMIT = 20;
+    const DAILY_LIMIT = 15;
 
     private function checkUserLimit(User $user): bool
     {
@@ -171,7 +171,11 @@ class AIService
         5. Include a strong closing paragraph expressing interest in next steps
         6. Format the letter properly with appropriate spacing and paragraphs
         7. Ensure the letter is concise but comprehensive (around 300-400 words)
-        8. Highlight key achievements and skills that directly relate to the job requirements
+        8. Highlight key achievements and skills that directly relate to the job requirements.
+        9. Use action verbs and avoid jargon or industry-specific terms that the employer might not understand.
+        10. Proofread for grammar, spelling, and punctuation errors.
+        11. Fill up all the information and provide formated response everytime.
+        12. Make sure to use the candidate's name and address the reader by their name.
 
         Note: Focus on creating a personalized letter that shows why this candidate is uniquely qualified for this specific role.
         EOT;
