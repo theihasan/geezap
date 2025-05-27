@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Http;
 class AIService
 {
 
-    const DAILY_LIMIT = 5;
+    const DAILY_LIMIT = 20;
 
     private function checkUserLimit(User $user): bool
     {

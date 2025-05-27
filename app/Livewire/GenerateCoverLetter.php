@@ -44,9 +44,7 @@ class GenerateCoverLetter extends Component
             throw_if(!$this->hasCompleteProfile($user), new IncompleteProfileException());
             throw_if(!config('ai.chat_gpt_api_key'), new AIServiceAPIKeyNotFound());
 
-            $this->isGenerating = true;
-            $this->answer = '';
-            $this->feedback = '';
+            $this->resetGeneration();
             $this->dispatch('open-chat');
 
             $this->generateCoverLetter();
@@ -76,12 +74,21 @@ class GenerateCoverLetter extends Component
         }
 
         $originalAnswer = $this->answer;
-        $this->isGenerating = true;
-        $this->answer = '';
-        $this->generateCoverLetter(true, $originalAnswer);
+        $feedbackText = $this->feedback; // Store feedback before clearing
+
+        $this->resetGeneration();
+        $this->feedback = ''; // Clear feedback immediately after storing it
+
+        $this->generateCoverLetter(true, $originalAnswer, $feedbackText);
     }
 
-    private function generateCoverLetter(bool $isRegeneration = false, ?string $previousAnswer = null): void
+    private function resetGeneration(): void
+    {
+        $this->isGenerating = true;
+        $this->answer = '';
+    }
+
+    private function generateCoverLetter(bool $isRegeneration = false, ?string $previousAnswer = null, ?string $feedbackText = null): void
     {
         try {
             $aiService = app(AIService::class);
@@ -90,9 +97,10 @@ class GenerateCoverLetter extends Component
                 auth()->user(),
                 $this->jobListing->toArray(),
                 function($partial) {
-                    $this->stream('answer', $partial);
+                    $this->answer .= $partial;
+                    $this->dispatch('$refresh');
                 },
-                $isRegeneration ? $this->feedback : null,
+                $isRegeneration ? $feedbackText : null,
                 $previousAnswer
             );
 
@@ -105,7 +113,6 @@ class GenerateCoverLetter extends Component
 
             $this->answer = $response;
             $this->isGenerating = false;
-
 
         } catch (DailyChatLimitExceededException $e){
             $this->answer = 'Sorry, you have exceeded the daily limit for chat requests. Please try again later.';

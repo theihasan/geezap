@@ -42,7 +42,7 @@
                         @if(!empty($answer))
                             <div class="flex justify-start">
                                 <div class="bg-gray-700 rounded-lg px-4 py-2 max-w-[80%]">
-                                    <p class="text-white whitespace-pre-line" wire:stream="answer">{{ $answer }}</p>
+                                    <p class="text-white whitespace-pre-line">{{ $answer }}</p>
                                 </div>
                             </div>
                         @endif
@@ -73,7 +73,9 @@
                                     </label>
                                     <input type="text"
                                            wire:model="feedback"
-                                           class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-pink-500 focus:ring-pink-500"
+                                           wire:loading.attr="disabled"
+                                           wire:target="regenerateWithFeedback"
+                                           class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-pink-500 focus:ring-pink-500 disabled:opacity-50 disabled:cursor-not-allowed"
                                            placeholder="Example: Make it more formal, emphasize my leadership skills, etc."
                                     >
                                 </div>
@@ -85,8 +87,15 @@
                                         </button>
                                     </div>
                                     <button type="submit"
-                                            class="px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors flex items-center gap-2">
-                                        <i class="las la-sync"></i> Regenerate
+                                            class="px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                                            wire:loading.attr="disabled"
+                                            wire:target="regenerateWithFeedback">
+                                        <div wire:loading.remove wire:target="regenerateWithFeedback">
+                                            <i class="las la-sync"></i> Regenerate
+                                        </div>
+                                        <div wire:loading wire:target="regenerateWithFeedback">
+                                            <i class="las la-spinner animate-spin"></i> Regenerating...
+                                        </div>
                                     </button>
                                 </div>
                             </form>
