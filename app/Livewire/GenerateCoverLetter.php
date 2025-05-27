@@ -74,10 +74,10 @@ class GenerateCoverLetter extends Component
         }
 
         $originalAnswer = $this->answer;
-        $feedbackText = $this->feedback; // Store feedback before clearing
+        $feedbackText = $this->feedback;
 
         $this->resetGeneration();
-        $this->feedback = ''; // Clear feedback immediately after storing it
+        $this->feedback = '';
 
         $this->generateCoverLetter(true, $originalAnswer, $feedbackText);
     }
