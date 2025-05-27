@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Http;
 class AIService
 {
 
-    const DAILY_LIMIT = 15;
+    const DAILY_LIMIT = 20;
 
     private function checkUserLimit(User $user): bool
     {
@@ -154,14 +154,16 @@ class AIService
         Current Role: {$user->occupation}
         Location: {$user->state}, {$user->country}
 
-        Key Skills:
-        {$skills}
+        Key Skills: {$skills}
 
-        Professional Experience:
-        {$experience}
+        Professional Experience: {$experience}
 
-        Additional Information:
-        {$user->bio}
+        Additional Information: {$user->bio}
+
+        Please fill in your details:
+
+        "Write a professional, error-free cover letter for the position of [Job Title] at [Company]. Highlight the applicant's skills in [Skills], experience in [Experience], and their enthusiasm for contributing to the team. The letter should be well-structured, grammatically correct, and free of spelling mistakes. The applicant's bio: [Bio]."
+
 
         Guidelines:
         1. Start with a strong opening paragraph that mentions the specific role and company
