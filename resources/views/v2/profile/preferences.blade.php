@@ -149,6 +149,19 @@
                                 </select>
                             </div>
                             
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Number of Emails per Period</label>
+                                <select name="emails_per_frequency" class="w-full bg-white/5 border border-gray-700 rounded-lg px-4 py-3 text-white focus:border-pink-500 focus:outline-none">
+                                    <option value="1" {{ ($preferences->emails_per_frequency ?? 5) == 1 ? 'selected' : '' }}>1 email</option>
+                                    <option value="3" {{ ($preferences->emails_per_frequency ?? 5) == 3 ? 'selected' : '' }}>3 emails</option>
+                                    <option value="5" {{ ($preferences->emails_per_frequency ?? 5) == 5 ? 'selected' : '' }}>5 emails</option>
+                                    <option value="10" {{ ($preferences->emails_per_frequency ?? 5) == 10 ? 'selected' : '' }}>10 emails</option>
+                                    <option value="15" {{ ($preferences->emails_per_frequency ?? 5) == 15 ? 'selected' : '' }}>15 emails</option>
+                                    <option value="20" {{ ($preferences->emails_per_frequency ?? 5) == 20 ? 'selected' : '' }}>20 emails</option>
+                                </select>
+                                <p class="text-gray-400 text-xs mt-1">Maximum number of job emails you want to receive per frequency period</p>
+                            </div>
+                            
                             <div class="space-y-3">
                                 <div class="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-gray-700">
                                     <div>

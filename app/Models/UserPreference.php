@@ -8,10 +8,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class UserPreference extends Model
 {
     protected $fillable = [
-        'user_id', 'session_id', 'email_frequency', 'preferred_job_topics',
-        'preferred_regions', 'preferred_job_types', 'preferred_experience_levels',
-        'min_salary', 'max_salary', 'remote_only', 'email_notifications_enabled',
-        'job_alerts_enabled', 'show_recommendations', 'last_recommendation_update'
+        'user_id', 'session_id', 'email_frequency', 'emails_per_frequency',
+        'preferred_job_topics', 'preferred_regions', 'preferred_job_types', 
+        'preferred_experience_levels', 'min_salary', 'max_salary', 'remote_only', 
+        'email_notifications_enabled', 'job_alerts_enabled', 'show_recommendations', 
+        'last_recommendation_update'
     ];
 
     protected function casts(): array

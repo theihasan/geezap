@@ -15,6 +15,7 @@ class UserPreferencesUpdateRequest extends FormRequest
     {
         return [
             'email_frequency' => 'nullable|in:daily,weekly,monthly',
+            'emails_per_frequency' => 'nullable|integer|min:1|max:20',
             'preferred_job_topics' => 'nullable|array',
             'preferred_job_topics.*' => 'exists:job_categories,id',
             'preferred_regions' => 'nullable|array', 
@@ -42,6 +43,7 @@ class UserPreferencesUpdateRequest extends FormRequest
     {
         return [
             'email_frequency' => $this->input('email_frequency', 'weekly'),
+            'emails_per_frequency' => $this->input('emails_per_frequency', 5),
             'preferred_job_topics' => $this->input('preferred_job_topics', []),
             'preferred_regions' => $this->input('preferred_regions', []),
             'preferred_job_types' => $this->input('preferred_job_types', []),
