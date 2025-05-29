@@ -32,6 +32,7 @@ class ApiKeyResource extends Resource
                         Forms\Components\TextInput::make('api_secret')
                             ->maxLength(255),
                         Forms\Components\Select::make('api_name')
+                            ->default(ApiName::JOB->value)
                             ->options(ApiName::class)
                             ->required(),
                         Forms\Components\TextInput::make('request_remaining')
