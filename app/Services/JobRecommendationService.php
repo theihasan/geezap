@@ -28,8 +28,7 @@ class JobRecommendationService
         $preferences = GuestPreference::where('session_id', $sessionId)->first();
         
         if (!$preferences) {
-            return JobListing::with(['category', 'country'])
-                ->where('is_active', true)
+            return JobListing::with(['category'])
                 ->orderBy('views', 'desc')
                 ->limit($limit)
                 ->get();
