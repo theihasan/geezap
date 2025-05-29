@@ -173,10 +173,13 @@ class AppServiceProvider extends ServiceProvider
 
             $apiKey->increment('sent_request');
 
-            return Http::withHeaders([
+            $httpMacro = Http::withHeaders([
                 'X-RapidAPI-Host' => 'jsearch.p.rapidapi.com',
                 'X-RapidAPI-Key' => $apiKey->api_key,
             ])->baseUrl('https://jsearch.p.rapidapi.com');
+            
+            $apiKey->touch('request_sent_at');
+            return $httpMacro;
         });
     }
 
