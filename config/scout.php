@@ -191,6 +191,7 @@ return [
                         ['name' => 'city', 'type' => 'string', 'optional' => true],
                         ['name' => 'state', 'type' => 'string', 'optional' => true],
                         ['name' => 'country', 'type' => 'string', 'optional' => true],
+                        ['name' => 'is_remote', 'type' =>'bool', 'optional' => true],
                         ['name' => 'created_at', 'type' => 'int64'],
                     ],
                     'default_sorting_field' => 'created_at',
