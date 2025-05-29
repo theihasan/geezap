@@ -11,7 +11,7 @@
     </div>
 
     <!-- Main Content -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12" x-data="preferencesData()">
         @if(session('success'))
             <div class="bg-green-500/10 border border-green-500/20 text-green-400 px-4 py-3 rounded-xl mb-6">
                 {{ session('success') }}
@@ -29,17 +29,29 @@
                             <i class="las la-briefcase text-pink-500"></i>
                             Job Categories
                         </h2>
-                        <div class="grid grid-cols-1 gap-2 max-h-64 overflow-y-auto">
-                            @foreach($jobCategories as $category)
-                                <label class="relative cursor-pointer">
-                                    <input type="checkbox" name="preferred_job_topics[]" value="{{ $category->id }}" 
-                                           {{ in_array($category->id, $preferences->preferred_job_topics ?? []) ? 'checked' : '' }}
+                        <div class="space-y-2 max-h-80 overflow-y-auto">
+                            <template x-for="(category, index) in visibleCategories" :key="category.id">
+                                <label class="relative cursor-pointer block">
+                                    <input type="checkbox" 
+                                           name="preferred_job_topics[]" 
+                                           :value="category.id"
+                                           x-model="selectedCategories"
                                            class="sr-only peer">
                                     <div class="p-3 bg-white/5 hover:bg-white/10 border border-gray-700 peer-checked:border-pink-500 peer-checked:bg-pink-500/10 rounded-lg transition-all">
-                                        <div class="text-white font-ubuntu-medium text-sm">{{ $category->name }}</div>
+                                        <div class="text-white font-ubuntu-medium text-sm" x-text="category.name"></div>
                                     </div>
                                 </label>
-                            @endforeach
+                            </template>
+                            
+                            <!-- Show More/Less Button -->
+                            <div class="text-center pt-2" x-show="allCategories.length > 5">
+                                <button type="button" 
+                                        @click="toggleCategoriesView()"
+                                        class="text-pink-500 hover:text-pink-400 text-sm font-ubuntu-medium transition-colors">
+                                    <span x-show="!showAllCategories && visibleCategories.length < allCategories.length">Show More Categories</span>
+                                    <span x-show="showAllCategories || visibleCategories.length >= allCategories.length">Show Less</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -49,17 +61,29 @@
                             <i class="las la-globe text-pink-500"></i>
                             Preferred Regions
                         </h2>
-                        <div class="grid grid-cols-1 gap-2 max-h-64 overflow-y-auto">
-                            @foreach($countries as $country)
-                                <label class="relative cursor-pointer">
-                                    <input type="checkbox" name="preferred_regions[]" value="{{ $country->id }}" 
-                                           {{ in_array($country->id, $preferences->preferred_regions ?? []) ? 'checked' : '' }}
+                        <div class="space-y-2 max-h-80 overflow-y-auto">
+                            <template x-for="(country, index) in visibleCountries" :key="country.id">
+                                <label class="relative cursor-pointer block">
+                                    <input type="checkbox" 
+                                           name="preferred_regions[]" 
+                                           :value="country.id"
+                                           x-model="selectedRegions"
                                            class="sr-only peer">
                                     <div class="p-3 bg-white/5 hover:bg-white/10 border border-gray-700 peer-checked:border-pink-500 peer-checked:bg-pink-500/10 rounded-lg transition-all">
-                                        <div class="text-white font-ubuntu-medium text-sm">{{ $country->name }}</div>
+                                        <div class="text-white font-ubuntu-medium text-sm" x-text="country.name"></div>
                                     </div>
                                 </label>
-                            @endforeach
+                            </template>
+                            
+                            <!-- Show More/Less Button -->
+                            <div class="text-center pt-2" x-show="allCountries.length > 5">
+                                <button type="button" 
+                                        @click="toggleCountriesView()"
+                                        class="text-pink-500 hover:text-pink-400 text-sm font-ubuntu-medium transition-colors">
+                                    <span x-show="!showAllCountries && visibleCountries.length < allCountries.length">Show More Regions</span>
+                                    <span x-show="showAllCountries || visibleCountries.length >= allCountries.length">Show Less</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -251,4 +275,70 @@
             </div>
         </form>
     </div>
+
+    <script>
+        function preferencesData() {
+            return {
+                // Categories data
+                allCategories: @json($jobCategories),
+                selectedCategories: @json($preferences->preferred_job_topics ?? []),
+                showAllCategories: false,
+                categoriesDisplayCount: 5,
+                
+                // Countries data
+                allCountries: @json($countries),
+                selectedRegions: @json($preferences->preferred_regions ?? []),
+                showAllCountries: false,
+                countriesDisplayCount: 5,
+                
+                get visibleCategories() {
+                    if (this.showAllCategories) {
+                        return this.allCategories;
+                    }
+                    return this.allCategories.slice(0, this.categoriesDisplayCount);
+                },
+                
+                get visibleCountries() {
+                    if (this.showAllCountries) {
+                        return this.allCountries;
+                    }
+                    return this.allCountries.slice(0, this.countriesDisplayCount);
+                },
+                
+                toggleCategoriesView() {
+                    if (this.showAllCategories) {
+                        this.showAllCategories = false;
+                        this.categoriesDisplayCount = 5;
+                    } else {
+                        if (this.categoriesDisplayCount >= this.allCategories.length) {
+                            this.showAllCategories = false;
+                            this.categoriesDisplayCount = 5;
+                        } else {
+                            this.categoriesDisplayCount += 5;
+                            if (this.categoriesDisplayCount >= this.allCategories.length) {
+                                this.showAllCategories = true;
+                            }
+                        }
+                    }
+                },
+                
+                toggleCountriesView() {
+                    if (this.showAllCountries) {
+                        this.showAllCountries = false;
+                        this.countriesDisplayCount = 5;
+                    } else {
+                        if (this.countriesDisplayCount >= this.allCountries.length) {
+                            this.showAllCountries = false;
+                            this.countriesDisplayCount = 5;
+                        } else {
+                            this.countriesDisplayCount += 5;
+                            if (this.countriesDisplayCount >= this.allCountries.length) {
+                                this.showAllCountries = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 @endsection
