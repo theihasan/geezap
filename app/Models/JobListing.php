@@ -62,6 +62,7 @@ class JobListing extends Model
             'benefits' => 'array',
             'responsibilities' => 'array',
             'skills' => 'array',
+           'is_remote' => 'boolean',
         ];
     }
 
