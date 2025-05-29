@@ -94,7 +94,7 @@ class JobListing extends Model
             'id' => (string) $this->id,
             'created_at' => $this->created_at->timestamp,
             'job_category' => (string) $this->job_category, 
-            'is_remote' => (string) $this->is_remote,
+            'is_remote' => (bool) $this->is_remote,
         ]);
     }
 
