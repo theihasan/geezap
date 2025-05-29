@@ -1,0 +1,56 @@
+<?php
+
+namespace App\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class UserPreferencesUpdateRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
+        return auth()->check();
+    }
+
+    public function rules(): array
+    {
+        return [
+            'email_frequency' => 'nullable|in:daily,weekly,monthly',
+            'preferred_job_topics' => 'nullable|array',
+            'preferred_job_topics.*' => 'exists:job_categories,id',
+            'preferred_regions' => 'nullable|array', 
+            'preferred_regions.*' => 'exists:countries,id',
+            'preferred_job_types' => 'nullable|array',
+            'email_notifications_enabled' => 'boolean',
+            'job_alerts_enabled' => 'boolean',
+            'show_recommendations' => 'boolean',
+            'remote_only' => 'boolean',
+            'min_salary' => 'nullable|numeric|min:0',
+            'max_salary' => 'nullable|numeric|min:0|gte:min_salary',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'max_salary.gte' => 'Maximum salary must be greater than or equal to minimum salary.',
+            'preferred_job_topics.*.exists' => 'Selected job category is invalid.',
+            'preferred_regions.*.exists' => 'Selected region is invalid.',
+        ];
+    }
+
+    public function getPreferencesData(): array
+    {
+        return [
+            'email_frequency' => $this->input('email_frequency', 'weekly'),
+            'preferred_job_topics' => $this->input('preferred_job_topics', []),
+            'preferred_regions' => $this->input('preferred_regions', []),
+            'preferred_job_types' => $this->input('preferred_job_types', []),
+            'email_notifications_enabled' => $this->boolean('email_notifications_enabled'),
+            'job_alerts_enabled' => $this->boolean('job_alerts_enabled'),
+            'show_recommendations' => $this->boolean('show_recommendations', true),
+            'remote_only' => $this->boolean('remote_only'),
+            'min_salary' => $this->input('min_salary'),
+            'max_salary' => $this->input('max_salary'),
+        ];
+    }
+}

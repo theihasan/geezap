@@ -3,25 +3,38 @@
 namespace App\Http\Controllers;
 
 use App\Enums\Timezone;
-use App\Http\Requests\ContactInfoUpdateRequest;
-use App\Http\Requests\PasswordUpdateRequest;
-use App\Http\Requests\PersonalInfoUpdateRequest;
-use App\Http\Requests\ProfileUpdateRequest;
-use App\Http\Requests\SocialMediaInfoUpdateRequest;
-use App\Http\Requests\UpdateExperienceRequest;
-use App\Http\Requests\UpdateSkillRequest;
-use App\Services\ProfileService;
-use Illuminate\Http\RedirectResponse;
+use App\Models\Country;
+use Illuminate\View\View;
+use App\Models\JobCategory;
 use Illuminate\Http\Request;
+use App\Models\GuestPreference;
+use App\Services\ProfileService;
+use App\Caches\JobRecommendationCache;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\View\View;
+use App\Http\Requests\UpdateSkillRequest;
+use App\Services\JobRecommendationService;
+use App\Http\Requests\ProfileUpdateRequest;
+use App\Http\Requests\PasswordUpdateRequest;
+use App\Http\Requests\UpdateExperienceRequest;
+use App\Http\Requests\ContactInfoUpdateRequest;
+use App\Http\Requests\PersonalInfoUpdateRequest;
+use App\Http\Requests\UserPreferencesUpdateRequest;
+use App\Http\Requests\GuestPreferencesUpdateRequest;
+use App\Http\Requests\SocialMediaInfoUpdateRequest;
 
 class ProfileController extends Controller
 {
+    public function __construct(protected JobRecommendationService $jobRecommendationService)
+    {
+       
+    }
+
     public function edit(): View
-    {   $experiences = json_decode(Auth::user()->experience, true);
+    {   
+        $experiences = json_decode(Auth::user()->experience, true);
         $skills = json_decode(Auth::user()->skills, true);
         $timezones = Timezone::cases();
         return view('v2.profile.edit-profile', [
@@ -33,10 +46,8 @@ class ProfileController extends Controller
 
     public function updatePersonalInfo(PersonalInfoUpdateRequest $request, ProfileService $profileService): RedirectResponse
     {
-
          $profileService->updatePersonalInfo($request, Auth::user());
          return Redirect::route('profile.update')->with('status', 'Profile updated successfully');
-
     }
 
     public function updateContactInfo(ContactInfoUpdateRequest $request, ProfileService $profileService): RedirectResponse
@@ -79,13 +90,72 @@ class ProfileController extends Controller
         return Redirect::route('profile.update')->with('status', 'Skills updated successfully');
     }
 
-
-
     public function destroy(): RedirectResponse
     {
         $user = Auth::user();
         $user->delete();
 
         return Redirect::route('home')->with('success', 'Profile deleted successfully');
+    }
+
+    public function dashboard()
+    {
+        $user = auth()->user();
+        $recommendedJobs = $this->jobRecommendationService->getRecommendedJobsForUser($user, 6);
+        
+        return view('v2.profile.profile', compact('recommendedJobs'));
+    }
+
+    public function guestPreferences()
+    {
+        $jobCategories = JobCategory::query()->orderBy('name')->get();
+        $countries = Country::query()->orderBy('name')->get();
+        $sessionId = session()->getId();
+        
+        $preferences = GuestPreference::where('session_id', $sessionId)->first();
+        $recommendedJobs = $this->jobRecommendationService->getRecommendedJobsForGuest($sessionId, 3);
+        
+        return view('v2.guest.preferences', compact('jobCategories', 'countries', 'preferences', 'recommendedJobs'));
+    }
+
+    public function updateGuestPreferences(GuestPreferencesUpdateRequest $request): RedirectResponse
+    {
+        $sessionId = session()->getId();
+        
+        GuestPreference::updateOrCreate(
+            ['session_id' => $sessionId],
+            $request->getPreferencesData()
+        );
+
+        JobRecommendationCache::invalidateGuestRecommendations($sessionId);
+
+        return redirect()->route('guest.preferences')->with('success', 'Preferences updated successfully!');
+    }
+
+    public function preferences(): View
+    {
+        $user = auth()->user();
+        $jobCategories = JobCategory::query()->orderBy('name')->get();
+        $countries = Country::query()->orderBy('name')->get();
+        
+        $preferences = $user->preferences;
+        $recommendedJobs = $this->jobRecommendationService->getRecommendedJobsForUser($user, 6);
+        
+        return view('v2.profile.preferences', compact('jobCategories', 'countries', 'preferences', 'recommendedJobs'));
+    }
+
+    public function updatePreferences(UserPreferencesUpdateRequest $request): RedirectResponse
+    {
+        $user = auth()->user();
+        
+        // Create or update user preferences
+        $user->preferences()->updateOrCreate(
+            ['user_id' => $user->id],
+            $request->getPreferencesData()
+        );
+
+        JobRecommendationCache::invalidateUserRecommendations($user->id);
+
+        return redirect()->route('profile.preferences')->with('success', 'Preferences updated successfully!');
     }
 }
