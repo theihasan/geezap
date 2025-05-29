@@ -187,6 +187,71 @@
                         </div>
                     </div>
                 @endif
+                <!-- Recommended Jobs Section -->
+                @if($recommendedJobs && $recommendedJobs->count() > 0)
+                    <div class="bg-[#12122b] rounded-2xl p-6 border border-gray-800">
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-xl font-semibold text-white flex items-center gap-2 font-oxanium-semibold">
+                                <i class="las la-star text-pink-500"></i>
+                                Recommended Jobs for You
+                            </h2>
+                            <a href="{{ route('profile.preferences') }}" 
+                               class="text-pink-500 hover:text-pink-400 text-sm font-ubuntu-medium flex items-center gap-1">
+                                <i class="las la-cog"></i>
+                                Customize
+                            </a>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            @foreach($recommendedJobs as $job)
+                                <div class="bg-white/5 hover:bg-white/10 rounded-xl p-4 transition-all border border-gray-700 hover:border-pink-500/30">
+                                    <div class="flex items-start justify-between mb-3">
+                                        <div class="flex-1">
+                                            <h3 class="text-white font-ubuntu-medium text-sm mb-1 line-clamp-2">
+                                                <a href="{{ route('job.show', $job->slug) }}" class="hover:text-pink-500 transition-colors">
+                                                    {{ $job->title }}
+                                                </a>
+                                            </h3>
+                                            <p class="text-gray-400 text-xs font-ubuntu-light">{{ $job->company }}</p>
+                                        </div>
+                                        @if($job->is_remote)
+                                            <span class="bg-green-500/10 text-green-400 px-2 py-1 rounded-lg text-xs font-ubuntu-medium">
+                                                Remote
+                                            </span>
+                                        @endif
+                                    </div>
+                                    
+                                    <div class="flex items-center justify-between text-xs">
+                                        <div class="flex items-center gap-2 text-gray-400">
+                                            @if($job->country)
+                                                <span class="flex items-center gap-1">
+                                                    <i class="las la-map-marker"></i>
+                                                    {{ $job->country }}
+                                                </span>
+                                            @endif
+                                            @if($job->category)
+                                                <span class="bg-pink-500/10 text-pink-400 px-2 py-1 rounded">
+                                                    {{ $job->category->name }}
+                                                </span>
+                                            @endif
+                                        </div>
+                                        <span class="text-gray-500 font-ubuntu-light">
+                                            {{ $job->created_at->diffForHumans() }}
+                                        </span>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                        
+                        <div class="mt-4 text-center">
+                            <a href="{{ route('job.index') }}?recommended=1" 
+                               class="text-pink-500 hover:text-pink-400 text-sm font-ubuntu-medium inline-flex items-center gap-1">
+                                View All Recommended Jobs
+                                <i class="las la-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
