@@ -175,7 +175,7 @@
                                             @if($job->country)
                                                 <span class="flex items-center gap-1">
                                                     <i class="las la-map-marker"></i>
-                                                    {{ $job->country->name }}
+                                                    {{ $job->country }}
                                                 </span>
                                             @endif
                                         </div>
