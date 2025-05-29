@@ -140,26 +140,13 @@
                          <!-- Popular Jobs by Country -->
                     <div class="flex flex-wrap items-center gap-3 pt-4 text-sm text-gray-300">
                         <span class="font-medium">Top Countries:</span>
-                        <a href="{{ route('job.index', ['country' => 'US']) }}"
-                        class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all group">
-                            <span>🇺🇸 USA</span>
-                            <span class="text-pink-500 group-hover:text-pink-400">{{ $countryJobCounts['US'] ?? 0 }}+</span>
-                        </a>
-                        <a href="{{ route('job.index', ['country' => 'IN']) }}"
-                        class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all group">
-                            <span>🇮🇳 India</span>
-                            <span class="text-pink-500 group-hover:text-pink-400">{{ $countryJobCounts['IN'] ?? 0 }}+</span>
-                        </a>
-                        <a href="{{ route('job.index', ['country' => 'BD']) }}"
-                        class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all group">
-                            <span>🇧🇩 Bangladesh</span>
-                            <span class="text-pink-500 group-hover:text-pink-400">{{ $countryJobCounts['IN'] ?? 0 }}+</span>
-                        </a>
-                        <a href="{{ route('job.index') }}"
-                        class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all group">
-                            <i class="las la-globe text-gray-400 group-hover:text-white"></i>
-                            <span>All Countries</span>
-                        </a>
+                        @foreach($topCountries as $country)
+                            <a href="{{ route('job.index', ['country' => $country->code]) }}"
+                               class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all group">
+                                <span>{{ $country->getFlag() }} {{ $country->name }}</span>
+                                <span class="text-pink-500 group-hover:text-pink-400">{{ $country->jobs_count }}+</span>
+                            </a>
+                        @endforeach
                     </div>
                 </div>
         </div>
