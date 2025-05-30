@@ -35,9 +35,14 @@
                                     <input type="checkbox" 
                                            name="preferred_job_topics[]" 
                                            :value="category.id"
-                                           x-model="selectedCategories"
+                                           :checked="isCategorySelected(category.id)"
+                                           @change="toggleCategory(category.id)"
                                            class="sr-only peer">
-                                    <div class="p-3 bg-white/5 hover:bg-white/10 border border-gray-700 peer-checked:border-pink-500 peer-checked:bg-pink-500/10 rounded-lg transition-all">
+                                    <div class="p-3 bg-white/5 hover:bg-white/10 border border-gray-700 transition-all"
+                                         :class="{
+                                             'border-pink-500 bg-pink-500/10': isCategorySelected(category.id),
+                                             'border-gray-700': !isCategorySelected(category.id)
+                                         }">
                                         <div class="text-white font-ubuntu-medium text-sm" x-text="category.name"></div>
                                     </div>
                                 </label>
@@ -290,6 +295,49 @@
                 selectedRegions: @json($preferences->preferred_regions ?? []),
                 showAllCountries: false,
                 countriesDisplayCount: 5,
+                
+                // Initialize method to ensure proper data types
+                init() {
+                    // Ensure selectedCategories is an array of strings for consistency
+                    this.selectedCategories = this.selectedCategories.map(id => String(id));
+                    this.selectedRegions = this.selectedRegions.map(id => String(id));
+                },
+                
+                // Add method to check if category is selected
+                isCategorySelected(categoryId) {
+                    return this.selectedCategories.includes(String(categoryId));
+                },
+                
+                // Add method to toggle category selection
+                toggleCategory(categoryId) {
+                    const stringId = String(categoryId);
+                    const index = this.selectedCategories.indexOf(stringId);
+                    if (index > -1) {
+                        this.selectedCategories.splice(index, 1);
+                    } else {
+                        this.selectedCategories.push(stringId);
+                    }
+                    
+                    // Update the actual form inputs
+                    this.updateFormInputs();
+                },
+                
+                // Method to update hidden form inputs
+                updateFormInputs() {
+                    // Remove existing hidden inputs for categories
+                    const existingInputs = document.querySelectorAll('input[name="preferred_job_topics[]"][type="hidden"]');
+                    existingInputs.forEach(input => input.remove());
+                    
+                    // Add new hidden inputs for selected categories
+                    const form = document.querySelector('form');
+                    this.selectedCategories.forEach(categoryId => {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = 'preferred_job_topics[]';
+                        input.value = categoryId;
+                        form.appendChild(input);
+                    });
+                },
                 
                 get visibleCategories() {
                     if (this.showAllCategories) {
