@@ -25,8 +25,14 @@
                             <img src="{{ $job->employer_logo }}" alt="{{ $job->employer_name }}" style="width: 48px; height: 48px; border-radius: 8px; object-fit: cover;">
                         @endif
                         <div>
-                            <a href="{{route('job.show', ['slug' => $job->slug])}}" style="margin: 0; font-size: 18px; font-weight: 600; color: #111827;">{{ $job->job_title }}</a>
-                            <p style="margin: 4px 0 0; color: #4b5563;">{{ $job->employer_name }}</p>
+                            <div>
+                                @if($job->slug)
+                                    <a href="{{route('job.show', ['slug' => $job->slug])}}" style="margin: 0; font-size: 18px; font-weight: 600; color: #111827;">{{ $job->job_title }}</a>
+                                @else
+                                    <span style="margin: 0; font-size: 18px; font-weight: 600; color: #111827;">{{ $job->job_title }}</span>
+                                @endif
+                                <p style="margin: 4px 0 0; color: #4b5563;">{{ $job->employer_name }}</p>
+                            </div>
                         </div>
                     </div>
 
