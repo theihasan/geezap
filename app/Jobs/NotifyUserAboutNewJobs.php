@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\User;
+use App\Models\Country;
 use App\Models\JobListing;
 use App\Enums\EmailFrequency;
 use Illuminate\Bus\Queueable;
@@ -57,9 +58,16 @@ class NotifyUserAboutNewJobs implements ShouldQueue
                     $jobQuery->whereIn('job_category', $user->preferences->preferred_job_categories_id);
                 }
                 
-                // if (!empty($user->preferences->preferred_regions_id)) {
-                //     $jobQuery->whereIn('country', $user->preferences->preferred_regions_id);
-                // }
+                if (!empty($user->preferences->preferred_regions_id)) {
+                    // Get country codes that correspond to the preferred region IDs
+                    $countryCodes = Country::whereIn('id', $user->preferences->preferred_regions_id)
+                        ->pluck('code')
+                        ->toArray();
+                    
+                    if (!empty($countryCodes)) {
+                        $jobQuery->whereIn('country', $countryCodes);
+                    }
+                }
                 
                 if (!empty($user->preferences->preferred_job_types)) {
                     $jobQuery->whereIn('employment_type', $user->preferences->preferred_job_types);
