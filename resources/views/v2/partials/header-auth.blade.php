@@ -34,6 +34,10 @@
                     <i class="las la-briefcase"></i>
                     My Applications
                 </a>
+                <a href="{{route('profile.preferences')}}" class="flex items-center gap-2 px-4 py-2 text-gray-100 hover:text-pink-500 rounded-lg hover:bg-white/5 transition-all">
+                    <i class="las la-cog"></i>
+                    Preferences
+                </a>
                 <div class="border-t border-gray-700 my-2"></div>
                 <a href="{{route('logout')}}" class="flex items-center gap-2 px-4 py-2 text-red-400 hover:text-red-500 rounded-lg hover:bg-white/5 transition-all">
                     <i class="las la-sign-out-alt"></i>
