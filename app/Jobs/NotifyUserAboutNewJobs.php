@@ -51,16 +51,15 @@ class NotifyUserAboutNewJobs implements ShouldQueue
                     return;
                 }
                 
-                // Check if we should send an email based on frequency
-                $shouldSendEmail = $this->shouldSendEmailBasedOnFrequency($user);
+               // $shouldSendEmail = $this->shouldSendEmailBasedOnFrequency($user);
                 
-                if (!$shouldSendEmail) {
-                    logger()->debug("Skipping email based on frequency setting", [
-                        'user_id' => $user->id,
-                        'frequency' => $user->preferences->email_frequency
-                    ]);
-                    return;
-                }
+                // if (!$shouldSendEmail) {
+                //     logger()->debug("Skipping email based on frequency setting", [
+                //         'user_id' => $user->id,
+                //         'frequency' => $user->preferences->email_frequency
+                //     ]);
+                //     return;
+                // }
                 
                 $jobQuery = JobListing::query()
                     ->whereDate('created_at', '>=', now()->subWeeks(4));
