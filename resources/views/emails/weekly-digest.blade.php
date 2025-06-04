@@ -113,7 +113,7 @@
                 <p style="margin: 0; color: #6b7280; font-size: 14px;">Best regards,<br>The {{ config('app.name') }} Team</p>
                 <p style="margin: 15px 0 0; color: #9ca3af; font-size: 12px;">
                     You're receiving this email because you signed up for job alerts.<br>
-                    <a href="{{ route('profile.preferences') }}" style="color: #ec4899; text-decoration: none;">Manage email preferences</a> or <a href="#" style="color: #ec4899; text-decoration: none;">unsubscribe</a>
+                    <a href="{{ route('profile.preferences') }}" style="color: #ec4899; text-decoration: none;">Manage email preferences</a> or <a href="{{ route('profile.preferences') }}" style="color: #ec4899; text-decoration: none;">Unsubscribe</a>
                 </p>
             </td>
         </tr>
