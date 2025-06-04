@@ -11,10 +11,4 @@
         </div>
         <span>Categories</span>
     </a>
-    
-    @guest
-    <a href="{{ route('guest.preferences') }}" class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-        <i class="las la-cog"></i> Job Preferences
-    </a>
-    @endguest
 </div>
