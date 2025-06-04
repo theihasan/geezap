@@ -21,13 +21,12 @@ Route::prefix('jobs')->group(function () {
 
 Route::get('/categories', JobCategoryController::class)->name('job.categories');
 
-Route::view('/dashboard', 'v2.profile.profile')->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::get('/profile-update', [ProfileController::class, 'edit'])
-    ->middleware(['auth'])
-    ->name('profile.update');
+Route::get('/dashboard', [ProfileController::class, 'dashboard'])->middleware(['auth'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/profile-update', [ProfileController::class, 'edit'])
+        ->middleware(['auth'])
+        ->name('profile.update');
     Route::post('personal-info', [ProfileController::class, 'updatePersonalInfo'])->name('personal-info.update');
     Route::post('contact-info', [ProfileController::class, 'updateContactInfo'])->name('contact-info.update');
     Route::post('password', [ProfileController::class, 'updatePassword'])->name('userpassword.update');
@@ -36,6 +35,8 @@ Route::middleware('auth')->group(function () {
     Route::post('skill', [ProfileController::class, 'updateSkill'])->name('skill.update');
     Route::get('cover-letter', [CoverLetterController::class, 'coverLetter'])->name('cover-letter.update');
     Route::view('/applications', 'v2.profile.my-application')->name('applications');
+    Route::get('/profile/preferences', [ProfileController::class, 'preferences'])->name('profile.preferences');
+    Route::post('/profile/preferences', [ProfileController::class, 'updatePreferences'])->name('profile.preferences.update');
 });
 
 Route::prefix('auth')->middleware('guest')->group(function () {
