@@ -70,15 +70,14 @@ class SetUserPreferences extends Command
                 $defaultPreferences = [
                     'user_id' => $user->id,
                     'email_frequency' => 'weekly',
-                    'preferred_job_topics' => [],
-                    'preferred_regions' => [],
+                    'preferred_job_categories_id' => [],
+                    'preferred_regions_id' => [],
                     'preferred_job_types' => [],
                     'preferred_experience_levels' => [],
                     'min_salary' => null,
                     'max_salary' => null,
                     'remote_only' => false,
                     'email_notifications_enabled' => true,
-                    'job_alerts_enabled' => true,
                     'show_recommendations' => true,
                     'last_recommendation_update' => now(),
                 ];

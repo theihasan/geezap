@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class GuestPreference extends Model
 {
     protected $fillable = [
-        'session_id', 'email', 'preferred_job_topics', 'preferred_regions',
+        'session_id', 'email', 'preferred_job_categories_id', 'preferred_regions_id',
         'preferred_job_types', 'remote_only', 'email_alerts_enabled',
         'daily_views', 'last_view_date'
     ];
@@ -15,8 +15,8 @@ class GuestPreference extends Model
     protected function casts(): array
     {
         return [
-            'preferred_job_topics' => 'array',
-            'preferred_regions' => 'array',
+            'preferred_job_categories_id' => 'array',
+            'preferred_regions_id' => 'array',
             'preferred_job_types' => 'array',
             'email_alerts_enabled' => 'boolean',
             'remote_only' => 'boolean',

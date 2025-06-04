@@ -12,8 +12,8 @@ return new class extends Migration
             $table->id();
             $table->string('session_id')->unique();
             $table->string('email')->nullable();
-            $table->json('preferred_job_topics')->nullable();
-            $table->json('preferred_regions')->nullable();
+            $table->json('preferred_job_categories_id')->nullable();
+            $table->json('preferred_regions_id')->nullable();
             $table->json('preferred_job_types')->nullable();
             $table->boolean('remote_only')->default(false);
             $table->boolean('email_alerts_enabled')->default(false);

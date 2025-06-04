@@ -49,6 +49,10 @@ class JobRecommendationService
     {
         $query = JobListing::with(['category']);
 
+        if (!empty($preferences->preferred_job_categories_id)) {
+            $query->whereIn('job_category', $preferences->preferred_job_categories_id);
+        }
+
         if (!empty($preferences->preferred_job_topics)) {
             $query->whereIn('job_category', $preferences->preferred_job_topics);
         }

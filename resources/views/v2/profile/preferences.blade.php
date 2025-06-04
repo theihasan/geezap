@@ -63,10 +63,9 @@
                         <div class="relative">
                             <select name="email_frequency" class="w-full p-4 bg-gray-50 border-2 border-gray-200 rounded-xl text-gray-700 font-ubuntu-medium focus:border-pink-500 focus:bg-white transition-all appearance-none">
                                 <option value="daily" {{ ($preferences->email_frequency ?? 'weekly') == 'daily' ? 'selected' : '' }}>Daily</option>
-                                <option value="three_days" {{ ($preferences->email_frequency ?? 'weekly') == 'three_days' ? 'selected' : '' }}>Every 3 Days</option>
                                 <option value="weekly" {{ ($preferences->email_frequency ?? 'weekly') == 'weekly' ? 'selected' : '' }}>Weekly</option>
-                                <option value="fifteen_days" {{ ($preferences->email_frequency ?? 'weekly') == 'fifteen_days' ? 'selected' : '' }}>Every 15 Days</option>
                                 <option value="monthly" {{ ($preferences->email_frequency ?? 'weekly') == 'monthly' ? 'selected' : '' }}>Monthly</option>
+                                <option value="never" {{ ($preferences->email_frequency ?? 'weekly') == 'never' ? 'selected' : '' }}>Never</option>
                             </select>
                             <i class="las la-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"></i>
                         </div>
@@ -115,7 +114,7 @@
                     
                     <div class="space-y-2 max-h-60 overflow-y-auto pr-2">
                         @php
-                            $selectedCategories = $preferences->preferred_job_topics ?? [];
+                            $selectedCategories = $preferences->preferred_job_categories_id ?? [];
                         @endphp
                         
                         @foreach($jobCategories as $index => $category)
@@ -123,7 +122,7 @@
                                    data-category-name="{{ strtolower($category->name) }}">
                                 <div class="flex items-center gap-3 p-3 bg-gray-50 hover:bg-blue-50 border-2 border-gray-200 rounded-xl transition-all duration-200 group-hover:shadow-md">
                                     <input type="checkbox" 
-                                           name="preferred_job_topics[]" 
+                                           name="preferred_job_categories_id[]" 
                                            value="{{ $category->id }}"
                                            {{ in_array($category->id, $selectedCategories) ? 'checked' : '' }}
                                            class="w-4 h-4 text-blue-500 border-2 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
@@ -168,7 +167,7 @@
                                     <span class="text-gray-900 font-ubuntu-bold text-sm">Remote Only</span>
                                 </div>
                                 <input type="checkbox" name="remote_only" value="1" 
-                                       {{ $preferences->remote_only ? 'checked' : '' }}
+                                       {{ ($preferences->remote_only ?? false) ? 'checked' : '' }}
                                        class="w-4 h-4 text-green-500 border-2 border-gray-300 rounded focus:ring-green-500 focus:ring-2">
                             </div>
                         </label>
@@ -201,7 +200,7 @@
                     
                     <div class="space-y-2 max-h-60 overflow-y-auto pr-2">
                         @php
-                            $selectedRegions = $preferences->preferred_regions ?? [];
+                            $selectedRegions = $preferences->preferred_regions_id ?? [];
                         @endphp
                         
                         @foreach($countries as $index => $country)
@@ -209,10 +208,10 @@
                                    data-region-name="{{ strtolower($country->name) }}">
                                 <div class="flex items-center gap-3 p-3 bg-gray-50 hover:bg-orange-50 border-2 border-gray-200 rounded-xl transition-all duration-200 group-hover:shadow-md">
                                     <input type="checkbox" 
-                                           name="preferred_regions[]" 
+                                           name="preferred_regions_id[]" 
                                            value="{{ $country->id }}"
                                            {{ in_array($country->id, $selectedRegions) ? 'checked' : '' }}
-                                           class="w-4 h-4 text-orange-500 border-2 border-gray-300 rounded focus:ring-orange-500 focus:ring-2">
+                                           class="w-4 h-4 text-blue-500 border-2 border-gray-300 rounded focus:ring-blue-500 focus:ring-2">
                                     <span class="text-gray-700 text-sm font-ubuntu-medium group-hover:text-orange-600 transition-colors">{{ $country->name }}</span>
                                 </div>
                             </label>

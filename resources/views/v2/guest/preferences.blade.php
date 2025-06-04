@@ -56,8 +56,8 @@
                         <div class="grid grid-cols-1 gap-2 max-h-64 overflow-y-auto">
                             @foreach($countries->take(20) as $country)
                                 <label class="relative cursor-pointer">
-                                    <input type="checkbox" name="preferred_regions[]" value="{{ $country->id }}" 
-                                           {{ in_array($country->id, $preferences?->preferred_regions ?? []) ? 'checked' : '' }}
+                                    <input type="checkbox" name="preferred_job_categories_id[]" value="{{ $category->id }}" 
+                                           {{ in_array($category->id, $preferences?->preferred_job_categories_id ?? []) ? 'checked' : '' }}
                                            class="sr-only peer">
                                     <div class="p-3 bg-white/5 hover:bg-white/10 border border-gray-700 peer-checked:border-pink-500 peer-checked:bg-pink-500/10 rounded-lg transition-all">
                                         <div class="text-white font-ubuntu-medium text-sm">{{ $country->name }}</div>
