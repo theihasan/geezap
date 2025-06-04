@@ -51,6 +51,17 @@ class NotifyUserAboutNewJobs implements ShouldQueue
                     return;
                 }
                 
+                // Check if we should send an email based on frequency
+                $shouldSendEmail = $this->shouldSendEmailBasedOnFrequency($user);
+                
+                if (!$shouldSendEmail) {
+                    logger()->debug("Skipping email based on frequency setting", [
+                        'user_id' => $user->id,
+                        'frequency' => $user->preferences->email_frequency
+                    ]);
+                    return;
+                }
+                
                 $jobQuery = JobListing::query()
                     ->whereDate('created_at', '>=', now()->subWeeks(4));
                 
@@ -59,7 +70,6 @@ class NotifyUserAboutNewJobs implements ShouldQueue
                 }
                 
                 if (!empty($user->preferences->preferred_regions_id)) {
-                    // Get country codes that correspond to the preferred region IDs
                     $countryCodes = Country::whereIn('id', $user->preferences->preferred_regions_id)
                         ->pluck('code')
                         ->toArray();
@@ -106,5 +116,58 @@ class NotifyUserAboutNewJobs implements ShouldQueue
                 ]);
             });
         });
+    }
+    
+    /**
+     * Determine if an email should be sent based on the user's frequency preference
+     */
+    private function shouldSendEmailBasedOnFrequency(User $user): bool
+    {
+        if (!$user->preferences || !$user->preferences->email_frequency) {
+            return false;
+        }
+        
+        $frequency = $user->preferences->email_frequency;
+        $now = now();
+        
+        $key = 'last_email_sent_' . $user->id;
+        $lastSent = cache()->get($key);
+        
+        if (!$lastSent) {
+            cache()->put($key, $now, 60 * 24 * 30); 
+            return true;
+        }
+        
+        $lastSentTime = $lastSent;
+        
+        logger()->debug("Time difference check", [
+            'user_id' => $user->id,
+            'frequency' => $frequency,
+            'last_sent' => $lastSentTime->toDateTimeString(),
+            'now' => $now->toDateTimeString(),
+            'diff_days' => $now->diffInDays($lastSentTime, false), 
+            'diff_weeks' => $now->diffInWeeks($lastSentTime, false),
+            'diff_months' => $now->diffInMonths($lastSentTime, false)
+        ]);
+        
+        switch ($frequency) {
+            case EmailFrequency::DAILY->value:
+                $shouldSend = abs($now->diffInDays($lastSentTime, false)) >= 1;
+                break;
+            case EmailFrequency::WEEKLY->value:
+                $shouldSend = abs($now->diffInDays($lastSentTime, false)) >= 7;
+                break;
+            case EmailFrequency::MONTHLY->value:
+                $shouldSend = abs($now->diffInDays($lastSentTime, false)) >= 30; 
+                break;
+            default:
+                $shouldSend = false;
+        }
+        
+        if ($shouldSend) {
+            cache()->put($key, $now, 60 * 24 * 30);
+        }
+        
+        return $shouldSend;
     }
 }
