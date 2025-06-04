@@ -35,8 +35,8 @@
                         </div>
                     </div>
                     <label class="relative inline-flex items-center cursor-pointer ml-4">
-                        <input type="checkbox" name="email_notifications" value="1" 
-                               {{ ($preferences->email_notifications_enable ?? true) ? 'checked' : '' }}
+                        <input type="checkbox" name="email_notifications_enabled" value="1" 
+                               {{ ($preferences->email_notifications_enabled ?? true) ? 'checked' : '' }}
                                class="sr-only peer">
                         <div class="w-14 h-7 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-blue-500 shadow-inner"></div>
                     </label>
