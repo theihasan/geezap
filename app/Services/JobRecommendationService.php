@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\JobListing;
 use App\Models\User;
-use App\Models\GuestPreference;
 use App\Caches\JobRecommendationCache;
 use Illuminate\Support\Collection;
 
@@ -19,28 +18,6 @@ class JobRecommendationService
         }
 
         return JobRecommendationCache::getUserRecommendations($user, $limit, function () use ($preferences, $limit) {
-            return $this->buildRecommendationQuery($preferences, $limit);
-        });
-    }
-
-    public function getRecommendedJobsForGuest(string $sessionId, int $limit = 3): Collection
-    {
-        $preferences = GuestPreference::where('session_id', $sessionId)->first();
-        
-        if (!$preferences) {
-            return JobListing::with(['category'])
-                ->orderBy('views', 'desc')
-                ->limit($limit)
-                ->get();
-        }
-
-        if ($preferences->hasReachedDailyLimit()) {
-            return collect();
-        }
-
-        $preferences->incrementViews();
-
-        return JobRecommendationCache::getGuestRecommendations($sessionId, $limit, function () use ($preferences, $limit) {
             return $this->buildRecommendationQuery($preferences, $limit);
         });
     }
@@ -87,18 +64,11 @@ class JobRecommendationService
     }
 
     /**
-     * Clear cache for a specific guest's recommendations
-     */
-    public function clearGuestCache(string $sessionId): bool
-    {
-        return JobRecommendationCache::invalidateGuestRecommendations($sessionId);
-    }
-
-    /**
      * Clear all recommendation caches
      */
     public function clearAllCache(): bool
     {
-        return JobRecommendationCache::invalidateAll();
+        // Update this to only clear user recommendations
+        return JobRecommendationCache::invalidateUserRecommendations(null);
     }
 }

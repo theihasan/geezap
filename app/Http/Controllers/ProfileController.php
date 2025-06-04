@@ -7,7 +7,6 @@ use App\Models\Country;
 use Illuminate\View\View;
 use App\Models\JobCategory;
 use Illuminate\Http\Request;
-use App\Models\GuestPreference;
 use App\Services\ProfileService;
 use App\Caches\JobRecommendationCache;
 use Illuminate\Support\Facades\Auth;
@@ -22,7 +21,6 @@ use App\Http\Requests\UpdateExperienceRequest;
 use App\Http\Requests\ContactInfoUpdateRequest;
 use App\Http\Requests\PersonalInfoUpdateRequest;
 use App\Http\Requests\UserPreferencesUpdateRequest;
-use App\Http\Requests\GuestPreferencesUpdateRequest;
 use App\Http\Requests\SocialMediaInfoUpdateRequest;
 
 class ProfileController extends Controller
@@ -106,32 +104,6 @@ class ProfileController extends Controller
         return view('v2.profile.profile', compact('recommendedJobs'));
     }
 
-    public function guestPreferences()
-    {
-        $jobCategories = JobCategory::query()->orderBy('name')->get();
-        $countries = Country::query()->orderBy('name')->get();
-        $sessionId = session()->getId();
-        
-        $preferences = GuestPreference::where('session_id', $sessionId)->first();
-        $recommendedJobs = $this->jobRecommendationService->getRecommendedJobsForGuest($sessionId, 3);
-        
-        return view('v2.guest.preferences', compact('jobCategories', 'countries', 'preferences', 'recommendedJobs'));
-    }
-
-    public function updateGuestPreferences(GuestPreferencesUpdateRequest $request): RedirectResponse
-    {
-        $sessionId = session()->getId();
-        
-        GuestPreference::updateOrCreate(
-            ['session_id' => $sessionId],
-            $request->getPreferencesData()
-        );
-
-        JobRecommendationCache::invalidateGuestRecommendations($sessionId);
-
-        return redirect()->route('guest.preferences')->with('success', 'Preferences updated successfully!');
-    }
-
     public function preferences(): View
     {
         $user = auth()->user();
@@ -148,7 +120,6 @@ class ProfileController extends Controller
     {
         $user = auth()->user();
         
-        // Create or update user preferences
         $user->preferences()->updateOrCreate(
             ['user_id' => $user->id],
             $request->getPreferencesData()

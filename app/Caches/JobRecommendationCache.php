@@ -15,41 +15,26 @@ class JobRecommendationCache
         return Cache::remember($key, 60 * 30, $callback);
     }
 
-    public static function getGuestRecommendations(string $sessionId, int $limit, callable $callback): Collection
+    public static function invalidateUserRecommendations(?int $userId): bool
     {
-        $key = self::guestKey($sessionId, $limit);
-        
-        return Cache::remember($key, 60 * 15, $callback);
-    }
-
-    public static function invalidateUserRecommendations(int $userId): bool
-    {
-        $pattern = "user_recommendations_{$userId}_*";
-        return self::forgetPattern($pattern);
-    }
-
-    public static function invalidateGuestRecommendations(string $sessionId): bool
-    {
-        $pattern = "guest_recommendations_{$sessionId}_*";
+        if ($userId) {
+            $pattern = "user_recommendations_{$userId}_*";
+        } else {
+            $pattern = 'user_recommendations_*';
+        }
         return self::forgetPattern($pattern);
     }
 
     public static function invalidateAll(): bool
     {
         $userPattern = 'user_recommendations_*';
-        $guestPattern = 'guest_recommendations_*';
         
-        return self::forgetPattern($userPattern) && self::forgetPattern($guestPattern);
+        return self::forgetPattern($userPattern);
     }
 
     public static function userKey(int $userId, int $limit): string
     {
         return "user_recommendations_{$userId}_{$limit}";
-    }
-
-    public static function guestKey(string $sessionId, int $limit): string
-    {
-        return "guest_recommendations_{$sessionId}_{$limit}";
     }
 
     private static function forgetPattern(string $pattern): bool

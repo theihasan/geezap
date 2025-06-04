@@ -23,9 +23,6 @@ Route::get('/categories', JobCategoryController::class)->name('job.categories');
 
 Route::get('/dashboard', [ProfileController::class, 'dashboard'])->middleware(['auth'])->name('dashboard');
 
-Route::get('/job-preferences', [ProfileController::class, 'guestPreferences'])->name('guest.preferences');
-Route::post('/job-preferences', [ProfileController::class, 'updateGuestPreferences'])->name('guest.preferences.update');
-
 Route::middleware('auth')->group(function () {
     Route::get('/profile-update', [ProfileController::class, 'edit'])
         ->middleware(['auth'])
