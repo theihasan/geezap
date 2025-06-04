@@ -10,21 +10,34 @@
     <meta name="description" content="{{ $meta->description }}">
     <meta name="keywords" content="{{ $meta->keywords }}">
 
+    <!-- Favicon - Preloaded -->
+    <link rel="preload" href="{{asset('assets/images/favicon.ico')}}" as="image" type="image/x-icon">
     <link rel="apple-touch-icon" sizes="180x180" href="{{asset('assets/images/favicon.ico')}}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{asset('assets/images/favicon.ico')}}">
     <link rel="icon" type="image/png" sizes="16x16" href="{{asset('assets/images/favicon.ico')}}">
+    
+    <!-- Preconnect to external domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    
+    <!-- Critical CSS - Inline for faster rendering -->
+    <style>
+        body { @apply antialiased text-gray-200; }
+        .btn-primary { @apply px-6 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-lg hover:opacity-90 transition-opacity; }
+    </style>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/line-awesome/1.3.0/line-awesome/css/line-awesome.min.css"
         integrity="sha512-vebUliqxrVkBy3gucMhClmyQP9On/HAWQdKDXRaAlb/FKuTbxkjPKUyqVOxAcGwFDka79eTF+YXwfke1h3/wfg=="
         crossorigin="anonymous"
-        referrerpolicy="no-referrer" />
+        referrerpolicy="no-referrer"
+        media="print" onload="this.media='all'" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&family=Oxanium:wght@200;600;700&display=swap" 
+          rel="stylesheet"
+          media="print" onload="this.media='all'">
 
-    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&family=Oxanium:wght@200;600;700&display=swap" rel="stylesheet">
-
-    <script charset="UTF-8" src="//web.webpushs.com/js/push/03b87feb48aa4902b24d437f1551c5c8_1.js" async></script>
-
+    <script charset="UTF-8" src="//web.webpushs.com/js/push/03b87feb48aa4902b24d437f1551c5c8_1.js" async defer></script>
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="{{ $meta->og->type }}">
@@ -53,6 +66,7 @@
         </script>
     @endif
 
+    <!-- Vite assets with preload hints -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <!-- Livewire Styles -->

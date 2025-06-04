@@ -43,9 +43,27 @@
 </footer>
 
 @livewireScripts
+
+<script>
+    window.addEventListener('load', () => {
+        if ('requestIdleCallback' in window) {
+            requestIdleCallback(() => {
+                const analyticsScript = document.createElement('script');
+                analyticsScript.src = 'https://scripts.simpleanalyticscdn.com/latest.js';
+                analyticsScript.async = true;
+                document.body.appendChild(analyticsScript);
+            });
+        } else {
+            setTimeout(() => {
+                const analyticsScript = document.createElement('script');
+                analyticsScript.src = 'https://scripts.simpleanalyticscdn.com/latest.js';
+                analyticsScript.async = true;
+                document.body.appendChild(analyticsScript);
+            }, 2000);
+        }
+    });
+</script>
 @stack('extra-js')
-<!-- 100% privacy-first analytics -->
-<script async src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
 
 </body>
 </html>
