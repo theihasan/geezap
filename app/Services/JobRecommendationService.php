@@ -35,7 +35,7 @@ class JobRecommendationService
         }
 
         if (!empty($preferences->preferred_job_types)) {
-            $query->whereIn('job_type', $preferences->preferred_job_types);
+            $query->whereIn('employment_type', $preferences->preferred_job_types);
         }
 
         if ($preferences->remote_only) {
