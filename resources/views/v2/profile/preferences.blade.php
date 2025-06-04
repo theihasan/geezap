@@ -65,7 +65,6 @@
                                 <option value="daily" {{ ($preferences->email_frequency ?? 'weekly') == 'daily' ? 'selected' : '' }}>Daily</option>
                                 <option value="weekly" {{ ($preferences->email_frequency ?? 'weekly') == 'weekly' ? 'selected' : '' }}>Weekly</option>
                                 <option value="monthly" {{ ($preferences->email_frequency ?? 'weekly') == 'monthly' ? 'selected' : '' }}>Monthly</option>
-                                <option value="never" {{ ($preferences->email_frequency ?? 'weekly') == 'never' ? 'selected' : '' }}>Never</option>
                             </select>
                             <i class="las la-chevron-down absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"></i>
                         </div>
@@ -73,9 +72,12 @@
                     
                     <!-- Number of Emails per Period -->
                     <div>
-                        <label class="block text-sm font-ubuntu-bold text-gray-700 mb-3">Emails per Period</label>
+                        <label class="block text-sm font-ubuntu-bold text-gray-700 mb-3">
+                            Emails per Period
+                            <span class="ml-2 px-2 py-1 text-xs bg-pink-500 text-white font-bold rounded-full animate-pulse">Coming Soon</span>
+                        </label>
                         <div class="relative">
-                            <select name="emails_per_frequency" class="w-full p-4 bg-gray-50 border-2 border-gray-200 rounded-xl text-gray-700 font-ubuntu-medium focus:border-pink-500 focus:bg-white transition-all appearance-none">
+                            <select name="emails_per_frequency" class="w-full p-4 bg-gray-50 border-2 border-gray-200 rounded-xl text-gray-700 font-ubuntu-medium focus:border-pink-500 focus:bg-white transition-all appearance-none" disabled>
                                 <option value="1" {{ ($preferences->emails_per_frequency ?? 1) == 1 ? 'selected' : '' }}>1 email</option>
                                 <option value="2" {{ ($preferences->emails_per_frequency ?? 1) == 2 ? 'selected' : '' }}>2 emails</option>
                                 <option value="5" {{ ($preferences->emails_per_frequency ?? 1) == 5 ? 'selected' : '' }}>5 emails</option>
