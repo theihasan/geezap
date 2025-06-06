@@ -25,7 +25,12 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
+use Psr\Http\Message\ResponseInterface;
+use React\EventLoop\Loop;
+use React\Http\Browser;
 use RuntimeException;
+
+use function React\Promise\all;
 
 class GetJobData implements ShouldQueue
 {
@@ -77,6 +82,11 @@ class GetJobData implements ShouldQueue
 
     protected function fetchAndStoreJobs($apiKey, JobCategory $category): void
     {
+        $browser = new Browser();
+        $maxConcurrentRequests = 10;
+        $pendingPromises = 0;
+        $promises = [];
+
         foreach ($category->countries as $country) {
             for ($page = 1; $page <= $this->totalPages; $page++) {
                 try {
@@ -92,37 +102,91 @@ class GetJobData implements ShouldQueue
                         'batch_id' => $this->batch() ? $this->batch()->id : null,
                     ]);
 
-                    $response = Http::job()->retry([100, 200])->get('/search', [
+                    $url = config('services.job_api.url').'/search';
+                    $query = [
                         'query' => $category->query_name,
                         'page' => $page,
                         'num_pages' => $category->num_page,
                         'date_posted' => $category->timeframe,
                         'country' => $country->code
-                    ]);
+                    ];
 
-                    throw_if($response->status() === 429, new RuntimeException('Rate limit exceeded'));
-                    throw_if(!$response->successful(), new RequestException($response));
+                    $makeRequest = function () use ($browser, $url, $query, $apiKey, $category, $country, $page) {
+                        return $browser->get($url . '?' . http_build_query($query), [
+                            'Authorization' => 'Bearer ' . $apiKey->api_key,
+                            'Accept' => 'application/json'
+                        ])->then(function (ResponseInterface $response) use($apiKey, $category, $country, $page) {
+                            $statusCode = $response->getStatusCode();
+                            $headers = $response->getHeaders();
+                            $body = (string) $response->getBody();
 
-                    $this->updateApiKeyUsage($apiKey, $response);
+                            if ($statusCode === 429) {
+                                Log::warning('Rate limit exceeded', [
+                                    'category_id' => $category->id,
+                                    'country' => $country->code,
+                                    'page' => $page
+                                ]);
+                                return;
+                            }
 
-                    if ($response->ok()) {
-                        $jobResponseDTO = JobResponseDTO::fromResponse(
-                            $response->json(),
-                            $category->id,
-                            $category->category_image
-                        );
-                        StoreJobs::dispatch($jobResponseDTO);
+                            if ($statusCode === 200) {
+                                $responseData = json_decode($body, true);
+                                $this->updateApiKeyUsage(
+                                    $apiKey, 
+                                    $headers['X-RateLimit-Requests-Remaining'][0] ?? null,
+                                    $headers['X-RateLimit-Reset'][0] ?? null
+                                );
+                                $jobResponseDTO = JobResponseDTO::fromResponse(
+                                    $responseData,
+                                    $category->id,
+                                    $category->category_image
+                                );
+                                StoreJobs::dispatch($jobResponseDTO);
+                            }
+                        });
+                    };
+
+                    function (Exception $e) use($category, $country, $page) {
+                        Log::error('API request failed', [
+                            'category_id' => $category->id,
+                            'country' => $country->code,
+                            'page' => $page,
+                            'error' => $e->getMessage(),
+                        ]);
+                    };
+
+                    if ($pendingPromises >= $maxConcurrentRequests) {
+                        $batch = array_splice($promises, 0, $maxConcurrentRequests);
+                        all($batch)->then(function () use (&$pendingPromises, &$promises, $maxConcurrentRequests) {
+                            $pendingPromises -= $maxConcurrentRequests;
+                        });
+
+                        Loop::run();
+
+                        $promises[] = $makeRequest();
+                        $pendingPromises++;
                     }
 
-                } catch (RequestException | RuntimeException | Exception $e) {
+                    if (count($promises) > 0) {
+                        \React\Promise\all($promises)->then(function () use (&$pendingPromises, &$promises) {
+                           Log::info('Batch processed', [
+                               'batch_id' => $this->batch()? $this->batch()->id : null,
+                               'pending_promises' => $pendingPromises,
+                               'promises' => count($promises),
+                           ]);
+                        });
+
+                        Loop::run();
+                    }
+
+                }
+                catch (Exception $e) {
                     Log::error('API request failed', [
                         'category_id' => $category->id,
                         'country' => $country->code,
                         'page' => $page,
                         'error' => $e->getMessage(),
                     ]);
-                    
-                    continue;
                 }
             }
         }
