@@ -62,4 +62,8 @@ return [
     'brevo' => [
         'key' => env('BREVO_API_KEY'),
     ],
+
+    'job_api' => [
+        'url' => 'JOB_API_URL',
+    ],
 ];
