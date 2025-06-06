@@ -116,7 +116,7 @@ class GetJobData implements ShouldQueue
         ]);
         
         $browser = new Browser();
-        $maxConcurrentRequests = 3;
+        $maxConcurrentRequests = 5;
         $pendingPromises = 0;
         $promises = [];
         $baseUrl = config('services.job_api.url');
@@ -163,13 +163,14 @@ class GetJobData implements ShouldQueue
                     ]);
 
                     $headers = [
-                        'Authorization' => 'Bearer ' . $apiKey->api_key,
+                        'X-RapidAPI-Key' => $apiKey->api_key,
+                        'X-RapidAPI-Host' => 'jsearch.p.rapidapi.com',
                         'Accept' => 'application/json'
                     ];
                     
                     Log::info('Request headers prepared', [
                         'headers' => array_keys($headers),
-                        'auth_header_present' => isset($headers['Authorization']),
+                        'auth_header_present' => isset($headers['X-RapidAPI-Key']),
                         'category_id' => $category->id,
                         'country' => $country->code,
                         'page' => $page,
