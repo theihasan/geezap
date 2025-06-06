@@ -64,6 +64,6 @@ return [
     ],
 
     'job_api' => [
-        'url' => 'JOB_API_URL',
+        'url' => env('JOB_API_URL'),
     ],
 ];
