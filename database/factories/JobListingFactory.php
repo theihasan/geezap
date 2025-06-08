@@ -45,7 +45,6 @@ class JobListingFactory extends Factory
             'qualifications' => $this->faker->randomElements(['Bachelor\'s Degree', 'Master\'s Degree', '2+ years experience', '5+ years experience', 'Certification'], $this->faker->numberBetween(2, 4)),
             'responsibilities' => $this->faker->randomElements(['Team management', 'Project planning', 'Client communication', 'Code review', 'Documentation', 'Testing'], $this->faker->numberBetween(3, 6)),
             'required_experience' => $this->faker->numberBetween(1, 10),
-            'skills' => $this->faker->randomElements(['PHP', 'Laravel', 'JavaScript', 'Vue.js', 'React', 'MySQL', 'PostgreSQL', 'AWS', 'Docker'], $this->faker->numberBetween(3, 7)),
         ];
     }
     

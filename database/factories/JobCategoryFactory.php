@@ -19,7 +19,10 @@ class JobCategoryFactory extends Factory
         return [
             'name' => $name,
             'slug' => Str::slug($name),
-            'description' => $this->faker->sentence(),
+            'query_name' => $name, 
+            'page' => $this->faker->numberBetween(1, 5),
+            'num_page' => $this->faker->numberBetween(10, 30),
+            'timeframe' => $this->faker->randomElement(['day', 'week', 'month']),
             'category_image' => $this->faker->imageUrl(),
         ];
     }
