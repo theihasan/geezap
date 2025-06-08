@@ -20,8 +20,6 @@ class ApplyJob extends Component
     public function apply()
     {
         auth()->user()->jobs()->attach($this->job->id, ['status' => JobSavedStatus::APPLIED->value]);
-
-        logger('Execution time', [(microtime(true) - LARAVEL_START) * 1000]);
     }
 
     public function alreadyApplied(): void
