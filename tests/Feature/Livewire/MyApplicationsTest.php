@@ -2,15 +2,16 @@
 
 namespace Tests\Feature\Livewire;
 
-use App\Livewire\MyApplications;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Livewire\Livewire;
 use Tests\TestCase;
+use Livewire\Livewire;
+use App\Livewire\MyApplications;
+use PHPUnit\Framework\Attributes\Test;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class MyApplicationsTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function renders_successfully()
     {
         Livewire::test(MyApplications::class)
