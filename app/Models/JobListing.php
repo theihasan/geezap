@@ -62,7 +62,6 @@ class JobListing extends Model
             'qualifications' => 'array',
             'benefits' => 'array',
             'responsibilities' => 'array',
-            'skills' => 'array',
            'is_remote' => 'boolean',
         ];
     }
@@ -113,6 +112,11 @@ class JobListing extends Model
     {
         return 'listing_index';
     }
-
+    
+    public function scopeByPublisher(Builder $query, string $publisher): Builder
+    {
+        return $query->where('publisher', $publisher);
+    }
 
 }
+
