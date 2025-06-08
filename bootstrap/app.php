@@ -52,7 +52,7 @@ return Application::configure(basePath: dirname(__DIR__))
             ->withoutOverlapping(600);
 
         $schedule->job(new NotifyUserAboutNewJobs())
-            ->daily()
+            ->days([Schedule::SATURDAY, Schedule::THURSDAY])
             ->withoutOverlapping(600);
 
         $schedule->command('model:prune')->everyMinute();
