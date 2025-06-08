@@ -7,6 +7,7 @@ use Carbon\Carbon;
 readonly class JobDTO
 {
     public function __construct(
+        public ?string $jobId,
         public string  $employerName,
         public ?string $employerLogo,
         public ?string $employerWebsite,
@@ -35,6 +36,7 @@ readonly class JobDTO
     public static function fromArray(array $data): self
     {
         return new self(
+            jobId: $data['job_id'] ?? null,
             employerName: $data['employer_name'],
             employerLogo: $data['employer_logo'],
             employerWebsite: $data['employer_website'],
@@ -65,6 +67,7 @@ readonly class JobDTO
     public function toArray(): array
     {
         return [
+            'job_id' => $this->jobId,
             'employer_name' => $this->employerName,
             'employer_logo' => $this->employerLogo,
             'employer_website' => $this->employerWebsite,
