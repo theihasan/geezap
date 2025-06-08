@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[ObservedBy([JobListingObserver::class])]
 #[ScopedBy([JobListingScope::class])]
@@ -77,6 +78,11 @@ class JobListing extends Model
         return $this->belongsTo(JobCategory::class, 'job_category', 'id');
     }
 
+    public function applyOptions(): HasMany
+    {
+        return $this->hasMany(JobApplyOption::class);
+    }
+
     public function prunable(): Builder
     {
         return static::query()->where('created_at', '<=', now()->subDays(14));
@@ -107,9 +113,6 @@ class JobListing extends Model
     {
         return 'listing_index';
     }
-
-
-
 
 
 }
