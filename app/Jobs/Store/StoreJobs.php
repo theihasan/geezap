@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace App\Jobs\Store;
 
 use App\DTO\JobDTO;
@@ -22,7 +25,6 @@ class StoreJobs implements ShouldQueue
     {
     }
 
-
     public function handle(): void
     {
         try {
@@ -32,6 +34,7 @@ class StoreJobs implements ShouldQueue
 
                 $jobDTO = JobDTO::fromArray($jobData);
 
+        
                 $query = JobListing::query();
                 
                 if ($jobDTO->jobId) {
@@ -40,11 +43,27 @@ class StoreJobs implements ShouldQueue
                     $query->where('job_title', $jobDTO->jobTitle);
                 }
                 
-                if (!$query->exists()) {
-                    JobListing::query()->create($jobDTO->toArray());
+                $existingJob = $query->first();
+                
+                if (!$existingJob) {
+                    $jobListing = JobListing::query()->create($jobDTO->toArray());
+                } else {
+                    $jobListing = $existingJob;
+                }
+                
+                if ($jobDTO->applyOptions && is_array($jobDTO->applyOptions)) {
+                    foreach ($jobDTO->applyOptions as $option) {
+                        $jobListing->applyOptions()->updateOrCreate(
+                            ['publisher' => $option['publisher']],
+                            [
+                                'apply_link' => $option['apply_link'],
+                                'is_direct' => $option['is_direct'],
+                            ]
+                        );
+                    }
                 }
             }
-        } catch (\PDOException|\Exception $e){
+        } catch (\PDOException|\Exception $e) {
             $errorMessage = is_array($e->getMessage()) ? json_encode($e->getMessage()) : $e->getMessage();
             logger()->debug('Exception sent from store job class', ['error' => $errorMessage]);
             $this->release(60);

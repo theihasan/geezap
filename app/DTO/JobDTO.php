@@ -31,10 +31,23 @@ readonly class JobDTO
         public ?array  $benefits,
         public ?array  $qualifications,
         public ?array  $responsibilities,
+        public ?array  $applyOptions,
     ) {}
 
     public static function fromArray(array $data): self
     {
+        $applyOptions = null;
+        if (isset($data['apply_options']) && is_array($data['apply_options'])) {
+            $applyOptions = [];
+            foreach ($data['apply_options'] as $option) {
+                $applyOptions[] = [
+                    'publisher' => $option['publisher'] ?? '',
+                    'apply_link' => $option['apply_link'] ?? '',
+                    'is_direct' => $option['is_direct'] ?? false,
+                ];
+            }
+        }
+
         return new self(
             jobId: $data['job_id'] ?? null,
             employerName: $data['employer_name'],
@@ -60,7 +73,7 @@ readonly class JobDTO
             benefits: $data['job_highlights']['Benefits'] ?? null,
             qualifications: $data['job_highlights']['Qualifications'] ?? null,
             responsibilities: $data['job_highlights']['Responsibilities'] ?? null,
-
+            applyOptions: $applyOptions,
         );
     }
 
