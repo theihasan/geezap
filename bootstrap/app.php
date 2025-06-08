@@ -44,7 +44,7 @@ return Application::configure(basePath: dirname(__DIR__))
         Integration::handles($exceptions);
     })->withSchedule(function (Schedule $schedule) {
         $schedule->job(new DispatchJobCategories())
-            ->daily()
+            ->days([Schedule::SATURDAY, Schedule::THURSDAY])
             ->withoutOverlapping(600);
 
         $schedule->job(new ResetAPIKeyLimit())
