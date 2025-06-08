@@ -49,7 +49,7 @@ class ApiKeyResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('api_key'),
-                Tables\Columns\TextColumn::make('api_secret'),
+                Tables\Columns\TextColumn::make('rate_limit_reset'),
                 Tables\Columns\TextColumn::make('api_name')
                     ->formatStateUsing(function ($state){
                         return ucfirst($state);
