@@ -29,7 +29,7 @@ class ApplyJob extends Component
         if (auth()->user()) {
             $this->hasApplied = auth()->user()
                                 ->jobs()
-                                ->where('job_id', $this->job->id)
+                                ->where('job_user.job_id', $this->job->id)
                                 ->exists();
         }
     }
