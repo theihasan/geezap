@@ -6,7 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class ApiKey extends Model
 {
-    protected $fillable = ['api_key', 'api_secret', 'api_name', 'request_remaining', 'request_sent_at'];
+    protected $fillable = [
+        'api_key', 
+        'api_secret', 
+        'api_name', 
+        'request_remaining', 
+        'request_sent_at',
+        'rate_limit_reset',
+    ];
 
     protected function casts()
     {
