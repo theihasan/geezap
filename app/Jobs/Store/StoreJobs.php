@@ -32,10 +32,15 @@ class StoreJobs implements ShouldQueue
 
                 $jobDTO = JobDTO::fromArray($jobData);
 
-                if (!JobListing::query()
-                    ->where('job_title', $jobDTO->jobTitle)
-                    ->exists()
-                ) {
+                $query = JobListing::query();
+                
+                if ($jobDTO->jobId) {
+                    $query->where('job_id', $jobDTO->jobId);
+                } else {
+                    $query->where('job_title', $jobDTO->jobTitle);
+                }
+                
+                if (!$query->exists()) {
                     JobListing::query()->create($jobDTO->toArray());
                 }
             }
