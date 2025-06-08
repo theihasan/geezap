@@ -195,6 +195,7 @@ return [
                         ['name' => 'salary_min', 'type' =>'int32', 'optional' => true],
                         ['name' => 'salary_max', 'type' =>'int32', 'optional' => true],
                         ['name' => 'publisher', 'type' => 'string', 'optional' => true],
+                        ['employment_type', 'type' =>'string', 'optional' => true],
                         ['name' => 'created_at', 'type' => 'int64'],
                     ],
                     'default_sorting_field' => 'created_at',
