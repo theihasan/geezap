@@ -23,14 +23,18 @@ class SaveForLetter extends Component
                 'message' => 'You need to login for this action',
                 'type' => 'error'
             ]);
-            //return user whose are non logged in
+         
             return;
         }
-        JobUser::updateOrCreate([
-            'job_id' => $this->job->id,
-            'user_id' => auth()->id(),
-            'status' => JobSavedStatus::SAVED->value,
-        ]);
+        JobUser::updateOrCreate(
+            [
+                'job_id' => $this->job->id,
+                'user_id' => auth()->id(),
+            ],
+            [
+                'status' => JobSavedStatus::SAVED->value,
+            ]
+        );
 
         $this->dispatch('notify', [
             'message' => 'Job Saved Successfully',

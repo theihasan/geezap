@@ -17,3 +17,11 @@
 
 ## HTTP Requests
 - Use Laravel macros for HTTP calls to ensure consistency
+
+## Testing
+- Write comprehensive test cases for all features
+- Use phpunit latest for testing.
+- When mocking, do not use Mockery::mock('alias:', ...), instead mock the class, and use $this->app->instance(...) to register the instance. 
+- While writing tests, consider upto 10 edge cases.
+- Reuse code by creating reusable functions between test cases. 
+- Use phpunit latest version with #Test[] attributes for test cases.
