@@ -19,6 +19,7 @@ class ApiKey extends Model
     {
         return [
             'request_sent_at' => 'datetime',
+            'rate_limit_reset' => 'datetime', 
             'request_remaining' => 'integer'
         ];
     }
