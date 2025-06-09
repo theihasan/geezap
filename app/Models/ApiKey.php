@@ -13,6 +13,7 @@ class ApiKey extends Model
         'request_remaining', 
         'request_sent_at',
         'rate_limit_reset',
+        'sent_request'
     ];
 
     protected function casts()
@@ -20,7 +21,8 @@ class ApiKey extends Model
         return [
             'request_sent_at' => 'datetime',
             'rate_limit_reset' => 'datetime', 
-            'request_remaining' => 'integer'
+            'request_remaining' => 'integer',
+            'sent_request' => 'integer'
         ];
     }
 }
