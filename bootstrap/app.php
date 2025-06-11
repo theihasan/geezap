@@ -44,17 +44,18 @@ return Application::configure(basePath: dirname(__DIR__))
         Integration::handles($exceptions);
     })->withSchedule(function (Schedule $schedule) {
         $schedule->job(new DispatchJobCategories())
-            ->days([Schedule::SATURDAY, Schedule::THURSDAY])
+            ->twiceDaily(0, 12)
+            ->days([Schedule::FRIDAY, Schedule::SUNDAY, Schedule::TUESDAY, Schedule::THURSDAY])
             ->withoutOverlapping(600);
 
         $schedule->job(new ResetAPIKeyLimit())
             ->monthly()
             ->withoutOverlapping(600);
 
-        $schedule->job(new NotifyUserAboutNewJobs())
-            ->days([Schedule::SATURDAY, Schedule::THURSDAY])
-            ->withoutOverlapping(600);
+        // $schedule->job(new NotifyUserAboutNewJobs())
+        //     ->days([Schedule::SATURDAY, Schedule::THURSDAY])
+        //     ->withoutOverlapping(600);
 
-        $schedule->command('model:prune')->everyMinute();
+        //$schedule->command('model:prune')->everyMinute();
 
     })->create();
