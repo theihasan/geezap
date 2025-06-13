@@ -164,10 +164,10 @@ class AppServiceProvider extends ServiceProvider
         Http::macro('job', function () {
             $apiKey = ApiKey::query()
                 ->where('api_name', ApiName::JOB)
-                ->where(function($query) {
-                    $query->whereNull('rate_limit_reset')
-                        ->orWhere('rate_limit_reset', '>', Carbon::now());
-                })
+                // ->where(function($query) {
+                //     $query->whereNull('rate_limit_reset')
+                //         ->orWhere('rate_limit_reset', '>', Carbon::now());
+                // })
                 ->orderBy('sent_request')
                 ->first();
 
