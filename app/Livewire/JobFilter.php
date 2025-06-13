@@ -210,9 +210,6 @@ class JobFilter extends Component
 
         $this->hasMorePages = $total > $perPage;
 
-        // Make sure this dispatch is called with the correct total
-        // Add debug logging to verify it's working
-        logger()->debug('JobFilter: Dispatching jobCountUpdated event with total: ' . $total);
         $this->dispatch('jobCountUpdated', $total);
         
         return view('livewire.job-filter', [
@@ -223,13 +220,5 @@ class JobFilter extends Component
             'jobTypes' => $this->jobTypes,
             'totalJobs' => $total  
         ]);
-    }
-
-    // Add a new method to force re-apply filters
-    // This can be called when returning to the page
-    public function reapplyFilters()
-    {
-        // This method just triggers a re-render with existing filters
-        // No need to do anything here as the render method will handle it
     }
 }
