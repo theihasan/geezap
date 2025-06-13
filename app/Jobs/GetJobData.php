@@ -51,10 +51,10 @@ class GetJobData implements ShouldQueue
             $apiKey = ApiKey::query()
                 ->where('api_name', ApiName::JOB)
                 ->where('request_remaining', '>', 0)
-                ->where(function($query) {
-                    $query->whereNull('rate_limit_reset')
-                        ->orWhere('rate_limit_reset', '>', Carbon::now());
-                })
+                // ->where(function($query) {
+                //     $query->whereNull('rate_limit_reset')
+                //         ->orWhere('rate_limit_reset', '>', Carbon::now());
+                // })
                 ->orderBy('sent_request')
                 ->first();
 
@@ -143,6 +143,7 @@ class GetJobData implements ShouldQueue
                 'request_remaining' => $response->header('X-RateLimit-Requests-Remaining'),
                 'rate_limit_reset' => Carbon::createFromTimestamp($response->header('X-RateLimit-Reset')),
                 'sent_request' => DB::raw('sent_request + 1'),
+                'updated_at' => now(),
             ]);
     }
 }
