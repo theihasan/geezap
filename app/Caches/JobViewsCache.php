@@ -8,7 +8,7 @@ class JobViewsCache{
 
     public static function get($slug, $ip)
     {
-        return Cache::remember(self::key($slug, $ip), 1, function () use ($slug) {
+        return Cache::remember(self::key($slug, $ip), 5 * 60, function () use ($slug) {
             MostViewedJobsCache::invalidate();
             return JobListing::query()
                 ->where('slug', $slug)
