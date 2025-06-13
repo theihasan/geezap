@@ -32,7 +32,7 @@ class HomePageController extends Controller
 
         $latestJobs = LatestJobsCache::get($mostViewedJobs->pluck('id')->toArray());
 
-        $topCountries = CountryJobCountCache::getTopCountries(5);
+        $topCountries = CountryJobCountCache::getTopCountries(10);
 
         $meta = $metaGenerator->getHomePageMeta(
             $availableJobs,
