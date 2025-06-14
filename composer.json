@@ -8,6 +8,7 @@
         "php": "^8.2",
         "abbasudo/laravel-purity": "^3.3",
         "filament/filament": "^3.2",
+        "flowframe/laravel-trend": "^0.4.0",
         "laravel/breeze": "^2.0",
         "laravel/framework": "^11.0",
         "laravel/horizon": "^5.32",
