@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 class ApiRequestStats extends BaseWidget
 {
-    protected static ?string $pollingInterval = '15s';
+    protected static ?string $pollingInterval = '3s';
     
     protected function getStats(): array
     {
