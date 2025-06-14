@@ -10,7 +10,7 @@
         "filament/filament": "^3.2",
         "flowframe/laravel-trend": "^0.4.0",
         "laravel/breeze": "^2.0",
-        "laravel/framework": "^11.0",
+        "laravel/framework": "^12.0",
         "laravel/horizon": "^5.32",
         "laravel/reverb": "^1.0",
         "laravel/sanctum": "^4.0",
