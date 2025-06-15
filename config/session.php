@@ -216,7 +216,7 @@ return [
 
     'redis' => [
         'driver' => 'redis',
-        'connection' => 'session',
+        'connection' => 'default', 
         'lock_connection' => 'session',
     ],
 ];
