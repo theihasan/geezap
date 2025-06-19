@@ -1,0 +1,18 @@
+{$APP_DOMAIN} {
+    log
+    encode gzip
+    root * /app/public
+
+    handle {
+        reverse_proxy http://app:8000
+    }
+
+    file_server
+
+    header {
+        -X-Powered-By
+        -Server
+    }
+
+    tls {$CERTIFICATE_MODE:internal}
+}

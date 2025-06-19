@@ -1,0 +1,11 @@
+vendor
+.idea
+node_modules
+*.log
+.git
+Dockerfile
+docker-compose.*
+.DS_Store
+storage/app/*
+storage/debugbar/*
+public/build
