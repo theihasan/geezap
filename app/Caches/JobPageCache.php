@@ -21,8 +21,9 @@ class JobPageCache{
                 ->thenReturn();
 
             return $jobsQuery
+                ->selectRaw('*, RAND() as random_seed')
                 ->latest('posted_at')
-                ->inRandomOrder()
+                ->orderByRaw('random_seed')
                 ->paginate(20)
                 ->withQueryString();
         });
