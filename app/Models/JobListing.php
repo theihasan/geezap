@@ -10,7 +10,7 @@ use Abbasudo\Purity\Traits\Filterable;
 use App\Models\Scopes\JobListingScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Prunable;
+use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -22,7 +22,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 #[ScopedBy([JobListingScope::class])]
 class JobListing extends Model
 {
-    use HasFactory, Filterable, Prunable, Searchable;
+    use HasFactory, Filterable, MassPrunable, Searchable;
 
     protected $fillable = [
         'employer_name',
@@ -88,10 +88,6 @@ class JobListing extends Model
         return static::query()->where('created_at', '<=', now()->subDays(14));
     }
 
-    protected function pruning(): void
-    {
-        Log::info('Prepare for removing job: ' . $this->id);
-    }
 
     public function toSearchableArray(): array
     {
