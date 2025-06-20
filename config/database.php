@@ -157,55 +157,38 @@ return [
     'options' => [
         'cluster' => env('REDIS_CLUSTER', 'redis'),
         'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_').'_database_'),
-        'parameters' => [
-            'scheme' => 'tls',
-            'ssl' => [
-                'verify_peer' => false,
-                'verify_peer_name' => false,
-            ],
-        ],
     ],
 
     'default' => [
-        'scheme' => env('REDIS_SCHEME', 'tls'),
         'url' => env('REDIS_URL'),
         'host' => env('REDIS_HOST', '127.0.0.1'),
-        'username' => env('REDIS_USERNAME', 'default'),
         'password' => env('REDIS_PASSWORD'),
         'port' => env('REDIS_PORT', 6379),
         'database' => env('REDIS_DB', 0),
     ],
     
     'session' => [
-        'scheme' => env('REDIS_SESSION_SCHEME', 'tls'),
         'url' => env('REDIS_SESSION_URL'),
         'host' => env('REDIS_SESSION_HOST', '127.0.0.1'),
-        'username' => env('REDIS_SESSION_USERNAME', 'default'),
         'password' => env('REDIS_SESSION_PASSWORD'),
         'port' => env('REDIS_SESSION_PORT', 6379),
         'database' => env('REDIS_SESSION_DB', 2),
     ],
     
     'queue' => [
-        'scheme' => env('REDIS_QUEUE_SCHEME', 'tls'),
         'url' => env('REDIS_QUEUE_URL'),
         'host' => env('REDIS_QUEUE_HOST', '127.0.0.1'),
-        'username' => env('REDIS_QUEUE_USERNAME', 'default'),
         'password' => env('REDIS_QUEUE_PASSWORD'),
         'port' => env('REDIS_QUEUE_PORT', 6379),
         'database' => env('REDIS_QUEUE_DB', 0),
     ],
     
     'cache' => [
-        'scheme' => env('REDIS_CACHE_SCHEME', 'tls'),
         'url' => env('REDIS_CACHE_URL'),
         'host' => env('REDIS_CACHE_HOST', '127.0.0.1'),
-        'username' => env('REDIS_CACHE_USERNAME', 'default'),
         'password' => env('REDIS_CACHE_PASSWORD'),
         'port' => env('REDIS_CACHE_PORT', 6379),
         'database' => env('REDIS_CACHE_DB', 1),
-        'read_timeout' => 60,
-        'timeout' => 60,
     ],
 ],
 
