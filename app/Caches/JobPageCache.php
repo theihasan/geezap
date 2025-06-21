@@ -26,7 +26,7 @@ class JobPageCache{
             
             // Get current page from request
             $page = $request->get('page', 1);
-            $perPage = 10;
+            $perPage = 6;
             
             // Calculate offset for the current page
             $offset = ($page - 1) * $perPage;
