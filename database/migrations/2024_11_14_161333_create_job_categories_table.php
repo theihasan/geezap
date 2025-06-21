@@ -20,14 +20,6 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::table('job_listings', function (Blueprint $table) {
-            $table->dropColumn('job_category');
-        });
-
-        Schema::table('job_listings', function (Blueprint $table) {
-            $table->foreignId('job_category')->constrained('job_categories');
-        });
-
         $this->migrateExistingCategories();
     }
 
