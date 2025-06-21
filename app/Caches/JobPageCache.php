@@ -4,6 +4,7 @@ namespace App\Caches;
 use App\Models\JobListing;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Pipeline\Pipeline;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class JobPageCache{
 
@@ -20,15 +21,53 @@ class JobPageCache{
                 ])
                 ->thenReturn();
 
-            return $jobsQuery
-                ->selectRaw('*, RAND() as random_seed')
+            // Get the total count for pagination
+            $totalCount = $jobsQuery->count();
+            
+            // Get current page from request
+            $page = $request->get('page', 1);
+            $perPage = 10;
+            
+            // Calculate offset for the current page
+            $offset = ($page - 1) * $perPage;
+            
+            // Get jobs for the current page ordered by posted_at
+            $jobs = $jobsQuery
                 ->latest('posted_at')
-                ->orderByRaw('random_seed')
-                ->paginate(20)
-                ->withQueryString();
+                ->skip($offset)
+                ->take($perPage * 2) 
+                ->get();
+            
+
+            if ($jobs->count() > $perPage) {
+                $jobsArray = $jobs->all();
+                $randomKeys = array_rand($jobsArray, min($perPage, count($jobsArray)));
+                
+                $randomJobs = collect();
+                foreach ((array)$randomKeys as $key) {
+                    $randomJobs->push($jobsArray[$key]);
+                }
+                
+                $paginator = new LengthAwarePaginator(
+                    $randomJobs,
+                    $totalCount,
+                    $perPage,
+                    $page,
+                    ['path' => $request->url(), 'query' => $request->query()]
+                );
+                
+                return $paginator;
+            }
+            
+            return new LengthAwarePaginator(
+                $jobs,
+                $totalCount,
+                $perPage,
+                $page,
+                ['path' => $request->url(), 'query' => $request->query()]
+            );
         });
     }
-
 
     public static function invalidate()
     {
