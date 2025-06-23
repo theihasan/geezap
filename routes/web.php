@@ -44,4 +44,8 @@ Route::prefix('auth')->middleware('guest')->group(function () {
     Route::get('{provider}/callback', [SocialAuthController::class, 'callback'])->name('social.callback');
 });
 
+Route::get('/metrics', function() {
+    response('Promethus metrics', 200);
+});
+
 require __DIR__.'/auth.php';
