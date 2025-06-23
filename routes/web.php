@@ -45,7 +45,12 @@ Route::prefix('auth')->middleware('guest')->group(function () {
 });
 
 Route::get('/metrics', function() {
-    response('Promethus metrics', 200);
+    return response()->json([
+        'metrics' => [
+            'users' => \App\Models\User::count(),
+            'jobs' => \App\Models\JobListing::count(),
+        ]
+    ], 200);
 });
 
 require __DIR__.'/auth.php';
