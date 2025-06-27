@@ -16,15 +16,19 @@ services:
     restart: always
     env_file:
       - ./.env
-    image: geezap:latest
+    image: geezap/app:latest
+    depends_on:
+        - redis
+        - mysql
     volumes:
       - ./storage:/app/storage
+      - ./storage/app/public:/app/public/storage
 
   worker:
     restart: always
     env_file:
       - ./.env
-    image: geezap:latest
+    image: geezap/app:latest
     command: php artisan queue:work --tries=3 --timeout=60
     volumes:
       - ./storage:/app/storage
@@ -33,13 +37,15 @@ services:
     restart: always
     env_file:
       - ./.env
-    image: geezap:latest
+    image: geezap/app:latest
     command: php artisan schedule:work
     volumes:
       - ./storage:/app/storage
 
   caddy:
-    image: caddy:2.10-alpine
+    build:
+      dockerfile: caddy.Dockerfile
+    image: geezap/caddy:latest
     restart: always
     ports:
       - "80:80"
@@ -48,9 +54,9 @@ services:
       - APP_DOMAIN=${APP_DOMAIN}
       - CERTIFICATE_MODE=${CERTIFICATE_MODE}
     volumes:
-      - .:/app
-      - ./Caddyfile:/etc/caddy/Caddyfile
       - caddy:/data
+    depends_on:
+        - app
     networks:
       default:
         aliases:

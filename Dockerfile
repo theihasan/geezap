@@ -47,7 +47,7 @@ RUN npm install --no-audit --no-fund
 COPY . /app
 RUN npm run build
 
-FROM php:8.2-cli-alpine
+FROM php:8.2-fpm-alpine
 WORKDIR /app
 
 COPY --from=builder /usr/local/lib/php/extensions /usr/local/lib/php/extensions
@@ -55,10 +55,8 @@ COPY --from=builder /usr/local/lib/php/extensions /usr/local/lib/php/extensions
 RUN apk add --no-cache icu-dev libpng-dev freetype-dev libjpeg-turbo-dev libzip-dev && \
     docker-php-ext-enable intl redis bcmath pdo_mysql gd sockets pcntl zip && \
     docker-php-ext-enable --ini-name z-openswoole.ini openswoole && \
-    chown -R www-data:www-data /app
+    chown -R www-data:www-data /app/
 
 COPY --from=builder /usr/local/bin/composer /usr/local/bin/composer
 COPY --from=builder /app /app
 COPY --from=node /app/public/build /app/public/build
-
-CMD php artisan octane:start --host=0.0.0.0 --port=8000
