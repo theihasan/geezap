@@ -1,0 +1,76 @@
+services:
+  mysql:
+    restart: always
+    image: mariadb:11.8.2-noble
+    environment:
+      - MARIADB_DATABASE=${DB_DATABASE}
+      - MARIADB_USER=${DB_USERNAME}
+      - MARIADB_PASSWORD=${DB_PASSWORD}
+      - MARIADB_ROOT_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - mysql:/var/lib/mysql
+
+  app:
+    build:
+      context: .
+    restart: always
+    env_file:
+      - ./.env
+    image: geezap/app:latest
+    depends_on:
+        - redis
+        - mysql
+    volumes:
+      - ./storage:/app/storage
+      - ./storage/app/public:/app/public/storage
+
+  worker:
+    restart: always
+    env_file:
+      - ./.env
+    image: geezap/app:latest
+    command: php artisan horizon
+    volumes:
+      - ./storage:/app/storage
+
+  scheduler:
+    restart: always
+    env_file:
+      - ./.env
+    image: geezap/app:latest
+    command: php artisan schedule:work
+    volumes:
+      - ./storage:/app/storage
+
+  caddy:
+    build:
+      dockerfile: caddy.Dockerfile
+    image: geezap/caddy:latest
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - APP_DOMAIN=${APP_DOMAIN}
+      - CERTIFICATE_MODE=${CERTIFICATE_MODE}
+    volumes:
+      - caddy:/data
+      - ./storage/app/public:/app/public/storage
+    depends_on:
+        - app
+    networks:
+      default:
+        aliases:
+          - ${APP_DOMAIN}
+    logging:
+      options:
+        max-size: "200mb"
+        max-file: "10"
+
+  redis:
+    restart: always
+    image: redis:7.4.4-alpine
+
+volumes:
+  mysql:
+  caddy:
