@@ -29,7 +29,7 @@ services:
     env_file:
       - ./.env
     image: geezap/app:latest
-    command: php artisan queue:work --tries=3 --timeout=60
+    command: php artisan horizon
     volumes:
       - ./storage:/app/storage
 
@@ -55,6 +55,7 @@ services:
       - CERTIFICATE_MODE=${CERTIFICATE_MODE}
     volumes:
       - caddy:/data
+      - ./storage/app/public:/app/public/storage
     depends_on:
         - app
     networks:
