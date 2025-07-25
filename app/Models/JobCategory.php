@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
@@ -10,6 +11,8 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class JobCategory extends Model
 {
+    use HasFactory;
+    
     protected $fillable = [
         'name',
         'slug',

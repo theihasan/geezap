@@ -62,7 +62,6 @@ class JobListing extends Model
             'qualifications' => 'array',
             'benefits' => 'array',
             'responsibilities' => 'array',
-            'skills' => 'array',
            'is_remote' => 'boolean',
         ];
     }
@@ -102,6 +101,13 @@ class JobListing extends Model
             'salary_max' => (int) $this->max_salary,
             'salary_currency' => (string) $this->salary_currency,
             'salary_period' => (string) $this->salary_period,
+            'employment_type' => (string) $this->employment_type,
+            'required_experience' => (int) $this->required_experience,
+            'city' => (string) $this->city,
+            'state' => (string) $this->state,
+            'country' => (string) $this->country,
+            'posted_at' => $this->posted_at->timestamp,
+            'expired_at' => $this->expired_at->timestamp,
         ]);
     }
 
@@ -109,6 +115,11 @@ class JobListing extends Model
     {
         return 'listing_index';
     }
-
+    
+    public function scopeByPublisher(Builder $query, string $publisher): Builder
+    {
+        return $query->where('publisher', $publisher);
+    }
 
 }
+
