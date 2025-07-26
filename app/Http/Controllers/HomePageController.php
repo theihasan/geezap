@@ -6,19 +6,23 @@ use App\Caches\CountriesCache;
 use App\Caches\CountryJobCountCache;
 use App\Caches\JobCategoryCache;
 use App\Caches\JobsCountCache;
-use App\Caches\LatestJobsCache;
-use App\Caches\MostViewedJobsCache;
+use App\Caches\CountryAwareLatestJobsCache;
+use App\Caches\CountryAwareMostViewedJobsCache;
 use App\Services\MetaTagGenerator;
+use App\Traits\DetectsUserCountry;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
 
 class HomePageController extends Controller
 {
+    use DetectsUserCountry;
+
     public function __invoke(MetaTagGenerator $metaGenerator): Factory|Application|View|\Illuminate\Contracts\Foundation\Application
     {
+        $userCountry = $this->getUserCountry();
 
-        $mostViewedJobs = MostViewedJobsCache::get();
+        $mostViewedJobs = CountryAwareMostViewedJobsCache::get($userCountry);
 
         $jobCategories = JobCategoryCache::getTopCategories();
 
@@ -30,7 +34,10 @@ class HomePageController extends Controller
 
         $availableJobs = JobsCountCache::availableJobsCount();
 
-        $latestJobs = LatestJobsCache::get($mostViewedJobs->pluck('id')->toArray());
+        $latestJobs = CountryAwareLatestJobsCache::get(
+            $mostViewedJobs->pluck('id')->toArray(),
+            $userCountry
+        );
 
         $topCountries = CountryJobCountCache::getTopCountries(10);
 
@@ -52,6 +59,7 @@ class HomePageController extends Controller
             'latestJobs',
             'meta',
             'topCountries',
+            'userCountry', // Pass user country to view for UI indicators
         ]));
     }
 }
