@@ -8,6 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Cache;
 
 class UpdateUserCountryFromCloudflare implements ShouldQueue
 {
@@ -30,12 +31,25 @@ class UpdateUserCountryFromCloudflare implements ShouldQueue
             return;
         }
 
-        if ($user->country === $this->cfCountry) {
+        $normalizedCountry = strtoupper($this->cfCountry);
+
+        if ($user->country === $normalizedCountry) {
             return;
         }
 
         $user->update([
-            'country' => $this->cfCountry
+            'country' => $normalizedCountry
         ]);
+
+        $this->clearUserCountryCache($this->userId);
+    }
+
+    /**
+     * Clear user's country cache after updating
+     */
+    private function clearUserCountryCache(string $userId): void
+    {
+        $cacheKey = "user_country_{$userId}";
+        Cache::forget($cacheKey);
     }
 }
