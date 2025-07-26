@@ -1,4 +1,11 @@
 @extends('v2.layouts.app')
+
+@push('extra-css')
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+@endpush
+
 @section('content')
     <section class="py-12">
         <div class="max-w-7xl mx-auto px-6">
@@ -62,7 +69,8 @@
                 </div>
 
                 <!-- Right Sidebar -->
-                <div class="md:col-span-1">
+                <div class="md:col-span-1 space-y-6">
+                    <!-- Company Info -->
                     <div class="bg-[#1a1a3a] p-6 rounded-2xl border border-gray-700">
                         <div class="flex items-center gap-4 mb-6">
                             @if($job->employer_logo)
@@ -118,8 +126,24 @@
                         @endif
                     </div>
 
-                    <!-- Separate card for buttons -->
+                    <!-- Location Map -->
+                    @if($job->latitude && $job->longitude)
+                    <div class="bg-[#1a1a3a] p-6 rounded-2xl border border-gray-700">
+                        <h3 class="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+                            <i class="las la-map text-pink-300"></i>
+                            Job Location
+                        </h3>
+                        <div id="job-map" class="h-64 rounded-xl overflow-hidden border border-gray-700" 
+                             data-lat="{{ $job->latitude }}" 
+                             data-lng="{{ $job->longitude }}"
+                             data-title="{{ $job->job_title }}"
+                             data-company="{{ $job->employer_name }}"
+                             data-location="{{ $job->state }}, {{ $job->country }}">
+                        </div>
+                    </div>
+                    @endif
 
+                    <!-- Separate card for buttons -->
                     <livewire:jobs.save-for-letter :job="$job" />
                 </div>
             </div>
@@ -178,3 +202,134 @@
         </div>
     </section>
 @endsection
+
+@push('extra-js')
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const mapContainer = document.getElementById('job-map');
+    
+    if (mapContainer) {
+        const lat = parseFloat(mapContainer.dataset.lat);
+        const lng = parseFloat(mapContainer.dataset.lng);
+        const title = mapContainer.dataset.title;
+        const company = mapContainer.dataset.company;
+        const location = mapContainer.dataset.location;
+        
+        if (lat && lng) {
+            // Initialize the map
+            const map = L.map('job-map', {
+                zoomControl: false,
+                scrollWheelZoom: false
+            }).setView([lat, lng], 13);
+            
+            // Add zoom control in bottom right
+            L.control.zoom({
+                position: 'bottomright'
+            }).addTo(map);
+            
+            // Add tile layer with dark theme
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                subdomains: 'abcd',
+                maxZoom: 20
+            }).addTo(map);
+            
+            // Create custom icon
+            const customIcon = L.divIcon({
+                html: '<div class="custom-marker"><i class="las la-map-marker-alt"></i></div>',
+                className: 'custom-div-icon',
+                iconSize: [40, 40],
+                iconAnchor: [20, 40],
+                popupAnchor: [0, -40]
+            });
+            
+            // Add marker
+            const marker = L.marker([lat, lng], { icon: customIcon }).addTo(map);
+            
+            // Add popup
+            marker.bindPopup(`
+                <div class="custom-popup">
+                    <h4 class="font-semibold text-white mb-1">${title}</h4>
+                    <p class="text-gray-300 text-sm mb-1">${company}</p>
+                    <p class="text-gray-400 text-xs">${location}</p>
+                </div>
+            `);
+            
+            marker.openPopup();
+        }
+    }
+});
+</script>
+
+<style>
+.custom-div-icon {
+    background: transparent;
+    border: none;
+}
+
+.custom-marker {
+    background: linear-gradient(135deg, #ec4899, #8b5cf6);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.custom-marker i {
+    transform: rotate(45deg);
+    font-size: 20px;
+}
+
+.leaflet-popup-content-wrapper {
+    background: #1a1a3a !important;
+    border: 1px solid #374151 !important;
+    border-radius: 12px !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5) !important;
+}
+
+.leaflet-popup-content {
+    margin: 16px !important;
+}
+
+.leaflet-popup-tip {
+    background: #1a1a3a !important;
+    border: 1px solid #374151 !important;
+}
+
+.custom-popup h4 {
+    color: #ffffff;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.custom-popup p {
+    margin: 0;
+}
+
+.leaflet-control-zoom {
+    border: none !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
+}
+
+.leaflet-control-zoom a {
+    background: #1a1a3a !important;
+    border: 1px solid #374151 !important;
+    color: #ec4899 !important;
+    font-weight: bold !important;
+}
+
+.leaflet-control-zoom a:hover {
+    background: #374151 !important;
+    color: #f472b6 !important;
+}
+</style>
+@endpush

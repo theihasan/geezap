@@ -71,6 +71,16 @@ class JobListingResource extends Resource
                             ->maxLength(255),
                         Forms\Components\TextInput::make('country')
                             ->maxLength(255),
+                        Forms\Components\TextInput::make('latitude')
+                            ->numeric()
+                            ->step(0.000001)
+                            ->placeholder('e.g., 41.88325')
+                            ->helperText('Job location latitude coordinate'),
+                        Forms\Components\TextInput::make('longitude')
+                            ->numeric()
+                            ->step(0.000001)
+                            ->placeholder('e.g., -87.6323879')
+                            ->helperText('Job location longitude coordinate'),
                         Forms\Components\TextInput::make('apply_link')
                             ->url()
                             ->required()
@@ -129,6 +139,14 @@ class JobListingResource extends Resource
                 Tables\Columns\TextColumn::make('employment_type')
                     ->label('Type')
                     ->color('info'),
+                Tables\Columns\IconColumn::make('has_coordinates')
+                    ->label('Map')
+                    ->boolean()
+                    ->getStateUsing(fn ($record) => !empty($record->latitude) && !empty($record->longitude))
+                    ->trueIcon('heroicon-o-map')
+                    ->falseIcon('heroicon-o-x-mark')
+                    ->trueColor('success')
+                    ->falseColor('gray'),
                 Tables\Columns\TextColumn::make('posted_at')
                     ->label('Posted Date')
                     ->sortable()

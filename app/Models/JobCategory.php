@@ -26,6 +26,11 @@ class JobCategory extends Model
         return $this->hasMany(JobListing::class, 'job_category');
     }
 
+    public function listings()
+    {
+        return $this->hasMany(JobListing::class, 'job_category');
+    }
+
     public function countries(): BelongsToMany
     {
         return $this->belongsToMany(Country::class, 'job_category_country')
