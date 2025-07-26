@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Caches\JobListingCache;
 use App\Caches\CountryAwareJobPageCache;
+use App\Caches\JobPageCache;
 use App\Caches\JobViewsCache;
 use App\Caches\RelatedJobListingCache;
 use App\Services\MetaTagGenerator;
@@ -12,6 +13,7 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class JobController extends Controller
 {
@@ -19,16 +21,27 @@ class JobController extends Controller
 
     public function index(Request $request)
     {
-        $userCountry = $this->getUserCountry();
-        
-        $jobs = CountryAwareJobPageCache::get($request, $userCountry);
+        try {
+            $userCountry = $this->getUserCountry();
+            
+            $jobs = CountryAwareJobPageCache::get($request, $userCountry);
+        } catch (\Throwable $e) {
+            Log::warning('Country-aware cache failed, falling back to default', [
+                'error' => $e->getMessage(),
+                'memory_usage' => memory_get_usage(true),
+                'memory_peak' => memory_get_peak_usage(true)
+            ]);
+            
+            $jobs = JobPageCache::get($request);
+            $userCountry = null;
+        }
 
         $currentPage = $jobs->currentPage();
 
         return view('v2.job.index', [
             'jobs' => $jobs,
             'currentPage' => $currentPage,
-            'userCountry' => $userCountry, // Pass to view for UI indicators
+            'userCountry' => $userCountry,
         ]);
     }
 

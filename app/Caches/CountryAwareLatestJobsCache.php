@@ -10,26 +10,22 @@ class CountryAwareLatestJobsCache
     public static function get(array $excludeIds = [], ?string $userCountry = null, int $limit = 4)
     {
         return Cache::remember(self::key($userCountry, $excludeIds), 60 * 24, function () use ($excludeIds, $userCountry, $limit) {
-            $query = JobListing::query()
-                ->whereNotIn('id', $excludeIds);
-
             if ($userCountry) {
-                // Get country-specific jobs first
-                $countryJobs = (clone $query)
+                $countryJobs = JobListing::query()
+                    ->whereNotIn('id', $excludeIds)
                     ->where('country', $userCountry)
                     ->latest()
-                    ->take($limit)
+                    ->limit($limit)
                     ->get();
 
-                // If we don't have enough country-specific jobs, fill with global jobs
                 if ($countryJobs->count() < $limit) {
                     $needed = $limit - $countryJobs->count();
                     $countryExcludeIds = array_merge($excludeIds, $countryJobs->pluck('id')->toArray());
                     
-                    $globalJobs = $query
+                    $globalJobs = JobListing::query()
                         ->whereNotIn('id', $countryExcludeIds)
                         ->latest()
-                        ->take($needed)
+                        ->limit($needed)
                         ->get();
                     
                     return $countryJobs->merge($globalJobs);
@@ -38,22 +34,20 @@ class CountryAwareLatestJobsCache
                 return $countryJobs;
             }
 
-            // Default behavior for users without country
-            return $query
+            return JobListing::query()
+                ->whereNotIn('id', $excludeIds)
                 ->latest()
-                ->take($limit)
+                ->limit($limit)
                 ->get();
         });
     }
 
     public static function invalidate(?string $userCountry = null)
     {
-        // Clear country-specific cache
         if ($userCountry) {
             Cache::tags(["latest-jobs-{$userCountry}"])->flush();
         }
         
-        // Also clear global cache
         Cache::tags(['latest-jobs'])->flush();
     }
 

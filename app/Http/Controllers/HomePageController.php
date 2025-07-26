@@ -8,11 +8,14 @@ use App\Caches\JobCategoryCache;
 use App\Caches\JobsCountCache;
 use App\Caches\CountryAwareLatestJobsCache;
 use App\Caches\CountryAwareMostViewedJobsCache;
+use App\Caches\LatestJobsCache;
+use App\Caches\MostViewedJobsCache;
 use App\Services\MetaTagGenerator;
 use App\Traits\DetectsUserCountry;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Log;
 
 class HomePageController extends Controller
 {
@@ -20,9 +23,26 @@ class HomePageController extends Controller
 
     public function __invoke(MetaTagGenerator $metaGenerator): Factory|Application|View|\Illuminate\Contracts\Foundation\Application
     {
-        $userCountry = $this->getUserCountry();
+        try {
+            $userCountry = $this->getUserCountry();
 
-        $mostViewedJobs = CountryAwareMostViewedJobsCache::get($userCountry);
+            $mostViewedJobs = CountryAwareMostViewedJobsCache::get($userCountry);
+
+            $latestJobs = CountryAwareLatestJobsCache::get(
+                $mostViewedJobs->pluck('id')->toArray(),
+                $userCountry
+            );
+        } catch (\Throwable $e) {
+            Log::warning('Country-aware cache failed on homepage, falling back to default', [
+                'error' => $e->getMessage(),
+                'memory_usage' => memory_get_usage(true),
+                'memory_peak' => memory_get_peak_usage(true)
+            ]);
+            
+            $mostViewedJobs = MostViewedJobsCache::get();
+            $latestJobs = LatestJobsCache::get($mostViewedJobs->pluck('id')->toArray());
+            $userCountry = null;
+        }
 
         $jobCategories = JobCategoryCache::getTopCategories();
 
@@ -33,11 +53,6 @@ class HomePageController extends Controller
         $jobCategoriesCount = JobsCountCache::categoriesCount();
 
         $availableJobs = JobsCountCache::availableJobsCount();
-
-        $latestJobs = CountryAwareLatestJobsCache::get(
-            $mostViewedJobs->pluck('id')->toArray(),
-            $userCountry
-        );
 
         $topCountries = CountryJobCountCache::getTopCountries(10);
 
@@ -59,7 +74,7 @@ class HomePageController extends Controller
             'latestJobs',
             'meta',
             'topCountries',
-            'userCountry', // Pass user country to view for UI indicators
+            'userCountry',
         ]));
     }
 }
