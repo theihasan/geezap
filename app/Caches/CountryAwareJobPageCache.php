@@ -17,16 +17,14 @@ class CountryAwareJobPageCache
             $offset = ($page - 1) * $perPage;
 
             if ($userCountry) {
-                // Memory-efficient country-aware job fetching
-                return self::getCountryPrioritizedJobsEfficient($request, $userCountry, $page, $perPage, $offset);
+                return self::getCountryPrioritizedJobs($request, $userCountry, $page, $perPage, $offset);
             }
             
-            // Default behavior (original logic)
             return self::getDefaultJobs($request, $page, $perPage, $offset);
         });
     }
 
-    private static function getCountryPrioritizedJobsEfficient($request, $userCountry, $page, $perPage, $offset)
+    private static function getCountryPrioritizedJobs($request, $userCountry, $page, $perPage, $offset)
     {
         // Build base query with filters
         $baseQuery = JobListing::query()->with(['category']);
@@ -38,59 +36,42 @@ class CountryAwareJobPageCache
             ])
             ->thenReturn();
 
-        // Get total count for pagination (only count, don't load data)
+        // Get total count for pagination
         $totalCount = $baseQuery->count();
 
-        // Calculate how many country jobs and global jobs we need
-        $countryJobsQuery = clone $baseQuery;
-        $countryJobsCount = $countryJobsQuery->where('country', $userCountry)->count();
-        
-        // Strategy: Try to get 70% country jobs, 30% international jobs per page
-        $preferredCountryJobs = max(1, (int)($perPage * 0.7));
-        $preferredGlobalJobs = $perPage - $preferredCountryJobs;
-
-        // Adjust based on available country jobs
-        if ($countryJobsCount < $preferredCountryJobs) {
-            $countryJobsToTake = min($countryJobsCount, $perPage);
-            $globalJobsToTake = $perPage - $countryJobsToTake;
-        } else {
-            $countryJobsToTake = $preferredCountryJobs;
-            $globalJobsToTake = $preferredGlobalJobs;
-        }
-
+        // Simple approach: Get country jobs first, then fill with global jobs
         $finalJobs = collect();
-
-        // Get country jobs first (database-level pagination)
-        if ($countryJobsToTake > 0) {
-            $countryOffset = (int)($offset * 0.7); // Proportional offset for country jobs
-            $countryJobs = (clone $baseQuery)
-                ->where('country', $userCountry)
-                ->latest('posted_at')
-                ->skip($countryOffset)
-                ->take($countryJobsToTake)
-                ->get();
-            
-            $finalJobs = $finalJobs->merge($countryJobs);
-        }
-
-        // Get global jobs to fill remaining slots
-        if ($globalJobsToTake > 0 && $finalJobs->count() < $perPage) {
-            $globalOffset = (int)($offset * 0.3); // Proportional offset for global jobs
+        
+        // Strategy 1: Get country jobs for this page
+        $countryJobs = (clone $baseQuery)
+            ->where('country', $userCountry)
+            ->latest('posted_at')
+            ->skip($offset)
+            ->take($perPage)
+            ->get();
+        
+        $finalJobs = $countryJobs;
+        
+        // Strategy 2: If we don't have enough country jobs, fill with international jobs
+        if ($finalJobs->count() < $perPage) {
+            $needed = $perPage - $finalJobs->count();
             $excludeIds = $finalJobs->pluck('id')->toArray();
+            
+            // Calculate offset for global jobs based on how many country jobs we skipped
+            $countryJobsCount = (clone $baseQuery)->where('country', $userCountry)->count();
+            $countryJobsUsed = min($offset + $finalJobs->count(), $countryJobsCount);
+            $globalOffset = max(0, $offset - $countryJobsUsed);
             
             $globalJobs = (clone $baseQuery)
                 ->where('country', '!=', $userCountry)
                 ->whereNotIn('id', $excludeIds)
                 ->latest('posted_at')
                 ->skip($globalOffset)
-                ->take($globalJobsToTake)
+                ->take($needed)
                 ->get();
             
             $finalJobs = $finalJobs->merge($globalJobs);
         }
-
-        // Ensure we don't exceed perPage limit
-        $finalJobs = $finalJobs->take($perPage);
 
         return new LengthAwarePaginator(
             $finalJobs,
@@ -103,7 +84,6 @@ class CountryAwareJobPageCache
 
     private static function getDefaultJobs($request, $page, $perPage, $offset)
     {
-       
         $jobsQuery = JobListing::query()->with(['category']);
         
         $jobsQuery = app()->make(Pipeline::class)
@@ -132,7 +112,6 @@ class CountryAwareJobPageCache
 
     public static function invalidate(?string $userCountry = null)
     {
-        // Clear specific country cache if provided
         if ($userCountry) {
             $countryKeys = [
                 "jobs_page_{$userCountry}_1_*",

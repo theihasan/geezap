@@ -24,6 +24,11 @@ class JobController extends Controller
         try {
             $userCountry = $this->getUserCountry();
             
+            // Development helper: simulate CloudFlare header for testing
+            if (app()->environment('local') && !$userCountry) {
+                $userCountry = 'BD'; // Simulate Bangladesh for testing
+            }
+            
             $jobs = CountryAwareJobPageCache::get($request, $userCountry);
         } catch (\Throwable $e) {
             Log::warning('Country-aware cache failed, falling back to default', [

@@ -88,11 +88,7 @@ class CountryAwareMostViewedJobsCache
             Cache::forget(self::key($userCountry));
         }
         
-
         Cache::forget(self::key(null));
-        
-
-        Cache::tags(['most-viewed-jobs'])->flush();
     }
 
     public static function key(?string $userCountry = null)
