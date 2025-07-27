@@ -12,6 +12,7 @@ class PrometheusMiddleware
     private $counter;
     private $durationGauge;
     private $activeRequestsGauge;
+    private $memoryUsageBytesGauge;
 
     public function __construct(private CollectorRegistry $registry)
     {
@@ -33,6 +34,13 @@ class PrometheusMiddleware
             'geezap',
             'http_active_requests',
             'Number of active HTTP requests',
+            ['method', 'path']
+        );
+
+        $this->memoryUsageBytesGauge = $this->registry->getOrRegisterGauge(
+            'geezap',
+            'memory_usage_bytes',
+            'Memory usage in bytes',
             ['method', 'path']
         );
         
@@ -67,6 +75,8 @@ class PrometheusMiddleware
         $this->durationGauge->set($duration, $labelsWithStatus);
 
         $this->activeRequestsGauge->dec($labels);
+
+        $this->memoryUsageBytesGauge->set(memory_get_usage(true), $labels);
 
         return $response;
     }
