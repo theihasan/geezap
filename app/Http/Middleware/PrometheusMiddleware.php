@@ -10,6 +10,8 @@ use Symfony\Component\HttpFoundation\Response;
 class PrometheusMiddleware
 {
     private $counter;
+    private $durationGauge;
+    private $activeRequestsGauge;
 
     public function __construct(private CollectorRegistry $registry)
     {
@@ -19,6 +21,21 @@ class PrometheusMiddleware
             'Total number of HTTP requests',
             ['method', 'path', 'status']
         );
+
+        $this->durationGauge = $this->registry->getOrRegisterGauge(
+            'geezap',
+            'http_requests_duration_seconds',
+            'Duration of HTTP requests',
+            ['method', 'path', 'status']
+        );
+
+        $this->activeRequestsGauge = $this->registry->getOrRegisterGauge(
+            'geezap',
+            'http_active_requests',
+            'Number of active HTTP requests',
+            ['method', 'path']
+        );
+        
     }
     /**
      * Handle an incoming request.
@@ -27,13 +44,29 @@ class PrometheusMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $response = $next($request);
-
-        $this->counter->inc([
+        $startTime = microtime(true);
+        
+        $labels = [
             'method' => $request->method(),
             'path' => $request->path(),
+        ];
+
+        $this->activeRequestsGauge->inc($labels);
+        
+        $response = $next($request);
+        
+        $endTime = microtime(true);
+        $duration = $endTime - $startTime;
+        
+        $labelsWithStatus = array_merge($labels, [
             'status' => $response->getStatusCode()
         ]);
+
+
+        $this->counter->inc($labelsWithStatus);
+        $this->durationGauge->set($duration, $labelsWithStatus);
+
+        $this->activeRequestsGauge->dec($labels);
 
         return $response;
     }
