@@ -14,6 +14,7 @@ class PrometheusMiddleware
     private $durationGauge;
     private $activeRequestsGauge;
     private $memoryUsageBytesGauge;
+    private $histogram;
 
     public function __construct(private CollectorRegistry $registry)
     {
@@ -26,6 +27,7 @@ class PrometheusMiddleware
         $this->initializeDurationGaugeMetrics();
         $this->initializeActiveRequestsGaugeMetrics();
         $this->initializeMemoryUsageBytesGaugeMetrics();
+        $this->initializeHistogramMetrics();
     }
 
     private function initializeCounterMetrics(): void
@@ -67,6 +69,17 @@ class PrometheusMiddleware
             ['type']
         );
     }
+
+    private function initializeHistogramMetrics(): void
+    {
+        $this->histogram = $this->registry->getOrRegisterHistogram(
+            'geezap',
+            'http_requests_duration_seconds',
+            'Histogram of HTTP request durations',
+            ['method', 'path', 'status']
+        );
+    }
+
     /**
      * Handle an incoming request.
      *
@@ -95,6 +108,7 @@ class PrometheusMiddleware
 
         $this->counter->inc($labelsWithStatus);
         $this->durationGauge->set($duration, $labelsWithStatus);
+        $this->histogram->observe($duration, $labelsWithStatus);
 
         $this->activeRequestsGauge->dec($labels);
         $this->memoryUsageBytesGauge->set(memory_get_usage(true), ['real']);
