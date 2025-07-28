@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Prometheus\CollectorRegistry;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -41,7 +42,7 @@ class PrometheusMiddleware
             'geezap',
             'memory_usage_bytes',
             'Memory usage in bytes',
-            ['method', 'path']
+            ['type']
         );
         
     }
@@ -75,8 +76,9 @@ class PrometheusMiddleware
         $this->durationGauge->set($duration, $labelsWithStatus);
 
         $this->activeRequestsGauge->dec($labels);
-
-        $this->memoryUsageBytesGauge->set(memory_get_usage(true), $labels);
+        $this->memoryUsageBytesGauge->set(memory_get_usage(true), ['real']);
+        $this->memoryUsageBytesGauge->set(memory_get_peak_usage(true), ['peak']);
+        $this->memoryUsageBytesGauge->set(memory_get_usage(false), ['allocated']);
 
         return $response;
     }
