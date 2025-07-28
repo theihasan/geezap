@@ -17,34 +17,55 @@ class PrometheusMiddleware
 
     public function __construct(private CollectorRegistry $registry)
     {
+        $this->initializeMetrics();
+    }
+
+    private function initializeMetrics(): void
+    {
+        $this->initializeCounterMetrics();
+        $this->initializeDurationGaugeMetrics();
+        $this->initializeActiveRequestsGaugeMetrics();
+        $this->initializeMemoryUsageBytesGaugeMetrics();
+    }
+
+    private function initializeCounterMetrics(): void
+    {
         $this->counter = $this->registry->getOrRegisterCounter(
             'geezap',
             'http_requests_total',
             'Total number of HTTP requests',
             ['method', 'path', 'status']
         );
+    }
 
+    private function initializeDurationGaugeMetrics(): void
+    {
         $this->durationGauge = $this->registry->getOrRegisterGauge(
             'geezap',
             'http_requests_duration_seconds',
             'Duration of HTTP requests',
             ['method', 'path', 'status']
         );
+    }
 
+    private function initializeActiveRequestsGaugeMetrics(): void
+    {
         $this->activeRequestsGauge = $this->registry->getOrRegisterGauge(
             'geezap',
             'http_active_requests',
             'Number of active HTTP requests',
             ['method', 'path']
         );
+    }
 
+    private function initializeMemoryUsageBytesGaugeMetrics(): void
+    {
         $this->memoryUsageBytesGauge = $this->registry->getOrRegisterGauge(
             'geezap',
             'memory_usage_bytes',
             'Memory usage in bytes',
             ['type']
         );
-        
     }
     /**
      * Handle an incoming request.
