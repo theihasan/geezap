@@ -10,6 +10,7 @@ use App\Jobs\PaythonJob;
 use App\Jobs\SymfonyJob;
 use App\Jobs\WordPressJob;
 use App\Jobs\ResetAPIKeyLimit;
+use App\Jobs\CollectMetricsJob;
 use Sentry\Laravel\Integration;
 use App\Jobs\DispatchJobCategories;
 use App\Jobs\NotifyUserAboutNewJobs;
@@ -57,6 +58,14 @@ return Application::configure(basePath: dirname(__DIR__))
         $schedule->job(new NotifyUserAboutNewJobs())
             ->daily()
             ->days([Schedule::SATURDAY, Schedule::THURSDAY])
+            ->withoutOverlapping(600);
+
+        $schedule->job(new CollectMetricsJob('business'))
+            ->everyFiveMinutes()
+            ->withoutOverlapping(300);
+
+        $schedule->job(new CollectMetricsJob('system'))
+            ->everyTenMinutes()
             ->withoutOverlapping(600);
 
         $schedule->command('model:prune')->everyMinute();
