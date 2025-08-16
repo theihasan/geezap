@@ -5,6 +5,8 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Prometheus\CollectorRegistry;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -21,6 +23,16 @@ class PrometheusMiddleware
     private $nodeDiskReadBytesTotal;
     private $nodeDiskWrittenBytesTotal;
     private $nodeDiskIoTimeSecondsTotal;
+    private $apiRequestsCounter;
+    private $userSessionsGauge;
+    private $responseTimeHistogram;
+    private $requestSizeHistogram;
+    private $responseSizeHistogram;
+    private $errorRateCounter;
+    private $throughputGauge;
+    private $concurrentUsersGauge;
+    private $phpMemoryUsageGauge;
+    private $phpProcessesGauge;
 
     public function __construct(private CollectorRegistry $registry)
     {
@@ -37,6 +49,9 @@ class PrometheusMiddleware
         $this->initializeNodeCpuSecondsTotal();
         $this->initializeNodeMemoryMetrics();
         $this->initializeNodeDiskMetrics();
+        $this->initializeApplicationMetrics();
+        $this->initializePerformanceMetrics();
+        $this->initializeUserMetrics();
     }
 
     private function initializeCounterMetrics(): void
@@ -141,6 +156,88 @@ class PrometheusMiddleware
         );
     }
 
+    private function initializeApplicationMetrics(): void
+    {
+        $this->apiRequestsCounter = $this->registry->getOrRegisterCounter(
+            'geezap',
+            'api_requests_total',
+            'Total API requests by endpoint',
+            ['endpoint', 'method', 'status', 'user_type']
+        );
+
+        $this->errorRateCounter = $this->registry->getOrRegisterCounter(
+            'geezap',
+            'http_errors_total',
+            'Total HTTP errors',
+            ['method', 'path', 'status', 'error_type']
+        );
+
+        $this->throughputGauge = $this->registry->getOrRegisterGauge(
+            'geezap',
+            'requests_per_second',
+            'Current requests per second',
+            ['method']
+        );
+    }
+
+    private function initializePerformanceMetrics(): void
+    {
+        $this->responseTimeHistogram = $this->registry->getOrRegisterHistogram(
+            'geezap',
+            'response_time_seconds',
+            'Response time distribution',
+            ['endpoint', 'method'],
+            [0.001, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10]
+        );
+
+        $this->requestSizeHistogram = $this->registry->getOrRegisterHistogram(
+            'geezap',
+            'request_size_bytes',
+            'Request size distribution',
+            ['method', 'endpoint'],
+            [100, 1000, 10000, 100000, 1000000, 10000000]
+        );
+
+        $this->responseSizeHistogram = $this->registry->getOrRegisterHistogram(
+            'geezap',
+            'response_size_bytes',
+            'Response size distribution',
+            ['method', 'endpoint', 'status'],
+            [100, 1000, 10000, 100000, 1000000, 10000000]
+        );
+
+        $this->phpMemoryUsageGauge = $this->registry->getOrRegisterGauge(
+            'geezap',
+            'php_memory_usage_bytes',
+            'PHP memory usage',
+            ['type']
+        );
+
+        $this->phpProcessesGauge = $this->registry->getOrRegisterGauge(
+            'geezap',
+            'php_processes_active',
+            'Active PHP processes',
+            []
+        );
+    }
+
+    private function initializeUserMetrics(): void
+    {
+        $this->userSessionsGauge = $this->registry->getOrRegisterGauge(
+            'geezap',
+            'user_sessions_active',
+            'Active user sessions',
+            ['user_type']
+        );
+
+        $this->concurrentUsersGauge = $this->registry->getOrRegisterGauge(
+            'geezap',
+            'concurrent_users',
+            'Concurrent users',
+            ['authenticated']
+        );
+    }
+
     private function collectNodeMetrics(): void
     {
         $this->collectCpuMetrics();
@@ -155,26 +252,26 @@ class PrometheusMiddleware
         }
 
         $contents = file_get_contents('/proc/stat');
-        $lines = explode("\n", $contents);
+        $modes = ['user', 'nice', 'system', 'idle', 'iowait', 'irq', 'softirq'];
         
-        foreach ($lines as $line) {
-            if (strpos($line, 'cpu') === 0) {
-                $parts = preg_split('/\s+/', trim($line));
-                if (count($parts) >= 8) {
-                    $cpu = $parts[0];
-                    $modes = ['user', 'nice', 'system', 'idle', 'iowait', 'irq', 'softirq'];
-                    
-                    for ($i = 1; $i <= 7; $i++) {
-                        if (isset($parts[$i]) && isset($modes[$i-1])) {
+        collect(explode("\n", $contents))
+            ->filter(fn($line) => str_starts_with($line, 'cpu'))
+            ->map(fn($line) => preg_split('/\s+/', trim($line)))
+            ->filter(fn($parts) => count($parts) >= 8)
+            ->each(function ($parts) use ($modes) {
+                $cpu = $parts[0];
+                collect($modes)
+                    ->take(7)
+                    ->each(function ($mode, $index) use ($parts, $cpu) {
+                        $partIndex = $index + 1;
+                        if (isset($parts[$partIndex])) {
                             $this->nodeCpuSecondsTotal->incBy(
-                                (float)$parts[$i] / 100, // Convert from jiffies to seconds
-                                [$cpu, $modes[$i-1]]
+                                (float)$parts[$partIndex] / 100,
+                                [$cpu, $mode]
                             );
                         }
-                    }
-                }
-            }
-        }
+                    });
+            });
     }
 
     private function collectMemoryMetrics(): void
@@ -184,21 +281,17 @@ class PrometheusMiddleware
         }
 
         $contents = file_get_contents('/proc/meminfo');
-        $lines = explode("\n", $contents);
         
-        foreach ($lines as $line) {
-            if (strpos($line, 'MemTotal:') === 0) {
-                $parts = preg_split('/\s+/', trim($line));
-                if (isset($parts[1])) {
-                    $this->nodeMemoryMemTotalBytes->set((float)$parts[1] * 1024); // Convert kB to bytes
-                }
-            } elseif (strpos($line, 'MemFree:') === 0) {
-                $parts = preg_split('/\s+/', trim($line));
-                if (isset($parts[1])) {
-                    $this->nodeMemoryMemFreeBytes->set((float)$parts[1] * 1024); // Convert kB to bytes
-                }
-            }
-        }
+        collect(explode("\n", $contents))
+            ->map(fn($line) => preg_split('/\s+/', trim($line)))
+            ->filter(fn($parts) => isset($parts[1]))
+            ->each(function ($parts) {
+                match ($parts[0]) {
+                    'MemTotal:' => $this->nodeMemoryMemTotalBytes->set((float)$parts[1] * 1024),
+                    'MemFree:' => $this->nodeMemoryMemFreeBytes->set((float)$parts[1] * 1024),
+                    default => null
+                };
+            });
     }
 
     private function collectDiskMetrics(): void
@@ -208,27 +301,21 @@ class PrometheusMiddleware
         }
 
         $contents = file_get_contents('/proc/diskstats');
-        $lines = explode("\n", $contents);
         
-        foreach ($lines as $line) {
-            $parts = preg_split('/\s+/', trim($line));
-            if (count($parts) >= 14) {
+        collect(explode("\n", $contents))
+            ->map(fn($line) => preg_split('/\s+/', trim($line)))
+            ->filter(fn($parts) => count($parts) >= 14)
+            ->reject(fn($parts) => str_starts_with($parts[2], 'loop') || str_starts_with($parts[2], 'ram'))
+            ->each(function ($parts) {
                 $device = $parts[2];
-                
-                // Skip loop devices and other virtual devices
-                if (strpos($device, 'loop') === 0 || strpos($device, 'ram') === 0) {
-                    continue;
-                }
-                
-                $readBytes = (float)$parts[5] * 512; // sectors to bytes
-                $writeBytes = (float)$parts[9] * 512; // sectors to bytes
+                $readBytes = (float)$parts[5] * 512;
+                $writeBytes = (float)$parts[9] * 512;
                 $ioTimeMs = (float)$parts[12];
                 
                 $this->nodeDiskReadBytesTotal->incBy($readBytes, [$device]);
                 $this->nodeDiskWrittenBytesTotal->incBy($writeBytes, [$device]);
-                $this->nodeDiskIoTimeSecondsTotal->incBy($ioTimeMs / 1000, [$device]); // Convert ms to seconds
-            }
-        }
+                $this->nodeDiskIoTimeSecondsTotal->incBy($ioTimeMs / 1000, [$device]);
+            });
     }
 
     /**
@@ -239,34 +326,178 @@ class PrometheusMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         $startTime = microtime(true);
+        $startMemory = memory_get_usage(true);
         
         $labels = [
             'method' => $request->method(),
-            'path' => $request->path(),
+            'path' => $this->normalizePath($request->path()),
         ];
 
         $this->activeRequestsGauge->inc($labels);
+        $this->collectUserMetrics($request);
         
         $response = $next($request);
         
         $endTime = microtime(true);
         $duration = $endTime - $startTime;
+        $endMemory = memory_get_usage(true);
         
         $labelsWithStatus = array_merge($labels, [
             'status' => $response->getStatusCode()
         ]);
 
-        $this->counter->inc($labelsWithStatus);
-        $this->durationGauge->set($duration, $labelsWithStatus);
-        $this->histogram->observe($duration, $labelsWithStatus);
-
+        $this->recordRequestMetrics($request, $response, $duration, $labelsWithStatus);
+        $this->recordPerformanceMetrics($request, $response, $duration, $startMemory, $endMemory);
+        $this->recordErrorMetrics($request, $response);
+        
         $this->activeRequestsGauge->dec($labels);
-        $this->memoryUsageBytesGauge->set(memory_get_usage(true), ['real']);
-        $this->memoryUsageBytesGauge->set(memory_get_peak_usage(true), ['peak']);
-        $this->memoryUsageBytesGauge->set(memory_get_usage(false), ['allocated']);
-
+        $this->collectSystemMetrics();
         $this->collectNodeMetrics();
 
         return $response;
+    }
+
+    private function normalizePath(string $path): string
+    {
+        // Replace dynamic segments with placeholders
+        $path = preg_replace('/\/\d+/', '/{id}', $path);
+        $path = preg_replace('/\/[a-f0-9-]{36}/', '/{uuid}', $path);
+        return $path ?: '/';
+    }
+
+    private function recordRequestMetrics(Request $request, Response $response, float $duration, array $labels): void
+    {
+        $this->counter->inc($labels);
+        $this->durationGauge->set($duration, $labels);
+        $this->histogram->observe($duration, $labels);
+
+        // API-specific metrics
+        if ($request->is('api/*')) {
+            $userType = Auth::check() ? 'authenticated' : 'anonymous';
+            $apiLabels = [
+                'endpoint' => $this->normalizePath($request->path()),
+                'method' => $request->method(),
+                'status' => $response->getStatusCode(),
+                'user_type' => $userType
+            ];
+            $this->apiRequestsCounter->inc($apiLabels);
+        }
+    }
+
+    private function recordPerformanceMetrics(Request $request, Response $response, float $duration, int $startMemory, int $endMemory): void
+    {
+        $endpoint = $this->normalizePath($request->path());
+        $method = $request->method();
+
+        // Response time
+        $this->responseTimeHistogram->observe($duration, ['endpoint' => $endpoint, 'method' => $method]);
+
+        // Request size
+        $requestSize = strlen($request->getContent());
+        if ($requestSize > 0) {
+            $this->requestSizeHistogram->observe($requestSize, ['method' => $method, 'endpoint' => $endpoint]);
+        }
+
+        // Response size
+        $responseSize = strlen($response->getContent());
+        if ($responseSize > 0) {
+            $this->responseSizeHistogram->observe($responseSize, [
+                'method' => $method,
+                'endpoint' => $endpoint,
+                'status' => $response->getStatusCode()
+            ]);
+        }
+
+        // Memory usage for this request
+        $memoryUsed = $endMemory - $startMemory;
+        if ($memoryUsed > 0) {
+            $this->phpMemoryUsageGauge->set($memoryUsed, ['type' => 'request']);
+        }
+    }
+
+    private function recordErrorMetrics(Request $request, Response $response): void
+    {
+        $statusCode = $response->getStatusCode();
+        
+        if ($statusCode >= 400) {
+            $errorType = match (true) {
+                $statusCode >= 500 => 'server_error',
+                $statusCode >= 400 => 'client_error',
+                default => 'unknown'
+            };
+
+            $this->errorRateCounter->inc([
+                'method' => $request->method(),
+                'path' => $this->normalizePath($request->path()),
+                'status' => $statusCode,
+                'error_type' => $errorType
+            ]);
+        }
+    }
+
+    private function collectUserMetrics(Request $request): void
+    {
+        if (Auth::check()) {
+            $this->userSessionsGauge->inc(['user_type' => 'authenticated']);
+            $this->concurrentUsersGauge->inc(['authenticated' => 'true']);
+        } else {
+            $this->userSessionsGauge->inc(['user_type' => 'anonymous']);
+            $this->concurrentUsersGauge->inc(['authenticated' => 'false']);
+        }
+    }
+
+    private function collectSystemMetrics(): void
+    {
+        // PHP memory usage
+        $this->phpMemoryUsageGauge->set(memory_get_usage(true), ['type' => 'real']);
+        $this->phpMemoryUsageGauge->set(memory_get_peak_usage(true), ['type' => 'peak']);
+        $this->phpMemoryUsageGauge->set(memory_get_usage(false), ['type' => 'allocated']);
+
+        // Database connections
+        try {
+            $connections = DB::getConnections();
+            foreach ($connections as $name => $connection) {
+                $pdo = $connection->getPdo();
+                if ($pdo) {
+                    // This is a simple way to check if connection is active
+                    $this->registry->getOrRegisterGauge(
+                        'geezap',
+                        'database_connections_active',
+                        'Active database connections',
+                        ['connection']
+                    )->set(1, ['connection' => $name]);
+                }
+            }
+        } catch (\Exception $e) {
+            // Log error but don't break the request
+            Log::warning('Failed to collect database connection metrics: ' . $e->getMessage());
+        }
+
+        // PHP process count (approximate)
+        if (function_exists('sys_getloadavg')) {
+            $load = sys_getloadavg();
+            if ($load !== false) {
+                $this->registry->getOrRegisterGauge(
+                    'geezap',
+                    'system_load_average',
+                    'System load average',
+                    ['period']
+                )->set($load[0], ['period' => '1m']);
+                
+                $this->registry->getOrRegisterGauge(
+                    'geezap',
+                    'system_load_average',
+                    'System load average',
+                    ['period']
+                )->set($load[1], ['period' => '5m']);
+                
+                $this->registry->getOrRegisterGauge(
+                    'geezap',
+                    'system_load_average',
+                    'System load average',
+                    ['period']
+                )->set($load[2], ['period' => '15m']);
+            }
+        }
     }
 }
