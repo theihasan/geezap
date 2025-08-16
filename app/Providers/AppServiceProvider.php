@@ -17,10 +17,19 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Cache\RateLimiting\Limit;
 use Opcodes\LogViewer\Facades\LogViewer;
 use Illuminate\Support\Facades\RateLimiter;
+use App\Listeners\MetricsEventListener;
+use Illuminate\Auth\Events\Registered;
+use App\Events\CoverLetterGenerated;
+use App\Events\ExceptionHappenEvent;
+use Illuminate\Queue\Events\JobProcessed;
+use Illuminate\Queue\Events\JobFailed;
+use Illuminate\Mail\Events\MessageSent;
+use Illuminate\Notifications\Events\NotificationSent;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -37,12 +46,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->configureUrl();
+        //$this->configureUrl();
         $this->registerHttpMacros();
         $this->configureCommand();
         $this->configureMetaTags();
         //$this->configureRateLimiter();
         $this->configureLogViewer();
+        $this->registerMetricsEventListeners();
         Livewire::component('job-filter', \App\Livewire\JobFilter::class);
 
     }
@@ -214,6 +224,17 @@ class AppServiceProvider extends ServiceProvider
         LogViewer::auth(function () {
             return auth()->check() && auth()->user()->role === Role::ADMIN;
         });
+    }
+
+    private function registerMetricsEventListeners(): void
+    {
+        Event::listen(Registered::class, [MetricsEventListener::class, 'handleUserRegistered']);
+        Event::listen(CoverLetterGenerated::class, [MetricsEventListener::class, 'handleCoverLetterGenerated']);
+        Event::listen(ExceptionHappenEvent::class, [MetricsEventListener::class, 'handleExceptionHappen']);
+        Event::listen(JobProcessed::class, [MetricsEventListener::class, 'handleJobProcessed']);
+        Event::listen(JobFailed::class, [MetricsEventListener::class, 'handleJobFailed']);
+        Event::listen(MessageSent::class, [MetricsEventListener::class, 'handleMessageSent']);
+        Event::listen(NotificationSent::class, [MetricsEventListener::class, 'handleNotificationSent']);
     }
 
 
