@@ -21,22 +21,17 @@ class CollectMetricsCommand extends Command
     {
         $type = $this->option('type');
 
-        $this->info("Collecting {$type} metrics...");
+        $this->info("Dispatching {$type} metrics collection job...");
 
         try {
-            match ($type) {
-                'business' => $this->collectBusinessMetrics(),
-                'system' => $this->collectSystemMetrics(),
-                'all' => $this->collectAllMetrics(),
-                default => $this->collectAllMetrics()
-            };
-
-            $this->info('Metrics collection completed successfully.');
+            \App\Jobs\CollectMetricsJob::dispatch($type);
+            
+            $this->info('Metrics collection job dispatched successfully.');
             return Command::SUCCESS;
 
         } catch (\Exception $e) {
-            $this->error('Failed to collect metrics: ' . $e->getMessage());
-            $this->metricsService->recordException('metrics_collection', get_class($e), __FILE__);
+            $this->error('Failed to dispatch metrics job: ' . $e->getMessage());
+            $this->metricsService->recordException('metrics_dispatch', get_class($e), __FILE__);
             return Command::FAILURE;
         }
     }
