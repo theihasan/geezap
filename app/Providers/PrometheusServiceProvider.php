@@ -26,16 +26,21 @@ class PrometheusServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton(CollectorRegistry::class, function ($app) {
-            $redis = new Redis([
-                'host' => config('database.redis.default.host'),
-                'port' => config('database.redis.default.port'),
-                'password' => config('database.redis.default.password'),
-                'timeout' => 0.1,
-                'read_timeout' => '10',
-                'persistent_connections' => false
-            ]);
+            try {
+                $redis = new Redis([
+                    'host' => config('database.redis.default.host'),
+                    'port' => config('database.redis.default.port'),
+                    'password' => config('database.redis.default.password'),
+                    'timeout' => 0.1,
+                    'read_timeout' => '10',
+                    'persistent_connections' => false
+                ]);
 
-            return new CollectorRegistry($redis);
+                return new CollectorRegistry($redis);
+            } catch (\Exception $e) {
+                // If Redis is not available, return a null registry or use in-memory storage
+                return new CollectorRegistry(new \Prometheus\Storage\InMemory());
+            }
         });
     }
 
@@ -44,12 +49,17 @@ class PrometheusServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->registry = app(CollectorRegistry::class);
+        try {
+            $this->registry = app(CollectorRegistry::class);
 
-        $this->registerDatabaseMetrics();
-        $this->registerQueueMetrics();
-        $this->registerCacheMetrics();
-        $this->registerApplicationMetrics();
+            $this->registerDatabaseMetrics();
+            $this->registerQueueMetrics();
+            $this->registerCacheMetrics();
+            $this->registerApplicationMetrics();
+        } catch (\Exception $e) {
+            // Log the error but don't break the application
+            \Illuminate\Support\Facades\Log::warning('Prometheus metrics registration failed: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -167,15 +177,15 @@ class PrometheusServiceProvider extends ServiceProvider
             ['store']
         );
 
-        Cache::listen(CacheHit::class, function ($event) use ($cacheHitsCounter) {
+        \Illuminate\Support\Facades\Event::listen(CacheHit::class, function ($event) use ($cacheHitsCounter) {
             $cacheHitsCounter->inc(['store' => $event->storeName ?? 'default']);
         });
 
-        Cache::listen(CacheMissed::class, function ($event) use ($cacheMissesCounter) {
+        \Illuminate\Support\Facades\Event::listen(CacheMissed::class, function ($event) use ($cacheMissesCounter) {
             $cacheMissesCounter->inc(['store' => $event->storeName ?? 'default']);
         });
 
-        Cache::listen(KeyWritten::class, function ($event) use ($cacheWritesCounter) {
+        \Illuminate\Support\Facades\Event::listen(KeyWritten::class, function ($event) use ($cacheWritesCounter) {
             $cacheWritesCounter->inc(['store' => $event->storeName ?? 'default']);
         });
     }
