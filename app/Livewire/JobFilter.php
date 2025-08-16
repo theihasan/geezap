@@ -6,6 +6,7 @@ use App\Caches\JobFilterCache;
 use App\Models\Country;
 use App\Models\JobCategory;
 use App\Models\JobListing;
+use App\Traits\DetectsUserCountry;
 use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -13,7 +14,7 @@ use Livewire\Attributes\Url;
 
 class JobFilter extends Component
 {
-    use WithPagination;
+    use WithPagination, DetectsUserCountry;
 
     #[Url]
     public $search = '';
@@ -173,7 +174,7 @@ class JobFilter extends Component
                 $total = $searchResults->total();
             }
         } else {
-            $query = JobListing::query()
+            $baseQuery = JobListing::query()
                 ->when($this->source, fn($query, $source) =>
                     $query->where('publisher', $source))
                 ->when($this->exclude_source, fn($query, $exclude_source) =>
@@ -187,8 +188,7 @@ class JobFilter extends Component
                 ->when($this->remote, fn($query) =>
                     $query->where('is_remote', true))
                 ->when(!empty($this->types), fn($query) =>
-                    $query->whereIn('employment_type', $this->types))
-                ->latest();
+                    $query->whereIn('employment_type', $this->types));
 
             $cacheKey = 'job_filter_count_' . md5(json_encode([
                 $this->source,
@@ -199,26 +199,64 @@ class JobFilter extends Component
                 $this->types
             ]));
 
-            $total = Cache::remember($cacheKey, now()->addMinutes(5), function() use ($query) {
-                return $query->count();
+            $total = Cache::remember($cacheKey, now()->addMinutes(5), function() use ($baseQuery) {
+                return $baseQuery->count();
             });
 
-            $jobs = $query->with('category')
-                ->take($perPage)
-                ->get();
+            if (!$this->country) {
+                $userCountry = $this->getUserCountry();
+
+                if ($userCountry) {
+                    // Prioritize jobs from user's country
+                    $countryJobs = (clone $baseQuery)
+                        ->where('country', $userCountry)
+                        ->latest('posted_at')
+                        ->with('category')
+                        ->take($perPage)
+                        ->get();
+
+                    $jobs = $countryJobs;
+
+                    if ($jobs->count() < $perPage) {
+                        $needed = $perPage - $jobs->count();
+                        $excludeIds = $jobs->pluck('id')->toArray();
+
+                        $internationalJobs = (clone $baseQuery)
+                            ->where('country', '!=', $userCountry)
+                            ->whereNotIn('id', $excludeIds)
+                            ->latest('posted_at')
+                            ->with('category')
+                            ->take($needed)
+                            ->get();
+
+                        $jobs = $jobs->merge($internationalJobs);
+                    }
+                } else {
+                    $jobs = $baseQuery->latest('posted_at')
+                        ->with('category')
+                        ->take($perPage)
+                        ->get();
+                }
+            } else {
+                // User has selected a specific country filter, use normal ordering
+                $jobs = $baseQuery->latest('posted_at')
+                    ->with('category')
+                    ->take($perPage)
+                    ->get();
+            }
         }
 
         $this->hasMorePages = $total > $perPage;
 
         $this->dispatch('jobCountUpdated', $total);
-        
+
         return view('livewire.job-filter', [
             'jobs' => $jobs,
             'categories' => $this->getCategories(),
             'publishers' => $this->getPublishers(),
             'countries' => $this->getCountries(),
             'jobTypes' => $this->jobTypes,
-            'totalJobs' => $total  
+            'totalJobs' => $total
         ]);
     }
 }
