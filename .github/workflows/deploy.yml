@@ -28,7 +28,7 @@ jobs:
         cache: 'npm'
 
     - name: Install PHP dependencies
-      run: composer install --optimize-autoloader --no-dev
+      run: composer install --optimize-autoloader --no-dev --no-interaction
 
     - name: Install NPM dependencies
       run: npm ci
