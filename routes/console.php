@@ -11,4 +11,7 @@ use App\Jobs\VueJsJob;
 use App\Jobs\WordPressJob;
 use Illuminate\Support\Facades\Schedule;
 
+Schedule::command('metrics:collect --type=business')->everyFiveMinutes();
+Schedule::command('metrics:collect --type=system')->everyTenMinutes();
+
 
