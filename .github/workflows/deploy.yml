@@ -17,7 +17,7 @@ jobs:
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: '8.2'
+        php-version: '8.3'
         extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, pdo_mysql, zip
         coverage: none
 
@@ -138,7 +138,7 @@ jobs:
           # Restart services (graceful restart with fallback)
           echo "♻️ Restarting services..."
           sudo systemctl reload nginx 2>/dev/null || echo "Note: Could not reload nginx (may not be running as sudo)"
-          sudo systemctl restart php8.2-fpm 2>/dev/null || sudo systemctl restart php-fpm 2>/dev/null || echo "Note: Could not restart PHP-FPM"
+          sudo systemctl restart php8.3-fpm 2>/dev/null || sudo systemctl restart php8.2-fpm 2>/dev/null || sudo systemctl restart php-fpm 2>/dev/null || echo "Note: Could not restart PHP-FPM"
           
           # Restart queue workers if using Horizon
           if command -v supervisorctl &> /dev/null; then
