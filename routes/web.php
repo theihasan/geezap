@@ -1,12 +1,15 @@
 <?php
 
-use App\Http\Controllers\CoverLetterController;
-use App\Http\Controllers\HomePageController;
-use App\Http\Controllers\JobCategoryController;
+use Illuminate\Support\Facades\Context;
+use Prometheus\RenderTextFormat;
+use Prometheus\CollectorRegistry;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\HomePageController;
 use App\Http\Controllers\SocialAuthController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CoverLetterController;
+use App\Http\Controllers\JobCategoryController;
 
 Route::get('/', HomePageController::class)->name('home');
 Route::get('about', \App\Http\Controllers\Pages\AboutPageController::class)->name('about');
@@ -44,13 +47,7 @@ Route::prefix('auth')->middleware('guest')->group(function () {
     Route::get('{provider}/callback', [SocialAuthController::class, 'callback'])->name('social.callback');
 });
 
-Route::get('/metrics', function() {
-    return response()->json([
-        'metrics' => [
-            'users' => \App\Models\User::count(),
-            'jobs' => \App\Models\JobListing::count(),
-        ]
-    ], 200);
-});
+Route::get('/metrics', [\App\Http\Controllers\MetricsController::class, 'index'])->name('metrics');
+Route::get('/health', [\App\Http\Controllers\MetricsController::class, 'health'])->name('health');
 
 require __DIR__.'/auth.php';
