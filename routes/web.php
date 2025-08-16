@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Context;
 use Prometheus\RenderTextFormat;
 use Prometheus\CollectorRegistry;
 use Illuminate\Support\Facades\Route;
@@ -46,10 +47,7 @@ Route::prefix('auth')->middleware('guest')->group(function () {
     Route::get('{provider}/callback', [SocialAuthController::class, 'callback'])->name('social.callback');
 });
 
-Route::get('/metrics', function (CollectorRegistry $registry) {
-    $renderer = new RenderTextFormat();
-    return response($renderer->render($registry->getMetricFamilySamples()))
-        ->header('Content-Type', RenderTextFormat::MIME_TYPE);
-});
+Route::get('/metrics', [\App\Http\Controllers\MetricsController::class, 'index'])->name('metrics');
+Route::get('/health', [\App\Http\Controllers\MetricsController::class, 'health'])->name('health');
 
 require __DIR__.'/auth.php';
