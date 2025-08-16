@@ -1,0 +1,274 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy to Server
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.3'
+        extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, pdo_mysql, zip
+        coverage: none
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: Install PHP dependencies
+      run: composer install --optimize-autoloader --no-dev
+
+    - name: Install NPM dependencies
+      run: npm ci
+
+    - name: Build assets
+      run: npm run build
+
+    - name: Create deployment archive
+      run: |
+        mkdir -p deployment
+        rsync -av --exclude-from='.github/workflows/exclude-list.txt' . deployment/
+        cd deployment
+        tar -czf ../deployment.tar.gz .
+        cd ..
+        rm -rf deployment
+
+    - name: Send Discord notification - Deployment started
+      uses: sarisia/actions-status-discord@v1
+      with:
+        webhook: ${{ secrets.DISCORD_WEBHOOK }}
+        status: "Starting"
+        title: "🚀 Deployment Started"
+        description: |
+          **Branch:** ${{ github.ref_name }}
+          **Commit:** ${{ github.sha }}
+          **Author:** ${{ github.actor }}
+          **Message:** ${{ github.event.head_commit.message }}
+        color: 0xffaa00
+        username: "Geezap Deploy Bot"
+        avatar_url: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+
+    - name: Deploy to server
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        port: ${{ secrets.PORT }}
+        script: |
+          set -e
+
+          # Define variables
+          APP_DIR="${{ secrets.APP_PATH }}"
+          BACKUP_DIR="$HOME/backups/$(date +%Y%m%d_%H%M%S)"
+
+          echo "🔄 Starting deployment process..."
+
+          # Create backup directory
+          mkdir -p "$BACKUP_DIR"
+
+          # Backup current application
+          if [ -d "$APP_DIR" ]; then
+            echo "📦 Creating backup..."
+            cp -r "$APP_DIR" "$BACKUP_DIR/app_backup"
+          fi
+
+          # Create app directory if it doesn't exist
+          mkdir -p "$APP_DIR"
+
+          # Navigate to app directory
+          cd "$APP_DIR"
+
+          # Download and extract deployment
+          echo "⬇️ Downloading latest deployment..."
+          wget -q "${{ secrets.DEPLOYMENT_URL }}/deployment.tar.gz" -O deployment.tar.gz
+
+          # Extract files
+          echo "📂 Extracting files..."
+          tar -xzf deployment.tar.gz
+          rm deployment.tar.gz
+
+          # Copy environment file
+          if [ -f "$BACKUP_DIR/app_backup/.env" ]; then
+            cp "$BACKUP_DIR/app_backup/.env" .env
+          fi
+
+          # Set proper permissions
+          echo "🔐 Setting permissions..."
+          chown -R www-data:www-data storage bootstrap/cache
+          chmod -R 775 storage bootstrap/cache
+
+          # Run Laravel commands
+          echo "⚙️ Running Laravel commands..."
+          php artisan config:clear
+          php artisan cache:clear
+          php artisan route:clear
+          php artisan view:clear
+          php artisan config:cache
+          php artisan route:cache
+          php artisan view:cache
+
+          # Run migrations
+          echo "🗄️ Running migrations..."
+          php artisan migrate --force
+
+          # Restart services
+          echo "♻️ Restarting services..."
+          sudo systemctl reload nginx
+          sudo systemctl restart php8.2-fpm
+
+          # Restart queue workers if using Horizon
+          if command -v supervisorctl &> /dev/null; then
+            sudo supervisorctl restart all
+          fi
+
+          echo "✅ Deployment completed successfully!"
+
+    - name: Upload deployment archive
+      run: |
+        # This is a placeholder - you'll need to upload the deployment.tar.gz
+        # to a location your server can access, or use SCP in the next step
+        echo "Deployment archive created: deployment.tar.gz"
+
+    - name: Copy deployment to server
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        port: ${{ secrets.PORT }}
+        source: "deployment.tar.gz"
+        target: "/tmp/"
+
+    - name: Execute deployment script
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        port: ${{ secrets.PORT }}
+        script: |
+          set -e
+
+          # Define variables
+          APP_DIR="${{ secrets.APP_PATH }}"
+          BACKUP_DIR="$HOME/backups/$(date +%Y%m%d_%H%M%S)"
+
+          echo "🔄 Starting deployment process..."
+
+          # Create backup directory
+          mkdir -p "$BACKUP_DIR"
+
+          # Backup current application
+          if [ -d "$APP_DIR" ]; then
+            echo "📦 Creating backup..."
+            cp -r "$APP_DIR" "$BACKUP_DIR/app_backup"
+          fi
+
+          # Create app directory if it doesn't exist
+          mkdir -p "$APP_DIR"
+
+          # Navigate to app directory
+          cd "$APP_DIR"
+
+          # Extract deployment
+          echo "📂 Extracting files..."
+          tar -xzf /tmp/deployment.tar.gz
+
+          # Copy environment file from backup
+          if [ -f "$BACKUP_DIR/app_backup/.env" ]; then
+            cp "$BACKUP_DIR/app_backup/.env" .env
+          else
+            echo "⚠️ Warning: No .env file found in backup"
+          fi
+
+          # Set proper permissions
+          echo "🔐 Setting permissions..."
+          sudo chown -R www-data:www-data storage bootstrap/cache
+          sudo chmod -R 775 storage bootstrap/cache
+
+          # Install production dependencies
+          echo "📦 Installing dependencies..."
+          composer install --optimize-autoloader --no-dev --no-interaction
+
+          # Run Laravel commands
+          echo "⚙️ Running Laravel commands..."
+          php artisan config:clear
+          php artisan cache:clear
+          php artisan route:clear
+          php artisan view:clear
+          php artisan config:cache
+          php artisan route:cache
+          php artisan view:cache
+
+          # Run migrations
+          echo "🗄️ Running migrations..."
+          php artisan migrate --force
+
+          # Restart services
+          echo "♻️ Restarting services..."
+          sudo systemctl reload nginx || echo "Failed to reload nginx"
+          sudo systemctl restart php8.2-fpm || echo "Failed to restart PHP-FPM"
+
+          # Restart queue workers if using Horizon
+          if command -v supervisorctl &> /dev/null; then
+            sudo supervisorctl restart all || echo "Failed to restart supervisor"
+          fi
+
+          # Clean up
+          rm -f /tmp/deployment.tar.gz
+
+          echo "✅ Deployment completed successfully!"
+
+    - name: Send Discord notification - Success
+      if: success()
+      uses: sarisia/actions-status-discord@v1
+      with:
+        webhook: ${{ secrets.DISCORD_WEBHOOK }}
+        status: "Success"
+        title: "✅ Deployment Successful"
+        description: |
+          **Branch:** ${{ github.ref_name }}
+          **Commit:** ${{ github.sha }}
+          **Author:** ${{ github.actor }}
+          **Duration:** ${{ job.duration }}
+
+          🎉 Application deployed successfully!
+        color: 0x00ff00
+        username: "Geezap Deploy Bot"
+        avatar_url: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+
+    - name: Send Discord notification - Failure
+      if: failure()
+      uses: sarisia/actions-status-discord@v1
+      with:
+        webhook: ${{ secrets.DISCORD_WEBHOOK }}
+        status: "Failure"
+        title: "❌ Deployment Failed"
+        description: |
+          **Branch:** ${{ github.ref_name }}
+          **Commit:** ${{ github.sha }}
+          **Author:** ${{ github.actor }}
+          **Error:** Check the GitHub Actions logs for details
+
+          🚨 Deployment failed! Please check the logs.
+        color: 0xff0000
+        username: "Geezap Deploy Bot"
+        avatar_url: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+
+    - name: Clean up
+      if: always()
+      run: |
+        rm -f deployment.tar.gz
