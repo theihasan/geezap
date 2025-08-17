@@ -6,6 +6,7 @@ use App\Services\MetricsService;
 use App\Events\CoverLetterGenerated;
 use App\Events\ExceptionHappenEvent;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Auth\Events\Login;
 use Illuminate\Queue\Events\JobProcessed;
 use Illuminate\Queue\Events\JobFailed;
 use Illuminate\Mail\Events\MessageSent;
@@ -23,6 +24,11 @@ class MetricsEventListener
     public function handleUserRegistered(Registered $event): void
     {
         $this->metricsService->recordUserRegistration();
+    }
+
+    public function handleUserLogin(Login $event): void
+    {
+        $event->user->touch('last_login_at');
     }
 
     /**

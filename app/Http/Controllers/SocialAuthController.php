@@ -60,6 +60,7 @@ class SocialAuthController extends Controller
             $user->update($data);
 
             Auth::login($user, remember: true);
+            $user->update(['last_login_at' => now()]);
             return redirect()->intended(route('dashboard'));
         } catch (\Exception $e){
             logger('Error on social login: ' . $e->getMessage());

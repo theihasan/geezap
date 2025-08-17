@@ -28,6 +28,8 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        Auth::user()->update(['last_login_at' => now()]);
+
         $intendedUrl = $request->input('intended_url');
         if ($intendedUrl && $intendedUrl !== route('login')) {
             return redirect()->to($intendedUrl);
