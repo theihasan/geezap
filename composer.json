@@ -12,6 +12,7 @@
         "laravel/breeze": "^2.0",
         "laravel/framework": "^12.0",
         "laravel/horizon": "^5.32",
+        "laravel/nightwatch": "^1.12",
         "laravel/reverb": "^1.0",
         "laravel/sanctum": "^4.0",
         "laravel/scout": "^10.15",
