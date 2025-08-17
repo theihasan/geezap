@@ -25,6 +25,7 @@ use Opcodes\LogViewer\Facades\LogViewer;
 use Illuminate\Support\Facades\RateLimiter;
 use App\Listeners\MetricsEventListener;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Auth\Events\Login;
 use App\Events\CoverLetterGenerated;
 use App\Events\ExceptionHappenEvent;
 use Illuminate\Queue\Events\JobProcessed;
@@ -47,7 +48,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //$this->configureUrl();
+        $this->configureUrl();
         $this->registerHttpMacros();
         $this->configureCommand();
         $this->configureMetaTags();
@@ -161,7 +162,7 @@ class AppServiceProvider extends ServiceProvider
                 'X-RapidAPI-Host' => 'jsearch.p.rapidapi.com',
                 'X-RapidAPI-Key' => $apiKey->api_key,
             ])->baseUrl('https://jsearch.p.rapidapi.com');
-            
+
             $apiKey->touch('request_sent_at');
             return $httpMacro;
         });
@@ -196,6 +197,7 @@ class AppServiceProvider extends ServiceProvider
     private function registerMetricsEventListeners(): void
     {
         Event::listen(Registered::class, [MetricsEventListener::class, 'handleUserRegistered']);
+        Event::listen(Login::class, [MetricsEventListener::class, 'handleUserLogin']);
         Event::listen(CoverLetterGenerated::class, [MetricsEventListener::class, 'handleCoverLetterGenerated']);
         Event::listen(ExceptionHappenEvent::class, [MetricsEventListener::class, 'handleExceptionHappen']);
         Event::listen(JobProcessed::class, [MetricsEventListener::class, 'handleJobProcessed']);
