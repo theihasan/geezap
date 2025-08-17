@@ -11,6 +11,7 @@ use App\DTO\MetaTagDTO;
 use App\DTO\OpenGraphDTO;
 use App\DTO\DiscordCardDTO;
 use App\DTO\TwitterCardDTO;
+use App\Services\MetaTagGenerator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -90,52 +91,18 @@ class AppServiceProvider extends ServiceProvider
             View::composer('v2.partials.header', function ($view) {
                 if (!$view->offsetExists('meta')) {
                     $currentRoute = request()->route()?->getName();
+                    $metaGenerator = app(MetaTagGenerator::class);
 
                     $meta = match($currentRoute) {
-                        'dashboard' => new MetaTagDTO(
-                            title: 'Dashboard | ' . config('app.name', 'Geezap'),
-                            description: 'Manage your job applications, track your progress, and update your preferences on Geezap.',
-                            keywords: 'dashboard, job applications, career tracking, job management',
-                            og: new OpenGraphDTO(
-                                title: 'Dashboard | ' . config('app.name', 'Geezap'),
-                                description: 'Manage your job applications, track your progress, and update your preferences on Geezap.',
-                                type: 'website',
-                                image: asset('assets/images/favicon.ico')
-                            ),
-                            twitter: new TwitterCardDTO(
-                                title: 'Dashboard | ' . config('app.name', 'Geezap'),
-                                description: 'Manage your job applications, track your progress, and update your preferences on Geezap.',
-                                image: asset('assets/images/favicon.ico')
-                            ),
-                            discord: new DiscordCardDTO(
-                                title: 'Dashboard | ' . config('app.name', 'Geezap'),
-                                description: 'Manage your job applications, track your progress, and update your preferences on Geezap.',
-                                image: asset('assets/images/favicon.ico')
-                            )
-                        ),
-
-                        'job.index' => new MetaTagDTO(
-                            title: 'Browse Jobs | ' . config('app.name', 'Geezap'),
-                            description: 'Explore thousands of tech jobs from top companies. Find remote, full-time, and contract positions.',
-                            keywords: 'tech jobs, remote work, full-time positions, contract work',
-                            og: new OpenGraphDTO(
-                                title: 'Browse Jobs | ' . config('app.name', 'Geezap'),
-                                description: 'Explore thousands of tech jobs from top companies. Find remote, full-time, and contract positions.',
-                                type: 'website',
-                                image: asset('assets/images/favicon.ico')
-                            ),
-                            twitter: new TwitterCardDTO(
-                                title: 'Browse Jobs | ' . config('app.name', 'Geezap'),
-                                description: 'Explore thousands of tech jobs from top companies. Find remote, full-time, and contract positions.',
-                                image: asset('assets/images/favicon.ico')
-                            ),
-                            discord: new DiscordCardDTO(
-                                title: 'Browse Jobs | ' . config('app.name', 'Geezap'),
-                                description: 'Explore thousands of tech jobs from top companies. Find remote, full-time, and contract positions.',
-                                image: asset('assets/images/favicon.ico')
-                            )
-                        ),
-
+                        'dashboard' => $metaGenerator->getDashboardMeta(),
+                        'about' => $metaGenerator->getAboutMeta(),
+                        'contact' => $metaGenerator->getContactMeta(),
+                        'privacy-policy' => $metaGenerator->getPrivacyPolicyMeta(),
+                        'terms' => $metaGenerator->getTermsMeta(),
+                        'cover-letter.update' => $metaGenerator->getCoverLetterMeta(),
+                        'applications' => $metaGenerator->getApplicationsMeta(),
+                        'profile.update' => $metaGenerator->getProfileUpdateMeta(),
+                        'profile.preferences' => $metaGenerator->getPreferencesMeta(),
                         default => new MetaTagDTO(
                             title: config('app.name', 'Geezap'),
                             description: 'Find your dream job with Geezap - AI-powered job aggregation platform unifying listings from LinkedIn, Upwork, Indeed, and ZipRecruiter with smart matching and cover letter generation.',

@@ -19,7 +19,7 @@ class JobController extends Controller
 {
     use DetectsUserCountry;
 
-    public function index(Request $request)
+    public function index(Request $request, MetaTagGenerator $metaTagGenerator)
     {
         try {
             $userCountry = $this->getUserCountry();
@@ -47,6 +47,7 @@ class JobController extends Controller
             'jobs' => $jobs,
             'currentPage' => $currentPage,
             'userCountry' => $userCountry,
+            'meta' => $metaTagGenerator->getJobsIndexMeta($request, $jobs->total()),
         ]);
     }
 
