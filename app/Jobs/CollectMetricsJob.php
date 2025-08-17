@@ -54,7 +54,7 @@ class CollectMetricsJob implements ShouldQueue
 
     private function collectJobApplicationMetrics(MetricsService $metricsService): void
     {
-        $recentApplications = DB::table('job_applications')
+        $recentApplications = DB::table('job_user')
             ->where('created_at', '>=', now()->subDay())
             ->count();
     }
@@ -104,7 +104,7 @@ class CollectMetricsJob implements ShouldQueue
     private function collectCacheMetrics(): void
     {
         $testKey = 'metrics_test_' . time();
-        
+
         Cache::put($testKey, 'test_value', 60);
         Cache::get($testKey);
         Cache::forget($testKey);
@@ -113,7 +113,7 @@ class CollectMetricsJob implements ShouldQueue
     private function collectStorageMetrics(): void
     {
         $storagePath = storage_path();
-        
+
         if (function_exists('disk_free_space') && function_exists('disk_total_space')) {
             $freeBytes = disk_free_space($storagePath);
             $totalBytes = disk_total_space($storagePath);
