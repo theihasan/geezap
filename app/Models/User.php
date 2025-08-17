@@ -27,7 +27,7 @@ class User extends Authenticatable implements FilamentUser
     protected $fillable = [
         'name','email','address','dob','state','country','occupation','postcode','phone','website','password',
         'bio','facebook','twitter','linkedin','github','skills','locale','timezone','experience','role','facebook_id',
-        'facebook_token','google_id','google_token','github_id','github_token',
+        'facebook_token','google_id','google_token','github_id','github_token','last_login_at',
     ];
 
     /**
@@ -54,6 +54,7 @@ class User extends Authenticatable implements FilamentUser
             'experience' => 'array',
             'skills' => 'array',
             'role' => Role::class,
+            'last_login_at' => 'datetime',
         ];
     }
 
@@ -69,7 +70,7 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->role === Role::ADMIN;
     }
-    
+
     /**
      * Get the user's preferences.
      */
@@ -77,7 +78,7 @@ class User extends Authenticatable implements FilamentUser
     {
         return $this->hasOne(UserPreference::class);
     }
-    
+
     /**
      * Get user preferences with defaults if none exist.
      */
