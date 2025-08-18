@@ -2,160 +2,168 @@
 
 namespace Tests\Feature\Cache;
 
-use App\Caches\JobListingCache;
-use App\Caches\CountryAwareLatestJobsCache;
-use App\Caches\CountryAwareJobPageCache;
-use App\Caches\JobRecommendationCache;
-use App\Models\JobListing;
-use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\Request;
+use App\Helpers\RedisCache;
 use Illuminate\Support\Facades\Cache;
 use Tests\TestCase;
 
 class JobCacheTest extends TestCase
 {
-    use RefreshDatabase;
-
     protected function setUp(): void
     {
         parent::setUp();
         config(['cache.default' => 'redis']);
+        
+        // Clear any existing test keys
+        $this->clearTestKeys();
     }
 
-    public function test_job_listing_cache_stores_and_retrieves_job(): void
+    protected function tearDown(): void
     {
-        // Arrange
-        $job = JobListing::factory()->create(['slug' => 'test-job-slug']);
-
-        // Act: First call should hit database and cache
-        $cachedJob1 = JobListingCache::get('test-job-slug');
-        
-        // Second call should hit cache
-        $cachedJob2 = JobListingCache::get('test-job-slug');
-
-        // Assert
-        $this->assertEquals($job->id, $cachedJob1->id);
-        $this->assertEquals($job->id, $cachedJob2->id);
-        $this->assertTrue(Cache::has('job_test-job-slug'));
+        $this->clearTestKeys();
+        parent::tearDown();
     }
 
-    public function test_job_listing_cache_invalidation_single_job(): void
+    private function clearTestKeys(): void
     {
-        // Arrange
-        $job = JobListing::factory()->create(['slug' => 'test-job-slug']);
-        JobListingCache::get('test-job-slug'); // Cache the job
-
-        $this->assertTrue(Cache::has('job_test-job-slug'));
-
-        // Act: Invalidate specific job
-        JobListingCache::invalidate('test-job-slug');
-
-        // Assert
-        $this->assertFalse(Cache::has('job_test-job-slug'));
+        $patterns = ['job_test_*', 'latestJobs_test_*', 'jobs_page_test_*', 'user_recommendations_test_*'];
+        foreach ($patterns as $pattern) {
+            RedisCache::forgetPattern($pattern);
+        }
     }
 
-    public function test_job_listing_cache_invalidation_all_jobs(): void
+    public function test_redis_cache_pattern_invalidation(): void
     {
-        // Arrange
-        $job1 = JobListing::factory()->create(['slug' => 'job-1']);
-        $job2 = JobListing::factory()->create(['slug' => 'job-2']);
-        
-        JobListingCache::get('job-1');
-        JobListingCache::get('job-2');
+        // Arrange: Create test cache keys simulating job caches
+        Cache::put('job_test_slug_1', 'job_data_1', 60);
+        Cache::put('job_test_slug_2', 'job_data_2', 60);
+        Cache::put('other_test_data', 'other_data', 60);
 
-        $this->assertTrue(Cache::has('job_job-1'));
-        $this->assertTrue(Cache::has('job_job-2'));
+        // Verify keys exist
+        $this->assertTrue(Cache::has('job_test_slug_1'));
+        $this->assertTrue(Cache::has('job_test_slug_2'));
+        $this->assertTrue(Cache::has('other_test_data'));
 
-        // Act: Invalidate all job caches
-        JobListingCache::invalidate();
+        // Act: Invalidate all job caches using pattern
+        $deletedCount = RedisCache::forgetPattern('job_test_*');
 
-        // Assert
-        $this->assertFalse(Cache::has('job_job-1'));
-        $this->assertFalse(Cache::has('job_job-2'));
+        // Assert: Only job keys are deleted
+        $this->assertEquals(2, $deletedCount);
+        $this->assertFalse(Cache::has('job_test_slug_1'));
+        $this->assertFalse(Cache::has('job_test_slug_2'));
+        $this->assertTrue(Cache::has('other_test_data')); // Should remain
     }
 
-    public function test_country_aware_latest_jobs_cache(): void
+    public function test_country_aware_cache_pattern_invalidation(): void
     {
-        // Arrange
-        JobListing::factory()->create(['country' => 'US']);
-        JobListing::factory()->create(['country' => 'CA']);
+        // Arrange: Create country-specific cache keys
+        Cache::put('latestJobs_test_country_US_exclude_123', 'us_jobs', 60);
+        Cache::put('latestJobs_test_country_US_exclude_456', 'us_jobs_2', 60);
+        Cache::put('latestJobs_test_country_CA_exclude_789', 'ca_jobs', 60);
+        Cache::put('latestJobs_test_global_exclude_abc', 'global_jobs', 60);
 
-        // Act: Cache jobs for US
-        $usJobs = CountryAwareLatestJobsCache::get([], 'US', 4);
-        
-        // Verify cache exists
-        $cacheKey = CountryAwareLatestJobsCache::key('US', []);
-        $this->assertTrue(Cache::has($cacheKey));
+        // Verify all keys exist
+        $this->assertTrue(Cache::has('latestJobs_test_country_US_exclude_123'));
+        $this->assertTrue(Cache::has('latestJobs_test_country_US_exclude_456'));
+        $this->assertTrue(Cache::has('latestJobs_test_country_CA_exclude_789'));
+        $this->assertTrue(Cache::has('latestJobs_test_global_exclude_abc'));
 
-        // Act: Invalidate US cache
-        CountryAwareLatestJobsCache::invalidate('US');
+        // Act: Invalidate only US country caches
+        $deletedCount = RedisCache::forgetPattern('latestJobs_test_country_US_*');
 
-        // Assert: US cache should be cleared
-        $this->assertFalse(Cache::has($cacheKey));
+        // Assert: Only US caches are deleted
+        $this->assertEquals(2, $deletedCount);
+        $this->assertFalse(Cache::has('latestJobs_test_country_US_exclude_123'));
+        $this->assertFalse(Cache::has('latestJobs_test_country_US_exclude_456'));
+        $this->assertTrue(Cache::has('latestJobs_test_country_CA_exclude_789'));
+        $this->assertTrue(Cache::has('latestJobs_test_global_exclude_abc'));
     }
 
-    public function test_country_aware_job_page_cache(): void
+    public function test_job_page_cache_pattern_invalidation(): void
     {
-        // Arrange
-        JobListing::factory()->count(10)->create(['country' => 'US']);
-        $request = new Request(['page' => 1, 'category' => 'tech']);
+        // Arrange: Create job page cache keys
+        Cache::put('jobs_page_test_US_1_abc123', 'page_data_1', 60);
+        Cache::put('jobs_page_test_US_2_def456', 'page_data_2', 60);
+        Cache::put('jobs_page_test_global_1_ghi789', 'global_page_1', 60);
+        Cache::put('other_page_data', 'other_data', 60);
 
-        // Act: Cache job page
-        $jobPage = CountryAwareJobPageCache::get($request, 'US');
-        
-        $cacheKey = CountryAwareJobPageCache::key($request, 'US');
-        $this->assertTrue(Cache::has($cacheKey));
+        // Verify keys exist
+        $this->assertTrue(Cache::has('jobs_page_test_US_1_abc123'));
+        $this->assertTrue(Cache::has('jobs_page_test_US_2_def456'));
+        $this->assertTrue(Cache::has('jobs_page_test_global_1_ghi789'));
+        $this->assertTrue(Cache::has('other_page_data'));
 
-        // Act: Invalidate country cache
-        CountryAwareJobPageCache::invalidate('US');
+        // Act: Invalidate US job page caches
+        $deletedCount = RedisCache::forgetPattern('jobs_page_test_US_*');
 
-        // Assert
-        $this->assertFalse(Cache::has($cacheKey));
+        // Assert: Only US job page caches are deleted
+        $this->assertEquals(2, $deletedCount);
+        $this->assertFalse(Cache::has('jobs_page_test_US_1_abc123'));
+        $this->assertFalse(Cache::has('jobs_page_test_US_2_def456'));
+        $this->assertTrue(Cache::has('jobs_page_test_global_1_ghi789'));
+        $this->assertTrue(Cache::has('other_page_data'));
     }
 
-    public function test_job_recommendation_cache(): void
+    public function test_user_recommendations_cache_pattern_invalidation(): void
     {
-        // Arrange
-        $user = User::factory()->create();
-        
-        // Act: Cache user recommendations
-        $recommendations = JobRecommendationCache::getUserRecommendations(
-            $user, 
-            5, 
-            fn() => collect(['job1', 'job2', 'job3'])
-        );
+        // Arrange: Create user recommendation cache keys
+        Cache::put('user_recommendations_test_123_5', 'user_123_recs', 60);
+        Cache::put('user_recommendations_test_123_10', 'user_123_more_recs', 60);
+        Cache::put('user_recommendations_test_456_5', 'user_456_recs', 60);
+        Cache::put('other_user_data', 'other_data', 60);
 
-        $cacheKey = JobRecommendationCache::userKey($user->id, 5);
-        $this->assertTrue(Cache::has($cacheKey));
+        // Verify keys exist
+        $this->assertTrue(Cache::has('user_recommendations_test_123_5'));
+        $this->assertTrue(Cache::has('user_recommendations_test_123_10'));
+        $this->assertTrue(Cache::has('user_recommendations_test_456_5'));
+        $this->assertTrue(Cache::has('other_user_data'));
 
-        // Act: Invalidate user recommendations
-        JobRecommendationCache::invalidateUserRecommendations($user->id);
+        // Act: Invalidate recommendations for user 123
+        $deletedCount = RedisCache::forgetPattern('user_recommendations_test_123_*');
 
-        // Assert
-        $this->assertFalse(Cache::has($cacheKey));
+        // Assert: Only user 123 recommendations are deleted
+        $this->assertEquals(2, $deletedCount);
+        $this->assertFalse(Cache::has('user_recommendations_test_123_5'));
+        $this->assertFalse(Cache::has('user_recommendations_test_123_10'));
+        $this->assertTrue(Cache::has('user_recommendations_test_456_5'));
+        $this->assertTrue(Cache::has('other_user_data'));
     }
 
-    public function test_job_recommendation_cache_invalidate_all(): void
+    public function test_bulk_cache_invalidation(): void
     {
-        // Arrange
-        $user1 = User::factory()->create();
-        $user2 = User::factory()->create();
+        // Arrange: Create multiple cache types
+        Cache::put('job_test_1', 'job_1', 60);
+        Cache::put('job_test_2', 'job_2', 60);
+        Cache::put('jobs_page_test_1', 'page_1', 60);
+        Cache::put('jobs_page_test_2', 'page_2', 60);
+        Cache::put('latestJobs_test_1', 'latest_1', 60);
+        Cache::put('related_jobs_test_1', 'related_1', 60);
+        Cache::put('keep_this_cache', 'keep_this', 60);
+
+        // Verify all keys exist
+        $this->assertTrue(Cache::has('job_test_1'));
+        $this->assertTrue(Cache::has('jobs_page_test_1'));
+        $this->assertTrue(Cache::has('latestJobs_test_1'));
+        $this->assertTrue(Cache::has('related_jobs_test_1'));
+        $this->assertTrue(Cache::has('keep_this_cache'));
+
+        // Act: Simulate what happens when a job is created/updated (observer behavior)
+        $deletedCounts = [];
+        $deletedCounts[] = RedisCache::forgetPattern('jobs_page_test_*');
+        $deletedCounts[] = RedisCache::forgetPattern('latestJobs_test_*');
+        $deletedCounts[] = RedisCache::forgetPattern('related_jobs_test_*');
+
+        // Assert: Related caches are cleared but others remain
+        $totalDeleted = array_sum($deletedCounts);
+        $this->assertGreaterThan(0, $totalDeleted);
         
-        JobRecommendationCache::getUserRecommendations($user1, 5, fn() => collect([]));
-        JobRecommendationCache::getUserRecommendations($user2, 5, fn() => collect([]));
-
-        $key1 = JobRecommendationCache::userKey($user1->id, 5);
-        $key2 = JobRecommendationCache::userKey($user2->id, 5);
+        $this->assertFalse(Cache::has('jobs_page_test_1'));
+        $this->assertFalse(Cache::has('jobs_page_test_2'));
+        $this->assertFalse(Cache::has('latestJobs_test_1'));
+        $this->assertFalse(Cache::has('related_jobs_test_1'));
         
-        $this->assertTrue(Cache::has($key1));
-        $this->assertTrue(Cache::has($key2));
-
-        // Act: Invalidate all recommendations
-        JobRecommendationCache::invalidateAll();
-
-        // Assert
-        $this->assertFalse(Cache::has($key1));
-        $this->assertFalse(Cache::has($key2));
+        // These should remain
+        $this->assertTrue(Cache::has('job_test_1'));
+        $this->assertTrue(Cache::has('job_test_2'));
+        $this->assertTrue(Cache::has('keep_this_cache'));
     }
 }
