@@ -12,7 +12,6 @@ use App\Caches\CountryAwareLatestJobsCache;
 use App\Caches\CountryAwareMostViewedJobsCache;
 use App\Caches\CountryAwareJobPageCache;
 use App\Caches\RelatedJobListingCache;
-use App\Helpers\RedisCache;
 use App\Models\JobListing;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
@@ -47,17 +46,17 @@ class JobListingObserver
 
     protected function clearCache(): void
     {
-        RedisCache::forget('jobCategoriesJobsCount');
-        RedisCache::forget('jobCategoriesAll');
+        Cache::forget('jobCategoriesJobsCount');
+        Cache::forget('jobCategoriesAll');
         JobListingCache::invalidate();
         JobPageCache::invalidate();
         MostViewedJobsCache::invalidate();
         LatestJobsCache::invalidate();
-
+        
         CountryAwareMostViewedJobsCache::invalidate();
         CountryAwareLatestJobsCache::invalidate();
         CountryAwareJobPageCache::invalidate();
-
+            
         JobsCountCache::invalidateLastWeekAdded();
         JobsCountCache::invalidateTodayAdded();
         JobsCountCache::invalidateAvailableJobsCount();

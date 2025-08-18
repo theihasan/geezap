@@ -2,12 +2,11 @@
 
 namespace App\Caches;
 
-use App\Helpers\RedisCache;
 use App\Models\JobListing;
 use Illuminate\Support\Facades\Cache;
 
-class JobListingCache
-{
+class JobListingCache{
+
     public static function get($slug)
     {
         return Cache::remember(self::key($slug), 60 * 24, function () use ($slug) {
@@ -16,17 +15,14 @@ class JobListingCache
         });
     }
 
-    public static function invalidate($slug = null): bool | int
+    public static function invalidate()
     {
-        if ($slug) {
-            return Cache::forget(self::key($slug));
-        }
-
-        return RedisCache::forgetPattern('job_*');
+        return Cache::forget(self::key('*'));
     }
 
     public static function key($slug)
     {
         return 'job_' . $slug;
     }
+    
 }

@@ -2,7 +2,6 @@
 
 namespace App\Caches;
 
-use App\Helpers\RedisCache;
 use App\Models\JobListing;
 use Illuminate\Support\Facades\Cache;
 
@@ -46,12 +45,14 @@ class CountryAwareLatestJobsCache
     public static function invalidate(?string $userCountry = null)
     {
         if ($userCountry) {
-            // Clear specific country caches using Redis SCAN
-            return RedisCache::forgetPattern("latestJobs_country_{$userCountry}_*");
+            // Clear specific country caches
+            for ($i = 1; $i <= 5; $i++) {
+                Cache::forget("latestJobs_country_{$userCountry}_exclude_*");
+            }
         }
         
-        // Clear all latest jobs caches
-        return RedisCache::forgetPattern('latestJobs_*');
+        // Clear global caches
+        Cache::forget('latestJobs_global_exclude_*');
     }
 
     public static function key(?string $userCountry = null, array $excludeIds = [])
