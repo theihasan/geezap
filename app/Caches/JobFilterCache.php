@@ -2,6 +2,7 @@
 
 namespace App\Caches;
 
+use App\Helpers\RedisCache;
 use App\Models\Country;
 use App\Models\JobCategory;
 use App\Models\JobListing;
@@ -36,15 +37,13 @@ final class JobFilterCache
         });
     }
 
-    public static function invalidate($key = null)
+    public static function invalidate($key = null): bool | int
     {
         if ($key) {
             return Cache::forget(self::key($key));
         }
 
-        Cache::forget(self::key('categories'));
-        Cache::forget(self::key('publishers'));
-        Cache::forget(self::key('countries'));
+        return RedisCache::forgetPattern('job_filter_*');
     }
 
     private static function key($type)
