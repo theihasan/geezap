@@ -19,7 +19,7 @@ class CoverLetterChat extends Component
     public string $currentLetter = '';
     public string $feedback = '';
     public array $chatHistory = [];
-    
+
     protected $listeners = ['openCoverLetterChat' => 'openChat'];
 
     public function mount(JobListing $job): void
@@ -39,12 +39,12 @@ class CoverLetterChat extends Component
     {
         try {
             throw_if(!auth()->check(), new NonAuthenticatedUser());
-            
+
             $user = auth()->user();
             throw_if(!$this->hasCompleteProfile($user), new IncompleteProfileException());
-            
+
             $this->isOpen = true;
-            
+
         } catch (NonAuthenticatedUser|IncompleteProfileException $e) {
             $this->dispatch('notify', [
                 'message' => $e->getMessage(),
@@ -56,46 +56,47 @@ class CoverLetterChat extends Component
     public function closeChat(): void
     {
         $this->isOpen = false;
-        $this->reset(['currentLetter', 'feedback', 'chatHistory', 'isGenerating']);
+        // Only reset feedback and isGenerating, keep chatHistory and currentLetter
+        //$this->reset(['feedback', 'isGenerating']);
     }
 
     public function generateInitialLetter(): void
     {
         try {
             throw_if(!auth()->check(), new NonAuthenticatedUser());
-            
+
             $user = auth()->user();
             throw_if(!$this->hasCompleteProfile($user), new IncompleteProfileException());
-            
+
             $this->isGenerating = true;
             $this->currentLetter = '';
-            
+
             // Dispatch generation started event
             $this->dispatch('generation-started');
-            
+
             // Force UI update to show loading state
             $this->dispatch('$refresh');
-            
+
             // Add user message to chat history
             $this->chatHistory[] = [
                 'type' => 'user',
                 'message' => 'Generate a cover letter for this position',
                 'timestamp' => now()
             ];
-            
+
             $this->addAssistantMessage();
-            
+
             // Force another UI update after adding messages
             $this->dispatch('$refresh');
-            
+
             // Show notification
             $this->dispatch('notify', [
                 'message' => 'Generating your personalized cover letter...',
                 'type' => 'info'
             ]);
-            
+
             $this->streamCoverLetter();
-            
+
         } catch (NonAuthenticatedUser|IncompleteProfileException $e) {
             $this->isGenerating = false;
             $this->dispatch('notify', [
@@ -108,7 +109,7 @@ class CoverLetterChat extends Component
     public function submitFeedback(): void
     {
         $feedbackText = trim($this->feedback);
-        
+
         if (empty($feedbackText)) {
             $this->dispatch('notify', [
                 'message' => 'Please provide feedback on how to improve the cover letter',
@@ -121,7 +122,7 @@ class CoverLetterChat extends Component
             $this->isGenerating = true;
             $this->dispatch('generation-started');
             $this->dispatch('$refresh');
-            
+
             // Add user feedback to chat history
             $this->chatHistory[] = [
                 'type' => 'user',
@@ -131,19 +132,19 @@ class CoverLetterChat extends Component
 
             $previousLetter = $this->currentLetter;
             $this->currentLetter = '';
-            
+
             $this->addAssistantMessage();
             $this->dispatch('$refresh');
-            
+
             $this->dispatch('notify', [
                 'message' => 'Regenerating cover letter with your feedback...',
                 'type' => 'info'
             ]);
-            
+
             $this->streamCoverLetter($feedbackText, $previousLetter);
-            
+
             $this->feedback = '';
-            
+
         } catch (\Exception $e) {
             Log::error('Failed to submit feedback: ' . $e->getMessage());
             $this->dispatch('notify', [
@@ -170,48 +171,48 @@ class CoverLetterChat extends Component
         try {
             $aiService = app(AIService::class);
             $jobData = $this->job->toArray();
-            
+
             $generator = $aiService->generateCoverLetter(
                 auth()->user(),
                 $jobData,
                 $feedback,
                 $previousLetter
             );
-            
+
             $chunkCount = 0;
             foreach ($generator as $chunk) {
                 $this->currentLetter .= $chunk;
                 $chunkCount++;
-                
+
                 // Update the last message in chat history
                 $lastIndex = count($this->chatHistory) - 1;
                 if ($lastIndex >= 0 && isset($this->chatHistory[$lastIndex]['isStreaming'])) {
                     $this->chatHistory[$lastIndex]['message'] = $this->currentLetter;
                 }
-                
+
                 // Dispatch refresh more frequently to show real-time progress
                 if ($chunkCount % 3 === 0 || strlen($this->currentLetter) % 50 === 0) {
                     $this->dispatch('$refresh');
                 }
             }
-            
+
             // Final update
             $lastIndex = count($this->chatHistory) - 1;
             if ($lastIndex >= 0 && isset($this->chatHistory[$lastIndex]['isStreaming'])) {
                 $this->chatHistory[$lastIndex]['message'] = $this->currentLetter;
                 unset($this->chatHistory[$lastIndex]['isStreaming']);
             }
-            
+
             $this->isGenerating = false;
-            
+
             // Show completion notification
             $this->dispatch('notify', [
                 'message' => 'Your cover letter has been generated successfully!',
                 'type' => 'success'
             ]);
-            
+
             $this->dispatch('$refresh');
-            
+
         } catch (OpenAIApiKeyInvalidException $e) {
             // Ensure we show the error immediately after the loading state
             sleep(1); // Brief delay to show loading state
@@ -229,7 +230,7 @@ class CoverLetterChat extends Component
     private function handleError(string $message): void
     {
         $this->isGenerating = false;
-        
+
         // Update or add error message
         $lastIndex = count($this->chatHistory) - 1;
         if ($lastIndex >= 0 && isset($this->chatHistory[$lastIndex]['isStreaming'])) {
@@ -244,10 +245,10 @@ class CoverLetterChat extends Component
                 'isError' => true
             ];
         }
-        
+
         // Force UI update to show error
         $this->dispatch('$refresh');
-        
+
         // Show error notification
         $this->dispatch('notify', [
             'message' => $message,
