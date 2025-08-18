@@ -2,6 +2,7 @@
 
 namespace App\Caches;
 
+use App\Helpers\RedisCache;
 use App\Models\JobListing;
 use Illuminate\Support\Facades\Cache;
 
@@ -29,12 +30,12 @@ class MostViewedJobsCache{
         });
     }
 
-    public static function invalidate()
+    public static function invalidate(): bool
     {
-        return Cache::forget(self::key());
+        return RedisCache::forget(static::key());
     }
 
-    public static function key()
+    public static function key(): string
     {
         return 'mostViewedJobs';
     }
