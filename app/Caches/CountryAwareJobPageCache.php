@@ -2,7 +2,6 @@
 
 namespace App\Caches;
 
-use App\Helpers\RedisCache;
 use App\Models\JobListing;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Pipeline\Pipeline;
@@ -114,12 +113,30 @@ class CountryAwareJobPageCache
     public static function invalidate(?string $userCountry = null)
     {
         if ($userCountry) {
-            // Clear specific country job pages using Redis SCAN
-            return RedisCache::forgetPattern("jobs_page_{$userCountry}_*");
+            $countryKeys = [
+                "jobs_page_{$userCountry}_1_*",
+                "jobs_page_{$userCountry}_2_*", 
+                "jobs_page_{$userCountry}_3_*",
+                "jobs_page_{$userCountry}_4_*",
+                "jobs_page_{$userCountry}_5_*"
+            ];
+            
+            foreach ($countryKeys as $pattern) {
+                Cache::forget($pattern);
+            }
         }
         
-        // Clear all job pages
-        return RedisCache::forgetPattern('jobs_page_*');
+        $globalKeys = [
+            'jobs_page_global_1_*',
+            'jobs_page_global_2_*',
+            'jobs_page_global_3_*',
+            'jobs_page_global_4_*',
+            'jobs_page_global_5_*'
+        ];
+        
+        foreach ($globalKeys as $pattern) {
+            Cache::forget($pattern);
+        }
     }
 
     public static function key($request, ?string $userCountry = null)

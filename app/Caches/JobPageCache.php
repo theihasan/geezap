@@ -1,7 +1,6 @@
 <?php
 namespace App\Caches;
 
-use App\Helpers\RedisCache;
 use App\Models\JobListing;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Pipeline\Pipeline;
@@ -72,12 +71,17 @@ class JobPageCache{
 
     public static function invalidate()
     {
-        return RedisCache::forgetPattern('jobs_page_*');
+        return Cache::forget(self::keyPrefix());
     }
 
     public static function key($request)
     {
         return 'jobs_page_' . $request->get('page', 1) . '_' . md5(serialize($request->all()));
+    }
+
+    public static function keyPrefix()
+    {
+        return 'jobs_*' ;
     }
 
 }

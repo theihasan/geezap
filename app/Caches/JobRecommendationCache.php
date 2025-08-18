@@ -2,7 +2,6 @@
 
 namespace App\Caches;
 
-use App\Helpers\RedisCache;
 use App\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -19,19 +18,27 @@ class JobRecommendationCache
     public static function invalidateUserRecommendations(?int $userId): bool
     {
         if ($userId) {
-            return RedisCache::forgetPattern("user_recommendations_{$userId}_*");
+            $pattern = "user_recommendations_{$userId}_*";
+        } else {
+            $pattern = 'user_recommendations_*';
         }
-        
-        return RedisCache::forgetPattern('user_recommendations_*');
+        return self::forgetPattern($pattern);
     }
 
     public static function invalidateAll(): bool
     {
-        return RedisCache::forgetPattern('user_recommendations_*');
+        $userPattern = 'user_recommendations_*';
+        
+        return self::forgetPattern($userPattern);
     }
 
     public static function userKey(int $userId, int $limit): string
     {
         return "user_recommendations_{$userId}_{$limit}";
+    }
+
+    private static function forgetPattern(string $pattern): bool
+    {
+        return Cache::forget($pattern);
     }
 }

@@ -1,7 +1,6 @@
 <?php
 namespace App\Caches;
 
-use App\Helpers\RedisCache;
 use App\Models\JobListing;
 use Illuminate\Support\Facades\Cache;
 
@@ -44,12 +43,17 @@ class RelatedJobListingCache{
 
     public static function invalidate()
     {
-        return RedisCache::forgetPattern('related_jobs_*');
+        return Cache::forget(self::keyPrefix());
     }
 
     public static function key($slug)
     {
         return 'related_jobs_' . $slug;
+    }
+
+    public static function keyPrefix()
+    {
+        return 'related_jobs_*';
     }
 
 }
