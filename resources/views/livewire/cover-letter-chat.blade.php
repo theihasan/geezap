@@ -53,16 +53,17 @@
                 
                 <div class="flex h-full flex-col bg-[#1a1a3a] shadow-2xl border-l border-gray-700">
                     <!-- Header -->
-                    <div class="flex items-center justify-between px-4 py-6 bg-gradient-to-r from-purple-600 to-pink-500">
+                    <div class="flex items-center justify-between px-6 py-6 bg-gradient-to-r from-purple-600 to-pink-500">
                         <div class="flex items-center">
                             <div class="flex-shrink-0">
-                                <div class="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
-                                    <i class="las la-file-alt text-xl text-white"></i>
+                                <div class="w-12 h-12 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                                    <i class="las la-file-alt text-2xl text-white"></i>
                                 </div>
                             </div>
                             <div class="ml-4">
-                                <h2 class="text-lg font-medium text-white">AI Cover Letter Generator</h2>
-                                <p class="text-sm text-white text-opacity-75">{{ $job->job_title }}</p>
+                                <p class="text-sm text-white text-opacity-85 font-medium">{{ $job->employer_name }}</p>
+                                <h2 class="text-lg font-semibold text-white">{{ $job->job_title }}</h2>
+                                <p class="text-xs text-white text-opacity-70">AI Cover Letter Generator</p>
                             </div>
                         </div>
                         <button 
@@ -73,41 +74,11 @@
                         </button>
                     </div>
 
-                    <!-- Job Info Card -->
-                    <div class="px-6 py-4 border-b border-gray-700">
-                        <div class="bg-[#2d2d5f] rounded-lg p-6">
-                            <div class="flex items-start space-x-4">
-                                <div class="w-14 h-14 bg-gray-600 rounded-lg flex items-center justify-center text-gray-300 text-base font-medium">
-                                    {{ substr($job->employer_name, 0, 2) }}
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <h3 class="text-white font-semibold text-lg">{{ $job->employer_name }}</h3>
-                                    <p class="text-gray-400 text-sm mt-1">{{ $job->employer_industry ?? 'Technology' }}</p>
-                                </div>
-                            </div>
-                            
-                            <div class="mt-4">
-                                <div class="flex items-center text-sm text-gray-300">
-                                    <i class="las la-clock mr-2 text-lg"></i>
-                                    <div>
-                                        <p class="font-medium">Job Type</p>
-                                        <p class="text-gray-400 text-xs">{{ $job->job_type ?? 'Full-time' }}</p>
-                                    </div>
-                                </div>
-                                {{-- <div class="flex items-center text-sm text-gray-300">
-                                    <i class="las la-map-marker-alt mr-2 text-lg"></i>
-                                    <div>
-                                        <p class="font-medium">Job Location</p>
-                                        <p class="text-gray-400 text-xs">{{ $job->job_location ?? 'Remote' }}</p>
-                                    </div>
-                                </div> --}}
-                            </div>
-                        </div>
-                    </div>
+
 
                     <!-- Generation Status -->
                     @if($isGenerating)
-                        <div class="px-4 py-4 border-b border-gray-700">
+                        <div class="px-6 py-4 border-b border-gray-700">
                             <div class="bg-[#2d2d5f] rounded-lg p-4">
                                 <div class="flex items-center space-x-3">
                                     <div class="w-8 h-8 bg-pink-600 rounded-full flex items-center justify-center">
@@ -155,16 +126,36 @@
                                                     <span class="text-xs opacity-75">AI Assistant</span>
                                                 </div>
                                                 <div class="text-sm {{ isset($message['isError']) ? 'text-red-300' : '' }}">
-                                                    @if(!empty($message['message']))
-                                                        <div class="whitespace-pre-line">{{ $message['message'] }}</div>
-                                                    @endif
-                                                    
                                                     @if(isset($message['isStreaming']))
-                                                        <div class="flex items-center gap-1 mt-2">
-                                                            <div class="w-2 h-2 bg-white rounded-full animate-bounce"></div>
-                                                            <div class="w-2 h-2 bg-white rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
-                                                            <div class="w-2 h-2 bg-white rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
+                                                        <div class="space-y-3">
+                                                            <!-- Loading indicator always shows when streaming -->
+                                                            <div class="flex items-center gap-3 p-3 bg-gradient-to-r from-purple-900/30 to-pink-900/30 rounded-lg border border-purple-500/20">
+                                                                <div class="flex items-center gap-1">
+                                                                    <div class="w-3 h-3 bg-pink-500 rounded-full animate-bounce"></div>
+                                                                    <div class="w-3 h-3 bg-purple-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                                                                    <div class="w-3 h-3 bg-pink-500 rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
+                                                                </div>
+                                                                <div class="flex-1">
+                                                                    <p class="text-sm text-white font-medium">Generating Cover Letter</p>
+                                                                    <p class="text-xs text-gray-300">AI is analyzing the job and crafting your personalized letter...</p>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <!-- Show generated content if any -->
+                                                            @if(!empty($message['message']) && $message['message'] !== 'Starting to generate your personalized cover letter...')
+                                                                <div class="p-3 bg-gray-800/50 rounded-lg">
+                                                                    <div class="whitespace-pre-line text-gray-100">{{ $message['message'] }}</div>
+                                                                    <div class="mt-2 flex items-center gap-1 text-xs text-gray-400">
+                                                                        <i class="las la-circle animate-pulse"></i>
+                                                                        <span>Still generating...</span>
+                                                                    </div>
+                                                                </div>
+                                                            @endif
                                                         </div>
+                                                    @else
+                                                        @if(!empty($message['message']))
+                                                            <div class="whitespace-pre-line">{{ $message['message'] }}</div>
+                                                        @endif
                                                     @endif
                                                 </div>
                                             </div>
@@ -277,6 +268,20 @@
                     chatMessages.scrollTop = chatMessages.scrollHeight;
                 }, 100);
             }
+        });
+
+        // Force UI updates during generation
+        document.addEventListener('livewire:init', () => {
+            $wire.on('generation-started', () => {
+                console.log('Generation started');
+                // Force a small delay to ensure UI updates
+                setTimeout(() => {
+                    const chatMessages = document.getElementById('chat-messages');
+                    if (chatMessages) {
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    }
+                }, 500);
+            });
         });
     </script>
     @endscript

@@ -70,6 +70,12 @@ class CoverLetterChat extends Component
             $this->isGenerating = true;
             $this->currentLetter = '';
             
+            // Dispatch generation started event
+            $this->dispatch('generation-started');
+            
+            // Force UI update to show loading state
+            $this->dispatch('$refresh');
+            
             // Add user message to chat history
             $this->chatHistory[] = [
                 'type' => 'user',
@@ -78,6 +84,9 @@ class CoverLetterChat extends Component
             ];
             
             $this->addAssistantMessage();
+            
+            // Force another UI update after adding messages
+            $this->dispatch('$refresh');
             
             // Show notification
             $this->dispatch('notify', [
@@ -88,6 +97,7 @@ class CoverLetterChat extends Component
             $this->streamCoverLetter();
             
         } catch (NonAuthenticatedUser|IncompleteProfileException $e) {
+            $this->isGenerating = false;
             $this->dispatch('notify', [
                 'message' => $e->getMessage(),
                 'type' => 'error'
@@ -108,6 +118,10 @@ class CoverLetterChat extends Component
         }
 
         try {
+            $this->isGenerating = true;
+            $this->dispatch('generation-started');
+            $this->dispatch('$refresh');
+            
             // Add user feedback to chat history
             $this->chatHistory[] = [
                 'type' => 'user',
@@ -117,9 +131,9 @@ class CoverLetterChat extends Component
 
             $previousLetter = $this->currentLetter;
             $this->currentLetter = '';
-            $this->isGenerating = true;
             
             $this->addAssistantMessage();
+            $this->dispatch('$refresh');
             
             $this->dispatch('notify', [
                 'message' => 'Regenerating cover letter with your feedback...',
@@ -137,6 +151,7 @@ class CoverLetterChat extends Component
                 'type' => 'error'
             ]);
             $this->isGenerating = false;
+            $this->dispatch('$refresh');
         }
     }
 
@@ -144,7 +159,7 @@ class CoverLetterChat extends Component
     {
         $this->chatHistory[] = [
             'type' => 'assistant',
-            'message' => '',
+            'message' => 'Starting to generate your personalized cover letter...',
             'timestamp' => now(),
             'isStreaming' => true
         ];
@@ -174,8 +189,8 @@ class CoverLetterChat extends Component
                     $this->chatHistory[$lastIndex]['message'] = $this->currentLetter;
                 }
                 
-                // Only dispatch refresh periodically to avoid too many updates
-                if ($chunkCount % 5 === 0 || strlen($this->currentLetter) % 100 === 0) {
+                // Dispatch refresh more frequently to show real-time progress
+                if ($chunkCount % 3 === 0 || strlen($this->currentLetter) % 50 === 0) {
                     $this->dispatch('$refresh');
                 }
             }
@@ -198,11 +213,15 @@ class CoverLetterChat extends Component
             $this->dispatch('$refresh');
             
         } catch (OpenAIApiKeyInvalidException $e) {
+            // Ensure we show the error immediately after the loading state
+            sleep(1); // Brief delay to show loading state
             $this->handleError('⚠️ API Configuration Error: ' . $e->getMessage());
         } catch (DailyChatLimitExceededException $e) {
+            sleep(1);
             $this->handleError($e->getMessage());
         } catch (\Exception $e) {
             Log::error('Cover letter generation failed: ' . $e->getMessage());
+            sleep(1);
             $this->handleError('Sorry, there was an error generating your cover letter. Please try again.');
         }
     }
@@ -225,6 +244,15 @@ class CoverLetterChat extends Component
                 'isError' => true
             ];
         }
+        
+        // Force UI update to show error
+        $this->dispatch('$refresh');
+        
+        // Show error notification
+        $this->dispatch('notify', [
+            'message' => $message,
+            'type' => 'error'
+        ]);
     }
 
     public function copyCoverLetter(): void
