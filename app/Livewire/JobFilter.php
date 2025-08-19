@@ -8,6 +8,7 @@ use App\Models\JobCategory;
 use App\Models\JobListing;
 use App\Traits\DetectsUserCountry;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\Url;
@@ -15,6 +16,20 @@ use Livewire\Attributes\Url;
 class JobFilter extends Component
 {
     use WithPagination, DetectsUserCountry;
+
+    public function mount()
+    {
+        // Ensure component is properly initialized
+        if (!isset($this->perPage)) {
+            $this->perPage = 10;
+        }
+        if (!isset($this->hasMorePages)) {
+            $this->hasMorePages = false;
+        }
+        if (!is_array($this->types)) {
+            $this->types = [];
+        }
+    }
 
     #[Url]
     public $search = '';
@@ -72,19 +87,32 @@ class JobFilter extends Component
 
     protected function getCategories()
     {
-        return JobFilterCache::getCategories();
+        try {
+            return JobFilterCache::getCategories();
+        } catch (\Throwable $e) {
+            Log::warning('Failed to get categories from cache', ['error' => $e->getMessage()]);
+            return JobCategory::all();
+        }
     }
-
 
     protected function getPublishers()
     {
-        return JobFilterCache::getPublishers();
+        try {
+            return JobFilterCache::getPublishers();
+        } catch (\Throwable $e) {
+            Log::warning('Failed to get publishers from cache', ['error' => $e->getMessage()]);
+            return JobListing::distinct('publisher')->pluck('publisher')->filter();
+        }
     }
-
 
     protected function getCountries()
     {
-        return JobFilterCache::getCountries();
+        try {
+            return JobFilterCache::getCountries();
+        } catch (\Throwable $e) {
+            Log::warning('Failed to get countries from cache', ['error' => $e->getMessage()]);
+            return Country::all()->keyBy('code');
+        }
     }
     public function updatedSource()
     {
@@ -134,10 +162,11 @@ class JobFilter extends Component
 
     public function render()
     {
-        $perPage = $this->perPage;
+        try {
+            $perPage = $this->perPage;
 
-        if ($this->search) {
-            $searchQuery = JobListing::search($this->search);
+            if ($this->search) {
+                $searchQuery = JobListing::search($this->search);
 
             $searchQuery = $searchQuery->when($this->source, fn($query, $source) =>
                 $query->where('publisher', $source))
@@ -248,15 +277,33 @@ class JobFilter extends Component
 
         $this->hasMorePages = $total > $perPage;
 
-        $this->dispatch('jobCountUpdated', $total);
+            $this->dispatch('jobCountUpdated', $total);
 
-        return view('livewire.job-filter', [
-            'jobs' => $jobs,
-            'categories' => $this->getCategories(),
-            'publishers' => $this->getPublishers(),
-            'countries' => $this->getCountries(),
-            'jobTypes' => $this->jobTypes,
-            'totalJobs' => $total
-        ]);
+            return view('livewire.job-filter', [
+                'jobs' => $jobs ?? collect([]),
+                'categories' => method_exists($this, 'getCategories') ? $this->getCategories() : collect([]),
+                'publishers' => method_exists($this, 'getPublishers') ? $this->getPublishers() : collect([]),
+                'countries' => method_exists($this, 'getCountries') ? $this->getCountries() : collect([]),
+                'jobTypes' => $this->jobTypes ?? [],
+                'totalJobs' => $total ?? 0
+            ]);
+        } catch (\Throwable $e) {
+            \Log::error('JobFilter render error', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'user_authenticated' => auth()->check(),
+                'memory_usage' => memory_get_usage(true)
+            ]);
+            
+            // Return basic view with empty results on error
+            return view('livewire.job-filter', [
+                'jobs' => collect([]),
+                'categories' => collect([]),
+                'publishers' => collect([]),
+                'countries' => collect([]),
+                'jobTypes' => $this->jobTypes,
+                'totalJobs' => 0
+            ]);
+        }
     }
 }
