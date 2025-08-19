@@ -127,30 +127,29 @@
                     </div>
 
                     <!-- Location Map -->
-                    @if($job->latitude && $job->longitude)
-                    <div class="bg-[#1a1a3a] p-6 rounded-2xl border border-gray-700">
-                        <h3 class="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-                            <i class="las la-map text-pink-300"></i>
-                            Job Location
-                        </h3>
-                        <div id="job-map" class="h-64 rounded-xl overflow-hidden border border-gray-700" 
-                             data-lat="{{ $job->latitude }}" 
-                             data-lng="{{ $job->longitude }}"
-                             data-title="{{ $job->job_title }}"
-                             data-company="{{ $job->employer_name }}"
-                             data-location="{{ $job->state }}, {{ $job->country }}">
-                        </div>
-                    </div>
-                    @endif
+{{--                    @if($job->latitude && $job->longitude)--}}
+{{--                    <div class="bg-[#1a1a3a] p-6 rounded-2xl border border-gray-700">--}}
+{{--                        <h3 class="text-xl font-semibold text-white mb-4 flex items-center gap-2">--}}
+{{--                            <i class="las la-map text-pink-300"></i>--}}
+{{--                            Job Location--}}
+{{--                        </h3>--}}
+{{--                        <div id="job-map" class="h-64 rounded-xl overflow-hidden border border-gray-700" --}}
+{{--                             data-lat="{{ $job->latitude }}" --}}
+{{--                             data-lng="{{ $job->longitude }}"--}}
+{{--                             data-title="{{ $job->job_title }}"--}}
+{{--                             data-company="{{ $job->employer_name }}"--}}
+{{--                             data-location="{{ $job->state }}, {{ $job->country }}">--}}
+{{--                        </div>--}}
+{{--                    </div>--}}
+{{--                    @endif--}}
 
                     <!-- Separate card for buttons -->
                     <livewire:jobs.save-for-letter :job="$job" />
                 </div>
             </div>
 
-            <!-- Additional CV Generation Call to Action -->
-            <livewire:generate-cover-letter :job="$job" :request="request()" />
-
+            <!-- Cover Letter Generator -->
+            <livewire:cover-letter-chat :job="$job" />
 
             <!-- Apply Now Section Before Related Jobs -->
             <livewire:apply-job :job="$job" />
@@ -210,33 +209,33 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const mapContainer = document.getElementById('job-map');
-    
+
     if (mapContainer) {
         const lat = parseFloat(mapContainer.dataset.lat);
         const lng = parseFloat(mapContainer.dataset.lng);
         const title = mapContainer.dataset.title;
         const company = mapContainer.dataset.company;
         const location = mapContainer.dataset.location;
-        
+
         if (lat && lng) {
             // Initialize the map
             const map = L.map('job-map', {
                 zoomControl: false,
                 scrollWheelZoom: false
             }).setView([lat, lng], 13);
-            
+
             // Add zoom control in bottom right
             L.control.zoom({
                 position: 'bottomright'
             }).addTo(map);
-            
+
             // Add tile layer with dark theme
             L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
                 subdomains: 'abcd',
                 maxZoom: 20
             }).addTo(map);
-            
+
             // Create custom icon
             const customIcon = L.divIcon({
                 html: '<div class="custom-marker"><i class="las la-map-marker-alt"></i></div>',
@@ -245,10 +244,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 iconAnchor: [20, 40],
                 popupAnchor: [0, -40]
             });
-            
+
             // Add marker
             const marker = L.marker([lat, lng], { icon: customIcon }).addTo(map);
-            
+
             // Add popup
             marker.bindPopup(`
                 <div class="custom-popup">
@@ -257,7 +256,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <p class="text-gray-400 text-xs">${location}</p>
                 </div>
             `);
-            
+
             marker.openPopup();
         }
     }

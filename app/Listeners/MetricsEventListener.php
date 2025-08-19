@@ -3,7 +3,7 @@
 namespace App\Listeners;
 
 use App\Services\MetricsService;
-use App\Events\CoverLetterGenerated;
+
 use App\Events\ExceptionHappenEvent;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Events\Login;
@@ -31,13 +31,7 @@ class MetricsEventListener
         $event->user->touch('last_login_at');
     }
 
-    /**
-     * @throws \Prometheus\Exception\MetricsRegistrationException
-     */
-    public function handleCoverLetterGenerated(CoverLetterGenerated $event): void
-    {
-        $this->metricsService->recordCoverLetterGeneration('success');
-    }
+
 
     /**
      * @throws \Prometheus\Exception\MetricsRegistrationException

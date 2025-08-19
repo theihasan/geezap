@@ -26,7 +26,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use App\Listeners\MetricsEventListener;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Events\Login;
-use App\Events\CoverLetterGenerated;
+
 use App\Events\ExceptionHappenEvent;
 use Illuminate\Queue\Events\JobProcessed;
 use Illuminate\Queue\Events\JobFailed;
@@ -198,7 +198,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Event::listen(Registered::class, [MetricsEventListener::class, 'handleUserRegistered']);
         Event::listen(Login::class, [MetricsEventListener::class, 'handleUserLogin']);
-        Event::listen(CoverLetterGenerated::class, [MetricsEventListener::class, 'handleCoverLetterGenerated']);
+
         Event::listen(ExceptionHappenEvent::class, [MetricsEventListener::class, 'handleExceptionHappen']);
         Event::listen(JobProcessed::class, [MetricsEventListener::class, 'handleJobProcessed']);
         Event::listen(JobFailed::class, [MetricsEventListener::class, 'handleJobFailed']);

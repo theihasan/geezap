@@ -80,13 +80,7 @@ class CollectMetricsJob implements ShouldQueue
 
     private function collectContentMetrics(MetricsService $metricsService): void
     {
-        $coverLettersToday = DB::table('airesponses')
-            ->where('created_at', '>=', now()->startOfDay())
-            ->where('type', 'cover_letter')
-            ->count();
-
-        collect(range(1, $coverLettersToday))
-            ->each(fn() => $metricsService->recordCoverLetterGeneration('success'));
+        // Content metrics collection will be implemented when needed
     }
 
     private function collectDatabaseMetrics(): void

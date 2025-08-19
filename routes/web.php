@@ -8,7 +8,7 @@ use App\Http\Controllers\JobController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\HomePageController;
 use App\Http\Controllers\SocialAuthController;
-use App\Http\Controllers\CoverLetterController;
+
 use App\Http\Controllers\JobCategoryController;
 
 Route::get('/', HomePageController::class)->name('home');
@@ -36,7 +36,7 @@ Route::middleware('auth')->group(function () {
     Route::post('social-media-info', [ProfileController::class, 'updateSocialMediaInfo'])->name('social-media-info.update');
     Route::post('experience', [ProfileController::class, 'updateExperience'])->name('experience.update');
     Route::post('skill', [ProfileController::class, 'updateSkill'])->name('skill.update');
-    Route::get('cover-letter', [CoverLetterController::class, 'coverLetter'])->name('cover-letter.update');
+
     Route::view('/applications', 'v2.profile.my-application')->name('applications');
     Route::get('/profile/preferences', [ProfileController::class, 'preferences'])->name('profile.preferences');
     Route::post('/profile/preferences', [ProfileController::class, 'updatePreferences'])->name('profile.preferences.update');
