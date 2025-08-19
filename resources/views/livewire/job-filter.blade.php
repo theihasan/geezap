@@ -6,6 +6,7 @@
         jobType: false
     }
 }">
+    <x-loading />
     <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
         <!-- Filter Sidebar -->
         <div class="bg-[#1a1a3a] rounded-2xl p-6 border border-gray-700 mb-8 md:mb-0 md:col-span-1 col-span-full md:sticky md:top-6 h-fit">
@@ -155,9 +156,11 @@
         <div class="col-span-full md:col-span-3 relative">
             <!-- Improved Loading State for Filters -->
             <div wire:loading wire:target="search, source, exclude_source, country, category, remote, types, clearAllFilters"
-                 class="absolute inset-0 bg-[#1a1a3a] bg-opacity-90 rounded-2xl border border-gray-700 flex flex-col items-center justify-center z-10">
-                <div class="inline-block h-16 w-16 animate-spin rounded-full border-4 border-solid border-purple-500 border-r-transparent motion-reduce:animate-[spin_1.5s_linear_infinite] mb-4"></div>
-                <p class="text-gray-300 text-lg font-medium">Loading results...</p>
+                 class="absolute inset-0 bg-[#1a1a3a]/90 rounded-2xl border border-gray-700 flex items-center justify-center z-20">
+                <div class="text-center">
+                    <div class="inline-block h-16 w-16 animate-spin rounded-full border-4 border-solid border-purple-500 border-r-transparent motion-reduce:animate-[spin_1.5s_linear_infinite] mb-4"></div>
+                    <p class="text-gray-300 text-lg font-medium">Loading results...</p>
+                </div>
             </div>
 
             <!-- Results -->
