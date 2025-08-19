@@ -77,12 +77,21 @@ class CoverLetterChat extends Component
             // Force UI update to show loading state
             $this->dispatch('$refresh');
 
-            // Add user message to chat history
-            $this->chatHistory[] = [
-                'type' => 'user',
-                'message' => 'Generate a cover letter for this position',
-                'timestamp' => now()
-            ];
+            // Only add user message if this is truly the first generation
+            if (empty($this->chatHistory)) {
+                $this->chatHistory[] = [
+                    'type' => 'user',
+                    'message' => 'Generate a cover letter for this position',
+                    'timestamp' => now()
+                ];
+            } else {
+                // Add a new user message for additional generation request
+                $this->chatHistory[] = [
+                    'type' => 'user',
+                    'message' => 'Generate another cover letter for this position',
+                    'timestamp' => now()
+                ];
+            }
 
             $this->addAssistantMessage();
 
@@ -261,6 +270,15 @@ class CoverLetterChat extends Component
         $this->dispatch('copy-to-clipboard', ['text' => $this->currentLetter]);
         $this->dispatch('notify', [
             'message' => 'Cover letter copied to clipboard!',
+            'type' => 'success'
+        ]);
+    }
+
+    public function copyMessage($messageText): void
+    {
+        $this->dispatch('copy-to-clipboard', ['text' => $messageText]);
+        $this->dispatch('notify', [
+            'message' => 'Message copied to clipboard!',
             'type' => 'success'
         ]);
     }

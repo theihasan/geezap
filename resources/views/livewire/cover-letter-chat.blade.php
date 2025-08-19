@@ -152,9 +152,18 @@
                                                                 </div>
                                                             @endif
                                                         </div>
-                                                    @else
+                                                     @else
                                                         @if(!empty($message['message']))
                                                             <div class="whitespace-pre-line">{{ $message['message'] }}</div>
+                                                            <!-- Copy button for completed AI messages -->
+                                                            <div class="mt-3 pt-2 border-t border-gray-600">
+                                                                <button 
+                                                                    wire:click="copyMessage({{ json_encode($message['message']) }})"
+                                                                    class="text-xs text-gray-400 hover:text-white flex items-center gap-1 transition-colors">
+                                                                    <i class="las la-copy"></i>
+                                                                    <span>Copy message</span>
+                                                                </button>
+                                                            </div>
                                                         @endif
                                                     @endif
                                                 </div>
@@ -188,13 +197,6 @@
                         @elseif(!empty($currentLetter) && !$isGenerating)
                             <!-- Actions for completed letter -->
                             <div class="space-y-3">
-                                <button 
-                                    wire:click="copyCoverLetter"
-                                    class="w-full bg-gray-600 text-white px-4 py-3 rounded-lg font-medium text-sm flex items-center justify-center gap-2 hover:bg-gray-700 transition-colors">
-                                    <i class="las la-copy text-lg"></i>
-                                    <span>Copy Cover Letter</span>
-                                </button>
-                                
                                 <!-- Feedback input -->
                                 <div class="space-y-3">
                                     <div>
