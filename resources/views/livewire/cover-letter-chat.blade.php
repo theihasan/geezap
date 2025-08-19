@@ -6,6 +6,7 @@
         <div class="flex justify-center">
             <button 
                 wire:click="openChat"
+                wire:loading.attr="disabled"
                 class="px-8 py-3 bg-white text-pink-600 rounded-lg font-medium text-lg flex items-center gap-2 hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 {{ $isGenerating ? 'disabled' : '' }}>
                 @if($isGenerating)
@@ -189,10 +190,18 @@
                             <!-- Initial generation button -->
                             <button 
                                 wire:click="generateInitialLetter"
+                                wire:loading.attr="disabled"
+                                wire:target="generateInitialLetter"
                                 class="w-full bg-gradient-to-r from-purple-600 to-pink-500 text-white px-4 py-3 rounded-lg font-medium text-sm flex items-center justify-center gap-2 hover:from-purple-700 hover:to-pink-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                 {{ $isGenerating ? 'disabled' : '' }}>
-                                <i class="las la-magic text-lg"></i>
-                                <span>Generate a cover letter for this position</span>
+                                <span wire:loading.remove wire:target="generateInitialLetter">
+                                    <i class="las la-magic text-lg"></i>
+                                    <span>Generate a cover letter for this position</span>
+                                </span>
+                                <span wire:loading wire:target="generateInitialLetter" class="flex items-center gap-2">
+                                    <i class="las la-spinner animate-spin text-lg"></i>
+                                    <span>Generating...</span>
+                                </span>
                             </button>
                         @elseif(!empty($currentLetter) && !$isGenerating)
                             <!-- Actions for completed letter -->
@@ -202,7 +211,7 @@
                                     <div>
                                         <label class="block text-xs font-medium text-gray-300 mb-2">Improve this cover letter</label>
                                         <textarea 
-                                            wire:model.live="feedback"
+                                            wire:model="feedback"
                                             placeholder="Tell me how to make this cover letter better..."
                                             rows="3"
                                             class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 text-sm focus:border-pink-500 focus:ring-1 focus:ring-pink-500 resize-none"
@@ -210,16 +219,19 @@
                                     </div>
                                     <button 
                                         wire:click="submitFeedback"
+                                        wire:loading.attr="disabled"
+                                        wire:target="submitFeedback"
                                         type="button"
                                         class="w-full bg-pink-600 text-white px-4 py-3 rounded-lg font-medium text-sm flex items-center justify-center gap-2 hover:bg-pink-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                         {{ $isGenerating ? 'disabled' : '' }}>
-                                        @if($isGenerating)
-                                            <i class="las la-spinner animate-spin text-lg"></i>
-                                            <span>Regenerating...</span>
-                                        @else
+                                        <span wire:loading.remove wire:target="submitFeedback">
                                             <i class="las la-paper-plane text-lg"></i>
                                             <span>Send Feedback & Regenerate</span>
-                                        @endif
+                                        </span>
+                                        <span wire:loading wire:target="submitFeedback" class="flex items-center gap-2">
+                                            <i class="las la-spinner animate-spin text-lg"></i>
+                                            <span>Regenerating...</span>
+                                        </span>
                                     </button>
                                 </div>
                             </div>
