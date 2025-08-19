@@ -259,8 +259,72 @@ Sincerely,
         // Determine years of experience
         $experienceYears = $this->extractExperienceYears($user->bio ?? '');
 
-        // Build professional cover letter
-        $coverLetter = "Dear Hiring Manager,
+        // Handle feedback and generate variations
+        if ($feedback && $previousLetter) {
+            return $this->generateVariationBasedOnFeedback($user, $jobData, $feedback, $previousLetter);
+        }
+
+        // Generate different variations for initial requests
+        $variations = $this->getCoverLetterVariations($user, $jobData);
+        
+        // Use a simple hash of user ID and job ID to get consistent but different variations
+        $variationIndex = (int)($user->id + ($jobData['id'] ?? 0)) % count($variations);
+        
+        return $variations[$variationIndex];
+    }
+
+    private function generateVariationBasedOnFeedback(User $user, array $jobData, string $feedback, string $previousLetter): string
+    {
+        $jobTitle = $jobData['job_title'] ?? 'the position';
+        $companyName = $jobData['employer_name'] ?? 'your company';
+        $candidateName = $user->name ?? 'Candidate';
+        $currentRole = $user->occupation ?? 'Software Developer';
+        $skills = $this->formatSkills($user->skills);
+        $experienceYears = $this->extractExperienceYears($user->bio ?? '');
+
+        // Analyze feedback to determine what changes to make
+        $feedbackLower = strtolower($feedback);
+        
+        if (str_contains($feedbackLower, 'friendly') || str_contains($feedbackLower, 'casual')) {
+            return $this->generateFriendlyTone($user, $jobData);
+        }
+        
+        if (str_contains($feedbackLower, 'professional') || str_contains($feedbackLower, 'formal')) {
+            return $this->generateProfessionalTone($user, $jobData);
+        }
+        
+        if (str_contains($feedbackLower, 'shorter') || str_contains($feedbackLower, 'brief')) {
+            return $this->generateShorterVersion($user, $jobData);
+        }
+        
+        if (str_contains($feedbackLower, 'longer') || str_contains($feedbackLower, 'detailed')) {
+            return $this->generateDetailedVersion($user, $jobData);
+        }
+        
+        if (str_contains($feedbackLower, 'skills') || str_contains($feedbackLower, 'technical')) {
+            return $this->generateSkillsFocused($user, $jobData);
+        }
+        
+        if (str_contains($feedbackLower, 'experience') || str_contains($feedbackLower, 'background')) {
+            return $this->generateExperienceFocused($user, $jobData);
+        }
+
+        // Default: generate a different variation
+        return $this->generateAlternativeVersion($user, $jobData);
+    }
+
+    private function getCoverLetterVariations(User $user, array $jobData): array
+    {
+        $jobTitle = $jobData['job_title'] ?? 'the position';
+        $companyName = $jobData['employer_name'] ?? 'your company';
+        $candidateName = $user->name ?? 'Candidate';
+        $currentRole = $user->occupation ?? 'Software Developer';
+        $skills = $this->formatSkills($user->skills);
+        $experienceYears = $this->extractExperienceYears($user->bio ?? '');
+
+        return [
+            // Variation 1: Standard professional
+            "Dear Hiring Manager,
 
 I am writing to express my strong interest in the {$jobTitle} position at {$companyName}. As a {$currentRole} with {$experienceYears} years of experience in software development, I am excited about the opportunity to contribute to your innovative team.
 
@@ -271,9 +335,197 @@ I am particularly drawn to {$companyName}'s commitment to technological excellen
 Thank you for considering my application. I would welcome the opportunity to discuss how my technical expertise and professional experience can benefit {$companyName}. I look forward to hearing from you.
 
 Sincerely,
-{$candidateName}";
+{$candidateName}",
 
-        return $coverLetter;
+            // Variation 2: More personal approach
+            "Dear Hiring Manager,
+
+I am excited to submit my application for the {$jobTitle} position at {$companyName}. With {$experienceYears} years of experience as a {$currentRole}, I am confident that my technical skills and passion for innovation make me an ideal candidate for your team.
+
+Throughout my career, I have cultivated strong expertise in {$skills}, consistently delivering high-quality solutions that drive business success. My experience in developing scalable applications and collaborating with cross-functional teams has prepared me to excel in this role.
+
+What particularly attracts me to {$companyName} is your reputation for fostering innovation and technological advancement. I am eager to contribute my skills and fresh perspective to help achieve your development goals and continue your tradition of excellence.
+
+I would be thrilled to discuss how my background and enthusiasm can contribute to {$companyName}'s continued success. Thank you for your time and consideration.
+
+Sincerely,
+{$candidateName}",
+
+            // Variation 3: Results-focused
+            "Dear Hiring Manager,
+
+I am writing to apply for the {$jobTitle} position at {$companyName}. As an experienced {$currentRole} with {$experienceYears} years in the field, I have consistently delivered impactful solutions and driven meaningful results for my employers.
+
+My technical expertise spans {$skills}, and I have successfully applied these skills to develop robust applications and improve system performance. My track record includes optimizing workflows, implementing best practices, and mentoring junior developers to achieve team objectives.
+
+{$companyName}'s commitment to innovation and excellence aligns perfectly with my professional values and career aspirations. I am confident that my proven ability to deliver results and adapt to new technologies would make me a valuable addition to your development team.
+
+I look forward to the opportunity to discuss how my experience and results-driven approach can contribute to {$companyName}'s success. Thank you for considering my application.
+
+Sincerely,
+{$candidateName}"
+        ];
+    }
+
+    private function generateFriendlyTone(User $user, array $jobData): string
+    {
+        $jobTitle = $jobData['job_title'] ?? 'the position';
+        $companyName = $jobData['employer_name'] ?? 'your company';
+        $candidateName = $user->name ?? 'Candidate';
+        $currentRole = $user->occupation ?? 'Software Developer';
+        $skills = $this->formatSkills($user->skills);
+        $experienceYears = $this->extractExperienceYears($user->bio ?? '');
+
+        return "Dear Hiring Team,
+
+I hope this message finds you well! I'm reaching out to express my enthusiasm for the {$jobTitle} position at {$companyName}. As a passionate {$currentRole} with {$experienceYears} years of experience, I'm genuinely excited about the possibility of joining your team.
+
+I've been fortunate to work with technologies like {$skills} throughout my career, and I truly enjoy the challenge of creating innovative solutions. My experience has taught me that great software comes from collaboration, creativity, and a genuine passion for problem-solving.
+
+What draws me to {$companyName} is your company's reputation for innovation and the positive impact you're making in the industry. I'd love the opportunity to bring my skills and enthusiasm to contribute to your team's success.
+
+I'd be delighted to chat more about how my experience and passion for technology can add value to {$companyName}. Thank you so much for your consideration!
+
+Best regards,
+{$candidateName}";
+    }
+
+    private function generateProfessionalTone(User $user, array $jobData): string
+    {
+        $jobTitle = $jobData['job_title'] ?? 'the position';
+        $companyName = $jobData['employer_name'] ?? 'your company';
+        $candidateName = $user->name ?? 'Candidate';
+        $currentRole = $user->occupation ?? 'Software Developer';
+        $skills = $this->formatSkills($user->skills);
+        $experienceYears = $this->extractExperienceYears($user->bio ?? '');
+
+        return "Dear Hiring Manager,
+
+I am writing to formally express my interest in the {$jobTitle} position at {$companyName}. With {$experienceYears} years of progressive experience as a {$currentRole}, I possess the technical acumen and professional dedication required to excel in this role.
+
+My comprehensive expertise encompasses {$skills}, with a demonstrated history of delivering enterprise-level solutions that align with organizational objectives. I have consistently maintained the highest standards of code quality, system architecture, and project delivery throughout my professional tenure.
+
+{$companyName}'s distinguished reputation for technological leadership and commitment to excellence represents an ideal environment for my continued professional growth. I am prepared to leverage my extensive experience to contribute meaningfully to your organization's strategic initiatives.
+
+I would welcome the opportunity to discuss how my qualifications align with your requirements. Thank you for your consideration of my candidacy.
+
+Respectfully,
+{$candidateName}";
+    }
+
+    private function generateShorterVersion(User $user, array $jobData): string
+    {
+        $jobTitle = $jobData['job_title'] ?? 'the position';
+        $companyName = $jobData['employer_name'] ?? 'your company';
+        $candidateName = $user->name ?? 'Candidate';
+        $skills = $this->formatSkills($user->skills);
+
+        return "Dear Hiring Manager,
+
+I am excited to apply for the {$jobTitle} position at {$companyName}. My expertise in {$skills} and passion for innovative technology solutions make me an ideal candidate for your team.
+
+I am drawn to {$companyName}'s reputation for excellence and would love to contribute my skills to your continued success.
+
+Thank you for your consideration. I look forward to discussing this opportunity further.
+
+Sincerely,
+{$candidateName}";
+    }
+
+    private function generateDetailedVersion(User $user, array $jobData): string
+    {
+        $jobTitle = $jobData['job_title'] ?? 'the position';
+        $companyName = $jobData['employer_name'] ?? 'your company';
+        $candidateName = $user->name ?? 'Candidate';
+        $currentRole = $user->occupation ?? 'Software Developer';
+        $skills = $this->formatSkills($user->skills);
+        $experienceYears = $this->extractExperienceYears($user->bio ?? '');
+        $experience = $this->formatExperience($user->experience);
+
+        return "Dear Hiring Manager,
+
+I am writing to express my sincere interest in the {$jobTitle} position at {$companyName}. As a dedicated {$currentRole} with {$experienceYears} years of comprehensive experience in software development, I am excited about the opportunity to bring my expertise and passion to your esteemed organization.
+
+Throughout my career, I have developed extensive proficiency in {$skills}, consistently applying these technologies to create robust, scalable solutions that drive business success. My professional journey includes {$experience}, where I have honed my ability to work effectively in diverse environments and tackle complex technical challenges.
+
+In my current role, I have successfully led multiple projects from conception to deployment, consistently delivering high-quality results within budget and timeline constraints. My experience includes architecting systems, optimizing database performance, implementing security best practices, and mentoring junior developers to help them reach their full potential.
+
+What particularly attracts me to {$companyName} is your organization's commitment to innovation, technical excellence, and positive impact in the industry. I am impressed by your recent achievements and would be thrilled to contribute to your continued growth and success. My approach combines technical expertise with strong problem-solving skills and a collaborative mindset that I believe would be valuable to your team.
+
+I am confident that my technical skills, professional experience, and enthusiasm for continuous learning make me a strong candidate for this position. I would welcome the opportunity to discuss in detail how my background and expertise can contribute to {$companyName}'s objectives and help drive your technical initiatives forward.
+
+Thank you for your time and consideration. I look forward to the possibility of joining your team and contributing to your continued success.
+
+Sincerely,
+{$candidateName}";
+    }
+
+    private function generateSkillsFocused(User $user, array $jobData): string
+    {
+        $jobTitle = $jobData['job_title'] ?? 'the position';
+        $companyName = $jobData['employer_name'] ?? 'your company';
+        $candidateName = $user->name ?? 'Candidate';
+        $skills = $this->formatSkills($user->skills);
+        $experienceYears = $this->extractExperienceYears($user->bio ?? '');
+
+        return "Dear Hiring Manager,
+
+I am excited to apply for the {$jobTitle} position at {$companyName}. My {$experienceYears} years of hands-on experience with {$skills} have equipped me with the technical expertise necessary to excel in this role.
+
+My technical proficiency spans full-stack development, with particular strength in {$skills}. I have successfully implemented these technologies to build scalable web applications, optimize system performance, and deliver innovative solutions that meet complex business requirements.
+
+Beyond technical skills, I bring a strong foundation in software engineering principles, including test-driven development, code review processes, and agile methodologies. My ability to quickly adapt to new technologies and frameworks has consistently enabled me to contribute effectively to diverse projects.
+
+I am particularly excited about the opportunity to apply my technical skills at {$companyName} and contribute to your innovative development initiatives. Thank you for considering my application.
+
+Sincerely,
+{$candidateName}";
+    }
+
+    private function generateExperienceFocused(User $user, array $jobData): string
+    {
+        $jobTitle = $jobData['job_title'] ?? 'the position';
+        $companyName = $jobData['employer_name'] ?? 'your company';
+        $candidateName = $user->name ?? 'Candidate';
+        $currentRole = $user->occupation ?? 'Software Developer';
+        $experience = $this->formatExperience($user->experience);
+        $experienceYears = $this->extractExperienceYears($user->bio ?? '');
+
+        return "Dear Hiring Manager,
+
+I am writing to express my interest in the {$jobTitle} position at {$companyName}. With {$experienceYears} years of progressive experience as a {$currentRole}, I have built a strong foundation in software development and project leadership.
+
+My professional journey has taken me through various roles including {$experience}, where I have gained valuable insights into different aspects of software development, from initial planning and architecture to deployment and maintenance. This diverse experience has taught me the importance of writing clean, maintainable code and collaborating effectively with cross-functional teams.
+
+Throughout my career, I have consistently taken on increasing responsibilities, leading projects, mentoring team members, and driving technical decisions that have resulted in successful product deliveries. My experience has taught me to balance technical excellence with business objectives, ensuring that solutions are both robust and practical.
+
+I am excited about the opportunity to bring this wealth of experience to {$companyName} and contribute to your team's success. Thank you for your consideration.
+
+Sincerely,
+{$candidateName}";
+    }
+
+    private function generateAlternativeVersion(User $user, array $jobData): string
+    {
+        $jobTitle = $jobData['job_title'] ?? 'the position';
+        $companyName = $jobData['employer_name'] ?? 'your company';
+        $candidateName = $user->name ?? 'Candidate';
+        $currentRole = $user->occupation ?? 'Software Developer';
+        $skills = $this->formatSkills($user->skills);
+        $experienceYears = $this->extractExperienceYears($user->bio ?? '');
+
+        return "Dear Hiring Manager,
+
+I was thrilled to discover the {$jobTitle} opening at {$companyName}. As a {$currentRole} with {$experienceYears} years of experience, I am confident that my technical background and passion for creating exceptional software solutions align perfectly with your team's needs.
+
+My expertise in {$skills} has been instrumental in developing applications that not only meet functional requirements but also provide excellent user experiences. I thrive in collaborative environments where I can contribute to both technical discussions and creative problem-solving.
+
+{$companyName}'s innovative approach to technology and commitment to quality resonates with my professional values. I am eager to bring my technical skills and fresh perspective to contribute to your continued success and growth.
+
+I would be honored to discuss how my background and enthusiasm can add value to your team. Thank you for your time and consideration.
+
+Sincerely,
+{$candidateName}";
     }
 
     private function extractExperienceYears(string $bio): string
