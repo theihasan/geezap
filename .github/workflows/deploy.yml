@@ -24,6 +24,11 @@ jobs:
           echo "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
 
+      - name: Debug SERVER_IP variable
+        run: |
+          echo "SERVER_IP value: '${{ vars.SERVER_IP }}'"
+          echo "Length: $(echo '${{ vars.SERVER_IP }}' | wc -c)"
+
       - name: Deploy to Server using SSH
         id: deploy
         run: |
