@@ -64,9 +64,9 @@ return Application::configure(basePath: dirname(__DIR__))
             ->everyFiveMinutes()
             ->withoutOverlapping(300);
 
-        $schedule->job(new CollectMetricsJob('system'))
-            ->everyTenMinutes()
-            ->withoutOverlapping(600);
+        // $schedule->job(new CollectMetricsJob('system'))
+        //     ->everyTenMinutes()
+        //     ->withoutOverlapping(600);
 
         $schedule->command('model:prune')->everyMinute();
 
