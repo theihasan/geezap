@@ -54,7 +54,7 @@ class AppServiceProvider extends ServiceProvider
         $this->configureMetaTags();
         //$this->configureRateLimiter();
         $this->configureLogViewer();
-        $this->registerMetricsEventListeners();
+        //$this->registerMetricsEventListeners();
         Livewire::component('job-filter', \App\Livewire\JobFilter::class);
 
     }

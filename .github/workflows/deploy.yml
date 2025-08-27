@@ -24,15 +24,16 @@ jobs:
           echo "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
 
-      - name: Debug SERVER_IP variable
-        run: |
-          echo "SERVER_IP value: '${{ vars.SERVER_IP }}'"
-          echo "Length: $(echo '${{ vars.SERVER_IP }}' | wc -c)"
-
-      - name: Deploy to Server using SSH
+      - name: Debug and Deploy to Server using SSH
         id: deploy
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ vars.SERVER_IP }} "
+          echo "=== Debug Info ==="
+          echo "SERVER_IP variable: '${{ vars.SERVER_IP }}'"
+          echo "SERVER_IP length: $(echo -n '${{ vars.SERVER_IP }}' | wc -c)"
+          echo "SERVER_IP hex dump:"
+          echo -n '${{ vars.SERVER_IP }}' | hexdump -C
+          echo "=== Attempting SSH connection ==="
+          ssh -o StrictHostKeyChecking=no '${{ vars.SERVER_IP }}' "
             cd /var/www/html/geezap && \
             git fetch origin main && \
             git reset --hard origin/main && \
