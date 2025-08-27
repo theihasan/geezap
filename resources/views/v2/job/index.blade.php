@@ -37,12 +37,16 @@
                     updateJobCountDisplay(lastCount);
                 }
                 
-                const livewireComponent = Livewire.find(
-                    document.querySelector('[wire\\:id]')?.getAttribute('wire:id')
-                );
-                
-                if (livewireComponent) {
-                    livewireComponent.call('render');
+                // Refresh the Livewire component instead of calling render() directly
+                const livewireElement = document.querySelector('[wire\\:id]');
+                if (livewireElement) {
+                    const componentId = livewireElement.getAttribute('wire:id');
+                    const livewireComponent = Livewire.find(componentId);
+                    
+                    if (livewireComponent) {
+                        // Use $refresh to properly refresh the component
+                        livewireComponent.$refresh();
+                    }
                 }
             }
         });
