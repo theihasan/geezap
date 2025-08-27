@@ -27,7 +27,7 @@ jobs:
       - name: Deploy to Server using SSH
         id: deploy
         run: |
-          ssh -o StrictHostKeyChecking=no root@143.198.86.56 "
+          ssh -o StrictHostKeyChecking=no ${{ vars.SERVER_IP }} "
             cd /var/www/html/geezap && \
             git fetch origin main && \
             git reset --hard origin/main && \
