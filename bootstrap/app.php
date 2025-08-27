@@ -60,9 +60,9 @@ return Application::configure(basePath: dirname(__DIR__))
             ->days([Schedule::SATURDAY, Schedule::THURSDAY])
             ->withoutOverlapping(600);
 
-        $schedule->job(new CollectMetricsJob('business'))
-            ->everyFiveMinutes()
-            ->withoutOverlapping(300);
+        // $schedule->job(new CollectMetricsJob('business'))
+        //     ->everyFiveMinutes()
+        //     ->withoutOverlapping(300);
 
         // $schedule->job(new CollectMetricsJob('system'))
         //     ->everyTenMinutes()
