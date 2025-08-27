@@ -1,9 +1,9 @@
-name: Geezap Production Deployment
+name: Deploy Laravel App
 
 on:
   push:
     branches:
-      - main
+      - main 
 
 jobs:
   deploy:
@@ -19,12 +19,15 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Add Known Hosts
-        run: echo "${{ secrets.SSH_KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
 
-      - name: Deploy to DigitalOcean
+      - name: Deploy to Server using SSH
         id: deploy
         run: |
-          ssh root@143.198.86.56 "
+          ssh -o StrictHostKeyChecking=no root@143.198.86.56 "
             cd /var/www/html/geezap && \
             git fetch origin main && \
             git reset --hard origin/main && \
