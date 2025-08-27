@@ -25,6 +25,7 @@ class JobListing extends Model
     use HasFactory, Filterable, MassPrunable, Searchable;
 
     protected $fillable = [
+        'job_id',
         'employer_name',
         'employer_logo',
         'employer_website',
