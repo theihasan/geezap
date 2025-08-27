@@ -34,21 +34,14 @@ class StoreJobs implements ShouldQueue
 
                 $jobDTO = JobDTO::fromArray($jobData);
 
-        
-                $query = JobListing::query();
-                
-                if ($jobDTO->jobId) {
-                    $query->where('job_id', $jobDTO->jobId);
-                } else {
-                    $query->where('job_title', $jobDTO->jobTitle);
-                }
-                
-                $existingJob = $query->first();
+                $existingJob = $this->findExistingJob($jobDTO);
                 
                 if (!$existingJob) {
                     $jobListing = JobListing::query()->create($jobDTO->toArray());
                 } else {
                     $jobListing = $existingJob;
+                    // Update existing job with latest data
+                    $jobListing->update($jobDTO->toArray());
                 }
                 
                 if ($jobDTO->applyOptions && is_array($jobDTO->applyOptions)) {
@@ -68,5 +61,42 @@ class StoreJobs implements ShouldQueue
             logger()->debug('Exception sent from store job class', ['error' => $errorMessage]);
             $this->release(60);
         }
+    }
+
+    /**
+     * Find existing job using multiple criteria to prevent duplicates
+     */
+    private function findExistingJob(JobDTO $jobDTO): ?JobListing
+    {
+        $query = JobListing::query();
+
+        if ($jobDTO->jobId) {
+            $existingJob = $query->where('job_id', $jobDTO->jobId)->first();
+            if ($existingJob) {
+                return $existingJob;
+            }
+        }
+
+        $query = JobListing::query()
+            ->where('job_title', $jobDTO->jobTitle)
+            ->where('employer_name', $jobDTO->employerName);
+
+        if ($jobDTO->city) {
+            $query->where('city', $jobDTO->city);
+        }
+        
+        if ($jobDTO->state) {
+            $query->where('state', $jobDTO->state);
+        }
+        
+        if ($jobDTO->country) {
+            $query->where('country', $jobDTO->country);
+        }
+        
+        if ($jobDTO->publisher) {
+            $query->where('publisher', $jobDTO->publisher);
+        }
+
+        return $query->first();
     }
 }
