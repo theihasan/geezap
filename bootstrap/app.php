@@ -11,6 +11,7 @@ use App\Jobs\SymfonyJob;
 use App\Jobs\WordPressJob;
 use App\Jobs\ResetAPIKeyLimit;
 use App\Jobs\CollectMetricsJob;
+use Illuminate\Support\Facades\Artisan;
 use Sentry\Laravel\Integration;
 use App\Jobs\DispatchJobCategories;
 use App\Jobs\NotifyUserAboutNewJobs;
@@ -59,6 +60,12 @@ return Application::configure(basePath: dirname(__DIR__))
             ->daily()
             ->days([Schedule::SATURDAY, Schedule::THURSDAY])
             ->withoutOverlapping(600);
+            
+        $schedule->command('backup:run --only-db')
+            ->everySixHours()
+            ->then(function () {
+                Artisan::call('backup:clean');
+            });
 
         // $schedule->job(new CollectMetricsJob('business'))
         //     ->everyFiveMinutes()
