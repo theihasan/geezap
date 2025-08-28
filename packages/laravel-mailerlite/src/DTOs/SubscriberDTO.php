@@ -18,15 +18,15 @@ class SubscriberDTO
     /**
      * Create a new subscriber DTO.
      *
-     * @param string $email Subscriber's email address (required)
-     * @param string|null $name Subscriber's name (optional)
-     * @param array $fields Custom field values (optional)
-     * @param array $groups Group IDs to assign subscriber to (optional)
-     * @param string $status Subscriber status: active, unsubscribed, unconfirmed, bounced, junk (default: active)
-     * @param bool $resubscribe Whether to resubscribe if already exists (default: false)
-     * @param string|null $type Subscriber type: regular, unsubscribed, imported (optional)
-     * @param array $segments Segment IDs to assign subscriber to (optional)
-     * @param bool $autoresponders Whether to send autoresponders (default: true)
+     * @param  string  $email  Subscriber's email address (required)
+     * @param  string|null  $name  Subscriber's name (optional)
+     * @param  array  $fields  Custom field values (optional)
+     * @param  array  $groups  Group IDs to assign subscriber to (optional)
+     * @param  string  $status  Subscriber status: active, unsubscribed, unconfirmed, bounced, junk (default: active)
+     * @param  bool  $resubscribe  Whether to resubscribe if already exists (default: false)
+     * @param  string|null  $type  Subscriber type: regular, unsubscribed, imported (optional)
+     * @param  array  $segments  Segment IDs to assign subscriber to (optional)
+     * @param  bool  $autoresponders  Whether to send autoresponders (default: true)
      *
      * @throws InvalidArgumentException
      */
@@ -46,7 +46,7 @@ class SubscriberDTO
         $this->validateFields($fields);
         $this->validateGroups($groups);
         $this->validateSegments($segments);
-        
+
         if ($type !== null) {
             $this->validateType($type);
         }
@@ -55,8 +55,6 @@ class SubscriberDTO
     /**
      * Create a subscriber DTO from an array.
      *
-     * @param array $data
-     * @return static
      * @throws InvalidArgumentException
      */
     public static function fromArray(array $data): static
@@ -77,9 +75,6 @@ class SubscriberDTO
     /**
      * Create a basic subscriber with email and name.
      *
-     * @param string $email
-     * @param string|null $name
-     * @return static
      * @throws InvalidArgumentException
      */
     public static function create(string $email, ?string $name = null): static
@@ -90,10 +85,6 @@ class SubscriberDTO
     /**
      * Create a subscriber and assign to groups.
      *
-     * @param string $email
-     * @param string|null $name
-     * @param array $groups
-     * @return static
      * @throws InvalidArgumentException
      */
     public static function createWithGroups(string $email, ?string $name, array $groups): static
@@ -104,10 +95,6 @@ class SubscriberDTO
     /**
      * Create a subscriber with custom fields.
      *
-     * @param string $email
-     * @param string|null $name
-     * @param array $fields
-     * @return static
      * @throws InvalidArgumentException
      */
     public static function createWithFields(string $email, ?string $name, array $fields): static
@@ -117,8 +104,6 @@ class SubscriberDTO
 
     /**
      * Convert the DTO to an array for API submission.
-     *
-     * @return array
      */
     public function toArray(): array
     {
@@ -128,11 +113,11 @@ class SubscriberDTO
             $data['name'] = $this->name;
         }
 
-        if (!empty($this->fields)) {
+        if (! empty($this->fields)) {
             $data['fields'] = $this->fields;
         }
 
-        if (!empty($this->groups)) {
+        if (! empty($this->groups)) {
             $data['groups'] = $this->groups;
         }
 
@@ -148,11 +133,11 @@ class SubscriberDTO
             $data['type'] = $this->type;
         }
 
-        if (!empty($this->segments)) {
+        if (! empty($this->segments)) {
             $data['segments'] = $this->segments;
         }
 
-        if (!$this->autoresponders) {
+        if (! $this->autoresponders) {
             $data['autoresponders'] = $this->autoresponders;
         }
 
@@ -162,8 +147,6 @@ class SubscriberDTO
     /**
      * Get a copy of the DTO with updated fields.
      *
-     * @param array $updates
-     * @return static
      * @throws InvalidArgumentException
      */
     public function with(array $updates): static
@@ -173,9 +156,6 @@ class SubscriberDTO
 
     /**
      * Get a copy with a different name.
-     *
-     * @param string|null $name
-     * @return static
      */
     public function withName(?string $name): static
     {
@@ -194,9 +174,6 @@ class SubscriberDTO
 
     /**
      * Get a copy with additional groups.
-     *
-     * @param array $groups
-     * @return static
      */
     public function withGroups(array $groups): static
     {
@@ -215,9 +192,6 @@ class SubscriberDTO
 
     /**
      * Get a copy with additional fields.
-     *
-     * @param array $fields
-     * @return static
      */
     public function withFields(array $fields): static
     {
@@ -237,7 +211,6 @@ class SubscriberDTO
     /**
      * Validate email address.
      *
-     * @param string $email
      * @throws InvalidArgumentException
      */
     private function validateEmail(string $email): void
@@ -246,14 +219,14 @@ class SubscriberDTO
             throw new InvalidArgumentException('Email cannot be empty.');
         }
 
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
             throw new InvalidArgumentException("Invalid email address: {$email}");
         }
 
         // Check for common disposable email domains (basic list)
         $disposableDomains = ['10minutemail.com', 'tempmail.org', 'guerrillamail.com', 'mailinator.com'];
-        $domain = strtolower(substr(strrchr($email, "@"), 1));
-        
+        $domain = strtolower(substr(strrchr($email, '@'), 1));
+
         if (in_array($domain, $disposableDomains, true)) {
             throw new InvalidArgumentException("Disposable email addresses are not allowed: {$email}");
         }
@@ -262,16 +235,15 @@ class SubscriberDTO
     /**
      * Validate subscriber status.
      *
-     * @param string $status
      * @throws InvalidArgumentException
      */
     private function validateStatus(string $status): void
     {
         $validStatuses = ['active', 'unsubscribed', 'unconfirmed', 'bounced', 'junk'];
-        
-        if (!in_array($status, $validStatuses, true)) {
+
+        if (! in_array($status, $validStatuses, true)) {
             throw new InvalidArgumentException(
-                "Invalid status '{$status}'. Valid statuses: " . implode(', ', $validStatuses)
+                "Invalid status '{$status}'. Valid statuses: ".implode(', ', $validStatuses)
             );
         }
     }
@@ -279,16 +251,15 @@ class SubscriberDTO
     /**
      * Validate subscriber type.
      *
-     * @param string $type
      * @throws InvalidArgumentException
      */
     private function validateType(string $type): void
     {
         $validTypes = ['regular', 'unsubscribed', 'imported'];
-        
-        if (!in_array($type, $validTypes, true)) {
+
+        if (! in_array($type, $validTypes, true)) {
             throw new InvalidArgumentException(
-                "Invalid type '{$type}'. Valid types: " . implode(', ', $validTypes)
+                "Invalid type '{$type}'. Valid types: ".implode(', ', $validTypes)
             );
         }
     }
@@ -296,18 +267,17 @@ class SubscriberDTO
     /**
      * Validate custom fields.
      *
-     * @param array $fields
      * @throws InvalidArgumentException
      */
     private function validateFields(array $fields): void
     {
         foreach ($fields as $key => $value) {
-            if (!is_string($key) || empty(trim($key))) {
+            if (! is_string($key) || empty(trim($key))) {
                 throw new InvalidArgumentException('Field keys must be non-empty strings.');
             }
 
             // Value can be string, number, boolean, or null
-            if (!is_scalar($value) && $value !== null) {
+            if (! is_scalar($value) && $value !== null) {
                 throw new InvalidArgumentException(
                     "Field '{$key}' has invalid value type. Must be scalar or null."
                 );
@@ -318,13 +288,12 @@ class SubscriberDTO
     /**
      * Validate groups array.
      *
-     * @param array $groups
      * @throws InvalidArgumentException
      */
     private function validateGroups(array $groups): void
     {
         foreach ($groups as $group) {
-            if (!is_string($group) && !is_int($group)) {
+            if (! is_string($group) && ! is_int($group)) {
                 throw new InvalidArgumentException('Group IDs must be strings or integers.');
             }
 
@@ -337,13 +306,12 @@ class SubscriberDTO
     /**
      * Validate segments array.
      *
-     * @param array $segments
      * @throws InvalidArgumentException
      */
     private function validateSegments(array $segments): void
     {
         foreach ($segments as $segment) {
-            if (!is_string($segment) && !is_int($segment)) {
+            if (! is_string($segment) && ! is_int($segment)) {
                 throw new InvalidArgumentException('Segment IDs must be strings or integers.');
             }
 

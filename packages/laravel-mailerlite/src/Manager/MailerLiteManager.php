@@ -23,8 +23,8 @@ class MailerLiteManager
     /**
      * Create a new MailerLite manager instance.
      *
-     * @param string|null $apiKey The API key for authentication
-     * @param array $options Additional configuration options
+     * @param  string|null  $apiKey  The API key for authentication
+     * @param  array  $options  Additional configuration options
      *
      * @throws MailerLiteAuthenticationException
      */
@@ -40,7 +40,6 @@ class MailerLiteManager
     /**
      * Get or create the MailerLite SDK client instance.
      *
-     * @return MailerLite
      * @throws MailerLiteAuthenticationException
      */
     public function getClient(): MailerLite
@@ -55,7 +54,6 @@ class MailerLiteManager
     /**
      * Create a new MailerLite SDK client instance.
      *
-     * @return MailerLite
      * @throws MailerLiteAuthenticationException
      */
     protected function createClient(): MailerLite
@@ -63,7 +61,7 @@ class MailerLiteManager
         try {
             $client = new MailerLite([
                 'api_key' => $this->apiKey,
-                ...$this->options
+                ...$this->options,
             ]);
 
             // Test the connection by making a simple API call
@@ -76,7 +74,7 @@ class MailerLiteManager
             }
 
             // If it's an authentication-related error from the SDK
-            if (str_contains($e->getMessage(), '401') || 
+            if (str_contains($e->getMessage(), '401') ||
                 str_contains($e->getMessage(), 'Unauthorized') ||
                 str_contains($e->getMessage(), 'Invalid API key')) {
                 throw MailerLiteAuthenticationException::invalidApiKey();
@@ -90,7 +88,6 @@ class MailerLiteManager
     /**
      * Validate the connection by making a test API call.
      *
-     * @param MailerLite $client
      * @throws MailerLiteAuthenticationException
      */
     protected function validateConnection(MailerLite $client): void
@@ -100,7 +97,7 @@ class MailerLiteManager
             // We'll use the timezones endpoint as it's lightweight
             $client->timezones->get();
         } catch (\Exception $e) {
-            if (str_contains($e->getMessage(), '401') || 
+            if (str_contains($e->getMessage(), '401') ||
                 str_contains($e->getMessage(), 'Unauthorized') ||
                 str_contains($e->getMessage(), 'Invalid API key')) {
                 throw MailerLiteAuthenticationException::invalidApiKey();
@@ -113,8 +110,6 @@ class MailerLiteManager
 
     /**
      * Get the configured API key.
-     *
-     * @return string|null
      */
     public function getApiKey(): ?string
     {
@@ -123,8 +118,6 @@ class MailerLiteManager
 
     /**
      * Get the configuration options.
-     *
-     * @return array
      */
     public function getOptions(): array
     {
@@ -134,20 +127,18 @@ class MailerLiteManager
     /**
      * Create a manager instance from configuration.
      *
-     * @param array $config
-     * @return static
      * @throws MailerLiteAuthenticationException
      */
     public static function fromConfig(array $config): static
     {
         $apiKey = $config['key'] ?? null;
-        
+
         if (empty($apiKey)) {
             throw MailerLiteAuthenticationException::missingApiKey();
         }
 
         $options = [];
-        
+
         // Add timeout if configured
         if (isset($config['timeout'])) {
             $options['timeout'] = $config['timeout'];

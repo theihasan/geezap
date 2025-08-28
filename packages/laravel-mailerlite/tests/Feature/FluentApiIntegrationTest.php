@@ -20,7 +20,7 @@ describe('Fluent API Integration', function () {
             ->toGroup('test-group');
 
         expect($builder)->toBeInstanceOf(SubscriberBuilder::class);
-        
+
         $dto = $builder->toDTO();
         expect($dto->email)->toBe('integration@example.com');
         expect($dto->name)->toBe('Integration Test User');
@@ -80,7 +80,7 @@ describe('Fluent API Integration', function () {
     it('demonstrates complete fluent workflow', function () {
         // This test demonstrates the complete fluent API workflow
         // Note: This doesn't actually call MailerLite API, just demonstrates the fluent interface
-        
+
         $builder = MailerLite::subscribers()
             ->email('workflow@example.com')
             ->named('Workflow User')
@@ -93,12 +93,12 @@ describe('Fluent API Integration', function () {
 
         // Verify all the fluent operations worked
         $dto = $builder->toDTO();
-        
+
         expect($dto->email)->toBe('workflow@example.com');
         expect($dto->name)->toBe('Workflow User');
         expect($dto->fields)->toBe([
             'role' => 'admin',
-            'department' => 'engineering'
+            'department' => 'engineering',
         ]);
         expect($dto->groups)->toBe(['admins', 'engineers', 'newsletter']);
         expect($dto->type)->toBe('imported');
@@ -113,7 +113,7 @@ describe('Fluent API Integration', function () {
             ->withField('test', 'value');
 
         // Should throw exception when trying to create DTO without email
-        expect(fn() => $builder->toDTO())
+        expect(fn () => $builder->toDTO())
             ->toThrow(InvalidArgumentException::class, 'Email is required');
     });
 });

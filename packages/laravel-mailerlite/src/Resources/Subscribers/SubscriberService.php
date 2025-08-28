@@ -24,8 +24,6 @@ class SubscriberService implements SubscribersInterface
 {
     /**
      * Create a new subscriber service instance.
-     *
-     * @param MailerLiteManager $manager
      */
     public function __construct(
         protected MailerLiteManager $manager
@@ -34,8 +32,6 @@ class SubscriberService implements SubscribersInterface
     /**
      * Create a new subscriber.
      *
-     * @param SubscriberDTO $subscriber
-     * @return array
      * @throws SubscriberCreateException
      * @throws MailerLiteAuthenticationException
      */
@@ -54,8 +50,6 @@ class SubscriberService implements SubscribersInterface
     /**
      * Get a subscriber by email address.
      *
-     * @param string $email
-     * @return array|null
      * @throws MailerLiteAuthenticationException
      */
     public function getByEmail(string $email): ?array
@@ -78,8 +72,6 @@ class SubscriberService implements SubscribersInterface
     /**
      * Get a subscriber by ID.
      *
-     * @param string $id
-     * @return array|null
      * @throws MailerLiteAuthenticationException
      */
     public function getById(string $id): ?array
@@ -102,9 +94,6 @@ class SubscriberService implements SubscribersInterface
     /**
      * Update an existing subscriber.
      *
-     * @param string $id
-     * @param SubscriberDTO $subscriber
-     * @return array
      * @throws SubscriberNotFoundException
      * @throws SubscriberUpdateException
      * @throws MailerLiteAuthenticationException
@@ -128,8 +117,6 @@ class SubscriberService implements SubscribersInterface
     /**
      * Delete a subscriber.
      *
-     * @param string $id
-     * @return bool
      * @throws SubscriberNotFoundException
      * @throws SubscriberDeleteException
      * @throws MailerLiteAuthenticationException
@@ -153,8 +140,6 @@ class SubscriberService implements SubscribersInterface
     /**
      * Get all subscribers with optional filtering.
      *
-     * @param array $filters
-     * @return array
      * @throws MailerLiteAuthenticationException
      */
     public function list(array $filters = []): array
@@ -166,7 +151,7 @@ class SubscriberService implements SubscribersInterface
             return [
                 'data' => array_map([$this, 'transformSubscriberResponse'], $response['data'] ?? []),
                 'meta' => $response['meta'] ?? [],
-                'links' => $response['links'] ?? []
+                'links' => $response['links'] ?? [],
             ];
         } catch (\Exception $e) {
             $this->handleException($e);
@@ -176,9 +161,6 @@ class SubscriberService implements SubscribersInterface
     /**
      * Add a subscriber to a group.
      *
-     * @param string $subscriberId
-     * @param string $groupId
-     * @return array
      * @throws SubscriberNotFoundException
      * @throws MailerLiteAuthenticationException
      */
@@ -201,9 +183,6 @@ class SubscriberService implements SubscribersInterface
     /**
      * Remove a subscriber from a group.
      *
-     * @param string $subscriberId
-     * @param string $groupId
-     * @return bool
      * @throws SubscriberNotFoundException
      * @throws MailerLiteAuthenticationException
      */
@@ -226,8 +205,6 @@ class SubscriberService implements SubscribersInterface
     /**
      * Unsubscribe a subscriber.
      *
-     * @param string $id
-     * @return array
      * @throws SubscriberNotFoundException
      * @throws SubscriberUpdateException
      * @throws MailerLiteAuthenticationException
@@ -251,8 +228,6 @@ class SubscriberService implements SubscribersInterface
     /**
      * Resubscribe a subscriber.
      *
-     * @param string $id
-     * @return array
      * @throws SubscriberNotFoundException
      * @throws SubscriberUpdateException
      * @throws MailerLiteAuthenticationException
@@ -275,9 +250,6 @@ class SubscriberService implements SubscribersInterface
 
     /**
      * Transform subscriber response data.
-     *
-     * @param array $response
-     * @return array
      */
     protected function transformSubscriberResponse(array $response): array
     {
@@ -300,15 +272,12 @@ class SubscriberService implements SubscribersInterface
 
     /**
      * Check if an exception represents a "not found" error.
-     *
-     * @param \Exception $e
-     * @return bool
      */
     protected function isNotFoundError(\Exception $e): bool
     {
         $message = strtolower($e->getMessage());
-        
-        return str_contains($message, '404') || 
+
+        return str_contains($message, '404') ||
                str_contains($message, 'not found') ||
                str_contains($message, 'does not exist');
     }
@@ -316,11 +285,8 @@ class SubscriberService implements SubscribersInterface
     /**
      * Handle subscriber creation exceptions.
      *
-     * @param string $email
-     * @param \Exception $e
      * @throws SubscriberCreateException
      * @throws MailerLiteAuthenticationException
-     * @return never
      */
     protected function handleCreateException(string $email, \Exception $e): never
     {
@@ -344,11 +310,8 @@ class SubscriberService implements SubscribersInterface
     /**
      * Handle subscriber update exceptions.
      *
-     * @param string $identifier
-     * @param \Exception $e
      * @throws SubscriberUpdateException
      * @throws MailerLiteAuthenticationException
-     * @return never
      */
     protected function handleUpdateException(string $identifier, \Exception $e): never
     {
@@ -368,11 +331,8 @@ class SubscriberService implements SubscribersInterface
     /**
      * Handle subscriber deletion exceptions.
      *
-     * @param string $identifier
-     * @param \Exception $e
      * @throws SubscriberDeleteException
      * @throws MailerLiteAuthenticationException
-     * @return never
      */
     protected function handleDeleteException(string $identifier, \Exception $e): never
     {
@@ -388,9 +348,7 @@ class SubscriberService implements SubscribersInterface
     /**
      * Handle general exceptions.
      *
-     * @param \Exception $e
      * @throws MailerLiteAuthenticationException
-     * @return never
      */
     protected function handleException(\Exception $e): never
     {

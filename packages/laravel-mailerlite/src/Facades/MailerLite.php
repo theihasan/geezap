@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Ihasan\LaravelMailerlite\Facades;
 
-use Illuminate\Support\Facades\Facade;
-use Ihasan\LaravelMailerlite\Resources\Subscribers\SubscriberBuilder;
 use Ihasan\LaravelMailerlite\Resources\Campaigns\CampaignBuilder;
 use Ihasan\LaravelMailerlite\Resources\Groups\GroupBuilder;
+use Ihasan\LaravelMailerlite\Resources\Subscribers\SubscriberBuilder;
+use Illuminate\Support\Facades\Facade;
 
 /**
  * MailerLite Facade

@@ -11,10 +11,6 @@ class SubscriberNotFoundException extends MailerLiteException
 {
     /**
      * Create a new subscriber not found exception.
-     *
-     * @param string $identifier
-     * @param string $type
-     * @return static
      */
     public static function make(string $identifier, string $type = 'email'): static
     {
@@ -28,9 +24,6 @@ class SubscriberNotFoundException extends MailerLiteException
 
     /**
      * Create exception for subscriber not found by email.
-     *
-     * @param string $email
-     * @return static
      */
     public static function withEmail(string $email): static
     {
@@ -39,9 +32,6 @@ class SubscriberNotFoundException extends MailerLiteException
 
     /**
      * Create exception for subscriber not found by ID.
-     *
-     * @param string $id
-     * @return static
      */
     public static function withId(string $id): static
     {

@@ -15,7 +15,7 @@ describe('SubscriberDTO', function () {
     describe('Basic Creation', function () {
         it('creates with valid email', function () {
             $dto = new SubscriberDTO('john@example.com');
-            
+
             expect($dto->email)->toBe('john@example.com');
             expect($dto->name)->toBeNull();
             expect($dto->fields)->toBe([]);
@@ -27,7 +27,7 @@ describe('SubscriberDTO', function () {
 
         it('creates with email and name', function () {
             $dto = new SubscriberDTO('jane@example.com', 'Jane Doe');
-            
+
             expect($dto->email)->toBe('jane@example.com');
             expect($dto->name)->toBe('Jane Doe');
         });
@@ -64,7 +64,7 @@ describe('SubscriberDTO', function () {
                 'name' => 'User Name',
                 'fields' => ['role' => 'admin'],
                 'groups' => ['group1'],
-                'status' => 'active'
+                'status' => 'active',
             ];
 
             $dto = SubscriberDTO::fromArray($data);
@@ -109,22 +109,22 @@ describe('SubscriberDTO', function () {
 
     describe('Email Validation', function () {
         it('throws exception for empty email', function () {
-            expect(fn() => new SubscriberDTO(''))
+            expect(fn () => new SubscriberDTO(''))
                 ->toThrow(InvalidArgumentException::class, 'Email cannot be empty');
         });
 
         it('throws exception for whitespace-only email', function () {
-            expect(fn() => new SubscriberDTO('   '))
+            expect(fn () => new SubscriberDTO('   '))
                 ->toThrow(InvalidArgumentException::class, 'Email cannot be empty');
         });
 
         it('throws exception for invalid email format', function () {
-            expect(fn() => new SubscriberDTO('invalid-email'))
+            expect(fn () => new SubscriberDTO('invalid-email'))
                 ->toThrow(InvalidArgumentException::class, 'Invalid email address');
         });
 
         it('throws exception for disposable email', function () {
-            expect(fn() => new SubscriberDTO('test@10minutemail.com'))
+            expect(fn () => new SubscriberDTO('test@10minutemail.com'))
                 ->toThrow(InvalidArgumentException::class, 'Disposable email addresses are not allowed');
         });
 
@@ -134,7 +134,7 @@ describe('SubscriberDTO', function () {
                 'user.name@example.com',
                 'user+tag@example.com',
                 'user123@example-domain.com',
-                'test@subdomain.example.org'
+                'test@subdomain.example.org',
             ];
 
             foreach ($validEmails as $email) {
@@ -155,7 +155,7 @@ describe('SubscriberDTO', function () {
         });
 
         it('throws exception for invalid status', function () {
-            expect(fn() => new SubscriberDTO('test@example.com', status: 'invalid'))
+            expect(fn () => new SubscriberDTO('test@example.com', status: 'invalid'))
                 ->toThrow(InvalidArgumentException::class, 'Invalid status');
         });
     });
@@ -171,7 +171,7 @@ describe('SubscriberDTO', function () {
         });
 
         it('throws exception for invalid type', function () {
-            expect(fn() => new SubscriberDTO('test@example.com', type: 'invalid'))
+            expect(fn () => new SubscriberDTO('test@example.com', type: 'invalid'))
                 ->toThrow(InvalidArgumentException::class, 'Invalid type');
         });
 
@@ -188,7 +188,7 @@ describe('SubscriberDTO', function () {
                 'int_field' => 42,
                 'float_field' => 3.14,
                 'bool_field' => true,
-                'null_field' => null
+                'null_field' => null,
             ];
 
             $dto = new SubscriberDTO('test@example.com', fields: $fields);
@@ -196,17 +196,17 @@ describe('SubscriberDTO', function () {
         });
 
         it('throws exception for non-string keys', function () {
-            expect(fn() => new SubscriberDTO('test@example.com', fields: [123 => 'value']))
+            expect(fn () => new SubscriberDTO('test@example.com', fields: [123 => 'value']))
                 ->toThrow(InvalidArgumentException::class, 'Field keys must be non-empty strings');
         });
 
         it('throws exception for empty string keys', function () {
-            expect(fn() => new SubscriberDTO('test@example.com', fields: ['' => 'value']))
+            expect(fn () => new SubscriberDTO('test@example.com', fields: ['' => 'value']))
                 ->toThrow(InvalidArgumentException::class, 'Field keys must be non-empty strings');
         });
 
         it('throws exception for invalid field values', function () {
-            expect(fn() => new SubscriberDTO('test@example.com', fields: ['key' => ['array']]))
+            expect(fn () => new SubscriberDTO('test@example.com', fields: ['key' => ['array']]))
                 ->toThrow(InvalidArgumentException::class, 'Field \'key\' has invalid value type');
         });
     });
@@ -218,12 +218,12 @@ describe('SubscriberDTO', function () {
         });
 
         it('throws exception for invalid group ID types', function () {
-            expect(fn() => new SubscriberDTO('test@example.com', groups: [123.45]))
+            expect(fn () => new SubscriberDTO('test@example.com', groups: [123.45]))
                 ->toThrow(InvalidArgumentException::class, 'Group IDs must be strings or integers');
         });
 
         it('throws exception for empty string group IDs', function () {
-            expect(fn() => new SubscriberDTO('test@example.com', groups: ['']))
+            expect(fn () => new SubscriberDTO('test@example.com', groups: ['']))
                 ->toThrow(InvalidArgumentException::class, 'Group IDs cannot be empty strings');
         });
     });
@@ -258,7 +258,7 @@ describe('SubscriberDTO', function () {
                 'resubscribe' => true,
                 'type' => 'imported',
                 'segments' => ['segment1'],
-                'autoresponders' => false
+                'autoresponders' => false,
             ];
 
             expect($dto->toArray())->toBe($expected);
@@ -275,7 +275,7 @@ describe('SubscriberDTO', function () {
 
             $expected = [
                 'email' => 'default@example.com',
-                'name' => 'User'
+                'name' => 'User',
             ];
 
             expect($dto->toArray())->toBe($expected);
@@ -322,14 +322,14 @@ describe('SubscriberDTO', function () {
 
     describe('Error Cases', function () {
         it('throws exception when creating from array without email', function () {
-            expect(fn() => SubscriberDTO::fromArray(['name' => 'No Email']))
+            expect(fn () => SubscriberDTO::fromArray(['name' => 'No Email']))
                 ->toThrow(InvalidArgumentException::class, 'Email is required');
         });
 
         it('validates all constraints when using with method', function () {
             $dto = new SubscriberDTO('test@example.com');
-            
-            expect(fn() => $dto->with(['status' => 'invalid_status']))
+
+            expect(fn () => $dto->with(['status' => 'invalid_status']))
                 ->toThrow(InvalidArgumentException::class, 'Invalid status');
         });
     });

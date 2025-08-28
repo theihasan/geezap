@@ -22,10 +22,10 @@ class MailerLiteException extends Exception
     /**
      * Create a new MailerLite exception instance.
      *
-     * @param string $message The exception message
-     * @param int $code The exception code
-     * @param Exception|null $previous The previous exception for chaining
-     * @param array $context Additional context data
+     * @param  string  $message  The exception message
+     * @param  int  $code  The exception code
+     * @param  Exception|null  $previous  The previous exception for chaining
+     * @param  array  $context  Additional context data
      */
     public function __construct(
         string $message = '',
@@ -39,8 +39,6 @@ class MailerLiteException extends Exception
 
     /**
      * Get the exception context.
-     *
-     * @return array
      */
     public function getContext(): array
     {
@@ -49,9 +47,6 @@ class MailerLiteException extends Exception
 
     /**
      * Set additional context data.
-     *
-     * @param array $context
-     * @return static
      */
     public function withContext(array $context): static
     {

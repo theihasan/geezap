@@ -18,8 +18,6 @@ class LaravelMailerlite implements MailerLiteInterface
 {
     /**
      * Create a new LaravelMailerlite instance.
-     *
-     * @param MailerLiteManager $manager
      */
     public function __construct(
         protected MailerLiteManager $manager
@@ -27,8 +25,6 @@ class LaravelMailerlite implements MailerLiteInterface
 
     /**
      * Get a subscriber builder instance.
-     *
-     * @return SubscriberBuilder
      */
     public function subscribers(): SubscriberBuilder
     {

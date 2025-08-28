@@ -96,4 +96,4 @@ interface CampaignsInterface
      * @return array
      */
     public function getSubscribers(string $id, array $filters = []): array;
-}
+

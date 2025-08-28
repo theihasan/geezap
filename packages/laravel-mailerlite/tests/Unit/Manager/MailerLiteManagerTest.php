@@ -19,7 +19,7 @@ describe('MailerLiteManager', function () {
 
     it('can be instantiated with valid API key', function () {
         $manager = new MailerLiteManager('test-api-key');
-        
+
         expect($manager)->toBeInstanceOf(MailerLiteManager::class);
         expect($manager->getApiKey())->toBe('test-api-key');
         expect($manager->getOptions())->toBe([]);
@@ -28,7 +28,7 @@ describe('MailerLiteManager', function () {
     it('can be instantiated with API key and options', function () {
         $options = ['timeout' => 60, 'base_url' => 'https://custom.api.com'];
         $manager = new MailerLiteManager('test-api-key', $options);
-        
+
         expect($manager->getApiKey())->toBe('test-api-key');
         expect($manager->getOptions())->toBe($options);
     });
@@ -37,28 +37,28 @@ describe('MailerLiteManager', function () {
         $config = [
             'key' => 'config-api-key',
             'timeout' => 30,
-            'url' => 'https://connect.mailerlite.com/api/'
+            'url' => 'https://connect.mailerlite.com/api/',
         ];
-        
+
         $manager = MailerLiteManager::fromConfig($config);
-        
+
         expect($manager->getApiKey())->toBe('config-api-key');
         expect($manager->getOptions())->toBe([
             'timeout' => 30,
-            'base_url' => 'https://connect.mailerlite.com/api/'
+            'base_url' => 'https://connect.mailerlite.com/api/',
         ]);
     });
 
     it('throws exception when creating from config without API key', function () {
         $config = ['timeout' => 30];
-        
+
         expect(fn () => MailerLiteManager::fromConfig($config))
             ->toThrow(MailerLiteAuthenticationException::class);
     });
 
     it('throws exception when creating from config with empty API key', function () {
         $config = ['key' => ''];
-        
+
         expect(fn () => MailerLiteManager::fromConfig($config))
             ->toThrow(MailerLiteAuthenticationException::class);
     });
@@ -70,10 +70,10 @@ describe('MailerLiteManager', function () {
         }
 
         $manager = new MailerLiteManager(env('MAILERLITE_TEST_API_KEY'));
-        
+
         $client1 = $manager->getClient();
         $client2 = $manager->getClient();
-        
+
         expect($client1)->toBe($client2);
         expect($client1)->toBeInstanceOf(MailerLite::class);
     })->skip(); // Skip by default to avoid API calls in regular tests

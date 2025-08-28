@@ -14,14 +14,14 @@ use Ihasan\LaravelMailerlite\Resources\Subscribers\SubscriberBuilder;
 describe('MailerLite Facade', function () {
     it('resolves subscribers builder through facade', function () {
         $builder = MailerLite::subscribers();
-        
+
         expect($builder)->toBeInstanceOf(SubscriberBuilder::class);
     });
 
     it('returns different builder instances on multiple calls', function () {
         $builder1 = MailerLite::subscribers();
         $builder2 = MailerLite::subscribers();
-        
+
         expect($builder1)->toBeInstanceOf(SubscriberBuilder::class);
         expect($builder2)->toBeInstanceOf(SubscriberBuilder::class);
         expect($builder1)->not->toBe($builder2); // Different instances
@@ -32,7 +32,7 @@ describe('MailerLite Facade', function () {
         $method = $reflection->getMethod('getFacadeAccessor');
         $method->setAccessible(true);
         $accessor = $method->invoke(null);
-        
+
         expect($accessor)->toBe(LaravelMailerlite::class);
     });
 });

@@ -2,9 +2,9 @@
 
 namespace Ihasan\LaravelMailerlite\Tests;
 
+use Ihasan\LaravelMailerlite\LaravelMailerliteServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
-use Ihasan\LaravelMailerlite\LaravelMailerliteServiceProvider;
 
 class TestCase extends Orchestra
 {
@@ -27,7 +27,7 @@ class TestCase extends Orchestra
     public function getEnvironmentSetUp($app)
     {
         config()->set('database.default', 'testing');
-        
+
         // Set up MailerLite test configuration
         config()->set('mailerlite', [
             'key' => 'test-api-key-for-testing-purposes',

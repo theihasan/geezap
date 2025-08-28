@@ -22,9 +22,6 @@ class LaravelMailerliteServiceProvider extends PackageServiceProvider
 {
     /**
      * Configure the package settings.
-     *
-     * @param Package $package
-     * @return void
      */
     public function configurePackage(Package $package): void
     {
@@ -35,14 +32,13 @@ class LaravelMailerliteServiceProvider extends PackageServiceProvider
 
     /**
      * Register package services and bindings.
-     *
-     * @return void
      */
     public function packageRegistered(): void
     {
         // Register the MailerLite Manager as singleton
         $this->app->singleton(MailerLiteManager::class, function ($app) {
             $config = $app['config']['mailerlite'];
+
             return MailerLiteManager::fromConfig($config);
         });
 
@@ -68,8 +64,6 @@ class LaravelMailerliteServiceProvider extends PackageServiceProvider
 
     /**
      * Boot package services.
-     *
-     * @return void
      */
     public function packageBooted(): void
     {

@@ -16,8 +16,6 @@ class MailerLiteAuthenticationException extends MailerLiteException
 {
     /**
      * Create a new authentication exception for missing API key.
-     *
-     * @return static
      */
     public static function missingApiKey(): static
     {
@@ -31,8 +29,6 @@ class MailerLiteAuthenticationException extends MailerLiteException
 
     /**
      * Create a new authentication exception for invalid API key.
-     *
-     * @return static
      */
     public static function invalidApiKey(): static
     {
@@ -46,9 +42,6 @@ class MailerLiteAuthenticationException extends MailerLiteException
 
     /**
      * Create a new authentication exception for insufficient permissions.
-     *
-     * @param string $resource
-     * @return static
      */
     public static function insufficientPermissions(string $resource = ''): static
     {

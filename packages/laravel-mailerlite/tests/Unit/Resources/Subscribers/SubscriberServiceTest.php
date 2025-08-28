@@ -37,12 +37,12 @@ describe('SubscriberService', function () {
                 'email' => 'test@example.com',
                 'name' => 'Test User',
                 'status' => 'active',
-                'created_at' => '2024-01-01T00:00:00Z'
+                'created_at' => '2024-01-01T00:00:00Z',
             ];
 
             $mockClient = m::mock(MailerLite::class);
             $mockSubscribers = m::mock();
-            
+
             $mockClient->subscribers = $mockSubscribers;
             $mockSubscribers
                 ->shouldReceive('create')
@@ -65,37 +65,37 @@ describe('SubscriberService', function () {
 
         it('throws SubscriberCreateException when subscriber already exists', function () {
             $dto = new SubscriberDTO('existing@example.com');
-            
+
             $this->mockSubscribers
                 ->shouldReceive('create')
                 ->once()
                 ->andThrow(new Exception('Subscriber already exists'));
 
-            expect(fn() => $this->service->create($dto))
+            expect(fn () => $this->service->create($dto))
                 ->toThrow(SubscriberCreateException::class);
         });
 
         it('throws MailerLiteAuthenticationException on unauthorized error', function () {
             $dto = new SubscriberDTO('test@example.com');
-            
+
             $this->mockSubscribers
                 ->shouldReceive('create')
                 ->once()
                 ->andThrow(new Exception('401 Unauthorized'));
 
-            expect(fn() => $this->service->create($dto))
+            expect(fn () => $this->service->create($dto))
                 ->toThrow(MailerLiteAuthenticationException::class);
         });
 
         it('throws SubscriberCreateException for validation errors', function () {
             $dto = new SubscriberDTO('invalid@example.com');
-            
+
             $this->mockSubscribers
                 ->shouldReceive('create')
                 ->once()
                 ->andThrow(new Exception('422 Validation failed'));
 
-            expect(fn() => $this->service->create($dto))
+            expect(fn () => $this->service->create($dto))
                 ->toThrow(SubscriberCreateException::class);
         });
     });
@@ -107,7 +107,7 @@ describe('SubscriberService', function () {
                 'id' => '456',
                 'email' => $email,
                 'name' => 'Found User',
-                'status' => 'active'
+                'status' => 'active',
             ];
 
             $this->mockSubscribers
@@ -159,7 +159,7 @@ describe('SubscriberService', function () {
                 'id' => $id,
                 'email' => 'id@example.com',
                 'name' => 'ID User',
-                'status' => 'active'
+                'status' => 'active',
             ];
 
             $this->mockSubscribers
@@ -198,7 +198,7 @@ describe('SubscriberService', function () {
                 'email' => 'updated@example.com',
                 'name' => 'Updated Name',
                 'status' => 'active',
-                'updated_at' => '2024-01-02T00:00:00Z'
+                'updated_at' => '2024-01-02T00:00:00Z',
             ];
 
             $this->mockSubscribers
@@ -223,7 +223,7 @@ describe('SubscriberService', function () {
                 ->once()
                 ->andThrow(new Exception('404 Subscriber not found'));
 
-            expect(fn() => $this->service->update($id, $dto))
+            expect(fn () => $this->service->update($id, $dto))
                 ->toThrow(SubscriberNotFoundException::class);
         });
 
@@ -236,7 +236,7 @@ describe('SubscriberService', function () {
                 ->once()
                 ->andThrow(new Exception('422 Validation error'));
 
-            expect(fn() => $this->service->update($id, $dto))
+            expect(fn () => $this->service->update($id, $dto))
                 ->toThrow(SubscriberUpdateException::class);
         });
     });
@@ -265,7 +265,7 @@ describe('SubscriberService', function () {
                 ->with($id)
                 ->andThrow(new Exception('404 Not found'));
 
-            expect(fn() => $this->service->delete($id))
+            expect(fn () => $this->service->delete($id))
                 ->toThrow(SubscriberNotFoundException::class);
         });
 
@@ -278,7 +278,7 @@ describe('SubscriberService', function () {
                 ->with($id)
                 ->andThrow(new Exception('500 Server error'));
 
-            expect(fn() => $this->service->delete($id))
+            expect(fn () => $this->service->delete($id))
                 ->toThrow(SubscriberDeleteException::class);
         });
     });
@@ -289,10 +289,10 @@ describe('SubscriberService', function () {
             $expectedResponse = [
                 'data' => [
                     ['id' => '1', 'email' => 'user1@example.com', 'name' => 'User 1'],
-                    ['id' => '2', 'email' => 'user2@example.com', 'name' => 'User 2']
+                    ['id' => '2', 'email' => 'user2@example.com', 'name' => 'User 2'],
                 ],
                 'meta' => ['total' => 2, 'page' => 1],
-                'links' => ['next' => null, 'prev' => null]
+                'links' => ['next' => null, 'prev' => null],
             ];
 
             $this->mockSubscribers
@@ -313,7 +313,7 @@ describe('SubscriberService', function () {
             $expectedResponse = [
                 'data' => [],
                 'meta' => ['total' => 0, 'page' => 1],
-                'links' => ['next' => null, 'prev' => null]
+                'links' => ['next' => null, 'prev' => null],
             ];
 
             $this->mockSubscribers
@@ -336,7 +336,7 @@ describe('SubscriberService', function () {
             $expectedResponse = [
                 'id' => $subscriberId,
                 'email' => 'test@example.com',
-                'groups' => [['id' => $groupId, 'name' => 'Test Group']]
+                'groups' => [['id' => $groupId, 'name' => 'Test Group']],
             ];
 
             $this->mockSubscribers
@@ -360,7 +360,7 @@ describe('SubscriberService', function () {
                 ->once()
                 ->andThrow(new Exception('Subscriber not found'));
 
-            expect(fn() => $this->service->addToGroup($subscriberId, $groupId))
+            expect(fn () => $this->service->addToGroup($subscriberId, $groupId))
                 ->toThrow(SubscriberNotFoundException::class);
         });
     });
@@ -390,7 +390,7 @@ describe('SubscriberService', function () {
                 ->once()
                 ->andThrow(new Exception('404 Not found'));
 
-            expect(fn() => $this->service->removeFromGroup($subscriberId, $groupId))
+            expect(fn () => $this->service->removeFromGroup($subscriberId, $groupId))
                 ->toThrow(SubscriberNotFoundException::class);
         });
     });
@@ -402,7 +402,7 @@ describe('SubscriberService', function () {
                 'id' => $id,
                 'email' => 'test@example.com',
                 'status' => 'unsubscribed',
-                'unsubscribed_at' => '2024-01-02T00:00:00Z'
+                'unsubscribed_at' => '2024-01-02T00:00:00Z',
             ];
 
             $this->mockSubscribers
@@ -425,7 +425,7 @@ describe('SubscriberService', function () {
                 ->once()
                 ->andThrow(new Exception('404 Not found'));
 
-            expect(fn() => $this->service->unsubscribe($id))
+            expect(fn () => $this->service->unsubscribe($id))
                 ->toThrow(SubscriberNotFoundException::class);
         });
     });
@@ -437,7 +437,7 @@ describe('SubscriberService', function () {
                 'id' => $id,
                 'email' => 'test@example.com',
                 'status' => 'active',
-                'subscribed_at' => '2024-01-03T00:00:00Z'
+                'subscribed_at' => '2024-01-03T00:00:00Z',
             ];
 
             $this->mockSubscribers
@@ -460,7 +460,7 @@ describe('SubscriberService', function () {
                 ->once()
                 ->andThrow(new Exception('Subscriber does not exist'));
 
-            expect(fn() => $this->service->resubscribe($id))
+            expect(fn () => $this->service->resubscribe($id))
                 ->toThrow(SubscriberNotFoundException::class);
         });
     });
@@ -478,13 +478,13 @@ describe('SubscriberService', function () {
                 'subscribed_at' => '2024-01-01T10:05:00Z',
                 'fields' => [
                     ['key' => 'company', 'value' => 'Test Corp'],
-                    ['key' => 'role', 'value' => 'Developer']
+                    ['key' => 'role', 'value' => 'Developer'],
                 ],
                 'groups' => [
-                    ['id' => 'group_1', 'name' => 'Developers']
+                    ['id' => 'group_1', 'name' => 'Developers'],
                 ],
                 'opted_in_at' => '2024-01-01T10:03:00Z',
-                'optin_ip' => '192.168.1.1'
+                'optin_ip' => '192.168.1.1',
             ];
 
             $this->mockSubscribers
@@ -513,7 +513,7 @@ describe('SubscriberService', function () {
             $dto = new SubscriberDTO('minimal@example.com');
             $minimalResponse = [
                 'id' => 'min_123',
-                'email' => 'minimal@example.com'
+                'email' => 'minimal@example.com',
             ];
 
             $this->mockSubscribers

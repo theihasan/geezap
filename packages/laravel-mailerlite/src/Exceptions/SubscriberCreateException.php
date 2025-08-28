@@ -11,11 +11,6 @@ class SubscriberCreateException extends MailerLiteException
 {
     /**
      * Create a new subscriber creation exception.
-     *
-     * @param string $email
-     * @param string $reason
-     * @param \Throwable|null $previous
-     * @return static
      */
     public static function make(string $email, string $reason, ?\Throwable $previous = null): static
     {
@@ -29,9 +24,6 @@ class SubscriberCreateException extends MailerLiteException
 
     /**
      * Create exception for subscriber already exists.
-     *
-     * @param string $email
-     * @return static
      */
     public static function alreadyExists(string $email): static
     {
@@ -40,14 +32,11 @@ class SubscriberCreateException extends MailerLiteException
 
     /**
      * Create exception for invalid subscriber data.
-     *
-     * @param string $email
-     * @param array $errors
-     * @return static
      */
     public static function invalidData(string $email, array $errors): static
     {
-        $reason = 'Invalid data: ' . implode(', ', $errors);
+        $reason = 'Invalid data: '.implode(', ', $errors);
+
         return static::make($email, $reason);
     }
 }

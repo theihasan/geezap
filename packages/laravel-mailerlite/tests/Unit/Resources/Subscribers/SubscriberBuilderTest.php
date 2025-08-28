@@ -26,9 +26,9 @@ describe('SubscriberBuilder', function () {
     describe('Basic Builder Methods', function () {
         it('sets email correctly', function () {
             $builder = $this->builder->email('test@example.com');
-            
+
             expect($builder)->toBe($this->builder); // Returns self for chaining
-            
+
             $dto = $builder->toDTO();
             expect($dto->email)->toBe('test@example.com');
         });
@@ -53,7 +53,7 @@ describe('SubscriberBuilder', function () {
 
         it('sets custom fields correctly', function () {
             $fields = ['company' => 'Acme Inc', 'role' => 'Developer'];
-            
+
             $dto = $this->builder
                 ->email('test@example.com')
                 ->withFields($fields)
@@ -71,7 +71,7 @@ describe('SubscriberBuilder', function () {
 
             expect($dto->fields)->toBe([
                 'company' => 'Tech Corp',
-                'role' => 'Engineer'
+                'role' => 'Engineer',
             ]);
         });
 
@@ -86,7 +86,7 @@ describe('SubscriberBuilder', function () {
             expect($dto->fields)->toBe([
                 'company' => 'Acme Inc',
                 'role' => 'Developer',
-                'level' => 'Senior'
+                'level' => 'Senior',
             ]);
         });
     });
@@ -237,7 +237,7 @@ describe('SubscriberBuilder', function () {
                 ->shouldReceive('create')
                 ->once()
                 ->with(m::on(function ($dto) {
-                    return $dto instanceof SubscriberDTO && 
+                    return $dto instanceof SubscriberDTO &&
                            $dto->email === 'test@example.com' &&
                            $dto->name === 'Test User';
                 }))
@@ -442,7 +442,7 @@ describe('SubscriberBuilder', function () {
                 ->imported()
                 ->reset();
 
-            expect(fn() => $this->builder->toDTO())
+            expect(fn () => $this->builder->toDTO())
                 ->toThrow(InvalidArgumentException::class, 'Email is required');
         });
 
@@ -455,7 +455,7 @@ describe('SubscriberBuilder', function () {
             expect($fresh)->not->toBe($this->builder);
             expect($fresh)->toBeInstanceOf(SubscriberBuilder::class);
 
-            expect(fn() => $fresh->toDTO())
+            expect(fn () => $fresh->toDTO())
                 ->toThrow(InvalidArgumentException::class, 'Email is required');
         });
     });
@@ -476,34 +476,34 @@ describe('SubscriberBuilder', function () {
         });
 
         it('throws exception for non-existent methods', function () {
-            expect(fn() => $this->builder->nonExistentMethod())
+            expect(fn () => $this->builder->nonExistentMethod())
                 ->toThrow(BadMethodCallException::class);
         });
 
         it('throws exception for non-existent "and" methods', function () {
-            expect(fn() => $this->builder->andNonExistentMethod())
+            expect(fn () => $this->builder->andNonExistentMethod())
                 ->toThrow(BadMethodCallException::class);
         });
     });
 
     describe('Error Handling', function () {
         it('throws exception when converting to DTO without email', function () {
-            expect(fn() => $this->builder->toDTO())
+            expect(fn () => $this->builder->toDTO())
                 ->toThrow(InvalidArgumentException::class, 'Email is required');
         });
 
         it('throws exception when subscribing without email', function () {
-            expect(fn() => $this->builder->subscribe())
+            expect(fn () => $this->builder->subscribe())
                 ->toThrow(InvalidArgumentException::class, 'Email is required');
         });
 
         it('throws exception when finding without email', function () {
-            expect(fn() => $this->builder->find())
+            expect(fn () => $this->builder->find())
                 ->toThrow(InvalidArgumentException::class, 'Email is required');
         });
 
         it('throws exception when updating without email', function () {
-            expect(fn() => $this->builder->update())
+            expect(fn () => $this->builder->update())
                 ->toThrow(InvalidArgumentException::class, 'Email is required');
         });
     });
