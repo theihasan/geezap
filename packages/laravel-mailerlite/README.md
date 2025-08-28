@@ -1,24 +1,15 @@
-# :package_description
+# Laravel MailerLite SDK Wrapper
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/:vendor_slug/:package_slug.svg?style=flat-square)](https://packagist.org/packages/:vendor_slug/:package_slug)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/:vendor_slug/:package_slug/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/:vendor_slug/:package_slug/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/:vendor_slug/:package_slug/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/:vendor_slug/:package_slug/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
-[![Total Downloads](https://img.shields.io/packagist/dt/:vendor_slug/:package_slug.svg?style=flat-square)](https://packagist.org/packages/:vendor_slug/:package_slug)
-<!--delete-->
----
-This repo can be used to scaffold a Laravel package. Follow these steps to get started:
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/theihasan/laravel-mailerlite.svg?style=flat-square)](https://packagist.org/packages/theihasan/laravel-mailerlite)
+[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/theihasan/laravel-mailerlite/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/theihasan/laravel-mailerlite/actions?query=workflow%3Arun-tests+branch%3Amain)
+[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/theihasan/laravel-mailerlite/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/theihasan/laravel-mailerlite/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
+[![Total Downloads](https://img.shields.io/packagist/dt/theihasan/laravel-mailerlite.svg?style=flat-square)](https://packagist.org/packages/theihasan/laravel-mailerlite)
 
-1. Press the "Use this template" button at the top of this repo to create a new repo with the contents of this skeleton.
-2. Run "php ./configure.php" to run a script that will replace all placeholders throughout all the files.
-3. Have fun creating your package.
-4. If you need help creating a package, consider picking up our <a href="https://laravelpackage.training">Laravel Package Training</a> video course.
----
-<!--/delete-->
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
+A comprehensive Laravel wrapper for the official MailerLite PHP SDK, providing a fluent, plain-English API for managing subscribers, campaigns, groups, fields, segments, webhooks, and automations. Built with strong architecture patterns including DTOs, contracts, services, and comprehensive exception handling.
 
 ## Support us
 
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/:package_name.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/:package_name)
+[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/laravel-mailerlite.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/laravel-mailerlite)
 
 We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
 
@@ -26,49 +17,101 @@ We highly appreciate you sending us a postcard from your hometown, mentioning wh
 
 ## Installation
 
-You can install the package via composer:
+Install the package via Composer:
 
 ```bash
-composer require :vendor_slug/:package_slug
+composer require theihasan/laravel-mailerlite
 ```
 
-You can publish and run the migrations with:
+Publish the configuration file:
 
 ```bash
-php artisan vendor:publish --tag=":package_slug-migrations"
-php artisan migrate
+php artisan vendor:publish --tag="laravel-mailerlite-config"
 ```
 
-You can publish the config file with:
+Add your MailerLite API key to your `.env` file:
 
-```bash
-php artisan vendor:publish --tag=":package_slug-config"
+```env
+MAILERLITE_API_KEY=your_api_key_here
 ```
 
-This is the contents of the published config file:
+## Configuration
+
+The configuration file `config/mailerlite.php` contains:
 
 ```php
 return [
+    'key' => env('MAILERLITE_API_KEY'),
+    'url' => env('MAILERLITE_API_URL', 'https://connect.mailerlite.com/api/'),
+    'timeout' => env('MAILERLITE_TIMEOUT', 30),
 ];
 ```
 
-Optionally, you can publish the views using
+## Fluent API Quick Start
 
-```bash
-php artisan vendor:publish --tag=":package_slug-views"
-```
-
-## Usage
+This package provides a fluent, plain-English API for all MailerLite operations:
 
 ```php
-$variable = new VendorName\Skeleton();
-echo $variable->echoPhrase('Hello, VendorName!');
+use MailerLite;
+
+// Subscribe a user to a group with method chaining
+MailerLite::subscribers()
+    ->email('jane@example.com')
+    ->named('Jane Doe')
+    ->subscribe()
+    ->toGroup('Early Adopters');
+
+// Create and schedule a campaign
+MailerLite::campaigns()
+    ->draft()
+    ->subject('Weekly Jobs Newsletter')
+    ->from('Jobs Bot', 'jobs@example.com')
+    ->html('<h1>New job opportunities</h1>')
+    ->toGroup('Developers')
+    ->scheduleAt(now()->addDay());
+
+// Setup a webhook
+MailerLite::webhooks()
+    ->on('subscriber.created')
+    ->url('https://yourapp.com/webhooks/mailerlite')
+    ->create();
 ```
+
+## Architecture Overview
+
+This package follows Laravel best practices with:
+
+- **Manager Layer**: `MailerLiteManager` handles SDK initialization
+- **Contracts**: Interfaces for all services to enable mocking
+- **DTOs**: Data Transfer Objects for all inputs with validation
+- **Services**: Per-resource services (SubscriberService, CampaignService, etc.)
+- **Builders**: Fluent method chaining for readable API calls
+- **Exceptions**: Custom exceptions with granular error mapping
+- **Facade**: Clean, expressive facade interface
 
 ## Testing
 
 ```bash
 composer test
+```
+
+## Git Subtree Workflow
+
+This package is maintained using git subtree. Use these commands for development:
+
+### Setup (one time)
+```bash
+git config alias.mailerlite-pull "subtree pull --prefix=packages/laravel-mailerlite https://github.com/theihasan/laravel-mailerlite.git main --squash"
+git config alias.mailerlite-push "subtree push --prefix=packages/laravel-mailerlite https://github.com/theihasan/laravel-mailerlite.git main"
+```
+
+### Development workflow
+```bash
+# Pull latest changes from remote
+git mailerlite-pull
+
+# After making changes and committing locally
+git mailerlite-push
 ```
 
 ## Changelog
@@ -85,7 +128,7 @@ Please review [our security policy](../../security/policy) on how to report secu
 
 ## Credits
 
-- [:author_name](https://github.com/:author_username)
+- [Abul Hassan](https://github.com/theihasan)
 - [All Contributors](../../contributors)
 
 ## License
