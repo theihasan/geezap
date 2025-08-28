@@ -4,60 +4,62 @@ declare(strict_types=1);
 
 namespace Ihasan\LaravelMailerlite\Contracts;
 
+use Ihasan\LaravelMailerlite\Resources\Subscribers\SubscriberBuilder;
+
 /**
  * Main MailerLite package interface.
  *
  * This interface defines the high-level contract for the MailerLite package,
- * providing access to all resource-specific services.
+ * providing access to all resource builders for fluent API usage.
  */
 interface MailerLiteInterface
 {
     /**
-     * Get the subscriber service instance.
+     * Get the subscriber builder instance for fluent API operations.
      *
-     * @return SubscribersInterface
+     * @return SubscriberBuilder
      */
-    public function subscribers(): SubscribersInterface;
+    public function subscribers(): SubscriberBuilder;
 
     /**
-     * Get the campaign service instance.
-     *
-     * @return CampaignsInterface
+     * Get the campaign builder instance for fluent API operations.
+     * 
+     * @return mixed (to be implemented in future steps)
      */
-    public function campaigns(): CampaignsInterface;
+    // public function campaigns(): CampaignBuilder;
 
     /**
-     * Get the group service instance.
-     *
-     * @return GroupsInterface
+     * Get the group builder instance for fluent API operations.
+     * 
+     * @return mixed (to be implemented in future steps) 
      */
-    public function groups(): GroupsInterface;
+    // public function groups(): GroupBuilder;
 
     /**
-     * Get the field service instance.
-     *
-     * @return FieldsInterface
+     * Get the field builder instance for fluent API operations.
+     * 
+     * @return mixed (to be implemented in future steps)
      */
-    public function fields(): FieldsInterface;
+    // public function fields(): FieldBuilder;
 
     /**
-     * Get the segment service instance.
-     *
-     * @return SegmentsInterface
+     * Get the segment builder instance for fluent API operations.
+     * 
+     * @return mixed (to be implemented in future steps)
      */
-    public function segments(): SegmentsInterface;
+    // public function segments(): SegmentBuilder;
 
     /**
-     * Get the webhook service instance.
-     *
-     * @return WebhooksInterface
+     * Get the webhook builder instance for fluent API operations.
+     * 
+     * @return mixed (to be implemented in future steps)
      */
-    public function webhooks(): WebhooksInterface;
+    // public function webhooks(): WebhookBuilder;
 
     /**
-     * Get the automation service instance.
-     *
-     * @return AutomationsInterface
+     * Get the automation builder instance for fluent API operations.
+     * 
+     * @return mixed (to be implemented in future steps)
      */
-    public function automations(): AutomationsInterface;
+    // public function automations(): AutomationBuilder;
 }

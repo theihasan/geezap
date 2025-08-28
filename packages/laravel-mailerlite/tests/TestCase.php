@@ -27,6 +27,13 @@ class TestCase extends Orchestra
     public function getEnvironmentSetUp($app)
     {
         config()->set('database.default', 'testing');
+        
+        // Set up MailerLite test configuration
+        config()->set('mailerlite', [
+            'key' => 'test-api-key-for-testing-purposes',
+            'url' => 'https://connect.mailerlite.com/api/',
+            'timeout' => 30,
+        ]);
 
         /*
          foreach (\Illuminate\Support\Facades\File::allFiles(__DIR__ . '/database/migrations') as $migration) {
