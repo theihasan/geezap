@@ -33,7 +33,7 @@ jobs:
           echo "SERVER_IP hex dump:"
           echo -n '${{ vars.SERVER_IP }}' | hexdump -C
           echo "=== Attempting SSH connection ==="
-          ssh -o StrictHostKeyChecking=no '${{ vars.SERVER_IP }}' "
+           ssh -o StrictHostKeyChecking=no deploy@${{ vars.SERVER_IP }} "
             cd /var/www/html/geezap && \
             git fetch origin main && \
             git reset --hard origin/main && \
