@@ -19,7 +19,7 @@
         "php": "^8.1",
         "spatie/laravel-package-tools": "^1.16",
         "illuminate/contracts": "^10.0|^11.0",
-        "mailerlite/laravel-mailerlite": "^0.2"
+        "mailerlite/mailerlite-php": "^1.0"
     },
     "require-dev": {
         "laravel/pint": "^1.14",

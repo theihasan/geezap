@@ -89,6 +89,48 @@ This package follows Laravel best practices with:
 - **Exceptions**: Custom exceptions with granular error mapping
 - **Facade**: Clean, expressive facade interface
 
+## Manager Layer
+
+The `MailerLiteManager` class is responsible for initializing and managing the MailerLite SDK instance. It handles:
+
+- **API Key Validation**: Ensures API key is present and valid
+- **SDK Initialization**: Creates and configures the MailerLite SDK client
+- **Connection Testing**: Validates the API connection on initialization
+- **Configuration Management**: Handles timeout and base URL configuration
+
+### Basic Usage
+
+```php
+use Ihasan\LaravelMailerlite\Manager\MailerLiteManager;
+
+// Create manager with API key
+$manager = new MailerLiteManager('your-api-key');
+
+// Create manager with options
+$manager = new MailerLiteManager('your-api-key', [
+    'timeout' => 60,
+    'base_url' => 'https://custom.api.url'
+]);
+
+// Create from configuration array
+$manager = MailerLiteManager::fromConfig([
+    'key' => 'your-api-key',
+    'timeout' => 30,
+    'url' => 'https://connect.mailerlite.com/api/'
+]);
+
+// Get the SDK client
+$client = $manager->getClient();
+```
+
+### Exception Handling
+
+The manager throws `MailerLiteAuthenticationException` when:
+
+- API key is missing or empty
+- API key is invalid or revoked
+- API key has insufficient permissions
+
 ## Testing
 
 ```bash
