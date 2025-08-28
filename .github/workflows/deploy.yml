@@ -35,14 +35,15 @@ jobs:
            echo -n '${{ secrets.SERVER_IP }}' | hexdump -C
            echo "=== Attempting SSH connection ==="
             ssh -o StrictHostKeyChecking=no deploy@${{ secrets.SERVER_IP }} "
-            cd /var/www/html/geezap && \
-            git fetch origin main && \
-            git reset --hard origin/main && \
-            composer install --no-interaction --prefer-dist --optimize-autoloader && \
-            php artisan migrate --force && \
-            php artisan config:cache && \
-            php artisan route:cache && \
-            php artisan view:cache
+             cd /var/www/html/geezap && \
+             git fetch origin main && \
+             git reset --hard origin/main && \
+             composer install --no-interaction --prefer-dist --optimize-autoloader && \
+             php artisan migrate --force && \
+             php artisan view:clear && \
+             php artisan config:cache && \
+             php artisan route:cache && \
+             php artisan view:cache
           "
 
       - name: Send Discord Notification (Success)
