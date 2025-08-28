@@ -131,6 +131,52 @@ The manager throws `MailerLiteAuthenticationException` when:
 - API key is invalid or revoked
 - API key has insufficient permissions
 
+## Contracts (Interfaces)
+
+This package provides comprehensive interfaces for all services, enabling easy mocking and testing:
+
+### Available Contracts
+
+- `MailerLiteInterface` - Main package interface
+- `SubscribersInterface` - Subscriber operations
+- `CampaignsInterface` - Campaign management
+- `GroupsInterface` - Group management
+- `FieldsInterface` - Custom field management
+- `SegmentsInterface` - Segment operations
+- `WebhooksInterface` - Webhook management
+- `AutomationsInterface` - Automation operations
+
+### Usage with Dependency Injection
+
+```php
+use Ihasan\LaravelMailerlite\Contracts\SubscribersInterface;
+
+class NewsletterService
+{
+    public function __construct(
+        private SubscribersInterface $subscribers
+    ) {}
+
+    public function addSubscriber(string $email, string $name): void
+    {
+        $subscriber = new SubscriberDTO($email, $name);
+        $this->subscribers->create($subscriber);
+    }
+}
+```
+
+### Testing with Contracts
+
+```php
+use Ihasan\LaravelMailerlite\Contracts\SubscribersInterface;
+
+// In your test
+$mock = Mockery::mock(SubscribersInterface::class);
+$mock->shouldReceive('create')->once()->andReturn(['id' => '123']);
+
+$this->app->instance(SubscribersInterface::class, $mock);
+```
+
 ## Testing
 
 ```bash
