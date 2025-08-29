@@ -48,6 +48,23 @@
                         </p>
                     </div>
 
+                    <div>
+                        <label for="apply_link" class="block text-sm font-medium text-gray-700 mb-2">
+                            Application Link (Optional)
+                        </label>
+                        <input
+                            type="url"
+                            id="apply_link"
+                            name="apply_link"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            placeholder="https://example.com/apply or mailto:jobs@company.com"
+                            value="{{ old('apply_link') }}"
+                        >
+                        <p class="mt-2 text-sm text-gray-500">
+                            Provide a direct application link. This will be used as the primary way for candidates to apply. If not provided, the AI will try to extract contact information from the job content.
+                        </p>
+                    </div>
+
                     <div class="flex justify-end">
                         <button
                             type="submit"
