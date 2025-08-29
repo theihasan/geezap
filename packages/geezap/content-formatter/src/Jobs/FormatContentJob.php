@@ -228,6 +228,8 @@ IMPORTANT INSTRUCTIONS:
   - Choose appropriate job_category (1-15): 1=Tech, 2=Marketing, 3=Sales, 4=HR, 5=Finance, 6=Operations, 7=Design, 8=Customer Service, 9=Healthcare, 10=Education, 11=Legal, 12=Construction, 13=Retail, 14=Manufacturing, 15=Other
 - Break down responsibilities and qualifications into separate array items
 - Ensure all required fields are populated
+-If country not found then default country code will be BD
+- If no direct apply link found then look for an email address or contact information and add it to description and apply link
 
 JOB CONTENT TO EXTRACT:
 {$content}";
