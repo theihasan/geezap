@@ -21,6 +21,7 @@ class FormatContentJob implements ShouldQueue
     public $timeout = 120;
     public $maxExceptions = 3;
     public $backoff = [10, 30, 60];
+    public $queue = 'facebook';
     
     public function __construct(
         public int $packageId
@@ -45,7 +46,7 @@ class FormatContentJob implements ShouldQueue
             if ($jobData) {
                 $jobListing = JobListing::query()->create($jobData);
                 
-                $this->package->update([
+                $package->update([
                     'status' => 'completed',
                     'formatted_content' => $formattedContent,
                     'metadata' => [
@@ -55,7 +56,7 @@ class FormatContentJob implements ShouldQueue
                 ]);
 
                 Log::info('Content formatted and job listing created', [
-                    'package_id' => $this->package->id,
+                    'package_id' => $package->id,
                     'job_listing_id' => $jobListing->id,
                 ]);
             } else {
@@ -63,7 +64,7 @@ class FormatContentJob implements ShouldQueue
             }
 
         } catch (\Exception $e) {
-            $this->package->update([
+            $package->update([
                 'status' => 'failed',
                 'metadata' => [
                     'error' => $e->getMessage(),
@@ -72,7 +73,7 @@ class FormatContentJob implements ShouldQueue
             ]);
 
             Log::error('Content formatting failed', [
-                'package_id' => $this->package->id,
+                'package_id' => $package->id,
                 'error' => $e->getMessage(),
             ]);
 
@@ -108,6 +109,12 @@ class FormatContentJob implements ShouldQueue
 
         Return only valid JSON without any additional text or formatting.";
     }
+    
+    /*
+    @return array
+    @return null
+    @param string $formattedContent
+    */
 
     private function parseFormattedContent(string $formattedContent): ?array
     {
@@ -138,6 +145,10 @@ class FormatContentJob implements ShouldQueue
             return null;
         }
     }
+    
+    /*
+    @return array
+    */
     
     public function middleware(): array
     {
