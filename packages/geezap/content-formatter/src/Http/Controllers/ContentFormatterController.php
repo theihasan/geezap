@@ -6,12 +6,14 @@ use App\Http\Controllers\Controller;
 use Geezap\ContentFormatter\Jobs\FormatContentJob;
 use Geezap\ContentFormatter\Models\Package;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ContentFormatterController extends Controller
 {
     public function index()
     {
-        $packages = Package::latest()
+        $packages = Package::query()
+            ->latest()
             ->take(20)
             ->get();
 
@@ -30,7 +32,11 @@ class ContentFormatterController extends Controller
         ]);
 
         FormatContentJob::dispatch($package->id);
-
+        
+        Log::info('ContentFormatterController: Package created and job dispatched', [
+            'package_id' => $package->id,
+            'content_length' => strlen($package->content)
+        ]);
         return back()->with('success', 'Content submitted for formatting. It will be processed shortly.');
     }
 }

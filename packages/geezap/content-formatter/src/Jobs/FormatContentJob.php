@@ -11,151 +11,384 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\Middleware\ThrottlesExceptions;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
-use Prism\Prism;
+use Prism\Prism\Prism;
+use Prism\Prism\Enums\Provider;
+use Prism\Prism\Schema\ObjectSchema;
+use Prism\Prism\Schema\StringSchema;
+use Prism\Prism\Schema\IntegerSchema;
+use Prism\Prism\Schema\BooleanSchema;
+use Prism\Prism\Schema\ArraySchema;
 
 class FormatContentJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
     
     public $tries = 3;
-    public $timeout = 120;
+    public $timeout = 60; 
     public $maxExceptions = 3;
     public $backoff = [10, 30, 60];
-    public $queue = 'facebook';
     
     public function __construct(
         public int $packageId
-    ) {}
+    ) {
+        Log::info('FormatContentJob: Job created', [
+            'package_id' => $this->packageId,
+        ]);
+    }
 
     public function handle(): void
     {
+        Log::info('FormatContentJob: Starting job processing', [
+            'package_id' => $this->packageId,
+            'attempt' => $this->attempts()
+        ]);
+
         try {
-            $package = Package::findOrFail($this->packageId);
+            $package = Package::query()->findOrFail($this->packageId);
             $package->update(['status' => 'processing']);
+            Log::info('FormatContentJob: Updated package status to processing', [
+                'package_id' => $package->id
+            ]);
 
-            $prompt = $this->buildPrompt($package->content);
+            $prompt = $this->buildFallbackPrompt($package->content);
+            Log::info('FormatContentJob: Prompt built', [
+                'prompt_length' => strlen($prompt),
+                'content_preview' => substr($package->content, 0, 100) . '...'
+            ]);
+
+            Log::info('FormatContentJob: Calling Prism API with text-based approach');
             
-            $response = Prism::text()
-                ->using('deepseek', 'deepseek-chat')
-                ->withPrompt($prompt)
-                ->generate();
+            $textResponse = Prism::text()
+                ->using(Provider::DeepSeek, 'deepseek-chat')
+                ->withPrompt($this->buildFallbackPrompt($package->content))
+                ->asText();
+            
+            Log::info('FormatContentJob: Text response received', [
+                'response_length' => strlen($textResponse->text),
+                'response_preview' => substr($textResponse->text, 0, 200)
+            ]);
+            
+            $structuredData = $this->parseJsonResponse($textResponse->text);
+            $response = (object) ['structured' => $structuredData];
 
-            $formattedContent = $response->json();
-            $jobData = $this->parseFormattedContent($formattedContent);
+            $jobData = $this->processStructuredResponse($response->structured);
+            Log::info('FormatContentJob: Structured data processed', [
+                'job_data_fields' => array_keys($jobData),
+                'job_title' => $jobData['job_title'] ?? 'N/A'
+            ]);
 
-            if ($jobData) {
-                $jobListing = JobListing::query()->create($jobData);
-                
-                $package->update([
-                    'status' => 'completed',
-                    'formatted_content' => $formattedContent,
-                    'metadata' => [
-                        'job_listing_id' => $jobListing->id,
-                        'processed_at' => now(),
-                    ],
-                ]);
+            $jobListing = JobListing::query()->create($jobData);
+            Log::info('FormatContentJob: JobListing created', [
+                'job_listing_id' => $jobListing->id,
+                'job_title' => $jobListing->job_title
+            ]);
 
-                Log::info('Content formatted and job listing created', [
-                    'package_id' => $package->id,
+            // Update package status to completed
+            $package->update([
+                'status' => 'completed',
+                'formatted_content' => json_encode($response->structured, JSON_PRETTY_PRINT),
+                'metadata' => [
                     'job_listing_id' => $jobListing->id,
-                ]);
-            } else {
-                throw new \Exception('Failed to parse formatted content');
-            }
+                    'processed_at' => now(),
+                    'api_provider' => 'deepseek-chat',
+                    'schema_version' => '1.0'
+                ],
+            ]);
+
+            Log::info('FormatContentJob: Job completed successfully', [
+                'package_id' => $package->id,
+                'job_listing_id' => $jobListing->id,
+                'processing_time' => now()->diffInSeconds($package->updated_at)
+            ]);
 
         } catch (\Exception $e) {
+            Log::error('FormatContentJob: Job failed', [
+                'package_id' => $package->id,
+                'error_message' => $e->getMessage(),
+                'error_trace' => $e->getTraceAsString(),
+                'attempt' => $this->attempts()
+            ]);
+
             $package->update([
                 'status' => 'failed',
                 'metadata' => [
                     'error' => $e->getMessage(),
                     'failed_at' => now(),
+                    'attempt' => $this->attempts(),
+                    'error_trace' => $e->getTraceAsString()
                 ],
-            ]);
-
-            Log::error('Content formatting failed', [
-                'package_id' => $package->id,
-                'error' => $e->getMessage(),
             ]);
 
             throw $e;
         }
     }
 
+    private function createJobListingSchema(): ObjectSchema
+    {
+        Log::info('FormatContentJob: Creating job listing schema');
+        
+        return new ObjectSchema(
+            name: 'job_listing',
+            description: 'A structured job listing with all required fields',
+            properties: [
+                new StringSchema(
+                    name: 'job_title',
+                    description: 'The job title or position name'
+                ),
+                new StringSchema(
+                    name: 'employer_name',
+                    description: 'The name of the hiring company or organization'
+                ),
+                new StringSchema(
+                    name: 'description',
+                    description: 'Detailed job description and requirements'
+                ),
+                new StringSchema(
+                    name: 'employment_type',
+                    description: 'Type of employment (full-time, part-time, contract, internship, etc.)'
+                ),
+                new StringSchema(
+                    name: 'city',
+                    description: 'City where the job is located (if not remote)'
+                ),
+                new StringSchema(
+                    name: 'state',
+                    description: 'State or province where the job is located'
+                ),
+                new StringSchema(
+                    name: 'country',
+                    description: 'Country code where the job is located. Default BD'
+                ),
+                new BooleanSchema(
+                    name: 'is_remote',
+                    description: 'Whether this is a remote work position'
+                ),
+                new ArraySchema(
+                    name: 'benefits',
+                    description: 'List of job benefits and perks',
+                    items: new StringSchema('benefit', 'A single benefit or perk')
+                ),
+                new ArraySchema(
+                    name: 'qualifications',
+                    description: 'Required qualifications and skills',
+                    items: new StringSchema('qualification', 'A single qualification requirement')
+                ),
+                new ArraySchema(
+                    name: 'responsibilities',
+                    description: 'Job responsibilities and duties',
+                    items: new StringSchema('responsibility', 'A single job responsibility')
+                ),
+                new IntegerSchema(
+                    name: 'min_salary',
+                    description: 'Minimum salary amount (optional, 0 if not specified)'
+                ),
+                new IntegerSchema(
+                    name: 'max_salary',
+                    description: 'Maximum salary amount (optional, 0 if not specified)'
+                ),
+                new StringSchema(
+                    name: 'salary_currency',
+                    description: 'Currency code (USD, EUR, etc.) or "N/A" if not specified'
+                ),
+                new StringSchema(
+                    name: 'salary_period',
+                    description: 'Salary period (yearly, monthly, hourly, etc.) or "N/A" if not specified'
+                ),
+                new IntegerSchema(
+                    name: 'job_category',
+                    description: 'Job category ID (1-15, use best judgment based on role type)'
+                )
+            ],
+            requiredFields: [
+                'job_title', 
+                'employer_name', 
+                'description', 
+                'employment_type', 
+                'city', 
+                'state', 
+                'country', 
+                'is_remote',
+                'job_category'
+            ]
+        );
+    }
+
     private function buildPrompt(string $content): string
     {
-        return "Please format the following job posting content into a structured JSON format with these fields:
+        Log::info('FormatContentJob: Building structured prompt');
         
-        - job_title: string
-        - employer_name: string  
-        - description: string
-        - employment_type: string (full-time, part-time, contract, etc.)
-        - city: string
-        - state: string
-        - country: string
-        - is_remote: boolean
-        - benefits: array of strings
-        - qualifications: array of strings
-        - responsibilities: array of strings
-        - min_salary: integer (optional)
-        - max_salary: integer (optional)
-        - salary_currency: string (optional)
-        - salary_period: string (optional, yearly, monthly, hourly)
-        - job_category: integer (1-15, use your best judgment for category)
-        - posted_at: datetime (use current date if not specified)
-        - expired_at: datetime (30 days from posted_at if not specified)
+        return "Extract job information from the following content and structure it according to the provided schema. 
 
-        Content to format:
-        {$content}
+IMPORTANT INSTRUCTIONS:
+- Extract all available information from the job posting
+- For missing information, use reasonable defaults:
+  - If location is not specified but mentions remote, set is_remote=true and use 'Remote' for city
+  - If no salary mentioned, set min_salary=0, max_salary=0, currency='N/A', period='N/A'
+  - If no benefits mentioned, return empty array
+  - Choose appropriate job_category (1-15): 1=Tech, 2=Marketing, 3=Sales, 4=HR, 5=Finance, 6=Operations, 7=Design, 8=Customer Service, 9=Healthcare, 10=Education, 11=Legal, 12=Construction, 13=Retail, 14=Manufacturing, 15=Other
+- Break down responsibilities and qualifications into separate array items
+- Ensure all required fields are populated
 
-        Return only valid JSON without any additional text or formatting.";
+JOB CONTENT TO EXTRACT:
+{$content}";
     }
     
-    /*
-    @return array
-    @return null
-    @param string $formattedContent
-    */
-
-    private function parseFormattedContent(string $formattedContent): ?array
+    private function processStructuredResponse(array $structuredData): array
     {
+        Log::info('FormatContentJob: Processing structured response', [
+            'structured_fields' => array_keys($structuredData)
+        ]);
+
+        // Validate required fields
+        $requiredFields = ['job_title', 'employer_name', 'description', 'employment_type'];
+        foreach ($requiredFields as $field) {
+            if (empty($structuredData[$field])) {
+                Log::warning("FormatContentJob: Missing required field: {$field}");
+                throw new \Exception("Missing required field: {$field}");
+            }
+        }
+
+        // Apply defaults and normalize data
+        $defaults = [
+            'publisher' => 'Content Formatter',
+            'job_id' => uniqid('cf_'),
+            'posted_at' => now(),
+            'expired_at' => now()->addDays(30),
+            'employer_company_type' => 'Unknown',
+            'apply_link' => '#',
+            'required_experience' => 0,
+        ];
+
+        // Normalize arrays - ensure they are arrays even if empty
+        $arrayFields = ['benefits', 'qualifications', 'responsibilities'];
+        foreach ($arrayFields as $field) {
+            if (!isset($structuredData[$field]) || !is_array($structuredData[$field])) {
+                $structuredData[$field] = [];
+                Log::info("FormatContentJob: Normalized {$field} to empty array");
+            }
+        }
+
+        // Handle salary fields
+        if (!isset($structuredData['min_salary']) || $structuredData['min_salary'] === 'N/A') {
+            $structuredData['min_salary'] = null;
+        }
+        if (!isset($structuredData['max_salary']) || $structuredData['max_salary'] === 'N/A') {
+            $structuredData['max_salary'] = null;
+        }
+        if (!isset($structuredData['salary_currency']) || $structuredData['salary_currency'] === 'N/A') {
+            $structuredData['salary_currency'] = null;
+        }
+        if (!isset($structuredData['salary_period']) || $structuredData['salary_period'] === 'N/A') {
+            $structuredData['salary_period'] = null;
+        }
+
+        // Ensure boolean fields are proper booleans
+        $structuredData['is_remote'] = (bool) ($structuredData['is_remote'] ?? false);
+
+        // Merge with defaults
+        $finalData = array_merge($defaults, $structuredData);
+
+        Log::info('FormatContentJob: Final processed data', [
+            'job_title' => $finalData['job_title'],
+            'employer_name' => $finalData['employer_name'],
+            'employment_type' => $finalData['employment_type'],
+            'is_remote' => $finalData['is_remote'],
+            'job_category' => $finalData['job_category'],
+            'benefits_count' => count($finalData['benefits']),
+            'qualifications_count' => count($finalData['qualifications']),
+            'responsibilities_count' => count($finalData['responsibilities'])
+        ]);
+
+        return $finalData;
+    }
+
+    private function buildFallbackPrompt(string $content): string
+    {
+        Log::info('FormatContentJob: Building fallback JSON prompt');
+        
+        return "Extract job information from the following content and return ONLY a valid JSON object with these exact fields:
+
+{
+  \"job_title\": \"string - the job title\",
+  \"employer_name\": \"string - company name\",
+  \"description\": \"string - job description\",
+  \"employment_type\": \"string - full-time/part-time/contract/etc\",
+  \"city\": \"string - city name or Remote\",
+  \"state\": \"string - state/province\",
+  \"country\": \"string - country name\",
+  \"is_remote\": true/false,
+  \"benefits\": [\"string array of benefits\"],
+  \"qualifications\": [\"string array of requirements\"],
+  \"responsibilities\": [\"string array of duties\"],
+  \"min_salary\": 0,
+  \"max_salary\": 0,
+  \"salary_currency\": \"USD\",
+  \"salary_period\": \"yearly\",
+  \"job_category\": 1
+}
+
+Choose job_category: 1=Tech, 2=Marketing, 3=Sales, 4=HR, 5=Finance, 6=Operations, 7=Design, 8=Customer Service, 9=Healthcare, 10=Education, 11=Legal, 12=Construction, 13=Retail, 14=Manufacturing, 15=Other
+
+JOB CONTENT:
+{$content}
+
+Return ONLY the JSON object, no other text: If country not found then default country code will be BD";
+    }
+
+    private function parseJsonResponse(string $response): array
+    {
+        Log::info('FormatContentJob: Parsing JSON response', [
+            'response_length' => strlen($response),
+            'response_start' => substr($response, 0, 100)
+        ]);
+
+        $response = trim($response);
+        
+        $jsonStart = strpos($response, '{');
+        $jsonEnd = strrpos($response, '}');
+        
+        if ($jsonStart !== false && $jsonEnd !== false && $jsonEnd > $jsonStart) {
+            $jsonString = substr($response, $jsonStart, $jsonEnd - $jsonStart + 1);
+            Log::info('FormatContentJob: Extracted JSON string', [
+                'json_length' => strlen($jsonString),
+                'json_preview' => substr($jsonString, 0, 200)
+            ]);
+        } else {
+            $jsonString = $response;
+        }
+
         try {
-            $data = json_decode($formattedContent, true);
+            $data = json_decode($jsonString, true);
             
             if (json_last_error() !== JSON_ERROR_NONE) {
-                throw new \Exception('Invalid JSON response');
+                Log::error('FormatContentJob: JSON decode failed', [
+                    'json_error' => json_last_error_msg(),
+                    'json_string' => $jsonString
+                ]);
+                throw new \Exception('Invalid JSON response: ' . json_last_error_msg());
             }
 
-            $defaults = [
-                'publisher' => 'Facebook Group',
-                'job_id' => uniqid('cf_'),
-                'posted_at' => now(),
-                'expired_at' => now()->addDays(30),
-                'employer_company_type' => 'Unknown',
-                'apply_link' => '#',
-                'required_experience' => 0,
-            ];
+            Log::info('FormatContentJob: JSON parsed successfully', [
+                'parsed_fields' => array_keys($data)
+            ]);
 
-            return array_merge($defaults, $data);
+            return $data;
             
         } catch (\Exception $e) {
-            Log::error('Failed to parse formatted content', [
-                'content' => $formattedContent,
+            Log::error('FormatContentJob: Failed to parse JSON response', [
                 'error' => $e->getMessage(),
+                'response' => $response
             ]);
-            return null;
+            throw $e;
         }
     }
-    
-    /*
-    @return array
-    */
     
     public function middleware(): array
     {
         return [
             new ThrottlesExceptions(
                 maxAttempts: 2,
-                decayMinutes: 5
+                decaySeconds: 10
             )
         ];
     }
