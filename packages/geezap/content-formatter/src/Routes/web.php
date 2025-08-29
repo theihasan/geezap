@@ -8,7 +8,7 @@ Route::middleware(['web', 'auth'])->group(function () {
         ->middleware('can:admin-access')
         ->name('content-formatter.index');
     
-    Route::post('/admin/content-formatter', [ContentFormatterController::class, 'store'])
+    Route::post('/geezap/content-formatter', [ContentFormatterController::class, 'store'])
         ->middleware('can:admin-access')
         ->name('content-formatter.store');
 });
