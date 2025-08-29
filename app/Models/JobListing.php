@@ -115,5 +115,8 @@ class JobListing extends Model
         return 'listing_index';
     }
 
-
+    public function package(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(\Geezap\ContentFormatter\Models\Package::class, 'metadata->job_listing_id', 'id');
+    }
 }
