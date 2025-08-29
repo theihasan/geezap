@@ -66,6 +66,10 @@ return Application::configure(basePath: dirname(__DIR__))
             ->then(function () {
                 Artisan::call('backup:clean');
             });
+            
+        $schedule->command('content-formatter:process-packages')
+            ->everyFiveMinutes()
+            ->withoutOverlapping(600);
 
         // $schedule->job(new CollectMetricsJob('business'))
         //     ->everyFiveMinutes()

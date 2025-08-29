@@ -5,6 +5,7 @@ namespace Geezap\ContentFormatter;
 use App\Enums\Role;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
+use Geezap\ContentFormatter\Console\Commands\ProcessPackagesCommand;
 
 class ContentFormatterServiceProvider extends ServiceProvider
 {
@@ -21,6 +22,12 @@ class ContentFormatterServiceProvider extends ServiceProvider
         Gate::define('admin-access', function ($user) {
             return $user->role === Role::ADMIN;
         });
+        
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+               ProcessPackagesCommand::class
+            ]);
+        }
     }
 
     public function register()
