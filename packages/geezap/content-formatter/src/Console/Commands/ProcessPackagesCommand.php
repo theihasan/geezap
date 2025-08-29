@@ -6,9 +6,12 @@ use Geezap\ContentFormatter\Jobs\FormatContentJob;
 use Geezap\ContentFormatter\Models\Package;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Traits\Batchable;
 
 class ProcessPackagesCommand extends Command
 {
+    use Batchable;
+
     /**
      * The name and signature of the console command.
      *
