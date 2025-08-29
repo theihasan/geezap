@@ -3,6 +3,7 @@
 namespace Geezap\ContentFormatter\Jobs;
 
 use App\Models\JobListing;
+use App\Models\JobCategory;
 use Geezap\ContentFormatter\Models\Package;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -32,7 +33,7 @@ class FormatContentJob implements ShouldQueue
         public int $packageId
     ) {
         Log::info('FormatContentJob: Job created', [
-            'package_id' => $this->packageId,
+            'package_id' => $this->packageId
         ]);
     }
 
@@ -50,17 +51,18 @@ class FormatContentJob implements ShouldQueue
                 'package_id' => $package->id
             ]);
 
-            $prompt = $this->buildFallbackPrompt($package->content);
+            $prompt = $this->buildFallbackPrompt($package->content, $package->apply_link);
             Log::info('FormatContentJob: Prompt built', [
                 'prompt_length' => strlen($prompt),
-                'content_preview' => substr($package->content, 0, 100) . '...'
+                'content_preview' => substr($package->content, 0, 100) . '...',
+                'apply_link' => $package->apply_link
             ]);
 
             Log::info('FormatContentJob: Calling Prism API with text-based approach');
             
             $textResponse = Prism::text()
                 ->using(Provider::DeepSeek, 'deepseek-chat')
-                ->withPrompt($this->buildFallbackPrompt($package->content))
+                ->withPrompt($prompt)
                 ->asText();
             
             Log::info('FormatContentJob: Text response received', [
@@ -103,13 +105,13 @@ class FormatContentJob implements ShouldQueue
 
         } catch (\Exception $e) {
             Log::error('FormatContentJob: Job failed', [
-                'package_id' => $package->id,
+                'package_id' => $this->packageId,
                 'error_message' => $e->getMessage(),
                 'error_trace' => $e->getTraceAsString(),
                 'attempt' => $this->attempts()
             ]);
 
-            $package->update([
+            Package::query()->where('id', $this->packageId)->update([
                 'status' => 'failed',
                 'metadata' => [
                     'error' => $e->getMessage(),
@@ -241,13 +243,28 @@ JOB CONTENT TO EXTRACT:
             'structured_fields' => array_keys($structuredData)
         ]);
 
-        // Validate required fields
         $requiredFields = ['job_title', 'employer_name', 'description', 'employment_type'];
         foreach ($requiredFields as $field) {
             if (empty($structuredData[$field])) {
                 Log::warning("FormatContentJob: Missing required field: {$field}");
                 throw new \Exception("Missing required field: {$field}");
             }
+        }
+
+        // Handle apply link - use provided apply link or fallback to extracted contact info
+        $applyLink = $package->apply_link ?? '#';
+        if ($applyLink === '#' || empty($applyLink)) {
+            if (!empty($structuredData['application_url'])) {
+                $applyLink = $structuredData['application_url'];
+                Log::info('FormatContentJob: Using extracted application URL', ['url' => $applyLink]);
+            } elseif (!empty($structuredData['contact_email'])) {
+                $applyLink = 'mailto:' . $structuredData['contact_email'];
+                Log::info('FormatContentJob: Using extracted contact email', ['email' => $structuredData['contact_email']]);
+            } else {
+                Log::warning('FormatContentJob: No contact information found, using default #');
+            }
+        } else {
+            Log::info('FormatContentJob: Using provided apply link', ['apply_link' => $applyLink]);
         }
 
         // Apply defaults and normalize data
@@ -257,7 +274,7 @@ JOB CONTENT TO EXTRACT:
             'posted_at' => now(),
             'expired_at' => now()->addDays(30),
             'employer_company_type' => 'Unknown',
-            'apply_link' => '#',
+            'apply_link' => $applyLink,
             'required_experience' => 0,
         ];
 
@@ -304,9 +321,24 @@ JOB CONTENT TO EXTRACT:
         return $finalData;
     }
 
-    private function buildFallbackPrompt(string $content): string
+    private function buildFallbackPrompt(string $content, ?string $applyLink = null): string
     {
         Log::info('FormatContentJob: Building fallback JSON prompt');
+        
+        // Get available job categories from database
+        $categories = JobCategory::all(['id', 'name'])->map(function ($category) {
+            return $category->id . '=' . $category->name;
+        })->implode(', ');
+        
+        Log::info('FormatContentJob: Retrieved job categories', [
+            'categories_count' => JobCategory::count(),
+            'categories' => $categories
+        ]);
+        
+        $applyLinkInstruction = '';
+        if (!empty($applyLink) && $applyLink !== '#') {
+            $applyLinkInstruction = "\n\nAPPLY LINK PROVIDED: {$applyLink} - Use this as the primary application method.";
+        }
         
         return "Extract job information from the following content and return ONLY a valid JSON object with these exact fields:
 
@@ -326,15 +358,29 @@ JOB CONTENT TO EXTRACT:
   \"max_salary\": 0,
   \"salary_currency\": \"USD\",
   \"salary_period\": \"yearly\",
-  \"job_category\": 1
+  \"job_category\": 1,
+  \"contact_email\": \"string - application email address if found\",
+  \"application_url\": \"string - application URL if found\",
+  \"contact_phone\": \"string - phone number if found\"
 }
 
-Choose job_category: 1=Tech, 2=Marketing, 3=Sales, 4=HR, 5=Finance, 6=Operations, 7=Design, 8=Customer Service, 9=Healthcare, 10=Education, 11=Legal, 12=Construction, 13=Retail, 14=Manufacturing, 15=Other
+AVAILABLE JOB CATEGORIES - Select the most appropriate ID based on job content:
+{$categories}
+
+INSTRUCTIONS:
+- Analyze the job content carefully and select the most appropriate job_category ID
+- Extract ALL contact information including emails, URLs, and phone numbers
+- If no salary information is available, use 0 for salary amounts
+- If country is not specified, default to 'BD'
+- If employer_name is not found, use 'Not Specified' as default
+- If employment_type is not clear, use 'full-time' as default
+- Break down responsibilities and qualifications into separate array items
+- Ensure ALL required fields are populated{$applyLinkInstruction}
 
 JOB CONTENT:
 {$content}
 
-Return ONLY the JSON object, no other text: If country not found then default country code will be BD";
+Return ONLY the JSON object, no other text.";
     }
 
     private function parseJsonResponse(string $response): array

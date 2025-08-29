@@ -24,10 +24,12 @@ class ContentFormatterController extends Controller
     {
         $request->validate([
             'content' => 'required|string|min:10',
+            'apply_link' => 'nullable|string|max:500',
         ]);
 
         $package = Package::query()->create([
             'content' => $request->content,
+            'apply_link' => $request->apply_link,
             'status' => 'pending',
         ]);
 
@@ -35,7 +37,8 @@ class ContentFormatterController extends Controller
         
         Log::info('ContentFormatterController: Package created and job dispatched', [
             'package_id' => $package->id,
-            'content_length' => strlen($package->content)
+            'content_length' => strlen($package->content),
+            'apply_link' => $package->apply_link
         ]);
         return back()->with('success', 'Content submitted for formatting. It will be processed shortly.');
     }
