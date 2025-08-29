@@ -6,8 +6,7 @@ use Geezap\ContentFormatter\Jobs\FormatContentJob;
 use Geezap\ContentFormatter\Models\Package;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\Traits\Batchable;
-
+use Illuminate\Bus\Batchable;
 class ProcessPackagesCommand extends Command
 {
     use Batchable;
