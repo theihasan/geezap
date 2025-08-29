@@ -42,4 +42,14 @@ class Package extends Model
     {
         return $query->where('status', 'failed');
     }
+
+    public function jobListing()
+    {
+        return $this->belongsTo(\App\Models\JobListing::class, 'metadata->job_listing_id', 'id');
+    }
+
+    public function getJobListingIdAttribute()
+    {
+        return $this->metadata['job_listing_id'] ?? null;
+    }
 }
