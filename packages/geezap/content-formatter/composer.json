@@ -1,0 +1,22 @@
+{
+    "name": "geezap/content-formatter",
+    "description": "Content formatting package for job listings",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Geezap\\ContentFormatter\\": "src/"
+        }
+    },
+    "require": {
+        "php": "^8.1",
+        "prism-php/prism": "^0.86"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Geezap\\ContentFormatter\\ContentFormatterServiceProvider"
+            ]
+        }
+    }
+}
