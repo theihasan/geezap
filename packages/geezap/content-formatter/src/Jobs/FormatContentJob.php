@@ -6,6 +6,7 @@ use App\Models\JobListing;
 use App\Models\JobCategory;
 use Geezap\ContentFormatter\Models\Package;
 use Illuminate\Bus\Queueable;
+use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -22,7 +23,7 @@ use Prism\Prism\Schema\ArraySchema;
 
 class FormatContentJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels,Batchable;
     
     public $tries = 3;
     public $timeout = 60; 
