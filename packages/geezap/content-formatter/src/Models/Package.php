@@ -14,6 +14,7 @@ class Package extends Model
         'status',
         'formatted_content',
         'metadata',
+        'apply_link',
     ];
 
     protected function casts(): array
