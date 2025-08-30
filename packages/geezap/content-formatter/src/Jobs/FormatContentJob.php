@@ -335,7 +335,7 @@ AVAILABLE JOB CATEGORIES - Select the most appropriate ID based on job content:
 INSTRUCTIONS:
 - Analyze the job content carefully and select the most appropriate job_category ID
 - Extract ALL contact information including emails, URLs, and phone numbers
-- For description field, just put "PLACEHOLDER" - the original content will be preserved
+- For description field, just put \"PLACEHOLDER\" - the original content will be preserved
 - If no salary information is available, use 0 for salary amounts
 - If country is not specified, default to 'BD'
 - If employer_name is not found, use 'Not Specified' as default
