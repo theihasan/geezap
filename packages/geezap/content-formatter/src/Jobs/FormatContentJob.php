@@ -40,11 +40,6 @@ class FormatContentJob implements ShouldQueue
 
     public function handle(): void
     {
-        Log::info('FormatContentJob: Starting job processing', [
-            'package_id' => $this->packageId,
-            'attempt' => $this->attempts()
-        ]);
-
         try {
             $package = Package::query()->findOrFail($this->packageId);
             $package->update(['status' => 'processing']);
@@ -53,23 +48,12 @@ class FormatContentJob implements ShouldQueue
             ]);
 
             $prompt = $this->buildFallbackPrompt($package->content, $package->apply_link);
-            Log::info('FormatContentJob: Prompt built', [
-                'prompt_length' => strlen($prompt),
-                'content_preview' => substr($package->content, 0, 100) . '...',
-                'apply_link' => $package->apply_link
-            ]);
-
-            Log::info('FormatContentJob: Calling Prism API with text-based approach');
+        
             
             $textResponse = Prism::text()
                 ->using(Provider::DeepSeek, 'deepseek-chat')
                 ->withPrompt($prompt)
                 ->asText();
-            
-            Log::info('FormatContentJob: Text response received', [
-                'response_length' => strlen($textResponse->text),
-                'response_preview' => substr($textResponse->text, 0, 200)
-            ]);
             
             $structuredData = $this->parseJsonResponse($textResponse->text);
             $response = (object) ['structured' => $structuredData];
@@ -81,10 +65,6 @@ class FormatContentJob implements ShouldQueue
             ]);
 
             $jobListing = JobListing::query()->create($jobData);
-            Log::info('FormatContentJob: JobListing created', [
-                'job_listing_id' => $jobListing->id,
-                'job_title' => $jobListing->job_title
-            ]);
 
             // Update package status to completed
             $package->update([
@@ -96,12 +76,6 @@ class FormatContentJob implements ShouldQueue
                     'api_provider' => 'deepseek-chat',
                     'schema_version' => '1.0'
                 ],
-            ]);
-
-            Log::info('FormatContentJob: Job completed successfully', [
-                'package_id' => $package->id,
-                'job_listing_id' => $jobListing->id,
-                'processing_time' => now()->diffInSeconds($package->updated_at)
             ]);
 
         } catch (\Exception $e) {
@@ -128,7 +102,6 @@ class FormatContentJob implements ShouldQueue
 
     private function createJobListingSchema(): ObjectSchema
     {
-        Log::info('FormatContentJob: Creating job listing schema');
         
         return new ObjectSchema(
             name: 'job_listing',
@@ -218,19 +191,23 @@ class FormatContentJob implements ShouldQueue
 
     private function buildPrompt(string $content): string
     {
+        $categories = JobCategory::all(['id', 'name'])->map(function ($category) {
+            return $category->id . '=' . $category->name;
+        })->implode(', ');
         Log::info('FormatContentJob: Building structured prompt');
         
         return "Extract job information from the following content and structure it according to the provided schema. 
 
 IMPORTANT INSTRUCTIONS:
 - Extract all available information from the job posting
+- For the description field, preserve the original content exactly as provided - do not rewrite or modify it
 - For missing information, use reasonable defaults:
   - If location is not specified but mentions remote, set is_remote=true and use 'Remote' for city
   - If no salary mentioned, set min_salary=0, max_salary=0, currency='N/A', period='N/A'
   - If no benefits mentioned, return empty array
-  - Choose appropriate job_category (1-15): 1=Tech, 2=Marketing, 3=Sales, 4=HR, 5=Finance, 6=Operations, 7=Design, 8=Customer Service, 9=Healthcare, 10=Education, 11=Legal, 12=Construction, 13=Retail, 14=Manufacturing, 15=Other
+  - Choose appropriate job_category {$categories}
 - Break down responsibilities and qualifications into separate array items
-- Ensure all required fields are populated
+- Ensure all required fields are populated 
 -If country not found then default country code will be BD
 - If no direct apply link found then look for an email address or contact information and add it to description and apply link
 
@@ -240,10 +217,8 @@ JOB CONTENT TO EXTRACT:
     
     private function processStructuredResponse(array $structuredData): array
     {
-        Log::info('FormatContentJob: Processing structured response', [
-            'structured_fields' => array_keys($structuredData)
-        ]);
-
+        $package = Package::query()->findOrFail($this->packageId);
+        
         $requiredFields = ['job_title', 'employer_name', 'description', 'employment_type'];
         foreach ($requiredFields as $field) {
             if (empty($structuredData[$field])) {
@@ -251,6 +226,10 @@ JOB CONTENT TO EXTRACT:
                 throw new \Exception("Missing required field: {$field}");
             }
         }
+
+        // Preserve original description - don't let AI modify it
+        $structuredData['description'] = $package->content;
+        Log::info('FormatContentJob: Preserved original description from package content');
 
         // Handle apply link - use provided apply link or fallback to extracted contact info
         $applyLink = $package->apply_link ?? '#';
@@ -308,17 +287,6 @@ JOB CONTENT TO EXTRACT:
         // Merge with defaults
         $finalData = array_merge($defaults, $structuredData);
 
-        Log::info('FormatContentJob: Final processed data', [
-            'job_title' => $finalData['job_title'],
-            'employer_name' => $finalData['employer_name'],
-            'employment_type' => $finalData['employment_type'],
-            'is_remote' => $finalData['is_remote'],
-            'job_category' => $finalData['job_category'],
-            'benefits_count' => count($finalData['benefits']),
-            'qualifications_count' => count($finalData['qualifications']),
-            'responsibilities_count' => count($finalData['responsibilities'])
-        ]);
-
         return $finalData;
     }
 
@@ -331,10 +299,6 @@ JOB CONTENT TO EXTRACT:
             return $category->id . '=' . $category->name;
         })->implode(', ');
         
-        Log::info('FormatContentJob: Retrieved job categories', [
-            'categories_count' => JobCategory::count(),
-            'categories' => $categories
-        ]);
         
         $applyLinkInstruction = '';
         if (!empty($applyLink) && $applyLink !== '#') {
@@ -346,7 +310,7 @@ JOB CONTENT TO EXTRACT:
 {
   \"job_title\": \"string - the job title\",
   \"employer_name\": \"string - company name\",
-  \"description\": \"string - job description\",
+  \"description\": \"PLACEHOLDER - will be replaced with original content\",
   \"employment_type\": \"string - full-time/part-time/contract/etc\",
   \"city\": \"string - city name or Remote\",
   \"state\": \"string - state/province\",
@@ -371,6 +335,7 @@ AVAILABLE JOB CATEGORIES - Select the most appropriate ID based on job content:
 INSTRUCTIONS:
 - Analyze the job content carefully and select the most appropriate job_category ID
 - Extract ALL contact information including emails, URLs, and phone numbers
+- For description field, just put "PLACEHOLDER" - the original content will be preserved
 - If no salary information is available, use 0 for salary amounts
 - If country is not specified, default to 'BD'
 - If employer_name is not found, use 'Not Specified' as default
