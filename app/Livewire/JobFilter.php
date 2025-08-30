@@ -187,6 +187,7 @@ class JobFilter extends Component
                         $query->whereHas('category', function($query) use ($category) {
                             $query->where('id', $category);
                         }))
+                    ->with('category')
                     ->latest()
                     ->take($perPage)
                     ->get();
