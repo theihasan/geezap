@@ -20,7 +20,7 @@ class ContentFormatterServiceProvider extends ServiceProvider
         ], 'content-formatter-views');
 
         Gate::define('admin-access', function ($user) {
-            return $user->role === Role::ADMIN;
+            return $user->role === Role::ADMIN || $user->role === Role::EDITOR;
         });
         
         if ($this->app->runningInConsole()) {
