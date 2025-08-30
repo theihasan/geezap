@@ -310,7 +310,7 @@ JOB CONTENT TO EXTRACT:
 {
   \"job_title\": \"string - the job title\",
   \"employer_name\": \"string - company name\",
-  \"description\": \"PLACEHOLDER - will be replaced with original content\",
+  "description": "PLACEHOLDER",
   \"employment_type\": \"string - full-time/part-time/contract/etc\",
   \"city\": \"string - city name or Remote\",
   \"state\": \"string - state/province\",
