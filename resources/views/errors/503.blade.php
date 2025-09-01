@@ -1,6 +1,6 @@
 @extends('v2.layouts.app')
 @section('content')
-    <section class="min-h-screen flex items-center justify-center bg-[#12122b] relative py-20">
+    <section class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-[#12122b] relative py-20">
         <div class="absolute inset-0 opacity-10" style="background-image: url('https://placehold.co/1920x800/2a2a4a/FFFFFF'); background-size: cover;"></div>
 
         <div class="max-w-4xl mx-auto px-6 relative">
@@ -16,61 +16,61 @@
                               stroke="url(#gradient)" stroke-width="4"/>
                         <defs>
                             <linearGradient id="gradient" x1="0" y1="0" x2="400" y2="100">
-                                <stop offset="0%" stop-color="#EC4899"/>
-                                <stop offset="100%" stop-color="#8B5CF6"/>
+                                <stop offset="0%" stop-color="#3B82F6"/>
+                                <stop offset="100%" stop-color="#1D4ED8"/>
                             </linearGradient>
                         </defs>
                     </svg>
                 </div>
 
                 <div class="space-y-4">
-                    <h2 class="text-4xl font-oxanium-bold text-white">
+                    <h2 class="text-4xl font-oxanium-bold text-gray-900 dark:text-white">
                         Under Maintenance
                     </h2>
-                    <p class="text-xl text-gray-300 font-ubuntu-light max-w-2xl mx-auto">
+                    <p class="text-xl text-gray-600 dark:text-gray-300 font-ubuntu-light max-w-2xl mx-auto">
                         We're currently improving our services to bring you a better experience.
                         We'll be back shortly!
                     </p>
                 </div>
 
-                <div class="bg-[#1a1a3a]/50 p-6 rounded-xl max-w-xl mx-auto">
+                <div class="bg-gray-100 dark:bg-[#1a1a3a]/50 p-6 rounded-xl max-w-xl mx-auto">
                     <div class="flex items-center justify-center gap-2 mb-4">
-                        <div class="w-3 h-3 bg-pink-500 rounded-full animate-pulse"></div>
-                        <span class="text-pink-300 font-ubuntu-medium">Maintenance in Progress</span>
+                        <div class="w-3 h-3 bg-blue-500 dark:bg-pink-500 rounded-full animate-pulse"></div>
+                        <span class="text-blue-600 dark:text-pink-300 font-ubuntu-medium">Maintenance in Progress</span>
                     </div>
 
                     <div class="space-y-4">
-                        <div class="bg-[#12122b] p-4 rounded-lg">
-                            <h4 class="text-white font-semibold mb-2">Estimated Duration</h4>
-                            <p class="text-gray-300 text-sm">
+                        <div class="bg-white dark:bg-[#12122b] p-4 rounded-lg">
+                            <h4 class="text-gray-900 dark:text-white font-semibold mb-2">Estimated Duration</h4>
+                            <p class="text-gray-600 dark:text-gray-300 text-sm">
                                 Expected completion at {{ now()->addHours(2)->format('h:i A') }}
                             </p>
                         </div>
 
                         <div class="grid md:grid-cols-2 gap-4">
-                            <div class="bg-[#12122b] p-4 rounded-lg">
+                            <div class="bg-white dark:bg-[#12122b] p-4 rounded-lg">
                                 <div class="flex items-center gap-2 mb-2">
-                                    <i class="las la-tools text-pink-500"></i>
-                                    <h4 class="text-white font-semibold">What's Happening</h4>
+                                    <i class="las la-tools text-blue-600 dark:text-pink-500"></i>
+                                    <h4 class="text-gray-900 dark:text-white font-semibold">What's Happening</h4>
                                 </div>
-                                <p class="text-gray-300 text-sm">
+                                <p class="text-gray-600 dark:text-gray-300 text-sm">
                                     System upgrades and performance improvements
                                 </p>
                             </div>
 
-                            <div class="bg-[#12122b] p-4 rounded-lg">
+                            <div class="bg-white dark:bg-[#12122b] p-4 rounded-lg">
                                 <div class="flex items-center gap-2 mb-2">
-                                    <i class="las la-bell text-pink-500"></i>
-                                    <h4 class="text-white font-semibold">Get Notified</h4>
+                                    <i class="las la-bell text-blue-600 dark:text-pink-500"></i>
+                                    <h4 class="text-gray-900 dark:text-white font-semibold">Get Notified</h4>
                                 </div>
-                                <p class="text-gray-300 text-sm">
+                                <p class="text-gray-600 dark:text-gray-300 text-sm">
                                     Follow our status page for updates
                                 </p>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="text-gray-400 text-sm">
+                <div class="text-gray-600 dark:text-gray-400 text-sm">
                     This page will automatically refresh every 30 seconds to check for updates.
                 </div>
             </div>
