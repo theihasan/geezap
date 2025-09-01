@@ -45,6 +45,16 @@
                 <i class="las la-arrow-right opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all"></i>
             </a>
 
+            <!-- Theme Switcher for Mobile -->
+            <div class="flex items-center justify-between py-4 px-4 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
+                <span class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-blue-500/10 dark:bg-pink-500/10 flex items-center justify-center">
+                        <i class="las la-moon text-blue-500 dark:text-pink-500"></i>
+                    </div>
+                    <span class="text-gray-700 dark:text-gray-100">Theme</span>
+                </span>
+                <x-theme-switcher />
+            </div>
 
             <!-- Mobile Menu Footer -->
         <div class="mt-auto p-6 space-y-4 border-t border-gray-200 dark:border-white/10">

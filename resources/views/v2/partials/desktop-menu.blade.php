@@ -11,4 +11,7 @@
         </div>
         <span>Categories</span>
     </a>
+    
+    <!-- Theme Switcher -->
+    <x-theme-switcher />
 </div>
