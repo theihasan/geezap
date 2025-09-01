@@ -1,10 +1,10 @@
 @extends('v2.layouts.app')
 @section('content')
-    <section class="py-20 bg-[#12122b]">
+    <section class="py-20 bg-gray-50 dark:bg-[#12122b]">
         <div class="max-w-7xl mx-auto px-6">
             <div class="mb-8">
-                <h2 class="text-2xl font-ubuntu-bold text-white">
-                    Available Jobs <span class="text-pink-500" id="job-count">({{ $jobs->total() }})</span>
+                <h2 class="text-2xl font-ubuntu-bold text-gray-900 dark:text-white">
+                    Available Jobs <span class="text-blue-600 dark:text-pink-500" id="job-count">({{ $jobs->total() }})</span>
                 </h2>
             </div>
             <livewire:job-filter />
