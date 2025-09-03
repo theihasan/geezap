@@ -3,35 +3,16 @@
 namespace App\Http\Controllers\Pages;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Services\SeoMetaService;
 
 class PrivacyPolicyPageController extends Controller
 {
-    public function __invoke()
+    public function __invoke(SeoMetaService $seoService)
     {
+        $meta = $seoService->generateMeta();
+
         return view('v2.pages.privacy-policy', [
-            'meta' => (object)[
-                'title' => 'Privacy Policy | Geezap - Tech Job Board',
-                'description' => 'Learn how Geezap protects your privacy and what data we collect when you use our tech job board platform.',
-                'keywords' => 'privacy policy, geezap privacy, data protection, tech job board',
-                'og' => (object)[
-                    'type' => 'website',
-                    'title' => 'Privacy Policy | Geezap - Tech Job Board',
-                    'description' => 'Learn how Geezap protects your privacy and what data we collect.',
-                    'image' => null
-                ],
-                'twitter' => (object)[
-                    'title' => 'Privacy Policy | Geezap - Tech Job Board',
-                    'description' => 'Learn how Geezap protects your privacy and what data we collect.',
-                    'image' => null
-                ],
-                'discord' => (object)[
-                    'title' => 'Privacy Policy | Geezap - Tech Job Board',
-                    'description' => 'Learn how Geezap protects your privacy and what data we collect.',
-                    'image' => null
-                ],
-                'structuredData' => null
-            ]
+            'meta' => $meta
         ]);
     }
 }
