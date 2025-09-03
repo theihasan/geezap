@@ -8,6 +8,7 @@ use Illuminate\View\View;
 use App\Models\JobCategory;
 use Illuminate\Http\Request;
 use App\Services\ProfileService;
+use App\Services\SeoMetaService;
 use App\Caches\JobRecommendationCache;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -25,8 +26,10 @@ use App\Http\Requests\SocialMediaInfoUpdateRequest;
 
 class ProfileController extends Controller
 {
-    public function __construct(protected JobRecommendationService $jobRecommendationService)
-    {
+    public function __construct(
+        protected JobRecommendationService $jobRecommendationService,
+        protected SeoMetaService $seoService
+    ) {
        
     }
 
@@ -35,10 +38,13 @@ class ProfileController extends Controller
         $experiences = json_decode(Auth::user()->experience, true);
         $skills = json_decode(Auth::user()->skills, true);
         $timezones = Timezone::cases();
+        $meta = $this->seoService->generateMeta();
+
         return view('v2.profile.edit-profile', [
             'experiences' => $experiences,
             'skills' => $skills,
-            'timezones' => $timezones
+            'timezones' => $timezones,
+            'meta' => $meta
         ]);
     }
 
@@ -100,8 +106,9 @@ class ProfileController extends Controller
     {
         $user = auth()->user();
         $recommendedJobs = $this->jobRecommendationService->getRecommendedJobsForUser($user, 6);
+        $meta = $this->seoService->generateMeta();
         
-        return view('v2.profile.profile', compact('recommendedJobs'));
+        return view('v2.profile.profile', compact('recommendedJobs', 'meta'));
     }
 
     public function preferences(): View
@@ -112,8 +119,9 @@ class ProfileController extends Controller
         
         $preferences = $user->preferences;
         $recommendedJobs = $this->jobRecommendationService->getRecommendedJobsForUser($user, 6);
+        $meta = $this->seoService->generateMeta();
         
-        return view('v2.profile.preferences', compact('jobCategories', 'countries', 'preferences', 'recommendedJobs'));
+        return view('v2.profile.preferences', compact('jobCategories', 'countries', 'preferences', 'recommendedJobs', 'meta'));
     }
 
     public function updatePreferences(UserPreferencesUpdateRequest $request): RedirectResponse
