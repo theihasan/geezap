@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +9,23 @@
     <meta name="title" content="{{ $meta->title }}">
     <meta name="description" content="{{ $meta->description }}">
     <meta name="keywords" content="{{ $meta->keywords }}">
+
+    <!-- Theme initialization script to prevent flash of unstyled content -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            const html = document.documentElement;
+            
+            // Remove any existing theme classes
+            html.classList.remove('dark', 'light');
+            
+            if (savedTheme === 'dark') {
+                html.classList.add('dark');
+            } else {
+                html.classList.add('light');
+            }
+        })();
+    </script>
 
     <!-- Favicon - Preloaded -->
     <link rel="preload" href="{{asset('assets/images/favicon.ico')}}" as="image" type="image/x-icon">
