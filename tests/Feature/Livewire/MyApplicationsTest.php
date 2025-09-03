@@ -8,9 +8,10 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Livewire\Livewire;
 use Tests\TestCase;
 
+
 class MyApplicationsTest extends TestCase
 {
-    /** @test */
+    #[PHPUnit\Framework\Attributes\Test]
     public function renders_successfully()
     {
         Livewire::test(MyApplications::class)

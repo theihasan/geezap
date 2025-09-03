@@ -91,42 +91,8 @@ class AppServiceProvider extends ServiceProvider
         try {
             View::composer('v2.partials.header', function ($view) {
                 if (!$view->offsetExists('meta')) {
-                    $currentRoute = request()->route()?->getName();
-                    $metaGenerator = app(MetaTagGenerator::class);
-
-                    $meta = match($currentRoute) {
-                        'dashboard' => $metaGenerator->getDashboardMeta(),
-                        'about' => $metaGenerator->getAboutMeta(),
-                        'contact' => $metaGenerator->getContactMeta(),
-                        'privacy-policy' => $metaGenerator->getPrivacyPolicyMeta(),
-                        'terms' => $metaGenerator->getTermsMeta(),
-                        'cover-letter.update' => $metaGenerator->getCoverLetterMeta(),
-                        'applications' => $metaGenerator->getApplicationsMeta(),
-                        'profile.update' => $metaGenerator->getProfileUpdateMeta(),
-                        'profile.preferences' => $metaGenerator->getPreferencesMeta(),
-                        default => new MetaTagDTO(
-                            title: config('app.name', 'Geezap'),
-                            description: 'Find your dream job with Geezap - AI-powered job aggregation platform unifying listings from LinkedIn, Upwork, Indeed, and ZipRecruiter with smart matching and cover letter generation.',
-                            keywords: 'job search, AI job matching, career platform, job aggregator, remote jobs, tech jobs, LinkedIn jobs, Upwork, Indeed, ZipRecruiter',
-                            og: new OpenGraphDTO(
-                                title: config('app.name', 'Geezap'),
-                                description: 'Find your dream job with Geezap - AI-powered job aggregation platform unifying listings from LinkedIn, Upwork, Indeed, and ZipRecruiter with smart matching and cover letter generation.',
-                                type: 'website',
-                                image: asset('assets/images/favicon.ico')
-                            ),
-                            twitter: new TwitterCardDTO(
-                                title: config('app.name', 'Geezap'),
-                                description: 'Find your dream job with Geezap - AI-powered job aggregation platform unifying listings from LinkedIn, Upwork, Indeed, and ZipRecruiter with smart matching and cover letter generation.',
-                                image: asset('assets/images/favicon.ico')
-                            ),
-                            discord: new DiscordCardDTO(
-                                title: config('app.name', 'Geezap'),
-                                description: 'Find your dream job with Geezap - AI-powered job aggregation platform unifying listings from LinkedIn, Upwork, Indeed, and ZipRecruiter with smart matching and cover letter generation.',
-                                image: asset('assets/images/favicon.ico')
-                            )
-                        ),
-                    };
-
+                    $seoService = app(\App\Services\SeoMetaService::class);
+                    $meta = $seoService->generateMeta();
                     $view->with('meta', $meta);
                 }
             });

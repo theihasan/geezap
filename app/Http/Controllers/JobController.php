@@ -7,7 +7,7 @@ use App\Caches\CountryAwareJobPageCache;
 use App\Caches\JobPageCache;
 use App\Caches\JobViewsCache;
 use App\Caches\RelatedJobListingCache;
-use App\Services\MetaTagGenerator;
+use App\Services\SeoMetaService;
 use App\Traits\DetectsUserCountry;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -19,7 +19,7 @@ class JobController extends Controller
 {
     use DetectsUserCountry;
 
-    public function index(Request $request, MetaTagGenerator $metaTagGenerator)
+    public function index(Request $request, SeoMetaService $seoService)
     {
         try {
             $userCountry = $this->getUserCountry();
@@ -42,27 +42,27 @@ class JobController extends Controller
         }
 
         $currentPage = $jobs->currentPage();
+        $meta = $seoService->generateJobsIndexMeta($request, $jobs->total());
 
         return view('v2.job.index', [
             'jobs' => $jobs,
             'currentPage' => $currentPage,
             'userCountry' => $userCountry,
-            'meta' => $metaTagGenerator->getJobsIndexMeta($request, $jobs->total()),
+            'meta' => $meta,
         ]);
     }
 
-    public function job(MetaTagGenerator $metaTagGenerator, $slug): Factory|Application|View|\Illuminate\Contracts\Foundation\Application
+    public function job(SeoMetaService $seoService, $slug): Factory|Application|View|\Illuminate\Contracts\Foundation\Application
     {
         $jobViews = JobViewsCache::get($slug, request()->ip());
-
         $job = JobListingCache::get($slug);
-
         $relatedJobs = RelatedJobListingCache::get($slug, $job);
+        $meta = $seoService->generateJobDetailMeta($job);
 
         return view('v2.job.details', [
             'job' => $job,
             'relatedJobs' => $relatedJobs,
-            'meta' => $metaTagGenerator->getJobDetailsMeta($job)
+            'meta' => $meta
         ]);
     }
 }
