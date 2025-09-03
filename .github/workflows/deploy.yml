@@ -38,7 +38,7 @@ jobs:
             cd /var/www/html/geezap && \
             git fetch origin main && \
             git reset --hard origin/main && \
-            composer install --no-interaction --prefer-dist --optimize-autoloader && \
+            composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev && \
             php artisan migrate --force && \
             php artisan config:cache && \
             php artisan route:cache && \
