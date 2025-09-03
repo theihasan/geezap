@@ -36,13 +36,15 @@ jobs:
            echo "=== Attempting SSH connection ==="
             ssh -o StrictHostKeyChecking=no deploy@${{ secrets.SERVER_IP }} "
             cd /var/www/html/geezap && \
+            sudo chown -R deploy:deploy .git && \
             git fetch origin main && \
             git reset --hard origin/main && \
             composer install --no-interaction --prefer-dist --optimize-autoloader && \
             php artisan migrate --force && \
             php artisan config:cache && \
             php artisan route:cache && \
-            php artisan view:cache
+            php artisan view:cache && \
+            sudo chown -R www-data:www-data storage bootstrap/cache
           "
 
       - name: Send Discord Notification (Success)
