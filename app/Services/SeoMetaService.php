@@ -13,11 +13,13 @@ use Illuminate\Support\Facades\URL;
 
 class SeoMetaService
 {
-    public function __construct(
-        private Request $request,
-        private array $config = []
-    ) {
+    private array $config;
+    private Request $request;
+
+    public function __construct(Request $request)
+    {
         $this->config = config('seo', []);
+        $this->request = $request;
     }
 
     public function generateMeta(
