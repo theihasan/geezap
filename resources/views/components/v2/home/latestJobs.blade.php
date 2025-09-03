@@ -10,7 +10,7 @@
         <!-- Compact Two Column Job Listings Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             @foreach ($latestJobs as $job)
-                <div class="group relative overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700/50 bg-white dark:bg-[#1a1a3a] p-4 transition-all duration-300 hover:border-blue-500/50 dark:hover:border-pink-500/50 hover:shadow-md animate-fadeIn" style="animation-delay: {{ $loop->index * 100 }}ms">
+                <a href="{{ route('job.show', $job->slug) }}" class="group relative overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700/50 bg-white dark:bg-[#1a1a3a] p-4 transition-all duration-300 hover:border-blue-500/50 dark:hover:border-pink-500/50 hover:shadow-md animate-fadeIn block" style="animation-delay: {{ $loop->index * 100 }}ms">
                     <!-- Compact Header: Company Info & Job Type -->
                     <div class="flex items-start justify-between gap-3 mb-3">
                         <!-- Company Info -->
@@ -38,9 +38,7 @@
 
                     <!-- Job Title -->
                     <div class="mb-3">
-                        <a href="{{ route('job.show', $job->slug) }}" class="group/title">
-                            <h3 class="text-base font-semibold text-gray-900 dark:text-white group-hover/title:text-blue-600 dark:group-hover/title:text-pink-400 transition-colors line-clamp-2 leading-tight">{{ $job->job_title }}</h3>
-                        </a>
+                        <h3 class="text-base font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-pink-400 transition-colors line-clamp-2 leading-tight">{{ $job->job_title }}</h3>
                     </div>
 
                     <!-- Compact Details Row -->
@@ -76,12 +74,11 @@
                             </div>
                         @endif
 
-                        <a href="{{ route('job.show', $job->slug) }}"
-                           class="inline-flex items-center gap-1 rounded bg-gradient-to-r from-blue-500 to-blue-600 dark:from-pink-500 dark:to-purple-600 px-3 py-1.5 text-xs font-medium text-white transition-opacity hover:opacity-90">
+                        <div class="inline-flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-pink-400 transition-colors">
                             View Details →
-                        </a>
+                        </div>
                     </div>
-                </div>
+                </a>
             @endforeach
         </div>
 
