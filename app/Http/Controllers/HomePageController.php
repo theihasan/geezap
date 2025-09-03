@@ -10,7 +10,7 @@ use App\Caches\CountryAwareLatestJobsCache;
 use App\Caches\CountryAwareMostViewedJobsCache;
 use App\Caches\LatestJobsCache;
 use App\Caches\MostViewedJobsCache;
-use App\Services\MetaTagGenerator;
+use App\Services\SeoMetaService;
 use App\Traits\DetectsUserCountry;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -21,7 +21,7 @@ class HomePageController extends Controller
 {
     use DetectsUserCountry;
 
-    public function __invoke(MetaTagGenerator $metaGenerator): Factory|Application|View|\Illuminate\Contracts\Foundation\Application
+    public function __invoke(SeoMetaService $seoService): Factory|Application|View|\Illuminate\Contracts\Foundation\Application
     {
         try {
             $userCountry = $this->getUserCountry();
@@ -45,23 +45,18 @@ class HomePageController extends Controller
         }
 
         $jobCategories = JobCategoryCache::getTopCategories();
-
         $todayAddedJobsCount = JobsCountCache::todayAdded();
-
         $lastWeekAddedJobsCount = JobsCountCache::lastWeekAdded();
-
         $jobCategoriesCount = JobsCountCache::categoriesCount();
-
         $availableJobs = JobsCountCache::availableJobsCount();
-
         $topCountries = CountryJobCountCache::getTopCountries(10);
 
-        $meta = $metaGenerator->getHomePageMeta(
-            $availableJobs,
-            $todayAddedJobsCount,
-            $jobCategoriesCount,
-            $lastWeekAddedJobsCount,
-            $jobCategories
+        $meta = $seoService->generateHomePageMeta(
+            availableJobs: $availableJobs,
+            todayAddedJobsCount: $todayAddedJobsCount,
+            jobCategoriesCount: $jobCategoriesCount,
+            lastWeekAddedJobsCount: $lastWeekAddedJobsCount,
+            jobCategories: $jobCategories
         );
 
         return view('v2.index', compact([
