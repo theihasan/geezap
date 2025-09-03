@@ -16,6 +16,7 @@ Route::get('about', \App\Http\Controllers\Pages\AboutPageController::class)->nam
 Route::get('contact', \App\Http\Controllers\Pages\ContactPageController::class)->name('contact');
 Route::get('privacy-policy', \App\Http\Controllers\Pages\PrivacyPolicyPageController::class)->name('privacy-policy');
 Route::get('terms', \App\Http\Controllers\Pages\TermsPageController::class)->name('terms');
+Route::view('job-preferences', 'v2.pages.job-preferences')->name('job.preferences');
 
 Route::prefix('jobs')->group(function () {
     Route::get('/', [JobController::class, 'index'])->name('job.index');

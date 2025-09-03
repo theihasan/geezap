@@ -44,6 +44,16 @@
             </span>
                 <i class="las la-arrow-right opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all"></i>
             </a>
+            <a href="{{route('job.preferences')}}"
+               class="text-gray-700 dark:text-gray-100 hover:text-blue-600 dark:hover:text-pink-500 py-4 transition-all duration-200 transform translate-x-4 opacity-0 mobile-menu-item group flex items-center justify-between rounded-xl {{ request()->routeIs('job.preferences') ? 'bg-gray-100 dark:bg-white/10 text-blue-600 dark:text-pink-500' : 'hover:bg-gray-100 dark:hover:bg-white/5' }} px-4">
+            <span class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-blue-500/10 dark:bg-pink-500/10 flex items-center justify-center group-hover:bg-blue-500/20 dark:group-hover:bg-pink-500/20 transition-colors">
+                    <i class="las la-sliders-h text-blue-500 dark:text-pink-500"></i>
+                </div>
+                Job Preferences
+            </span>
+                <i class="las la-arrow-right opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all"></i>
+            </a>
 
             <!-- Theme Switcher for Mobile -->
             <div class="flex items-center justify-between py-4 px-4 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 transition-colors">
