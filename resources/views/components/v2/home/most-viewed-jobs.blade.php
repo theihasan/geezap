@@ -2,8 +2,8 @@
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
     @foreach ($mostViewedJobs as $job)
-        <div class="group relative bg-white dark:bg-[#1a1a3a] rounded-lg overflow-hidden transition-all duration-300 hover:bg-gray-50 dark:hover:bg-[#1e1e4a] border border-gray-200 dark:border-gray-700"
-             style="animation-delay: {{ $loop->index * 100 }}ms">
+        <a href="{{ route('job.show', $job->slug) }}" class="group relative bg-white dark:bg-[#1a1a3a] rounded-lg overflow-hidden transition-all duration-300 hover:bg-gray-50 dark:hover:bg-[#1e1e4a] border border-gray-200 dark:border-gray-700 block"
+           style="animation-delay: {{ $loop->index * 100 }}ms">
             <!-- Accent Line -->
             <div class="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-blue-500 dark:from-pink-500 to-blue-600 dark:to-purple-600 transform origin-top scale-y-0 group-hover:scale-y-100 transition-transform duration-500"></div>
 
@@ -34,17 +34,15 @@
                     </div>
                     
                     <!-- Employment Type Badge -->
-                    <span class="flex items-center gap-1 rounded-full bg-blue-500/10 dark:bg-pink-500/10 px-2 py-0.5 text-xs font-medium text-blue-600 dark:text-pink-400 border border-blue-500/20 dark:border-pink-500/20 flex-shrink-0">
+                    {{-- <span class="flex items-center gap-1 rounded-full bg-blue-500/10 dark:bg-pink-500/10 px-2 py-0.5 text-xs font-medium text-blue-600 dark:text-pink-400 border border-blue-500/20 dark:border-pink-500/20 flex-shrink-0">
                         <i class="las la-clock text-xs"></i>
                         {{ $job->employment_type }}
-                    </span>
+                    </span> --}}
                 </div>
 
                 <!-- Job Title -->
                 <div class="mb-3">
-                    <a href="{{ route('job.show', $job->slug) }}" class="block">
-                        <h3 class="text-base font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-pink-400 transition-colors line-clamp-2 leading-tight">{{ $job->job_title }}</h3>
-                    </a>
+                    <h3 class="text-base font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-pink-400 transition-colors line-clamp-2 leading-tight">{{ $job->job_title }}</h3>
                 </div>
 
                 <!-- Compact Details Row -->
@@ -64,7 +62,7 @@
                     </div>
                 </div>
 
-                <!-- Salary & Action -->
+                <!-- Salary -->
                 <div class="flex items-center justify-between">
                     @if ($job->min_salary && $job->max_salary)
                         <div class="text-gray-900 dark:text-white font-medium text-sm">
@@ -75,13 +73,12 @@
                         </div>
                     @endif
 
-                    <a href="{{ route('job.show', $job->slug) }}"
-                       class="inline-flex items-center gap-1 rounded bg-gradient-to-r from-blue-500 to-blue-600 dark:from-pink-500 dark:to-purple-600 px-3 py-1.5 text-xs font-medium text-white transition-opacity hover:opacity-90">
+                    <div class="inline-flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 group-hover:text-blue-600 dark:group-hover:text-pink-400 transition-colors">
                         View Details →
-                    </a>
+                    </div>
                 </div>
             </div>
-        </div>
+        </a>
     @endforeach
 </div>
 
