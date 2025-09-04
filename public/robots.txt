@@ -1,2 +1,57 @@
+# Robots.txt for Geezap Job Aggregator 
+# Generated on 2025-09-04
+
 User-agent: *
-Disallow:
+Allow: /
+
+# Allow crawling of main job pages
+Allow: /jobs
+Allow: /jobs/*
+Allow: /companies
+Allow: /companies/*
+
+# Allow public assets
+Allow: /assets/
+Allow: /css/
+Allow: /js/
+Allow: *.css
+Allow: *.js
+
+# Disallow admin and private areas
+Disallow: /admin
+Disallow: /admin/
+Disallow: /filament/
+Disallow: /horizon/
+Disallow: /telescope/
+
+# Disallow user account pages
+Disallow: /profile
+Disallow: /profile/
+Disallow: /dashboard
+Disallow: /dashboard/
+Disallow: /settings
+Disallow: /settings/
+
+# Disallow authentication pages
+Disallow: /login
+Disallow: /register
+Disallow: /password/
+Disallow: /email/
+
+# Disallow API endpoints
+Disallow: /api/
+Disallow: /livewire/
+Disallow: /broadcasting/
+
+# Disallow temporary and cache files
+Disallow: /storage/
+Disallow: /vendor/
+
+# Disallow search result pages with parameters to avoid duplicate content
+Disallow: /*?*
+
+# Crawl delay for respectful crawling
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://geezap.com/sitemap.xml
