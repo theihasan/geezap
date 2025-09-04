@@ -71,6 +71,10 @@ return Application::configure(basePath: dirname(__DIR__))
             ->everyFiveMinutes()
             ->withoutOverlapping(600);
 
+        $schedule->command('sitemap:generate')
+            ->daily()
+            ->withoutOverlapping(600);
+
         // $schedule->job(new CollectMetricsJob('business'))
         //     ->everyFiveMinutes()
         //     ->withoutOverlapping(300);
