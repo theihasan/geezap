@@ -13,6 +13,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Build assets
+        run: npm run build
+
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.9.0
         with:
@@ -39,6 +51,8 @@ jobs:
             git fetch origin main && \
             git reset --hard origin/main && \
             composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev && \
+            npm ci && \
+            npm run build && \
             php artisan migrate --force && \
             php artisan config:cache && \
             php artisan route:cache && \
