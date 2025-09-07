@@ -84,5 +84,8 @@ return Application::configure(basePath: dirname(__DIR__))
         //     ->withoutOverlapping(600);
 
         $schedule->command('model:prune')->everyMinute();
+        $schedule->command('model:prune', [
+               '--model' => 'MeShaon\RequestAnalytics\Models\RequestAnalytics',
+           ])->daily();
 
     })->create();
