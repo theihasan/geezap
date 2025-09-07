@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use MeShaon\RequestAnalytics\Contracts\CanAccessAnalyticsDashboard;
 
 #[ObservedBy([UserObserver::class])]
 class User extends Authenticatable implements FilamentUser
@@ -91,4 +92,9 @@ class User extends Authenticatable implements FilamentUser
             'remote_only' => false,
         ]);
     }
+    
+    public function canAccessAnalyticsDashboard(): bool
+      {
+         return true;
+      }
 }
