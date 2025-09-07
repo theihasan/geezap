@@ -11,33 +11,34 @@ class RelatedJobListingCache{
         return Cache::remember(self::key($slug), 60 * 24, function () use ($job) {
             $count = JobListing::query()
                 ->where('job_category', $job->job_category)
-                ->where('id', '!=', $job->id)
                 ->count();
                 
             if ($count > 3) {
-                $randomOffsets = array_rand(range(0, $count - 1), min(3, $count));
-                $result = collect();
+                $maxOffset = min($count - 1, 100);
+                $randomOffsets = (array)array_rand(range(0, $maxOffset), min(3, $maxOffset + 1));
                 
-                foreach ((array)$randomOffsets as $offset) {
-                    $randomJob = JobListing::query()
-                        ->where('job_category', $job->job_category)
-                        ->where('id', '!=', $job->id)
-                        ->skip($offset)
-                        ->take(1)
-                        ->first();
-                        
-                    if ($randomJob) {
-                        $result->push($randomJob);
-                    }
-                }
+                $result = collect($randomOffsets)
+                    ->map(function ($offset) use ($job) {
+                        return JobListing::query()
+                            ->where('job_category', $job->job_category)
+                            ->skip($offset)
+                            ->take(1)
+                            ->first();
+                    })
+                    ->reject(function ($jobListing) use ($job) {
+                        return !$jobListing || $jobListing->id === $job->id;
+                    })
+                    ->values();
                 
                 return $result;
             }
             
             return JobListing::query()
                 ->where('job_category', $job->job_category)
-                ->where('id', '!=', $job->id)
-                ->get();
+                ->get()
+                ->reject(function ($jobListing) use ($job) {
+                    return $jobListing->id === $job->id;
+                });
         });
     }
 
