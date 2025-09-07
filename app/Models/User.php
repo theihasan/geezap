@@ -16,7 +16,7 @@ use Laravel\Sanctum\HasApiTokens;
 use MeShaon\RequestAnalytics\Contracts\CanAccessAnalyticsDashboard;
 
 #[ObservedBy([UserObserver::class])]
-class User extends Authenticatable implements FilamentUser
+class User extends Authenticatable implements FilamentUser, CanAccessAnalyticsDashboard
 {
     use HasApiTokens, HasFactory, Notifiable;
 
