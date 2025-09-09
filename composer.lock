@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "940318b6e28223817566deb51e787c8c",
+    "content-hash": "685d30c29d8873bb1734dd70c5a4191e",
     "packages": [
         {
             "name": "abbasudo/laravel-purity",
@@ -4344,77 +4344,6 @@
                 "source": "https://github.com/Masterminds/html5-php/tree/2.10.0"
             },
             "time": "2025-07-25T09:04:22+00:00"
-        },
-        {
-            "name": "me-shaon/laravel-request-analytics",
-            "version": "v1.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/me-shaon/laravel-request-analytics.git",
-                "reference": "26ac94d49ee46baa6c4c12c5e442ab4f00fe1266"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/me-shaon/laravel-request-analytics/zipball/26ac94d49ee46baa6c4c12c5e442ab4f00fe1266",
-                "reference": "26ac94d49ee46baa6c4c12c5e442ab4f00fe1266",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/contracts": "^10.0 | ^11.0 | ^12.0",
-                "php": "^8.1 | ^8.2 | ^8.3",
-                "spatie/laravel-package-tools": "^1.14.0"
-            },
-            "require-dev": {
-                "laravel/pint": "^1.0",
-                "mockery/mockery": "^1.6",
-                "nunomaduro/collision": "^7.8 | ^8.1",
-                "orchestra/workbench": "^8.0 | ^9.0 | ^10.0",
-                "phpunit/phpunit": "^10.5 | ^11.0",
-                "rector/rector": "^1.0.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "MeShaon\\RequestAnalytics\\RequestAnalyticsServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "MeShaon\\RequestAnalytics\\": "src/",
-                    "MeShaon\\RequestAnalytics\\Database\\Factories\\": "database/factories/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Ahmed shamim",
-                    "email": "shaon.cse81@gmail.com",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Simple request data analytics package for Laravel projects",
-            "homepage": "https://github.com/me-shaon/laravel-request-analytics",
-            "keywords": [
-                "laravel",
-                "laravel-request-analytics",
-                "me-shaon"
-            ],
-            "support": {
-                "issues": "https://github.com/me-shaon/laravel-request-analytics/issues",
-                "source": "https://github.com/me-shaon/laravel-request-analytics/tree/v1.2.0"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/me-shaon",
-                    "type": "github"
-                }
-            ],
-            "time": "2025-09-08T05:55:58+00:00"
         },
         {
             "name": "monolog/monolog",
