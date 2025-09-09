@@ -20,6 +20,7 @@
         "laravel/socialite": "^5.16",
         "laravel/tinker": "^2.9",
         "livewire/livewire": "*",
+        "me-shaon/laravel-request-analytics": "^1.2",
         "opcodesio/log-viewer": "^3.15",
         "predis/predis": "^3.0",
         "prism-php/prism": "*",
