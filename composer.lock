@@ -4347,16 +4347,16 @@
         },
         {
             "name": "me-shaon/laravel-request-analytics",
-            "version": "v1.2.0",
+            "version": "v1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/me-shaon/laravel-request-analytics.git",
-                "reference": "26ac94d49ee46baa6c4c12c5e442ab4f00fe1266"
+                "reference": "bc087f8f2fdcb9e15c649ac24a7f0b953ac88fc5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/me-shaon/laravel-request-analytics/zipball/26ac94d49ee46baa6c4c12c5e442ab4f00fe1266",
-                "reference": "26ac94d49ee46baa6c4c12c5e442ab4f00fe1266",
+                "url": "https://api.github.com/repos/me-shaon/laravel-request-analytics/zipball/bc087f8f2fdcb9e15c649ac24a7f0b953ac88fc5",
+                "reference": "bc087f8f2fdcb9e15c649ac24a7f0b953ac88fc5",
                 "shasum": ""
             },
             "require": {
@@ -4406,7 +4406,7 @@
             ],
             "support": {
                 "issues": "https://github.com/me-shaon/laravel-request-analytics/issues",
-                "source": "https://github.com/me-shaon/laravel-request-analytics/tree/v1.2.0"
+                "source": "https://github.com/me-shaon/laravel-request-analytics/tree/v1.3.0"
             },
             "funding": [
                 {
@@ -4414,7 +4414,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-09-08T05:55:58+00:00"
+            "time": "2025-09-11T18:15:28+00:00"
         },
         {
             "name": "monolog/monolog",
