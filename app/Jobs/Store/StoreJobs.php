@@ -160,21 +160,30 @@ class StoreJobs implements ShouldQueue
             }
         }
 
-        // Batch insert new options
-        if (!empty($optionsToCreate)) {
-            JobApplyOption::insert($optionsToCreate);
-        }
-
-        // Batch update existing options
-        if (!empty($optionsToUpdate)) {
-            foreach ($optionsToUpdate as $updateData) {
-                JobApplyOption::where('id', $updateData['id'])
-                    ->update([
-                        'apply_link' => $updateData['apply_link'],
-                        'is_direct' => $updateData['is_direct'],
-                        'updated_at' => $updateData['updated_at'],
-                    ]);
+        // Upsert to handle both creates and updates in one efficient query
+        if (!empty($optionsToCreate) || !empty($optionsToUpdate)) {
+            $payload = [];
+            foreach ($optionsToCreate as $row) {
+                $payload[] = $row;
             }
+            foreach ($optionsToUpdate as $row) {
+                $payload[] = [
+                    'id' => $row['id'],
+                    'job_listing_id' => $existingOptions->flatten()->firstWhere('id', $row['id'])->job_listing_id ?? null,
+                    'publisher' => $existingOptions->flatten()->firstWhere('id', $row['id'])->publisher ?? null,
+                    'apply_link' => $row['apply_link'],
+                    'is_direct' => $row['is_direct'],
+                    'updated_at' => $row['updated_at'],
+                    'created_at' => $existingOptions->flatten()->firstWhere('id', $row['id'])->created_at ?? now(),
+                ];
+            }
+
+            // Use publisher + job_listing_id as conflict target
+            JobApplyOption::upsert(
+                $payload,
+                ['job_listing_id', 'publisher'],
+                ['apply_link', 'is_direct', 'updated_at']
+            );
         }
     }
 }
