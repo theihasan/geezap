@@ -22,8 +22,8 @@ jobs:
       - name: Install npm dependencies
         run: npm ci
 
-      - name: Build assets
-        run: npm run build
+      - name: Build assets (no clean)
+        run: npm run build -- --emptyOutDir=false
 
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.9.0
@@ -52,13 +52,9 @@ jobs:
             git fetch origin main && \
             git reset --hard origin/main && \
             composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev && \
-            # Fix permissions on Vite outDir to avoid EACCES unlink during build
-            sudo chown -R deploy:deploy /var/www/html/geezap || true && \
-            sudo rm -rf public/build || true && \
             mkdir -p public/build && \
-            sudo chown -R deploy:deploy public/build || true && \
             npm ci && \
-            npm run build && \
+            npm run build -- --emptyOutDir=false && \
             php artisan migrate --force && \
             php artisan config:cache && \
             php artisan route:cache && \
