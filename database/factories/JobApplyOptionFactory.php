@@ -28,3 +28,4 @@ class JobApplyOptionFactory extends Factory
         ];
     }
 }
+

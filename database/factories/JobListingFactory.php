@@ -61,4 +61,6 @@ class JobListingFactory extends Factory
             'required_experience' => $this->faker->numberBetween(0, 10),
         ];
     }
+
 }
+

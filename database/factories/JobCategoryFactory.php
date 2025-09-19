@@ -40,4 +40,5 @@ class JobCategoryFactory extends Factory
             'category_image' => $this->faker->imageUrl(200, 200),
         ];
     }
+
 }
