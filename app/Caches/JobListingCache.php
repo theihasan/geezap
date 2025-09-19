@@ -11,6 +11,7 @@ class JobListingCache{
     {
         return Cache::remember(self::key($slug), 60 * 24, function () use ($slug) {
             return JobListing::where('slug', $slug)
+                ->with('applyOptions')
                 ->firstOrFail();
         });
     }
