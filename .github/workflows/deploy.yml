@@ -46,11 +46,17 @@ jobs:
            echo "SERVER_IP hex dump:"
            echo -n '${{ secrets.SERVER_IP }}' | hexdump -C
            echo "=== Attempting SSH connection ==="
-            ssh -o StrictHostKeyChecking=no deploy@${{ secrets.SERVER_IP }} "
+           ssh -o StrictHostKeyChecking=no deploy@${{ secrets.SERVER_IP }} "
+            set -euo pipefail
             cd /var/www/html/geezap && \
             git fetch origin main && \
             git reset --hard origin/main && \
             composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev && \
+            # Fix permissions on Vite outDir to avoid EACCES unlink during build
+            sudo chown -R deploy:deploy /var/www/html/geezap || true && \
+            sudo rm -rf public/build || true && \
+            mkdir -p public/build && \
+            sudo chown -R deploy:deploy public/build || true && \
             npm ci && \
             npm run build && \
             php artisan migrate --force && \
