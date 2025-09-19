@@ -1,0 +1,28 @@
+name: opencode-pr-review
+on:
+  pull_request:
+    types: [opened, synchronize]
+  issue_comment:
+    types: [created]
+jobs:
+  opencode:
+    if: |
+      github.event_name == 'pull_request' ||
+      (contains(github.event.comment.body, '/review') ||
+       contains(github.event.comment.body, '/oc'))
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for better context
+      - name: Run opencode
+        uses: sst/opencode/github@latest
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+        with:
+          model: deepseek/deepseek-coder-v2
