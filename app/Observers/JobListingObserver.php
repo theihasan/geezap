@@ -32,16 +32,22 @@ class JobListingObserver
     public function created(JobListing $jobListing): void
     {
         $this->clearCache();
+        // Only invalidate related jobs cache for the same category
+        RelatedJobListingCache::invalidateForCategory($jobListing->job_category);
     }
 
     public function updated(JobListing $jobListing): void
     {
         $this->clearCache();
+        // Only invalidate related jobs cache for the same category
+        RelatedJobListingCache::invalidateForCategory($jobListing->job_category);
     }
 
     public function deleted(JobListing $jobListing): void
     {
         $this->clearCache();
+        // Only invalidate related jobs cache for the same category
+        RelatedJobListingCache::invalidateForCategory($jobListing->job_category);
     }
 
     protected function clearCache(): void
@@ -60,7 +66,8 @@ class JobListingObserver
         JobsCountCache::invalidateLastWeekAdded();
         JobsCountCache::invalidateTodayAdded();
         JobsCountCache::invalidateAvailableJobsCount();
-        RelatedJobListingCache::invalidate();
+        // Only invalidate related jobs cache for the same category, not all
+        // RelatedJobListingCache::invalidate(); // Commented out to reduce aggressive cache clearing
         JobCategoryCache::invalidate();
         JobsCountCache::invalidateCategoriesCount();
         JobFilterCache::invalidate();
