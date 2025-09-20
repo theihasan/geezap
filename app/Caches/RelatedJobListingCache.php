@@ -24,9 +24,10 @@ class RelatedJobListingCache{
                     ->get();
             }
             
-            // For large datasets, use efficient random sampling with OFFSET
-            // This is much more efficient than ORDER BY RAND() and still provides good randomization
-            $randomOffset = rand(0, max(0, $totalCount - 3));
+            // For large datasets, use hash-based randomization for consistent performance
+            // This avoids ORDER BY RAND() while still providing good randomization
+            $randomSeed = crc32($job->slug . date('Y-m-d')); // Daily rotation for variety
+            $randomOffset = $randomSeed % max(1, $totalCount - 2);
             
             return JobListing::query()
                 ->where('job_category', $job->job_category)
