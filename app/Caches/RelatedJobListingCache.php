@@ -9,20 +9,33 @@ class RelatedJobListingCache{
     public static function get($slug, $job)
     {
         return Cache::remember(self::key($slug), 60 * 24, function () use ($job) {
-            // Get all jobs in the same category except the current one
-            $allJobs = JobListing::query()
+            // Get count of jobs in the same category (excluding current job)
+            $totalCount = JobListing::query()
+                ->where('job_category', $job->job_category)
+                ->where('id', '!=', $job->id)
+                ->count();
+                
+            if ($totalCount <= 3) {
+                // If 3 or fewer jobs, get them all
+                return JobListing::query()
+                    ->where('job_category', $job->job_category)
+                    ->where('id', '!=', $job->id)
+                    ->select('id', 'employer_name', 'slug', 'state', 'country', 'employment_type', 'job_title', 'min_salary', 'max_salary', 'salary_period', 'created_at', 'description', 'employer_logo', 'posted_at')
+                    ->get();
+            }
+            
+            // For large datasets, use efficient random sampling with OFFSET
+            // This is much more efficient than ORDER BY RAND() and still provides good randomization
+            $randomOffset = rand(0, max(0, $totalCount - 3));
+            
+            return JobListing::query()
                 ->where('job_category', $job->job_category)
                 ->where('id', '!=', $job->id)
                 ->select('id', 'employer_name', 'slug', 'state', 'country', 'employment_type', 'job_title', 'min_salary', 'max_salary', 'salary_period', 'created_at', 'description', 'employer_logo', 'posted_at')
+                ->orderBy('id') // Use deterministic ordering for consistent results
+                ->offset($randomOffset)
+                ->limit(3)
                 ->get();
-                
-            if ($allJobs->count() <= 3) {
-                return $allJobs;
-            }
-            
-            // Use a more efficient randomization approach
-            // Get a random sample of 3 jobs from the collection
-            return $allJobs->random(min(3, $allJobs->count()));
         });
     }
 
