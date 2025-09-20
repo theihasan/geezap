@@ -44,9 +44,7 @@
                                 <button onclick="shareJob()" class="p-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-pink-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all">
                                     <i class="las la-share-alt text-xl"></i>
                                 </button>
-                                <button onclick="bookmarkJob()" class="p-2 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all">
-                                    <i class="las la-bookmark text-xl"></i>
-                                </button>
+                        <livewire:jobs.bookmark-job :job="$job" />
                             </div>
                         </div>
 
@@ -95,9 +93,7 @@
                             <button onclick="shareJob()" class="p-3 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-pink-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-all">
                                 <i class="las la-share-alt text-xl"></i>
                             </button>
-                            <button onclick="bookmarkJob()" class="p-3 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-all">
-                                <i class="las la-bookmark text-xl"></i>
-                            </button>
+                            <livewire:jobs.bookmark-job :job="$job" />
                         </div>
                         
                         @if($job->min_salary && $job->max_salary)
@@ -500,11 +496,7 @@ document.addEventListener('DOMContentLoaded', function() {
         window.location.href = `mailto:?subject=${subject}&body=${body}`;
     };
     
-    // Bookmark job functionality
-    window.bookmarkJob = function() {
-        // Add your bookmark logic here
-        alert('Bookmark functionality - integrate with your backend');
-    };
+
 
     // Map functionality
     const mapContainer = document.getElementById('job-map');
