@@ -50,7 +50,7 @@
         referrerpolicy="no-referrer"
         media="print" onload="this.media='all'" />
 
-    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&family=Oxanium:wght@200;600;700&display=swap" 
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" 
           rel="stylesheet"
           media="print" onload="this.media='all'">
 

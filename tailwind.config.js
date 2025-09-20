@@ -15,7 +15,8 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['JetBrains Mono', ...defaultTheme.fontFamily.mono],
+                'mono': ['JetBrains Mono', ...defaultTheme.fontFamily.mono],
                 'ubuntu': ['Ubuntu', 'sans-serif'],
                 'oxanium': ['Oxanium', 'cursive'],
             },

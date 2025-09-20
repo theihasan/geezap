@@ -25,7 +25,7 @@
                     </span>
                 </h1>
 
-                <p class="font-ubuntu-light text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+                <p class="font-sans text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
                     Join thousands of developers who have found their perfect roles through our platform.
                 </p>
                 <!-- Enhanced Search Box -->

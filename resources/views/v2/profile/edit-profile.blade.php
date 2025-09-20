@@ -18,7 +18,7 @@
                 <!-- Profile Info -->
                 <div class="flex-1 text-center sm:text-left">
                     <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2 font-oxanium-bold">{{ auth()->user()->name }}</h1>
-                    <p class="text-gray-600 dark:text-gray-400 mb-4 font-ubuntu-regular">{{ auth()->user()->occupation }}</p>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4 font-sans">{{ auth()->user()->occupation }}</p>
                 </div>
 
                 <!-- Action Buttons -->

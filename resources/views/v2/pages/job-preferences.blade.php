@@ -7,15 +7,15 @@
                 <!-- Coming Soon Badge -->
                 <div class="inline-flex items-center gap-3 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 px-6 py-3 rounded-full mb-6 border-2 border-blue-200 dark:border-purple-700">
                     <i class="las la-rocket text-2xl text-blue-600 dark:text-purple-400"></i>
-                    <span class="text-blue-700 dark:text-purple-300 font-ubuntu-bold">Premium Job Alerts</span>
-                    <div class="bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs px-3 py-1 rounded-full font-ubuntu-bold animate-pulse">COMING SOON</div>
+                    <span class="text-blue-700 dark:text-purple-300 font-sans">Premium Job Alerts</span>
+                    <div class="bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs px-3 py-1 rounded-full font-sans animate-pulse">COMING SOON</div>
                 </div>
                 
                 <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-4 font-oxanium-bold">
                     All Jobs, One Place, Zero Hassle
                 </h1>
-                <p class="text-xl text-gray-600 dark:text-gray-300 font-ubuntu-regular max-w-3xl mx-auto leading-relaxed mb-6">
-                    <span class="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent font-ubuntu-bold">Coming Soon:</span> Stop checking LinkedIn, Indeed, ZipRecruiter and dozens of other sites. Get all relevant jobs from every major platform delivered to your inbox, perfectly filtered to your preferences.
+                <p class="text-xl text-gray-600 dark:text-gray-300 font-sans max-w-3xl mx-auto leading-relaxed mb-6">
+                    <span class="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent font-sans">Coming Soon:</span> Stop checking LinkedIn, Indeed, ZipRecruiter and dozens of other sites. Get all relevant jobs from every major platform delivered to your inbox, perfectly filtered to your preferences.
                 </p>
                 
                 <!-- Waitlist Social Proof -->
@@ -25,7 +25,7 @@
                         <img class="w-8 h-8 rounded-full border-2 border-white" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face" alt="">
                         <img class="w-8 h-8 rounded-full border-2 border-white" src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=40&h=40&fit=crop&crop=face" alt="">
                     </div>
-                    <span class="font-ubuntu-medium">1,234+ professionals already on the early access waitlist</span>
+                    <span class="font-sans">1,234+ professionals already on the early access waitlist</span>
                 </div>
             </div>
         </div>
@@ -37,7 +37,7 @@
         <!-- Step 1: What kind of work excites you? -->
         <div class="mb-12" x-data="{ selectedCategories: ['software-development'] }">
             <div class="text-center mb-8">
-                <div class="inline-flex items-center gap-2 text-sm text-blue-600 dark:text-pink-400 font-ubuntu-bold mb-3">
+                <div class="inline-flex items-center gap-2 text-sm text-blue-600 dark:text-pink-400 font-sans mb-3">
                     <div class="w-8 h-8 bg-blue-100 dark:bg-pink-900/30 rounded-full flex items-center justify-center">
                         <span class="text-blue-600 dark:text-pink-400">1</span>
                     </div>
@@ -46,7 +46,7 @@
                 <h2 class="text-2xl font-bold text-gray-900 dark:text-white font-oxanium-bold mb-2">
                     What kind of work excites you?
                 </h2>
-                <p class="text-gray-600 dark:text-gray-400 font-ubuntu-regular">
+                <p class="text-gray-600 dark:text-gray-400 font-sans">
                     Choose the fields that match your interests and skills
                 </p>
             </div>
@@ -74,7 +74,7 @@
                             <i class="las la-{{ $category['icon'] }} text-xl"></i>
                         </div>
                         <h3 :class="selectedCategories.includes('{{ $category['id'] }}') ? 'text-{{ $category['color'] }}-700 dark:text-{{ $category['color'] }}-300' : 'text-gray-700 dark:text-gray-300'"
-                            class="text-sm font-ubuntu-bold transition-all duration-200">
+                            class="text-sm font-sans transition-all duration-200">
                             {{ $category['name'] }}
                         </h3>
                     </button>
@@ -85,7 +85,7 @@
         <!-- Step 2: How do you prefer to work? -->
         <div class="mb-12" x-data="{ workStyle: 'hybrid' }">
             <div class="text-center mb-8">
-                <div class="inline-flex items-center gap-2 text-sm text-blue-600 dark:text-pink-400 font-ubuntu-bold mb-3">
+                <div class="inline-flex items-center gap-2 text-sm text-blue-600 dark:text-pink-400 font-sans mb-3">
                     <div class="w-8 h-8 bg-blue-100 dark:bg-pink-900/30 rounded-full flex items-center justify-center">
                         <span class="text-blue-600 dark:text-pink-400">2</span>
                     </div>
@@ -94,7 +94,7 @@
                 <h2 class="text-2xl font-bold text-gray-900 dark:text-white font-oxanium-bold mb-2">
                     How do you prefer to work?
                 </h2>
-                <p class="text-gray-600 dark:text-gray-400 font-ubuntu-regular">
+                <p class="text-gray-600 dark:text-gray-400 font-sans">
                     Choose your ideal work arrangement
                 </p>
             </div>
@@ -117,7 +117,7 @@
                             <i class="las la-{{ $style['icon'] }} text-2xl"></i>
                         </div>
                         <h3 :class="workStyle === '{{ $style['id'] }}' ? 'text-{{ $style['color'] }}-700 dark:text-{{ $style['color'] }}-300' : 'text-gray-900 dark:text-white'"
-                            class="text-lg font-ubuntu-bold mb-1 transition-all duration-200">
+                            class="text-lg font-sans mb-1 transition-all duration-200">
                             {{ $style['name'] }}
                         </h3>
                         <p :class="workStyle === '{{ $style['id'] }}' ? 'text-{{ $style['color'] }}-600 dark:text-{{ $style['color'] }}-400' : 'text-gray-500 dark:text-gray-400'"
@@ -132,7 +132,7 @@
         <!-- Step 3: What's your ideal salary? -->
         <div class="mb-12" x-data="{ salaryRange: '50k-75k' }">
             <div class="text-center mb-8">
-                <div class="inline-flex items-center gap-2 text-sm text-blue-600 dark:text-pink-400 font-ubuntu-bold mb-3">
+                <div class="inline-flex items-center gap-2 text-sm text-blue-600 dark:text-pink-400 font-sans mb-3">
                     <div class="w-8 h-8 bg-blue-100 dark:bg-pink-900/30 rounded-full flex items-center justify-center">
                         <span class="text-blue-600 dark:text-pink-400">3</span>
                     </div>
@@ -141,7 +141,7 @@
                 <h2 class="text-2xl font-bold text-gray-900 dark:text-white font-oxanium-bold mb-2">
                     What's your ideal salary?
                 </h2>
-                <p class="text-gray-600 dark:text-gray-400 font-ubuntu-regular">
+                <p class="text-gray-600 dark:text-gray-400 font-sans">
                     Select your expected compensation range
                 </p>
             </div>
@@ -164,7 +164,7 @@
                             class="p-4 rounded-xl border-2 hover:border-green-300 dark:hover:border-green-600 transition-all duration-200 text-center hover:shadow-md">
                         <div class="mb-2">
                             <div :class="salaryRange === '{{ $range['id'] }}' ? 'text-green-600 dark:text-green-400' : 'text-gray-900 dark:text-white'"
-                                 class="font-ubuntu-bold text-lg transition-all duration-200">
+                                 class="font-sans text-lg transition-all duration-200">
                                 {{ $range['label'] }}
                             </div>
                             <div :class="salaryRange === '{{ $range['id'] }}' ? 'text-green-500 dark:text-green-500' : 'text-gray-500 dark:text-gray-400'"
@@ -180,7 +180,7 @@
         <!-- Step 4: Where would you like to work? -->
         <div class="mb-12" x-data="{ preferredLocation: 'anywhere' }">
             <div class="text-center mb-8">
-                <div class="inline-flex items-center gap-2 text-sm text-blue-600 dark:text-pink-400 font-ubuntu-bold mb-3">
+                <div class="inline-flex items-center gap-2 text-sm text-blue-600 dark:text-pink-400 font-sans mb-3">
                     <div class="w-8 h-8 bg-blue-100 dark:bg-pink-900/30 rounded-full flex items-center justify-center">
                         <span class="text-blue-600 dark:text-pink-400">4</span>
                     </div>
@@ -189,7 +189,7 @@
                 <h2 class="text-2xl font-bold text-gray-900 dark:text-white font-oxanium-bold mb-2">
                     Where would you like to work?
                 </h2>
-                <p class="text-gray-600 dark:text-gray-400 font-ubuntu-regular">
+                <p class="text-gray-600 dark:text-gray-400 font-sans">
                     Choose your preferred work location
                 </p>
             </div>
@@ -214,7 +214,7 @@
                             class="p-4 rounded-xl border-2 hover:border-{{ $location['color'] }}-300 dark:hover:border-{{ $location['color'] }}-600 transition-all duration-200 text-center hover:shadow-md">
                         <div class="text-3xl mb-2">{{ $location['flag'] }}</div>
                         <div :class="preferredLocation === '{{ $location['id'] }}' ? 'text-{{ $location['color'] }}-700 dark:text-{{ $location['color'] }}-300' : 'text-gray-700 dark:text-gray-300'"
-                             class="text-sm font-ubuntu-bold transition-all duration-200">
+                             class="text-sm font-sans transition-all duration-200">
                             {{ $location['name'] }}
                         </div>
                     </button>
@@ -228,7 +228,7 @@
                 <h3 class="text-3xl font-bold text-gray-900 dark:text-white font-oxanium-bold mb-4">
                     Choose Your Email Frequency
                 </h3>
-                <p class="text-lg text-gray-600 dark:text-gray-400 font-ubuntu-regular max-w-2xl mx-auto">
+                <p class="text-lg text-gray-600 dark:text-gray-400 font-sans max-w-2xl mx-auto">
                     Select how often you'd like to receive job alerts when our premium service launches.
                 </p>
             </div>
@@ -282,7 +282,7 @@
                     
                     <!-- Popular Badge -->
                     <div class="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                        <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-1 rounded-full text-xs font-ubuntu-bold">
+                        <div class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-1 rounded-full text-xs font-sans">
                             🔥 MOST POPULAR
                         </div>
                     </div>
@@ -376,7 +376,7 @@
             <div class="text-center mt-8">
                 <div class="inline-flex items-center gap-2 bg-blue-50 dark:bg-blue-900/20 px-4 py-2 rounded-full border border-blue-200 dark:border-blue-800">
                     <i class="las la-info-circle text-blue-600 dark:text-blue-400"></i>
-                    <span class="text-blue-700 dark:text-blue-300 text-sm font-ubuntu-medium">Join the waitlist to get early access and launch discounts</span>
+                    <span class="text-blue-700 dark:text-blue-300 text-sm font-sans">Join the waitlist to get early access and launch discounts</span>
                 </div>
             </div>
         </div>
@@ -393,25 +393,25 @@
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6 text-center">
                 <div class="flex flex-col items-center">
                     <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mb-4">1</div>
-                    <h4 class="font-ubuntu-bold text-gray-900 dark:text-white mb-2">We Scan</h4>
+                    <h4 class="font-sans text-gray-900 dark:text-white mb-2">We Scan</h4>
                     <p class="text-sm text-gray-600 dark:text-gray-400">Our system continuously monitors LinkedIn, Indeed, ZipRecruiter, Facebook Groups, and more</p>
                 </div>
                 
                 <div class="flex flex-col items-center">
                     <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mb-4">2</div>
-                    <h4 class="font-ubuntu-bold text-gray-900 dark:text-white mb-2">We Filter</h4>
+                    <h4 class="font-sans text-gray-900 dark:text-white mb-2">We Filter</h4>
                     <p class="text-sm text-gray-600 dark:text-gray-400">Remove duplicates, apply your preferences, and organize by relevance</p>
                 </div>
                 
                 <div class="flex flex-col items-center">
                     <div class="w-16 h-16 bg-gradient-to-r from-pink-500 to-red-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mb-4">3</div>
-                    <h4 class="font-ubuntu-bold text-gray-900 dark:text-white mb-2">We Collect</h4>
+                    <h4 class="font-sans text-gray-900 dark:text-white mb-2">We Collect</h4>
                     <p class="text-sm text-gray-600 dark:text-gray-400">Jobs are collected throughout the day - some instantly, others within hours</p>
                 </div>
                 
                 <div class="flex flex-col items-center">
                     <div class="w-16 h-16 bg-gradient-to-r from-green-500 to-blue-600 rounded-full flex items-center justify-center text-white text-2xl font-bold mb-4">4</div>
-                    <h4 class="font-ubuntu-bold text-gray-900 dark:text-white mb-2">You Receive</h4>
+                    <h4 class="font-sans text-gray-900 dark:text-white mb-2">You Receive</h4>
                     <p class="text-sm text-gray-600 dark:text-gray-400">Get a curated digest of all relevant jobs from all sources, delivered to your inbox</p>
                 </div>
             </div>
@@ -459,7 +459,7 @@
                 <h3 class="text-2xl font-bold text-gray-900 dark:text-white font-oxanium-bold mb-2">
                     Ready to be first in line?
                 </h3>
-                <p class="text-gray-600 dark:text-gray-400 font-ubuntu-regular">
+                <p class="text-gray-600 dark:text-gray-400 font-sans">
                     Join the waitlist and get exclusive early access when premium job alerts launch
                 </p>
             </div>
@@ -476,10 +476,10 @@
                     <form class="space-y-4">
                         <div>
                             <input x-model="email" type="email" placeholder="Enter your email address" 
-                                   class="w-full p-3 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-white font-ubuntu-medium focus:border-blue-500 dark:focus:border-blue-400 focus:bg-white dark:focus:bg-white/10 transition-all">
+                                   class="w-full p-3 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-700 dark:text-white font-sans focus:border-blue-500 dark:focus:border-blue-400 focus:bg-white dark:focus:bg-white/10 transition-all">
                         </div>
                         
-                        <button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-ubuntu-bold py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-[1.02] hover:shadow-lg">
+                        <button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-sans py-3 px-6 rounded-lg transition-all duration-200 transform hover:scale-[1.02] hover:shadow-lg">
                             <i class="las la-bell mr-2"></i>Join Waitlist
                         </button>
                         
@@ -492,7 +492,7 @@
                 <div class="text-center">
                     <div class="text-gray-400 dark:text-gray-500 text-sm mb-2">Or</div>
                     <a href="{{ route('job.index') }}?remote=1&category=1" 
-                       class="inline-flex items-center gap-3 bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 text-gray-700 dark:text-gray-300 font-ubuntu-bold py-3 px-6 rounded-xl transition-all duration-200 border border-gray-200 dark:border-gray-700">
+                       class="inline-flex items-center gap-3 bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 text-gray-700 dark:text-gray-300 font-sans py-3 px-6 rounded-xl transition-all duration-200 border border-gray-200 dark:border-gray-700">
                         <i class="las la-search text-xl"></i>
                         <span>Browse Jobs Now (Free)</span>
                     </a>
@@ -505,7 +505,7 @@
                     <div class="flex items-center gap-3 mb-3">
                         <img class="w-12 h-12 rounded-full" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&h=50&fit=crop&crop=face" alt="">
                         <div>
-                            <div class="font-ubuntu-bold text-gray-900 dark:text-white">Mike Chen</div>
+                            <div class="font-sans text-gray-900 dark:text-white">Mike Chen</div>
                             <div class="text-sm text-gray-500 dark:text-gray-400">Beta Tester</div>
                         </div>
                     </div>
@@ -516,7 +516,7 @@
                     <div class="flex items-center gap-3 mb-3">
                         <img class="w-12 h-12 rounded-full" src="https://images.unsplash.com/photo-1494790108755-2616c95e155d?w=50&h=50&fit=crop&crop=face" alt="">
                         <div>
-                            <div class="font-ubuntu-bold text-gray-900 dark:text-white">Sarah Johnson</div>
+                            <div class="font-sans text-gray-900 dark:text-white">Sarah Johnson</div>
                             <div class="text-sm text-gray-500 dark:text-gray-400">Early Access User</div>
                         </div>
                     </div>

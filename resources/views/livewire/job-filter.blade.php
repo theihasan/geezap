@@ -10,7 +10,7 @@
     <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
         <!-- Filter Sidebar -->
         <div class="bg-white dark:bg-[#1a1a3a] rounded-2xl p-6 border border-gray-200 dark:border-gray-700 mb-8 md:mb-0 md:col-span-1 col-span-full md:sticky md:top-6 h-fit">
-            <h3 class="text-xl font-ubuntu-bold text-gray-900 dark:text-white mb-4">
+            <h3 class="text-xl font-sans text-gray-900 dark:text-white mb-4">
                 Filter Jobs
                 @if($this->getActiveFilterCount() > 0)
                     <span class="ml-2 px-2 py-0.5 text-sm bg-blue-500 dark:bg-pink-500 text-white rounded-full">

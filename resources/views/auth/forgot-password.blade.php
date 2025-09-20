@@ -5,7 +5,7 @@
     <div class="bg-[#12122b] rounded-2xl shadow-lg p-8 max-w-lg w-full space-y-8 border border-gray-800">
         <div class="text-center space-y-2">
             <h2 class="text-3xl font-bold text-white font-oxanium-bold">Reset Password</h2>
-            <p class="text-gray-400 font-ubuntu-light">Enter your email to receive reset instructions</p>
+            <p class="text-gray-400 font-sans">Enter your email to receive reset instructions</p>
         </div>
 
         @session('status')
@@ -15,7 +15,7 @@
         @endsession
 
         <div class="flex justify-center mb-4">
-            <a href="{{ route('login') }}" class="text-gray-400 hover:text-pink-500 transition-colors flex items-center gap-2 font-ubuntu">
+            <a href="{{ route('login') }}" class="text-gray-400 hover:text-pink-500 transition-colors flex items-center gap-2 font-sans>
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
@@ -24,7 +24,7 @@
         </div>
 
         <!-- Reset Password Form -->
-        <form action="{{ route('password.email') }}" method="POST" class="space-y-6 font-ubuntu">
+        <form action="{{ route('password.email') }}" method="POST" class="space-y-6 font-sans>
             @csrf
             <div>
                 <label for="email" class="block text-gray-400 mb-1">Email Address</label>
@@ -50,9 +50,9 @@
         </form>
 
         <!-- Login Link -->
-        <p class="text-center text-gray-400 mt-6 font-ubuntu-light">
+        <p class="text-center text-gray-400 mt-6 font-sans">
             Remember your password?
-            <a href="{{ route('login') }}" class="text-pink-500 hover:text-pink-400 transition-colors font-ubuntu-medium">
+            <a href="{{ route('login') }}" class="text-pink-500 hover:text-pink-400 transition-colors font-sans">
                 Login here
             </a>
         </p>

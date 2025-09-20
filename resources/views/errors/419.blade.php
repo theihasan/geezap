@@ -26,19 +26,19 @@
                     <h2 class="text-4xl font-oxanium-bold text-gray-900 dark:text-white">
                         Page Expired
                     </h2>
-                    <p class="text-xl text-gray-600 dark:text-gray-300 font-ubuntu-light max-w-2xl mx-auto">
+                    <p class="text-xl text-gray-600 dark:text-gray-300 font-sans max-w-2xl mx-auto">
                         Your session has timed out due to inactivity. Please refresh the page and try again.
                     </p>
                 </div>
 
                 <div class="flex flex-col md:flex-row gap-4 justify-center">
                     <button onclick="window.location.reload()"
-                            class="font-ubuntu-regular bg-gradient-to-r from-blue-500 to-blue-600 dark:from-pink-500 dark:to-purple-600 text-white px-8 py-3 rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+                            class="font-sans bg-gradient-to-r from-blue-500 to-blue-600 dark:from-pink-500 dark:to-purple-600 text-white px-8 py-3 rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
                         <i class="las la-sync"></i>
                         Refresh Page
                     </button>
                     <a href="{{ route('home') }}"
-                       class="font-ubuntu-regular bg-gray-100 dark:bg-[#1a1a3a] text-gray-900 dark:text-white px-8 py-3 rounded-xl hover:bg-gray-200 dark:hover:bg-[#1a1a3a]/80 transition-all flex items-center justify-center gap-2">
+                       class="font-sans bg-gray-100 dark:bg-[#1a1a3a] text-gray-900 dark:text-white px-8 py-3 rounded-xl hover:bg-gray-200 dark:hover:bg-[#1a1a3a]/80 transition-all flex items-center justify-center gap-2">
                         <i class="las la-home"></i>
                         Back to Home
                     </a>

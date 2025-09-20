@@ -1,7 +1,7 @@
 @props([
     'jobs' => $jobs,
 ])
-<div class="flex justify-between md:justify-center mt-10 font-ubuntu-medium">
+<div class="flex justify-between md:justify-center mt-10 font-sans">
     <!-- Previous Button -->
     @if ($jobs->onFirstPage())
         <button class="px-4 py-2 rounded-lg bg-white/10 text-gray-500 cursor-not-allowed" disabled>

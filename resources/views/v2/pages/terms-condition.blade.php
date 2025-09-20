@@ -11,7 +11,7 @@
                 <h1 class="font-oxanium-bold text-5xl leading-tight text-gray-900 dark:text-white md:text-6xl mb-6">
                     Terms of <span class="bg-gradient-to-r from-blue-500 to-blue-600 dark:from-pink-500 dark:to-purple-500 bg-clip-text text-transparent">Service</span>
                 </h1>
-                <p class="font-ubuntu-light text-xl leading-relaxed text-gray-600 dark:text-gray-100 max-w-3xl mx-auto">
+                <p class="font-sans text-xl leading-relaxed text-gray-600 dark:text-gray-100 max-w-3xl mx-auto">
                     By accessing or using our platform, you agree to be bound by the following terms and conditions. Please read them carefully before using the site.
                 </p>
                 <div class="mt-6 text-gray-600 dark:text-gray-300">
