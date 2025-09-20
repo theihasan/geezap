@@ -358,43 +358,99 @@
             <!-- Related Jobs Section -->
             @if($relatedJobs->count() > 0)
                 <div class="mt-16">
-                    <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-8">Related Jobs</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="flex items-center gap-4 mb-8">
+                        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 dark:from-pink-500 dark:to-purple-500 rounded-xl flex items-center justify-center">
+                            <i class="las la-briefcase text-white text-xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Related Jobs</h2>
+                            <p class="text-gray-600 dark:text-gray-400">Discover similar opportunities that match your interests</p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         @foreach($relatedJobs as $relatedJob)
-                            <div class="group bg-white dark:bg-[#1a1a3a] p-6 rounded-2xl border border-gray-200 dark:border-gray-700 hover:border-blue-500/50 dark:hover:border-pink-500/50 transition">
-                                <div class="flex items-center justify-between mb-4">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-12 h-12 bg-gray-100 dark:bg-white/10 rounded-xl flex items-center justify-center">
-                                            <a href="{{ route('job.show', $relatedJob->slug) }}">
+                            <div class="group bg-white dark:bg-[#1a1a3a] rounded-2xl border border-gray-200 dark:border-gray-700 hover:border-blue-500/50 dark:hover:border-pink-500/50 hover:shadow-xl dark:hover:shadow-2xl transition-all duration-300 overflow-hidden transform hover:-translate-y-1">
+                                <!-- Card Header with Company Logo and Job Type Badge -->
+                                <div class="relative p-6 pb-4 bg-gradient-to-br from-gray-50 to-white dark:from-gray-800/50 dark:to-[#1a1a3a]">
+                                    <div class="flex items-start justify-between mb-4">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-12 h-12 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-600 flex items-center justify-center overflow-hidden">
                                                 @if($relatedJob->employer_logo)
-                                                <img src="{{ $relatedJob->employer_logo }}" alt="{{ $relatedJob->employer_name }}" class="w-8 h-8 object-contain">
+                                                    <img src="{{ $relatedJob->employer_logo }}" alt="{{ $relatedJob->employer_name }}" class="w-8 h-8 object-contain">
                                                 @else
-                                                    <img src="https://placehold.co/32x32" alt="{{ $relatedJob->employer_name }}" class="w-8 h-8 object-contain">
+                                                    <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white text-sm font-bold">
+                                                        {{ substr($relatedJob->employer_name, 0, 1) }}
+                                                    </div>
                                                 @endif
-                                            </a>
+                                            </div>
+                                            <div class="flex-1">
+                                                <h3 class="text-gray-900 dark:text-white font-semibold text-sm line-clamp-1">{{ $relatedJob->employer_name }}</h3>
+                                                <p class="text-gray-500 dark:text-gray-400 text-xs flex items-center gap-1">
+                                                    <i class="las la-clock text-xs"></i>
+                                                    {{ $relatedJob->posted_at?->diffForHumans() }}
+                                                </p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h3 class="text-gray-900 dark:text-white font-medium">{{ $relatedJob->employer_name }}</h3>
-                                            <p class="text-gray-600 dark:text-gray-400 text-sm">{{ $relatedJob->posted_at?->diffForHumans() }}</p>
-                                        </div>
+                                        <span class="px-2.5 py-1 text-xs bg-gradient-to-r from-blue-500/10 to-purple-500/10 dark:from-pink-500/10 dark:to-purple-500/10 text-blue-600 dark:text-pink-300 rounded-full font-medium border border-blue-500/20 dark:border-pink-500/20">
+                                            {{ $relatedJob->employment_type }}
+                                        </span>
                                     </div>
-                                    <span class="px-3 py-1 text-sm bg-blue-500/10 dark:bg-pink-500/10 text-blue-600 dark:text-pink-300 rounded-full">
-                                    {{ $relatedJob->employment_type }}
-                                </span>
                                 </div>
-                                <a href="{{ route('job.show', $relatedJob->slug) }}">
-                                <h4 class="text-lg text-gray-900 dark:text-white font-medium mb-2">{{ $relatedJob->job_title }}</h4>
-                                </a>
-                                <div class="flex justify-between items-center">
-                                <span class="text-gray-600 dark:text-gray-400 flex items-center gap-2">
-                                    <i class="las la-map-marker"></i>
-                                    {{ \App\Helpers\CountryFlag::getCountry($relatedJob->country) }}
-                                    <span class="text-lg">{{ \App\Helpers\CountryFlag::getFlag($relatedJob->country) }}</span>
-                                </span>
-                                    <a href="{{ route('job.show', $relatedJob->slug) }}" class="text-blue-600 dark:text-pink-300 hover:text-blue-700 dark:hover:text-pink-400 transition">
-                                        View Job <i class="las la-arrow-right"></i>
+
+                                <!-- Card Body -->
+                                <div class="px-6 pb-6">
+                                    <a href="{{ route('job.show', $relatedJob->slug) }}" class="block group-hover:text-blue-600 dark:group-hover:text-pink-300 transition-colors">
+                                        <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-3 line-clamp-2 leading-tight">
+                                            {{ $relatedJob->job_title }}
+                                        </h4>
                                     </a>
+
+                                    <!-- Job Details -->
+                                    <div class="space-y-3 mb-4">
+                                        <!-- Location -->
+                                        <div class="flex items-center gap-2 text-gray-600 dark:text-gray-400 text-sm">
+                                            <div class="w-5 h-5 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center flex-shrink-0">
+                                                <i class="las la-map-marker text-xs"></i>
+                                            </div>
+                                            <span class="flex items-center gap-1.5">
+                                                {{ \App\Helpers\CountryFlag::getCountry($relatedJob->country) }}
+                                                <span class="text-base">{{ \App\Helpers\CountryFlag::getFlag($relatedJob->country) }}</span>
+                                            </span>
+                                        </div>
+
+                                        <!-- Remote/On-site -->
+                                        <div class="flex items-center gap-2 text-gray-600 dark:text-gray-400 text-sm">
+                                            <div class="w-5 h-5 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center flex-shrink-0">
+                                                <i class="las {{ $relatedJob->is_remote ? 'la-laptop' : 'la-building' }} text-xs"></i>
+                                            </div>
+                                            <span>{{ $relatedJob->is_remote ? 'Remote Work' : 'On-site' }}</span>
+                                        </div>
+
+                                        <!-- Salary if available -->
+                                        @if($relatedJob->min_salary && $relatedJob->max_salary)
+                                            <div class="flex items-center gap-2 text-gray-600 dark:text-gray-400 text-sm">
+                                                <div class="w-5 h-5 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center flex-shrink-0">
+                                                    <i class="las la-dollar-sign text-xs"></i>
+                                                </div>
+                                                <span class="font-medium text-gray-900 dark:text-white">
+                                                    ${{ number_format($relatedJob->min_salary/1000) }}k - ${{ number_format($relatedJob->max_salary/1000) }}k
+                                                </span>
+                                            </div>
+                                        @endif
+                                    </div>
+
+                                    <!-- Action Button -->
+                                    <div class="pt-4 border-t border-gray-100 dark:border-gray-700">
+                                        <a href="{{ route('job.show', $relatedJob->slug) }}" class="w-full bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 hover:from-blue-50 hover:to-blue-100 dark:hover:from-pink-900/20 dark:hover:to-purple-900/20 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-pink-300 px-4 py-2.5 rounded-xl font-medium text-sm transition-all duration-300 flex items-center justify-center gap-2 border border-gray-200 dark:border-gray-600 hover:border-blue-300 dark:hover:border-pink-500/30">
+                                            <span>View Details</span>
+                                            <i class="las la-arrow-right text-sm group-hover:translate-x-0.5 transition-transform"></i>
+                                        </a>
+                                    </div>
                                 </div>
+
+                                <!-- Hover Effect Overlay -->
+                                <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-purple-500/5 dark:from-pink-500/5 dark:to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none rounded-2xl"></div>
                             </div>
                         @endforeach
                     </div>
