@@ -7,123 +7,328 @@
 @endpush
 
 @section('content')
-    <section class="py-12">
-        <div class="max-w-7xl mx-auto px-6">
+    <section class="py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Breadcrumb Navigation -->
+            <nav class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-6">
+                <a href="{{ route('home') }}" class="hover:text-blue-600 dark:hover:text-pink-300 transition-colors">Home</a>
+                <i class="las la-angle-right"></i>
+                <a href="{{ route('job.index') }}" class="hover:text-blue-600 dark:hover:text-pink-300 transition-colors">Jobs</a>
+                <i class="las la-angle-right"></i>
+                <span class="text-gray-900 dark:text-white">{{ $job->job_title }}</span>
+            </nav>
+
             <!-- Job Details Main Section -->
-            <div class="bg-white dark:bg-[#1a1a3a] p-6 rounded-2xl border border-gray-200 dark:border-gray-700 mb-8">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
-                    <div>
-                        <h2 class="text-3xl font-bold text-gray-900 dark:text-white font-oxanium-semibold">{{ $job->job_title }}</h2>
-                        <p class="text-gray-600 dark:text-gray-400 mt-2">{{ $job->employer_name }} • {{ $job->state }}, {{ $job->country }} • {{ $job->is_remote ? 'Remote' : 'On-site' }}</p>
+            <!-- Enhanced Job Header -->
+            <div class="bg-gradient-to-br from-white to-gray-50 dark:from-[#1a1a3a] dark:to-[#2a2a4a] p-6 sm:p-8 rounded-3xl border border-gray-200 dark:border-gray-700 mb-8 shadow-lg">
+                <!-- Header with Job Title and Actions -->
+                <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 mb-8">
+                    <!-- Left: Job Title and Company Info -->
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-3">
+                                <span class="px-3 py-1 text-sm bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full font-medium">
+                                    <i class="las la-clock mr-1"></i>
+                                    {{ $job->posted_at?->diffForHumans() }}
+                                </span>
+                                @if($job->is_remote)
+                                    <span class="px-3 py-1 text-sm bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-full font-medium">
+                                        <i class="las la-laptop mr-1"></i>
+                                        Remote
+                                    </span>
+                                @endif
+                            </div>
+                            
+                            <!-- Share & Save Actions - Mobile/Small screens -->
+                            <div class="flex items-center gap-2 lg:hidden">
+                                <button onclick="shareJob()" class="p-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-pink-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all">
+                                    <i class="las la-share-alt text-xl"></i>
+                                </button>
+                                <button onclick="bookmarkJob()" class="p-2 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all">
+                                    <i class="las la-bookmark text-xl"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white font-oxanium-semibold mb-6 leading-tight">
+                            {{ $job->job_title }}
+                        </h1>
+                        
+                        <!-- Company and Location Info -->
+                        <div class="flex flex-wrap items-center gap-6 text-lg">
+                            <div class="flex items-center gap-3">
+                                @if($job->employer_logo)
+                                    <img src="{{ $job->employer_logo }}" alt="{{ $job->employer_name }}" class="w-10 h-10 rounded-lg object-cover">
+                                @else
+                                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white text-lg font-bold">
+                                        {{ substr($job->employer_name, 0, 1) }}
+                                    </div>
+                                @endif
+                                <div>
+                                    <p class="text-gray-900 dark:text-white font-bold">{{ $job->employer_name }}</p>
+                                    <p class="text-gray-600 dark:text-gray-400 text-sm">{{ $job->industry ?? 'Technology' }}</p>
+                                </div>
+                            </div>
+                            
+                            @if($job->country)
+                                <div class="flex items-center gap-2">
+                                    <i class="las la-map-marker text-gray-500 dark:text-gray-400 text-xl"></i>
+                                    <span class="text-gray-700 dark:text-gray-300 font-medium">
+                                        {{ \App\Helpers\CountryFlag::getCountry($job->country) }}
+                                        <span class="ml-2">{{ \App\Helpers\CountryFlag::getFlag($job->country) }}</span>
+                                    </span>
+                                </div>
+                            @endif
+                            
+                            <div class="flex items-center gap-2">
+                                <i class="las {{ $job->is_remote ? 'la-laptop' : 'la-building' }} text-gray-500 dark:text-gray-400 text-xl"></i>
+                                <span class="text-gray-700 dark:text-gray-300 font-medium">
+                                    {{ $job->is_remote ? 'Remote Work' : 'On-site' }}
+                                </span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="mt-4 md:mt-0 flex flex-col items-start md:items-end">
+                    
+                    <!-- Right: Actions for larger screens -->
+                    <div class="hidden lg:flex flex-col items-end gap-4">
+                        <div class="flex items-center gap-3">
+                            <button onclick="shareJob()" class="p-3 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-pink-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-all">
+                                <i class="las la-share-alt text-xl"></i>
+                            </button>
+                            <button onclick="bookmarkJob()" class="p-3 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-all">
+                                <i class="las la-bookmark text-xl"></i>
+                            </button>
+                        </div>
+                        
                         @if($job->min_salary && $job->max_salary)
-                            <span class="text-blue-600 dark:text-pink-300 font-semibold text-xl">
-                                ${{ number_format($job->min_salary) }} - ${{ number_format($job->max_salary) }} @if($job->salary_period) / {{ $job->salary_period }} @endif
-                            </span>
+                            <div class="text-right">
+                                <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">Salary Range</p>
+                                <p class="text-2xl font-bold text-gray-900 dark:text-white">
+                                    ${{ number_format($job->min_salary/1000) }}k - ${{ number_format($job->max_salary/1000) }}k
+                                </p>
+                                @if($job->salary_period)
+                                    <p class="text-gray-600 dark:text-gray-400 text-sm">/ {{ $job->salary_period }}</p>
+                                @endif
+                            </div>
                         @endif
-                        <a href="#applyjob" class="mt-2 px-6 py-2 bg-gradient-to-r from-blue-500 to-blue-600 dark:from-pink-500 dark:to-purple-600 text-white rounded-lg hover:opacity-90 transition-opacity font-medium flex items-center gap-2">
-                            <i class="las la-paper-plane text-xl"></i> Apply Now
-                        </a>
                     </div>
                 </div>
 
-                <div class="text-gray-600 dark:text-gray-400 text-sm space-y-4 border-t border-gray-200 dark:border-gray-700 pt-6">
-                    <div class="flex items-center gap-2">
-                        <i class="las la-calendar-alt text-blue-600 dark:text-pink-300"></i>
-                        <span>Posted on: <span class="text-gray-900 dark:text-white">{{ $job->posted_at?->isoFormat('Do MMMM, YYYY') }}</span></span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <i class="las la-clock text-blue-600 dark:text-pink-300"></i>
-                        <span>Employment Type: <span class="text-gray-900 dark:text-white">{{ $job->employment_type }}</span></span>
+                <!-- Job Metadata - Inline Style -->
+                <div class="border-t border-gray-200 dark:border-gray-700 pt-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <!-- Left: Job Metadata -->
+                        <div class="flex flex-wrap items-center gap-6 text-sm">
+                            <!-- Employment Type -->
+                            <div class="flex items-center gap-2">
+                                <span class="text-gray-500 dark:text-gray-400 font-medium">Type:</span>
+                                <span class="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-full font-semibold">
+                                    {{ $job->employment_type }}
+                                </span>
+                            </div>
+
+                            <!-- Posted Date -->
+                            <div class="flex items-center gap-2">
+                                <span class="text-gray-500 dark:text-gray-400 font-medium">Posted:</span>
+                                <span class="text-gray-900 dark:text-white font-semibold">
+                                    {{ $job->posted_at?->isoFormat('MMM DD, YYYY') }}
+                                </span>
+                            </div>
+
+                            @if($job->required_experience)
+                                <!-- Experience Required -->
+                                <div class="flex items-center gap-2">
+                                    <span class="text-gray-500 dark:text-gray-400 font-medium">Experience:</span>
+                                    <span class="text-gray-900 dark:text-white font-semibold">
+                                        {{ number_format($job->required_experience / 12, 1) }}+ Years
+                                    </span>
+                                </div>
+                            @endif
+
+                            <!-- Mobile Salary Display -->
+                            @if($job->min_salary && $job->max_salary)
+                                <div class="flex items-center gap-2 lg:hidden">
+                                    <span class="text-gray-500 dark:text-gray-400 font-medium">Salary:</span>
+                                    <span class="text-gray-900 dark:text-white font-semibold">
+                                        ${{ number_format($job->min_salary/1000) }}k - ${{ number_format($job->max_salary/1000) }}k
+                                        @if($job->salary_period)
+                                            <span class="text-gray-500 dark:text-gray-400">/ {{ $job->salary_period }}</span>
+                                        @endif
+                                    </span>
+                                </div>
+                            @endif
+                        </div>
+
+                        <!-- Right: Social Share Icons -->
+                        <div class="flex items-center gap-2">
+                            <span class="text-gray-500 dark:text-gray-400 text-sm font-medium mr-2">Share:</span>
+                            <div class="flex items-center gap-2">
+                                <!-- Facebook -->
+                                <button onclick="shareOnFacebook()" class="w-9 h-9 bg-[#1877F2] hover:bg-[#166FE5] text-white rounded-lg flex items-center justify-center transition-colors duration-200" title="Share on Facebook">
+                                    <i class="lab la-facebook-f text-sm"></i>
+                                </button>
+                                
+                                <!-- X (Twitter) -->
+                                <button onclick="shareOnTwitter()" class="w-9 h-9 bg-black hover:bg-gray-800 text-white rounded-lg flex items-center justify-center transition-colors duration-200" title="Share on X">
+                                    <i class="lab la-twitter text-sm"></i>
+                                </button>
+                                
+                                <!-- LinkedIn -->
+                                <button onclick="shareOnLinkedIn()" class="w-9 h-9 bg-[#0A66C2] hover:bg-[#004182] text-white rounded-lg flex items-center justify-center transition-colors duration-200" title="Share on LinkedIn">
+                                    <i class="lab la-linkedin-in text-sm"></i>
+                                </button>
+                                
+                                <!-- Email -->
+                                <button onclick="shareViaEmail()" class="w-9 h-9 bg-gray-600 hover:bg-gray-700 dark:bg-gray-500 dark:hover:bg-gray-600 text-white rounded-lg flex items-center justify-center transition-colors duration-200" title="Share via Email">
+                                    <i class="las la-envelope text-sm"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Job Description & Requirements Section with Sidebar -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
                 <!-- Left Content -->
-                <div class="md:col-span-2 bg-white dark:bg-[#1a1a3a] p-6 rounded-2xl border border-gray-200 dark:border-gray-700 space-y-6">
-                    <h3 class="text-2xl font-semibold text-gray-900 dark:text-white">Job Description</h3>
-                    <div class="text-gray-700 dark:text-gray-300 leading-relaxed prose prose-gray dark:prose-invert max-w-none">
-                        {!! nl2br($job->description) !!}
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- Job Description -->
+                    <div class="bg-white dark:bg-[#1a1a3a] p-6 sm:p-8 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
+                                <i class="las la-file-alt text-blue-600 dark:text-pink-300 text-xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Job Description</h3>
+                        </div>
+                        <div class="text-gray-700 dark:text-gray-300 leading-relaxed prose prose-gray dark:prose-invert max-w-none text-base">
+                            {!! nl2br($job->description) !!}
+                        </div>
                     </div>
 
                     @if($job->responsibilities)
-                        <h3 class="text-2xl font-semibold mt-8 text-gray-900 dark:text-white">Responsibilities</h3>
-                        <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-2">
-                            @foreach($job->responsibilities as $responsibility)
-                                <li>{{ $responsibility }}</li>
-                            @endforeach
-                        </ul>
+                        <!-- Responsibilities -->
+                        <div class="bg-white dark:bg-[#1a1a3a] p-6 sm:p-8 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm">
+                            <div class="flex items-center gap-3 mb-6">
+                                <div class="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center">
+                                    <i class="las la-tasks text-green-600 dark:text-green-400 text-xl"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Key Responsibilities</h3>
+                            </div>
+                            <ul class="space-y-3">
+                                @foreach($job->responsibilities as $responsibility)
+                                    <li class="flex items-start gap-3 text-gray-700 dark:text-gray-300">
+                                        <div class="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
+                                        <span>{{ $responsibility }}</span>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
                     @endif
 
                     @if($job->qualifications)
-                        <h3 class="text-2xl font-semibold mt-8 text-gray-900 dark:text-white">Requirements</h3>
-                        <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-2">
-                            @foreach($job->qualifications as $qualification)
-                                <li>{{ $qualification }}</li>
-                            @endforeach
-                        </ul>
+                        <!-- Requirements -->
+                        <div class="bg-white dark:bg-[#1a1a3a] p-6 sm:p-8 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm">
+                            <div class="flex items-center gap-3 mb-6">
+                                <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center">
+                                    <i class="las la-check-circle text-purple-600 dark:text-purple-400 text-xl"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Requirements</h3>
+                            </div>
+                            <ul class="space-y-3">
+                                @foreach($job->qualifications as $qualification)
+                                    <li class="flex items-start gap-3 text-gray-700 dark:text-gray-300">
+                                        <div class="w-2 h-2 bg-purple-500 rounded-full mt-2 flex-shrink-0"></div>
+                                        <span>{{ $qualification }}</span>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
                     @endif
                 </div>
 
                 <!-- Right Sidebar -->
-                <div class="md:col-span-1 space-y-6">
+                <div class="lg:col-span-1 space-y-6">
                     <!-- Company Info -->
-                    <div class="bg-white dark:bg-[#1a1a3a] p-6 rounded-2xl border border-gray-200 dark:border-gray-700">
+                    <div class="bg-white dark:bg-[#1a1a3a] p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm sticky top-6">
                         <div class="flex items-center gap-4 mb-6">
                             @if($job->employer_logo)
-                            <img src="{{ $job->employer_logo }}" alt="{{ $job->employer_name }}" class="w-16 h-16 rounded-xl object-cover">
+                            <img src="{{ $job->employer_logo }}" alt="{{ $job->employer_name }}" class="w-16 h-16 rounded-xl object-cover border-2 border-gray-100 dark:border-gray-700">
                             @else
-                            <img src="https://placehold.co/32x32" alt="{{ $job->employer_name }}" class="w-16 h-16 rounded-xl object-cover">
+                            <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center text-white text-2xl font-bold">
+                                {{ substr($job->employer_name, 0, 1) }}
+                            </div>
                             @endif
                             <div>
-                                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">{{ $job->employer_name }}</h3>
-                                <p class="text-gray-600 dark:text-gray-400">{{ $job->industry ?? 'Technology' }}</p>
+                                <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ $job->employer_name }}</h3>
+                                <p class="text-gray-600 dark:text-gray-400 font-medium">{{ $job->industry ?? 'Technology' }}</p>
                             </div>
                         </div>
 
-                        <div class="space-y-4">
-                            @if($job->required_experience)
-                                <div class="flex items-center gap-3">
-                                    <i class="las la-briefcase text-blue-600 dark:text-pink-300 text-2xl"></i>
+                        <div class="space-y-5">
+                            @if($job->country)
+                                <div class="flex items-center gap-4 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl">
+                                    <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                                        <i class="las la-map-marker text-blue-600 dark:text-pink-300 text-lg"></i>
+                                    </div>
                                     <div>
-                                        <p class="text-gray-600 dark:text-gray-400">Experience Required</p>
-                                        <p class="text-gray-900 dark:text-white">{{ number_format($job->required_experience / 12, 1) }}+ Years</p>
+                                        <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">Location</p>
+                                        <p class="text-gray-900 dark:text-white font-semibold flex items-center gap-2">
+                                            {{ \App\Helpers\CountryFlag::getCountry($job->country) }}
+                                            <span class="text-lg">{{ \App\Helpers\CountryFlag::getFlag($job->country) }}</span>
+                                        </p>
                                     </div>
                                 </div>
                             @endif
 
-                            @if($job->state && $job->country)
-                                <div class="flex items-center gap-3">
-                                    <i class="las la-map-marker text-blue-600 dark:text-pink-300 text-2xl"></i>
-                                    <div>
-                                        <p class="text-gray-600 dark:text-gray-400">Location</p>
-                                        <p class="text-gray-900 dark:text-white">{{ $job->state }}, {{ $job->country }}</p>
-                                    </div>
+                            <div class="flex items-center gap-4 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl">
+                                <div class="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
+                                    <i class="las la-clock text-green-600 dark:text-green-400 text-lg"></i>
                                 </div>
-                            @endif
-
-                            <div class="flex items-center gap-3">
-                                <i class="las la-clock text-blue-600 dark:text-pink-300 text-2xl"></i>
                                 <div>
-                                    <p class="text-gray-600 dark:text-gray-400">Job Type</p>
-                                    <p class="text-gray-900 dark:text-white">{{ $job->employment_type }}</p>
+                                    <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">Job Type</p>
+                                    <p class="text-gray-900 dark:text-white font-semibold">{{ $job->employment_type }}</p>
                                 </div>
                             </div>
+
+                            @if($job->required_experience)
+                                <div class="flex items-center gap-4 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-xl">
+                                    <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
+                                        <i class="las la-briefcase text-purple-600 dark:text-purple-400 text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">Experience</p>
+                                        <p class="text-gray-900 dark:text-white font-semibold">{{ number_format($job->required_experience / 12, 1) }}+ Years</p>
+                                    </div>
+                                </div>
+                            @endif
                         </div>
 
                         @if($job->benefits)
                             <div class="border-t border-gray-200 dark:border-gray-700 mt-6 pt-6">
-                                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Benefits</h3>
-                                <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-2">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="w-8 h-8 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center">
+                                        <i class="las la-gift text-emerald-600 dark:text-emerald-400"></i>
+                                    </div>
+                                    <h3 class="text-lg font-bold text-gray-900 dark:text-white">Benefits</h3>
+                                </div>
+                                <ul class="space-y-2">
                                     @foreach($job->benefits as $benefit)
-                                        <li>{{ $benefit }}</li>
+                                        <li class="flex items-start gap-3 text-gray-700 dark:text-gray-300 text-sm">
+                                            <div class="w-1.5 h-1.5 bg-emerald-500 rounded-full mt-2 flex-shrink-0"></div>
+                                            <span>{{ $benefit }}</span>
+                                        </li>
                                     @endforeach
                                 </ul>
                             </div>
                         @endif
+
+                        <!-- Quick Apply Button in Sidebar -->
+                        <div class="border-t border-gray-200 dark:border-gray-700 mt-6 pt-6">
+                            <button onclick="scrollToApply()" class="w-full bg-gradient-to-r from-blue-600 to-blue-700 dark:from-pink-500 dark:to-pink-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 dark:hover:from-pink-600 dark:hover:to-pink-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                                <i class="las la-paper-plane mr-2"></i>
+                                Quick Apply
+                            </button>
+                        </div>
                     </div>
 
                     <!-- Location Map -->
@@ -185,9 +390,10 @@
                                 <h4 class="text-lg text-gray-900 dark:text-white font-medium mb-2">{{ $relatedJob->job_title }}</h4>
                                 </a>
                                 <div class="flex justify-between items-center">
-                                <span class="text-gray-600 dark:text-gray-400">
+                                <span class="text-gray-600 dark:text-gray-400 flex items-center gap-2">
                                     <i class="las la-map-marker"></i>
-                                    {{ $relatedJob->state }}, {{ $relatedJob->country }}
+                                    {{ \App\Helpers\CountryFlag::getCountry($relatedJob->country) }}
+                                    <span class="text-lg">{{ \App\Helpers\CountryFlag::getFlag($relatedJob->country) }}</span>
                                 </span>
                                     <a href="{{ route('job.show', $relatedJob->slug) }}" class="text-blue-600 dark:text-pink-300 hover:text-blue-700 dark:hover:text-pink-400 transition">
                                         View Job <i class="las la-arrow-right"></i>
@@ -202,12 +408,105 @@
     </section>
 @endsection
 
+    <!-- Sticky Apply Button -->
+    <div id="stickyApplyButton" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 opacity-0 transition-all duration-300 translate-y-4">
+        <button onclick="scrollToApply()" class="bg-gradient-to-r from-blue-600 to-blue-700 dark:from-pink-500 dark:to-pink-600 text-white px-8 py-4 rounded-full font-semibold text-lg shadow-2xl hover:from-blue-700 hover:to-blue-800 dark:hover:from-pink-600 dark:hover:to-pink-700 transition-all duration-300 hover:shadow-3xl transform hover:-translate-y-1 border-2 border-white dark:border-gray-800">
+            <i class="las la-paper-plane mr-2"></i>
+            Apply for this Job
+        </button>
+    </div>
+
 @push('extra-js')
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
         crossorigin=""></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Sticky Apply Button Logic
+    const stickyButton = document.getElementById('stickyApplyButton');
+    const heroSection = document.querySelector('section');
+    
+    function toggleStickyButton() {
+        const heroBottom = heroSection.offsetTop + heroSection.offsetHeight;
+        const scrollPosition = window.scrollY;
+        
+        if (scrollPosition > heroBottom + 200) {
+            stickyButton.style.opacity = '1';
+            stickyButton.style.transform = 'translateX(-50%) translateY(0)';
+        } else {
+            stickyButton.style.opacity = '0';
+            stickyButton.style.transform = 'translateX(-50%) translateY(1rem)';
+        }
+    }
+    
+    window.addEventListener('scroll', toggleStickyButton);
+    
+    // Scroll to apply section
+    window.scrollToApply = function() {
+        const applySection = document.querySelector('livewire\\:apply-job') || document.querySelector('[wire\\:key*="apply"]');
+        if (applySection) {
+            applySection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    };
+    
+    // Scroll to cover letter section
+    window.scrollToCoverLetter = function() {
+        const coverLetterSection = document.querySelector('livewire\\:cover-letter-chat') || document.querySelector('[wire\\:key*="cover"]');
+        if (coverLetterSection) {
+            coverLetterSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    };
+    
+    // Share job functionality
+    window.shareJob = function() {
+        if (navigator.share) {
+            navigator.share({
+                title: '{{ $job->job_title }} at {{ $job->employer_name }}',
+                text: 'Check out this job opportunity!',
+                url: window.location.href
+            }).catch(console.error);
+        } else {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                alert('Job link copied to clipboard!');
+            }).catch(() => {
+                alert('Could not copy link. Please copy manually: ' + window.location.href);
+            });
+        }
+    };
+    
+    // Social Media Share Functions
+    window.shareOnFacebook = function() {
+        const url = encodeURIComponent(window.location.href);
+        const text = encodeURIComponent('{{ $job->job_title }} at {{ $job->employer_name }} - Check out this job opportunity!');
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${text}`, '_blank', 'width=600,height=400');
+    };
+    
+    window.shareOnTwitter = function() {
+        const url = encodeURIComponent(window.location.href);
+        const text = encodeURIComponent('{{ $job->job_title }} at {{ $job->employer_name }} - Check out this job opportunity!');
+        window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank', 'width=600,height=400');
+    };
+    
+    window.shareOnLinkedIn = function() {
+        const url = encodeURIComponent(window.location.href);
+        const title = encodeURIComponent('{{ $job->job_title }} at {{ $job->employer_name }}');
+        const summary = encodeURIComponent('Check out this job opportunity!');
+        window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}&title=${title}&summary=${summary}`, '_blank', 'width=600,height=400');
+    };
+    
+    window.shareViaEmail = function() {
+        const subject = encodeURIComponent('Job Opportunity: {{ $job->job_title }} at {{ $job->employer_name }}');
+        const body = encodeURIComponent(`Hi there,\n\nI found this job opportunity that might interest you:\n\n{{ $job->job_title }} at {{ $job->employer_name }}\n\nCheck it out: ${window.location.href}\n\nBest regards`);
+        window.location.href = `mailto:?subject=${subject}&body=${body}`;
+    };
+    
+    // Bookmark job functionality
+    window.bookmarkJob = function() {
+        // Add your bookmark logic here
+        alert('Bookmark functionality - integrate with your backend');
+    };
+
+    // Map functionality
     const mapContainer = document.getElementById('job-map');
 
     if (mapContainer) {
