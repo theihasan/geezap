@@ -21,6 +21,7 @@ return new class extends Migration
         });
 
         Schema::table('job_listings', function (Blueprint $table) {
+            $table->dropIndex(['job_category']);
             $table->dropColumn('job_category');
         });
 
@@ -36,6 +37,7 @@ return new class extends Migration
         Schema::table('job_listings', function (Blueprint $table) {
             $table->dropForeign(['job_category']);
             $table->string('job_category');
+            $table->index('job_category');
         });
 
         Schema::dropIfExists('job_categories');
@@ -44,7 +46,7 @@ return new class extends Migration
     private function migrateExistingCategories(): void
     {
         $categories = config('geezap');
-        $categoryModel = new \App\Models\JobCategory();
+        $categoryModel = new \App\Models\JobCategory;
 
         foreach ($categories as $key => $config) {
             $categoryModel->create([
