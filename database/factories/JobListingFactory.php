@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Models\JobListing;
 use App\Models\JobCategory;
+use App\Models\JobListing;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -29,7 +29,7 @@ class JobListingFactory extends Factory
             'publisher' => $this->faker->randomElement(['LinkedIn', 'Indeed', 'Glassdoor', 'Monster']),
             'employment_type' => $this->faker->randomElement(['Full-time', 'Part-time', 'Contract', 'Freelance']),
             'job_title' => $this->faker->jobTitle(),
-            'job_category' => JobCategory::factory(),
+            'job_category' => JobCategory::factory()->create()->id,
             'category_image' => $this->faker->imageUrl(200, 200),
             'apply_link' => $this->faker->url(),
             'description' => $this->faker->paragraphs(3, true),
@@ -54,7 +54,7 @@ class JobListingFactory extends Factory
                 'Paid Time Off',
                 'Flexible Schedule',
                 'Remote Work',
-                'Professional Development'
+                'Professional Development',
             ], $this->faker->numberBetween(2, 5)),
             'qualifications' => $this->faker->sentences(5),
             'responsibilities' => $this->faker->sentences(8),

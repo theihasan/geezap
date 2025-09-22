@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Caches\JobListingCache;
 use App\Caches\CountryAwareJobPageCache;
+use App\Caches\JobListingCache;
 use App\Caches\JobPageCache;
 use App\Caches\JobViewsCache;
 use App\Caches\RelatedJobListingCache;
+use App\Services\SearchSuggestionService;
 use App\Services\SeoMetaService;
 use App\Traits\DetectsUserCountry;
 use Illuminate\Contracts\View\Factory;
@@ -19,26 +20,50 @@ class JobController extends Controller
 {
     use DetectsUserCountry;
 
-    public function index(Request $request, SeoMetaService $seoService)
+    public function index(Request $request, SeoMetaService $seoService, SearchSuggestionService $searchService)
     {
         try {
             $userCountry = $this->getUserCountry();
-            
+
             // Development helper: simulate CloudFlare header for testing
-            if (app()->environment('local') && !$userCountry) {
+            if (app()->environment('local') && ! $userCountry) {
                 $userCountry = 'BD'; // Simulate Bangladesh for testing
             }
-            
+
             $jobs = CountryAwareJobPageCache::get($request, $userCountry);
         } catch (\Throwable $e) {
             Log::warning('Country-aware cache failed, falling back to default', [
                 'error' => $e->getMessage(),
                 'memory_usage' => memory_get_usage(true),
-                'memory_peak' => memory_get_peak_usage(true)
+                'memory_peak' => memory_get_peak_usage(true),
             ]);
-            
+
             $jobs = JobPageCache::get($request);
             $userCountry = null;
+        }
+
+        // Track search if there's a query
+        if ($request->has('search') && ! empty($request->search)) {
+            try {
+                $appliedFilters = array_filter([
+                    'category' => $request->category,
+                    'remote' => $request->remote,
+                    'country' => $request->country,
+                    'types' => $request->types,
+                ]);
+
+                $searchService->trackSearch([
+                    'query' => $request->search,
+                    'user_id' => auth()->id(),
+                    'results_count' => $jobs->total(),
+                    'filters' => $appliedFilters,
+                ]);
+            } catch (\Exception $e) {
+                Log::warning('Failed to track search', [
+                    'query' => $request->search,
+                    'error' => $e->getMessage(),
+                ]);
+            }
         }
 
         $currentPage = $jobs->currentPage();
@@ -62,7 +87,7 @@ class JobController extends Controller
         return view('v2.job.details', [
             'job' => $job,
             'relatedJobs' => $relatedJobs,
-            'meta' => $meta
+            'meta' => $meta,
         ]);
     }
 }
