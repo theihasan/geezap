@@ -19,7 +19,7 @@ class JobCategoryFactory extends Factory
      */
     public function definition(): array
     {
-        $name = $this->faker->randomElement([
+        $name = $this->faker->unique()->randomElement([
             'Software Engineer',
             'Data Scientist',
             'Product Manager',
@@ -27,12 +27,12 @@ class JobCategoryFactory extends Factory
             'Sales Representative',
             'Designer',
             'DevOps Engineer',
-            'Business Analyst'
+            'Business Analyst',
         ]);
 
         return [
             'name' => $name,
-            'slug' => \Illuminate\Support\Str::slug($name),
+            'slug' => \Illuminate\Support\Str::slug($name).'-'.$this->faker->unique()->numberBetween(1000, 9999),
             'query_name' => $name,
             'page' => 1,
             'num_page' => 5,
