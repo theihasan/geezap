@@ -12,7 +12,6 @@ use App\Caches\CountryAwareLatestJobsCache;
 use App\Caches\CountryAwareMostViewedJobsCache;
 use App\Caches\CountryAwareJobPageCache;
 use App\Caches\RelatedJobListingCache;
-use App\Jobs\SubmitUrlToGoogleIndexing;
 use App\Models\JobListing;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
@@ -33,38 +32,16 @@ class JobListingObserver
     public function created(JobListing $jobListing): void
     {
         $this->clearCache();
-        $this->submitToGoogleIndexing($jobListing, 'URL_UPDATED');
     }
 
     public function updated(JobListing $jobListing): void
     {
         $this->clearCache();
-        $this->submitToGoogleIndexing($jobListing, 'URL_UPDATED');
     }
 
     public function deleted(JobListing $jobListing): void
     {
         $this->clearCache();
-        $this->submitToGoogleIndexing($jobListing, 'URL_DELETED');
-    }
-
-    private function submitToGoogleIndexing(JobListing $jobListing, string $type): void
-    {
-        if (!config('services.google_indexing.enabled')) {
-            return;
-        }
-
-        try {
-            $url = route('job.show', $jobListing->slug);
-            SubmitUrlToGoogleIndexing::dispatch($url, $type);
-        } catch (\Exception $e) {
-            \Log::warning('Failed to dispatch Google Indexing job', [
-                'job_id' => $jobListing->id,
-                'slug' => $jobListing->slug,
-                'type' => $type,
-                'error' => $e->getMessage()
-            ]);
-        }
     }
 
     protected function clearCache(): void
