@@ -36,7 +36,7 @@
             </div>
         </div>
 
-        <div class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-800 text-center text-gray-600 dark:text-gray-300 font-sans>
+        <div class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-800 text-center text-gray-600 dark:text-gray-300 font-sans">
             <p>© {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</p>
         </div>
     </div>

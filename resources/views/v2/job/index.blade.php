@@ -39,7 +39,7 @@
                 
                 // Refresh the Livewire component instead of calling render() directly
                 const livewireElement = document.querySelector('[wire\\:id]');
-                if (livewireElement) {
+                if (livewireElement && typeof window.Livewire !== 'undefined') {
                     const componentId = livewireElement.getAttribute('wire:id');
                     const livewireComponent = Livewire.find(componentId);
                     

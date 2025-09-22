@@ -318,13 +318,7 @@
                             </div>
                         @endif
 
-                        <!-- Quick Apply Button in Sidebar -->
-                        <div class="border-t border-gray-200 dark:border-gray-700 mt-6 pt-6">
-                            <button onclick="scrollToApply()" class="w-full bg-gradient-to-r from-blue-600 to-blue-700 dark:from-pink-500 dark:to-pink-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 dark:hover:from-pink-600 dark:hover:to-pink-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-                                <i class="las la-paper-plane mr-2"></i>
-                                Quick Apply
-                            </button>
-                        </div>
+
                     </div>
 
                     <!-- Location Map -->
@@ -344,8 +338,7 @@
 {{--                    </div>--}}
 {{--                    @endif--}}
 
-                    <!-- Separate card for buttons -->
-                    <livewire:jobs.save-for-letter :job="$job" />
+
                 </div>
             </div>
 
@@ -460,13 +453,7 @@
     </section>
 @endsection
 
-    <!-- Sticky Apply Button -->
-    <div id="stickyApplyButton" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 opacity-0 transition-all duration-300 translate-y-4">
-        <button onclick="scrollToApply()" class="bg-gradient-to-r from-blue-600 to-blue-700 dark:from-pink-500 dark:to-pink-600 text-white px-8 py-4 rounded-full font-semibold text-lg shadow-2xl hover:from-blue-700 hover:to-blue-800 dark:hover:from-pink-600 dark:hover:to-pink-700 transition-all duration-300 hover:shadow-3xl transform hover:-translate-y-1 border-2 border-white dark:border-gray-800">
-            <i class="las la-paper-plane mr-2"></i>
-            Apply for this Job
-        </button>
-    </div>
+
 
 @push('extra-js')
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
@@ -474,40 +461,9 @@
         crossorigin=""></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Sticky Apply Button Logic
-    const stickyButton = document.getElementById('stickyApplyButton');
-    const heroSection = document.querySelector('section');
+
     
-    function toggleStickyButton() {
-        const heroBottom = heroSection.offsetTop + heroSection.offsetHeight;
-        const scrollPosition = window.scrollY;
-        
-        if (scrollPosition > heroBottom + 200) {
-            stickyButton.style.opacity = '1';
-            stickyButton.style.transform = 'translateX(-50%) translateY(0)';
-        } else {
-            stickyButton.style.opacity = '0';
-            stickyButton.style.transform = 'translateX(-50%) translateY(1rem)';
-        }
-    }
-    
-    window.addEventListener('scroll', toggleStickyButton);
-    
-    // Scroll to apply section
-    window.scrollToApply = function() {
-        const applySection = document.querySelector('livewire\\:apply-job') || document.querySelector('[wire\\:key*="apply"]');
-        if (applySection) {
-            applySection.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-    };
-    
-    // Scroll to cover letter section
-    window.scrollToCoverLetter = function() {
-        const coverLetterSection = document.querySelector('livewire\\:cover-letter-chat') || document.querySelector('[wire\\:key*="cover"]');
-        if (coverLetterSection) {
-            coverLetterSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-    };
+
     
     // Share job functionality
     window.shareJob = function() {
