@@ -38,37 +38,79 @@
                                     <i class="las la-search text-gray-400 text-lg"></i>
                                 </div>
                                 <input
+                                    id="searchInput"
                                     name="search"
                                     type="text"
-                                    placeholder="Search by job title, company, or keyword"
-                                    class="w-full h-14 pl-12 pr-4 rounded-xl bg-white dark:bg-white/10 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-pink-500/50 focus:border-transparent transition-all backdrop-blur-sm"
+                                    placeholder="Try 'Frontend Developer', 'Google', or 'React'"
+                                    class="w-full h-16 pl-12 pr-32 rounded-2xl bg-white dark:bg-white/10 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-pink-500/50 focus:border-transparent transition-all backdrop-blur-sm text-lg shadow-lg"
                                     autocomplete="off"
+                                    spellcheck="false"
                                 >
-                            </div>
 
-                            <!-- Filters Button -->
-                            <div class="flex gap-3">
-                                <div class="relative">
-                                    <button
-                                        type="button"
-                                        onclick="toggleFilters()"
-                                        class="h-14 px-6 rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 hover:bg-gray-50 dark:hover:bg-white/10 text-gray-900 dark:text-white transition-all flex items-center gap-2 backdrop-blur-sm"
-                                    >
-                                        <i class="las la-filter"></i>
-                                        <span>Filters</span>
-                                    </button>
-                                </div>
-
-                                <!-- Search Button -->
+                                <!-- Search Button (Inside Input) -->
                                 <button
                                     type="submit"
-                                    class="h-14 px-8 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 dark:from-pink-500 dark:to-purple-600 text-white font-medium transition-all hover:shadow-lg hover:shadow-blue-500/20 dark:hover:shadow-pink-500/20 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-pink-500/50 flex items-center gap-2"
+                                    class="absolute right-2 top-2 h-12 px-6 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 dark:from-pink-500 dark:to-purple-600 text-white font-medium transition-all hover:shadow-lg hover:shadow-blue-500/20 dark:hover:shadow-pink-500/20 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500/50 dark:focus:ring-pink-500/50 flex items-center gap-2"
                                 >
-                                    <span>Search</span>
+                                    <span class="hidden sm:inline">Search Jobs</span>
                                     <i class="las la-arrow-right"></i>
                                 </button>
                             </div>
+
+                            <!-- Hidden Filter Inputs -->
+                            <input type="hidden" name="is_remote" id="remoteFilter">
+                            <input type="hidden" name="employment_type" id="typeFilter">
+                            <input type="hidden" name="experience_level" id="experienceFilter">
                         </div>
+
+                            <!-- Autocomplete Dropdown -->
+                            <div id="autocompleteDropdown" class="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-[#1a1a3a] rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 hidden z-50 max-h-96 overflow-y-auto">
+                                <!-- Loading State -->
+                                <div id="loadingState" class="p-6 text-center hidden">
+                                    <div class="inline-block h-6 w-6 animate-spin rounded-full border-2 border-solid border-blue-500 dark:border-pink-500 border-r-transparent"></div>
+                                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">Loading suggestions...</p>
+                                </div>
+
+                                <!-- Search Suggestions -->
+                                <div id="searchSuggestions" class="p-4 border-b border-gray-100 dark:border-gray-700">
+                                    <div class="text-sm text-gray-500 dark:text-gray-400 mb-3 font-medium">Suggestions</div>
+                                    <div id="suggestionsList" class="space-y-1">
+                                        <!-- Dynamic suggestions will be populated here -->
+                                    </div>
+                                </div>
+
+                                <!-- Recent Searches (if user is logged in) -->
+                                @if(auth()->check())
+                                <div id="recentSearches" class="p-4 border-b border-gray-100 dark:border-gray-700 hidden">
+                                    <div class="text-sm text-gray-500 dark:text-gray-400 mb-3 font-medium flex items-center justify-between">
+                                        <span>Recent Searches</span>
+                                        <button type="button" onclick="clearRecentSearches()" class="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">Clear</button>
+                                    </div>
+                                    <div id="recentSearchesList" class="space-y-1">
+                                        <!-- Recent searches will be populated here -->
+                                    </div>
+                                </div>
+                                @endif
+
+                                <!-- Quick Filters -->
+                                <div class="p-4">
+                                    <div class="text-sm text-gray-500 dark:text-gray-400 mb-3 font-medium">Quick Filters</div>
+                                    <div class="flex flex-wrap gap-2">
+                                        <button type="button" class="quick-filter px-3 py-2 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors text-sm font-medium" data-filter="remote" data-value="1">
+                                            <i class="las la-laptop mr-1"></i>Remote
+                                        </button>
+                                        <button type="button" class="quick-filter px-3 py-2 rounded-full bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors text-sm font-medium" data-filter="type" data-value="fulltime">
+                                            <i class="las la-briefcase mr-1"></i>Full-time
+                                        </button>
+                                        <button type="button" class="quick-filter px-3 py-2 rounded-full bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors text-sm font-medium" data-filter="type" data-value="contractor">
+                                            <i class="las la-handshake mr-1"></i>Contract
+                                        </button>
+                                        <button type="button" class="quick-filter px-3 py-2 rounded-full bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-900/30 transition-colors text-sm font-medium" data-filter="experience" data-value="entry">
+                                            <i class="las la-graduation-cap mr-1"></i>Entry Level
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
 
                         <!-- Expandable Filters -->
                         <div id="filters" class="hidden mt-3 p-4 rounded-xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 backdrop-blur-sm">
@@ -112,6 +154,29 @@
                             </div>
                         </div>
                     </form>
+
+                    <!-- Search Tips & Stats -->
+                    <div class="mt-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-600 dark:text-gray-400">
+                        <div class="flex items-center gap-4">
+                            <span class="flex items-center gap-1">
+                                <i class="las la-lightbulb text-yellow-500"></i>
+                                <span>Tip: Try specific skills like "React" or "Python"</span>
+                            </span>
+                            <span class="hidden sm:inline text-gray-300 dark:text-gray-600">•</span>
+                            <span class="flex items-center gap-1">
+                                <i class="las la-chart-line text-green-500"></i>
+                                <span>{{ $availableJobs }} jobs available</span>
+                            </span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span>Trending:</span>
+                            <div class="flex gap-1">
+                                <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full text-xs">React</span>
+                                <span class="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full text-xs">Python</span>
+                                <span class="px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-full text-xs">AI/ML</span>
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- Popular Searches -->
                     <div class="flex flex-wrap items-center gap-3 mt-6 text-sm text-gray-600 dark:text-gray-400 text-center mb-8">
@@ -169,13 +234,285 @@
     </div>
 </section>
 
-<!-- Add this script at the end of your blade file or in your JS bundle -->
-<script>
-function toggleFilters() {
-    const filters = document.getElementById('filters');
-    filters.classList.toggle('hidden');
-}
-</script>
+    <!-- Enhanced Search JavaScript -->
+    <script>
+        // Search autocomplete functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const autocompleteDropdown = document.getElementById('autocompleteDropdown');
+            const searchForm = document.getElementById('searchForm');
+            const recentSearchesDiv = document.getElementById('recentSearches');
+            const recentSearchesList = document.getElementById('recentSearchesList');
+
+            let searchTimeout;
+            let recentSearches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
+
+            // Show dropdown on focus
+            searchInput.addEventListener('focus', function() {
+                const query = this.value.trim();
+                if (query.length === 0) {
+                    showPopularSuggestions();
+                }
+                loadRecentSearches();
+            });
+
+            // Hide dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!searchInput.contains(e.target) && !autocompleteDropdown.contains(e.target)) {
+                    hideDropdown();
+                }
+            });
+
+            // Handle search input
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                const query = this.value.trim();
+
+                if (query.length > 0) {
+                    searchTimeout = setTimeout(() => {
+                        fetchSuggestions(query);
+                    }, 300);
+                } else {
+                    showPopularSuggestions();
+                }
+            });
+
+            // Suggestion clicks are handled in renderSuggestions function
+
+            // Handle quick filter clicks
+            document.querySelectorAll('.quick-filter').forEach(button => {
+                button.addEventListener('click', function() {
+                    const filter = this.dataset.filter;
+                    const value = this.dataset.value;
+
+                    // Update hidden inputs
+                    if (filter === 'remote') {
+                        document.getElementById('remoteFilter').value = value;
+                    } else if (filter === 'type') {
+                        document.getElementById('typeFilter').value = value;
+                    } else if (filter === 'experience') {
+                        document.getElementById('experienceFilter').value = value;
+                    }
+
+                    // Submit form
+                    searchForm.submit();
+                });
+            });
+
+            // Handle form submission
+            searchForm.addEventListener('submit', function() {
+                const searchTerm = searchInput.value.trim();
+                if (searchTerm) {
+                    addToRecentSearches(searchTerm);
+                }
+            });
+
+            function showDropdown() {
+                autocompleteDropdown.classList.remove('hidden');
+            }
+
+            function hideDropdown() {
+                autocompleteDropdown.classList.add('hidden');
+            }
+
+            function addToRecentSearches(term) {
+                if (!term.trim()) return;
+
+                // Remove if already exists
+                recentSearches = recentSearches.filter(s => s !== term);
+
+                // Add to beginning
+                recentSearches.unshift(term);
+
+                // Keep only last 5
+                recentSearches = recentSearches.slice(0, 5);
+
+                // Save to localStorage
+                localStorage.setItem('recentSearches', JSON.stringify(recentSearches));
+            }
+
+            function loadRecentSearches() {
+                if (recentSearches.length > 0 && recentSearchesDiv) {
+                    recentSearchesList.innerHTML = '';
+                    recentSearches.forEach(search => {
+                        const item = document.createElement('button');
+                        item.type = 'button';
+                        item.className = 'recent-search-item text-left p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-white/5 transition-colors flex items-center gap-2 w-full';
+                        item.innerHTML = `
+                            <i class="las la-history text-gray-400"></i>
+                            <span>${search}</span>
+                        `;
+                        item.addEventListener('click', function() {
+                            searchInput.value = search;
+                            searchForm.submit();
+                        });
+                        recentSearchesList.appendChild(item);
+                    });
+                    recentSearchesDiv.classList.remove('hidden');
+                }
+            }
+
+            async function fetchSuggestions(query) {
+                try {
+                    showLoadingState();
+                    const response = await fetch(`/api/search/suggestions?q=${encodeURIComponent(query)}&limit=8`);
+                    const data = await response.json();
+
+                    if (data.success) {
+                        renderSuggestions(data.data.suggestions);
+                    } else {
+                        console.error('Failed to fetch suggestions:', data.message);
+                        showPopularSuggestions();
+                    }
+                } catch (error) {
+                    console.error('Error fetching suggestions:', error);
+                    showPopularSuggestions();
+                } finally {
+                    hideLoadingState();
+                }
+            }
+
+            function renderSuggestions(suggestions) {
+                const suggestionsList = document.getElementById('suggestionsList');
+                suggestionsList.innerHTML = '';
+
+                if (suggestions.length === 0) {
+                    suggestionsList.innerHTML = '<p class="text-sm text-gray-500 dark:text-gray-400 p-3">No suggestions found</p>';
+                    return;
+                }
+
+                suggestions.forEach(suggestion => {
+                    const item = document.createElement('button');
+                    item.type = 'button';
+                    item.className = 'suggestion-item text-left p-3 rounded-xl hover:bg-gray-50 dark:hover:bg-white/5 transition-colors flex items-center justify-between w-full';
+
+                    const leftContent = document.createElement('div');
+                    leftContent.className = 'flex items-center gap-3';
+
+                    const icon = document.createElement('i');
+                    icon.className = suggestion.icon + ' text-lg';
+                    // Set color based on type
+                    if (suggestion.type === 'trending') {
+                        icon.classList.add('text-orange-500');
+                    } else if (suggestion.type === 'job_title') {
+                        icon.classList.add('text-blue-500', 'dark:text-pink-400');
+                    } else if (suggestion.type === 'company') {
+                        icon.classList.add('text-green-500', 'dark:text-green-400');
+                    } else if (suggestion.type === 'skill') {
+                        icon.classList.add('text-purple-500', 'dark:text-purple-400');
+                    } else {
+                        icon.classList.add('text-gray-500');
+                    }
+
+                    const text = document.createElement('span');
+                    text.textContent = suggestion.text;
+                    text.className = 'flex-1';
+
+                    leftContent.appendChild(icon);
+                    leftContent.appendChild(text);
+
+                    const rightContent = document.createElement('div');
+                    rightContent.className = 'flex items-center gap-2';
+
+                    if (suggestion.badge) {
+                        const badge = document.createElement('span');
+                        badge.textContent = suggestion.badge;
+                        badge.className = 'text-xs px-2 py-1 rounded-full bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400';
+                        rightContent.appendChild(badge);
+                    }
+
+                    if (suggestion.count) {
+                        const count = document.createElement('span');
+                        count.textContent = suggestion.count;
+                        count.className = 'text-xs text-gray-400';
+                        rightContent.appendChild(count);
+                    }
+
+                    item.appendChild(leftContent);
+                    item.appendChild(rightContent);
+
+                    item.addEventListener('click', function() {
+                        searchInput.value = suggestion.text;
+                        addToRecentSearches(suggestion.text);
+                        searchForm.submit();
+                    });
+
+                    suggestionsList.appendChild(item);
+                });
+
+                showDropdown();
+            }
+
+            function showPopularSuggestions() {
+                // Show default popular suggestions when no query
+                const defaultSuggestions = [
+                    { text: 'Frontend Developer', icon: 'las la-code', type: 'popular' },
+                    { text: 'Backend Developer', icon: 'las la-server', type: 'popular' },
+                    { text: 'Full Stack Developer', icon: 'las la-layer-group', type: 'popular' },
+                    { text: 'UI/UX Designer', icon: 'las la-palette', type: 'popular' },
+                    { text: 'Product Manager', icon: 'las la-cog', type: 'popular' },
+                    { text: 'Data Scientist', icon: 'las la-chart-bar', type: 'popular' }
+                ];
+
+                renderSuggestions(defaultSuggestions);
+            }
+
+            function showLoadingState() {
+                document.getElementById('loadingState').classList.remove('hidden');
+                document.getElementById('searchSuggestions').classList.add('hidden');
+            }
+
+            function hideLoadingState() {
+                document.getElementById('loadingState').classList.add('hidden');
+                document.getElementById('searchSuggestions').classList.remove('hidden');
+            }
+
+            async function loadRecentSearches() {
+                @if(auth()->check())
+                try {
+                    const response = await fetch('/api/search/recent');
+                    const data = await response.json();
+
+                    if (data.success && data.data.searches.length > 0) {
+                        recentSearchesList.innerHTML = '';
+                        data.data.searches.forEach(search => {
+                            const item = document.createElement('button');
+                            item.type = 'button';
+                            item.className = 'recent-search-item text-left p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-white/5 transition-colors flex items-center gap-2 w-full';
+                            item.innerHTML = `
+                                <i class="las la-history text-gray-400"></i>
+                                <span>${search}</span>
+                            `;
+                            item.addEventListener('click', function() {
+                                searchInput.value = search;
+                                searchForm.submit();
+                            });
+                            recentSearchesList.appendChild(item);
+                        });
+                        recentSearchesDiv.classList.remove('hidden');
+                    }
+                } catch (error) {
+                    console.error('Error loading recent searches:', error);
+                }
+                @endif
+            }
+
+            function clearRecentSearches() {
+                recentSearches = [];
+                localStorage.removeItem('recentSearches');
+                recentSearchesDiv.classList.add('hidden');
+            }
+
+            // Make functions available globally
+            window.clearRecentSearches = clearRecentSearches;
+        });
+
+        // Legacy function for backward compatibility
+        function toggleFilters() {
+            // This function is kept for any existing references
+            console.log('toggleFilters called - legacy function');
+        }
+    </script>
 
     <!-- Latest jobs start -->
     @if ($latestJobs)
@@ -296,6 +633,73 @@ function toggleFilters() {
         .animate-fadeIn {
             animation: fadeIn 0.5s ease-out forwards;
             opacity: 0;
+        }
+
+        /* Enhanced search styles */
+        #autocompleteDropdown {
+            animation: slideDown 0.2s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Custom scrollbar for dropdown */
+        #autocompleteDropdown::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #autocompleteDropdown::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 3px;
+        }
+
+        .dark #autocompleteDropdown::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        #autocompleteDropdown::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 3px;
+        }
+
+        .dark #autocompleteDropdown::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Hover effects for interactive elements */
+        .suggestion-item:hover {
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+
+        .dark .suggestion-item:hover {
+            background-color: rgba(236, 72, 153, 0.1);
+        }
+
+        .quick-filter:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Focus states for accessibility */
+        .suggestion-item:focus,
+        .quick-filter:focus,
+        .recent-search-item:focus {
+            outline: 2px solid rgba(59, 130, 246, 0.5);
+            outline-offset: 2px;
+        }
+
+        .dark .suggestion-item:focus,
+        .dark .quick-filter:focus,
+        .dark .recent-search-item:focus {
+            outline-color: rgba(236, 72, 153, 0.5);
         }
     </style>
 @endpush
