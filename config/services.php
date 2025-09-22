@@ -62,4 +62,9 @@ return [
     'brevo' => [
         'key' => env('BREVO_API_KEY'),
     ],
+
+    'google_indexing' => [
+        'service_account_key_path' => env('GOOGLE_INDEXING_SERVICE_ACCOUNT_KEY_PATH'),
+        'enabled' => env('GOOGLE_INDEXING_ENABLED', false),
+    ],
 ];
