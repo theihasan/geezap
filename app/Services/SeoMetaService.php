@@ -131,7 +131,7 @@ class SeoMetaService
 
         $keywords = "{$job->job_title}, {$job->employer_name}, {$job->job_category}, {$location} jobs, tech jobs";
 
-        $image = $job->employer_logo ?? $this->resolveImage();
+        $image = $this->resolveImage(); 
 
         $structuredData = [
             '@context' => 'https://schema.org',
@@ -143,7 +143,7 @@ class SeoMetaService
             'hiringOrganization' => [
                 '@type' => 'Organization',
                 'name' => $job->employer_name,
-                'logo' => $image,
+                'logo' => $job->employer_logo ?? $this->resolveImage(),
             ],
             'jobLocation' => [
                 '@type' => 'Place',
