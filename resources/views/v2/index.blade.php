@@ -73,7 +73,7 @@
 
                                 <!-- Search Suggestions -->
                                 <div id="searchSuggestions" class="p-4 border-b border-gray-100 dark:border-gray-700">
-                                    <div class="text-sm text-gray-500 dark:text-gray-400 mb-3 font-medium">Suggestions</div>
+                                    <div class="text-sm text-gray-700 dark:text-gray-400 mb-3 font-medium">Suggestions</div>
                                     <div id="suggestionsList" class="space-y-1">
                                         <!-- Dynamic suggestions will be populated here -->
                                     </div>
@@ -377,7 +377,7 @@
                 suggestionsList.innerHTML = '';
 
                 if (suggestions.length === 0) {
-                    suggestionsList.innerHTML = '<p class="text-sm text-gray-500 dark:text-gray-400 p-3">No suggestions found</p>';
+                    suggestionsList.innerHTML = '<p class="text-sm text-gray-600 dark:text-gray-400 p-3">No suggestions found</p>';
                     return;
                 }
 
@@ -406,7 +406,7 @@
 
                     const text = document.createElement('span');
                     text.textContent = suggestion.text;
-                    text.className = 'flex-1';
+                    text.className = 'flex-1 text-gray-900 dark:text-white';
 
                     leftContent.appendChild(icon);
                     leftContent.appendChild(text);
