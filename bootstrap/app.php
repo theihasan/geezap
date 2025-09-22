@@ -1,30 +1,19 @@
 <?php
 
-use App\Jobs\AspJob;
-use App\Jobs\ReactJob;
-use App\Jobs\VueJsJob;
-use App\Jobs\NodeJSJob;
-use App\Jobs\GetJobData;
-use App\Jobs\LaravelJob;
-use App\Jobs\PaythonJob;
-use App\Jobs\SymfonyJob;
-use App\Jobs\WordPressJob;
-use App\Jobs\ResetAPIKeyLimit;
-use App\Jobs\CollectMetricsJob;
-use Illuminate\Support\Facades\Artisan;
-use Sentry\Laravel\Integration;
-use App\Jobs\DispatchJobCategories;
-use App\Jobs\NotifyUserAboutNewJobs;
-use Illuminate\Foundation\Application;
-use Illuminate\Console\Scheduling\Schedule;
-use App\Http\Middleware\PrometheusMiddleware;
 use App\Http\Middleware\BlockCrawlerMiddleware;
 use App\Http\Middleware\CaptureCloudflareCountry;
+use App\Http\Middleware\PrometheusMiddleware;
 use App\Http\Middleware\VerifyClouflareTurnstile;
+use App\Jobs\CollectMetricsJob;
+use App\Jobs\DispatchJobCategories;
+use App\Jobs\NotifyUserAboutNewJobs;
+use App\Jobs\ResetAPIKeyLimit;
+use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-
-
+use Illuminate\Support\Facades\Artisan;
+use Sentry\Laravel\Integration;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -35,38 +24,39 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //$middleware->append(BlockCrawlerMiddleware::class);
+        $middleware->append(BlockCrawlerMiddleware::class);
         $middleware->web(append: [
             CaptureCloudflareCountry::class,
             PrometheusMiddleware::class,
         ]);
         $middleware->alias([
             'cf-turnstile.verify' => VerifyClouflareTurnstile::class,
+            'api.throttle' => \App\Http\Middleware\ApiThrottleMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         Integration::handles($exceptions);
     })->withSchedule(function (Schedule $schedule) {
-        $schedule->job(new DispatchJobCategories())
+        $schedule->job(new DispatchJobCategories)
             ->everySixHours()
-            //->days([Schedule::FRIDAY, Schedule::SUNDAY, Schedule::TUESDAY, Schedule::THURSDAY])
+            // ->days([Schedule::FRIDAY, Schedule::SUNDAY, Schedule::TUESDAY, Schedule::THURSDAY])
             ->withoutOverlapping(600);
 
-        $schedule->job(new ResetAPIKeyLimit())
+        $schedule->job(new ResetAPIKeyLimit)
             ->monthly()
             ->withoutOverlapping(600);
 
-        $schedule->job(new NotifyUserAboutNewJobs())
+        $schedule->job(new NotifyUserAboutNewJobs)
             ->daily()
             ->days([Schedule::SATURDAY, Schedule::THURSDAY])
             ->withoutOverlapping(600);
-            
+
         $schedule->command('backup:run --only-db')
             ->everySixHours()
             ->then(function () {
                 Artisan::call('backup:clean');
             });
-            
+
         $schedule->command('content-formatter:process-packages')
             ->everyFiveMinutes()
             ->withoutOverlapping(600);
@@ -85,7 +75,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $schedule->command('model:prune')->everyMinute();
         $schedule->command('model:prune', [
-               '--model' => 'MeShaon\RequestAnalytics\Models\RequestAnalytics',
-           ])->daily();
+            '--model' => 'MeShaon\RequestAnalytics\Models\RequestAnalytics',
+        ])->daily();
 
     })->create();
