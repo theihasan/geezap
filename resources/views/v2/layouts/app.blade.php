@@ -33,3 +33,6 @@
 <!-- Footer -->
 @include('v2.partials.footer')
 
+<!-- Global Notification Component -->
+<x-notification />
+
