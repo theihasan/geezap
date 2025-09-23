@@ -52,10 +52,7 @@ return Application::configure(basePath: dirname(__DIR__))
             ->withoutOverlapping(600);
 
         $schedule->command('backup:run --only-db')
-            ->everySixHours()
-            ->then(function () {
-                Artisan::call('backup:clean');
-            });
+            ->everySixHours();
 
         $schedule->command('content-formatter:process-packages')
             ->everyFiveMinutes()

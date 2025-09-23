@@ -33,19 +33,19 @@ class JobListingObserver
     public function created(JobListing $jobListing): void
     {
         $this->clearCache();
-        $this->submitToGoogleIndexing($jobListing, 'URL_UPDATED');
+        //$this->submitToGoogleIndexing($jobListing, 'URL_UPDATED');
     }
-
+    
     public function updated(JobListing $jobListing): void
     {
         $this->clearCache();
-        $this->submitToGoogleIndexing($jobListing, 'URL_UPDATED');
+        //$this->submitToGoogleIndexing($jobListing, 'URL_UPDATED');
     }
 
     public function deleted(JobListing $jobListing): void
     {
         $this->clearCache();
-        $this->submitToGoogleIndexing($jobListing, 'URL_DELETED');
+        //$this->submitToGoogleIndexing($jobListing, 'URL_DELETED');
     }
 
     private function submitToGoogleIndexing(JobListing $jobListing, string $type): void
