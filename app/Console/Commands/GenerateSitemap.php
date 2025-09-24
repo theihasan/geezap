@@ -19,6 +19,9 @@ class GenerateSitemap extends Command
 
         Storage::disk('public')->put('sitemap.xml', $sitemap);
 
+        // Create symlink in public directory for web access
+        $this->createPublicSymlink();
+
         $this->info('Sitemap generated successfully!');
     }
 
@@ -84,5 +87,23 @@ class GenerateSitemap extends Command
         $xml .= "</urlset>\n";
 
         return $xml;
+    }
+
+    private function createPublicSymlink(): void
+    {
+        $storagePath = storage_path('app/public/sitemap.xml');
+        $publicPath = public_path('sitemap.xml');
+
+        // Remove existing symlink or file if it exists
+        if (file_exists($publicPath) || is_link($publicPath)) {
+            unlink($publicPath);
+        }
+
+        // Create symlink
+        if (symlink($storagePath, $publicPath)) {
+            $this->info('Public symlink created successfully!');
+        } else {
+            $this->warn('Failed to create public symlink. You may need to create it manually.');
+        }
     }
 }
