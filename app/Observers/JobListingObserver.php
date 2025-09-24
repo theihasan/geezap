@@ -1,6 +1,10 @@
 <?php
+
 namespace App\Observers;
 
+use App\Caches\CountryAwareJobPageCache;
+use App\Caches\CountryAwareLatestJobsCache;
+use App\Caches\CountryAwareMostViewedJobsCache;
 use App\Caches\JobCategoryCache;
 use App\Caches\JobFilterCache;
 use App\Caches\JobListingCache;
@@ -8,11 +12,7 @@ use App\Caches\JobPageCache;
 use App\Caches\JobsCountCache;
 use App\Caches\LatestJobsCache;
 use App\Caches\MostViewedJobsCache;
-use App\Caches\CountryAwareLatestJobsCache;
-use App\Caches\CountryAwareMostViewedJobsCache;
-use App\Caches\CountryAwareJobPageCache;
 use App\Caches\RelatedJobListingCache;
-use App\Jobs\SubmitUrlToGoogleIndexing;
 use App\Models\JobListing;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
@@ -25,10 +25,7 @@ class JobListingObserver
         $jobListing->slug = Str::slug($jobListing->job_title.'-'.time());
     }
 
-    public function updating(JobListing $jobListing): void
-    {
-
-    }
+    public function updating(JobListing $jobListing): void {}
 
     public function created(JobListing $jobListing): void
     {
@@ -36,7 +33,7 @@ class JobListingObserver
         // Only invalidate related jobs cache for the same category
         RelatedJobListingCache::invalidateForCategory($jobListing->job_category);
     }
-    
+
     public function updated(JobListing $jobListing): void
     {
         $this->clearCache();
@@ -51,8 +48,6 @@ class JobListingObserver
         RelatedJobListingCache::invalidateForCategory($jobListing->job_category);
     }
 
-    }
-
     protected function clearCache(): void
     {
         Cache::forget('jobCategoriesJobsCount');
@@ -61,11 +56,11 @@ class JobListingObserver
         JobPageCache::invalidate();
         MostViewedJobsCache::invalidate();
         LatestJobsCache::invalidate();
-        
+
         CountryAwareMostViewedJobsCache::invalidate();
         CountryAwareLatestJobsCache::invalidate();
         CountryAwareJobPageCache::invalidate();
-            
+
         JobsCountCache::invalidateLastWeekAdded();
         JobsCountCache::invalidateTodayAdded();
         JobsCountCache::invalidateAvailableJobsCount();
