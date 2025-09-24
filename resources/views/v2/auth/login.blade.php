@@ -5,7 +5,7 @@
     <div class="bg-white dark:bg-[#12122b] rounded-2xl shadow-lg p-8 max-w-lg w-full space-y-8 border border-gray-200 dark:border-gray-800">
         <div class="text-center space-y-2">
             <h2 class="text-3xl font-bold text-gray-900 dark:text-white font-oxanium-bold">Welcome Back</h2>
-            <p class="text-gray-600 dark:text-gray-400 font-ubuntu-light">Please login to your account</p>
+            <p class="text-gray-600 dark:text-gray-400 font-sans">Please login to your account</p>
         </div>
 
         @session('status')
@@ -14,7 +14,7 @@
         </div>
         @endsession
         <div class="flex justify-center mb-4">
-            <a href="{{ route('home') }}" class="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-pink-500 transition-colors flex items-center gap-2 font-ubuntu">
+            <a href="{{ route('home') }}" class="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-pink-500 transition-colors flex items-center gap-2 font-sans>
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
@@ -28,12 +28,12 @@
         <!-- Divider -->
         <div class="flex items-center my-6">
             <hr class="flex-grow border-t border-gray-300 dark:border-gray-600">
-            <span class="mx-4 text-gray-600 dark:text-gray-400 font-ubuntu-light">or continue with email</span>
+            <span class="mx-4 text-gray-600 dark:text-gray-400 font-sans">or continue with email</span>
             <hr class="flex-grow border-t border-gray-300 dark:border-gray-600">
         </div>
 
         <!-- Login Form -->
-        <form action="{{ route('login') }}" method="POST" class="space-y-6 font-ubuntu">
+        <form action="{{ route('login') }}" method="POST" class="space-y-6 font-sans>
             @csrf
             <div>
                 <label for="LoginEmail" class="block text-gray-700 dark:text-gray-400 mb-1">Email Address</label>
@@ -117,9 +117,9 @@
         </form>
 
         <!-- Register Link -->
-        <p class="text-center text-gray-600 dark:text-gray-400 mt-6 font-ubuntu-light">
+        <p class="text-center text-gray-600 dark:text-gray-400 mt-6 font-sans">
             Don't have an account?
-            <a href="{{ route('register') }}" class="text-blue-600 dark:text-pink-500 hover:text-blue-700 dark:hover:text-pink-400 transition-colors font-ubuntu-medium">
+            <a href="{{ route('register') }}" class="text-blue-600 dark:text-pink-500 hover:text-blue-700 dark:hover:text-pink-400 transition-colors font-sans">
                 Sign up
             </a>
         </p>

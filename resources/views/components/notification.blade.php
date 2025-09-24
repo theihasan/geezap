@@ -11,8 +11,8 @@
     }"
     x-on:notify.window="
         show = true;
-        message = $event.detail[0].message;
-        type = $event.detail[0].type || 'success';
+        message = $event.detail[0]?.message || '';
+        type = $event.detail[0]?.type || 'success';
         setTimeout(() => show = false, 3000)
     "
 >
@@ -23,7 +23,7 @@
          x-transition:leave="transition ease-in duration-200"
          x-transition:leave-start="opacity-100 transform translate-x-0"
          x-transition:leave-end="opacity-0 transform translate-x-8"
-         :class="types[type]"
+         :class="types[type] || types.success"
          class="fixed top-4 right-4 px-4 py-3 rounded border flex items-center z-50"
     >
         <span x-text="message"></span>

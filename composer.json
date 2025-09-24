@@ -10,6 +10,7 @@
         "filament/filament": "^3.2",
         "flowframe/laravel-trend": "^0.4.0",
         "geezap/content-formatter": "@dev",
+        "google/apiclient": "^2.18",
         "laravel/breeze": "^2.0",
         "laravel/framework": "^12.0",
         "laravel/horizon": "^5.32",
@@ -33,6 +34,7 @@
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.13",
         "fakerphp/faker": "^1.23",
+        "laravel/boost": "^1.1",
         "laravel/pint": "^1.13",
         "laravel/sail": "^1.26",
         "mockery/mockery": "^1.6",

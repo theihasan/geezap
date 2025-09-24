@@ -1,0 +1,11 @@
+{
+    "mcpServers": {
+        "laravel-boost": {
+            "command": "/Users/figlab/Library/Application Support/Herd/bin/php83",
+            "args": [
+                "/Users/figlab/Desktop/sites/geezap/artisan",
+                "boost:mcp"
+            ]
+        }
+    }
+}

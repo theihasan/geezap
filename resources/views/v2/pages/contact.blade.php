@@ -7,7 +7,7 @@
                 <h1 class="font-oxanium-bold text-5xl leading-tight text-gray-900 dark:text-white md:text-6xl mb-6">
                     Get in <span class="bg-gradient-to-r from-blue-500 to-blue-600 dark:from-pink-500 dark:to-purple-500 bg-clip-text text-transparent">Touch</span>
                 </h1>
-                <p class="font-ubuntu-light text-xl leading-relaxed text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+                <p class="font-sans text-xl leading-relaxed text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
                     We'd love to hear from you. Reach out to us through any of the channels below, and we'll get back to you as soon as possible.
                 </p>
             </div>

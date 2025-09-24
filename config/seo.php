@@ -22,7 +22,7 @@ return [
     ],
 
     'images' => [
-        'default' => '/assets/images/og-default.jpg',
+        'default' => '/assets/images/logo-icon-40.png',
         'fallback' => '/assets/images/favicon.ico',
         'width' => 1200,
         'height' => 630,

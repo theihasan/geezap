@@ -52,7 +52,7 @@ class GenerateSitemap extends Command
 
         // Job categories
         $categories = JobCategory::withCount('jobs')
-            ->where('jobs_count', '>', 0)
+            ->having('jobs_count', '>', 0)
             ->get();
 
         foreach ($categories as $category) {

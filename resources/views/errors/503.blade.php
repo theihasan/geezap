@@ -27,7 +27,7 @@
                     <h2 class="text-4xl font-oxanium-bold text-gray-900 dark:text-white">
                         Under Maintenance
                     </h2>
-                    <p class="text-xl text-gray-600 dark:text-gray-300 font-ubuntu-light max-w-2xl mx-auto">
+                    <p class="text-xl text-gray-600 dark:text-gray-300 font-sans max-w-2xl mx-auto">
                         We're currently improving our services to bring you a better experience.
                         We'll be back shortly!
                     </p>
@@ -36,7 +36,7 @@
                 <div class="bg-gray-100 dark:bg-[#1a1a3a]/50 p-6 rounded-xl max-w-xl mx-auto">
                     <div class="flex items-center justify-center gap-2 mb-4">
                         <div class="w-3 h-3 bg-blue-500 dark:bg-pink-500 rounded-full animate-pulse"></div>
-                        <span class="text-blue-600 dark:text-pink-300 font-ubuntu-medium">Maintenance in Progress</span>
+                        <span class="text-blue-600 dark:text-pink-300 font-sans">Maintenance in Progress</span>
                     </div>
 
                     <div class="space-y-4">

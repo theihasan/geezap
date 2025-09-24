@@ -3,7 +3,7 @@
     <section class="py-20 bg-gray-50 dark:bg-[#12122b]">
         <div class="max-w-7xl mx-auto px-6">
             <div class="mb-8">
-                <h2 class="text-2xl font-ubuntu-bold text-gray-900 dark:text-white">
+                <h2 class="text-2xl font-sans text-gray-900 dark:text-white">
                     Available Jobs <span class="text-blue-600 dark:text-pink-500" id="job-count">({{ $jobs->total() }})</span>
                 </h2>
             </div>
@@ -39,7 +39,7 @@
                 
                 // Refresh the Livewire component instead of calling render() directly
                 const livewireElement = document.querySelector('[wire\\:id]');
-                if (livewireElement) {
+                if (livewireElement && typeof window.Livewire !== 'undefined') {
                     const componentId = livewireElement.getAttribute('wire:id');
                     const livewireComponent = Livewire.find(componentId);
                     

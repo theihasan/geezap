@@ -12,6 +12,7 @@ use App\Caches\CountryAwareLatestJobsCache;
 use App\Caches\CountryAwareMostViewedJobsCache;
 use App\Caches\CountryAwareJobPageCache;
 use App\Caches\RelatedJobListingCache;
+use App\Jobs\SubmitUrlToGoogleIndexing;
 use App\Models\JobListing;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
@@ -35,7 +36,7 @@ class JobListingObserver
         // Only invalidate related jobs cache for the same category
         RelatedJobListingCache::invalidateForCategory($jobListing->job_category);
     }
-
+    
     public function updated(JobListing $jobListing): void
     {
         $this->clearCache();
@@ -48,6 +49,8 @@ class JobListingObserver
         $this->clearCache();
         // Only invalidate related jobs cache for the same category
         RelatedJobListingCache::invalidateForCategory($jobListing->job_category);
+    }
+
     }
 
     protected function clearCache(): void

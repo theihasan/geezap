@@ -47,14 +47,14 @@
             document.getElementById('jobs-filter-form').submit();
         }
     }">
-    <h3 class="text-xl font-ubuntu-bold text-white mb-4">
+    <h3 class="text-xl font-sans text-white mb-4">
         Filter Jobs
         <span x-show="getActiveFilterCount() > 0"
               class="ml-2 px-2 py-0.5 text-sm bg-pink-500 text-white rounded-full"
               x-text="getActiveFilterCount()"></span>
     </h3>
 
-    <form method="GET" action="{{ route('job.index') }}" class="space-y-4 font-ubuntu" id="jobs-filter-form">
+    <form method="GET" action="{{ route('job.index') }}" class="space-y-4 font-sans id="jobs-filter-form">
         <!-- Basic Filters Section -->
         <div class="border-b border-gray-700 pb-4 mb-4">
             <button type="button"
@@ -208,7 +208,7 @@
             </button>
 
             <button type="submit"
-                    class="bg-gradient-to-r from-pink-500 to-purple-600 text-white py-2 px-6 rounded-lg hover:opacity-90 transition-opacity font-ubuntu-medium">
+                    class="bg-gradient-to-r from-pink-500 to-purple-600 text-white py-2 px-6 rounded-lg hover:opacity-90 transition-opacity font-sans">
                 Apply Filters
             </button>
         </div>

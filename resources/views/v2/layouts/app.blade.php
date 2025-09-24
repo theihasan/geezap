@@ -1,5 +1,5 @@
 @include('v2.partials.header')
-<body class="bg-white dark:bg-[#0A0A1B] font-ubuntu-light">
+<body class="bg-white dark:bg-[#0A0A1B] font-sans">
 <!-- Navigation -->
 <nav class="bg-white dark:bg-[#12122b] border-b border-gray-200 dark:border-gray-800">
     <div class="max-w-7xl mx-auto px-6">
@@ -32,4 +32,7 @@
 
 <!-- Footer -->
 @include('v2.partials.footer')
+
+<!-- Global Notification Component -->
+<x-notification />
 

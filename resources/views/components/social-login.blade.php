@@ -1,4 +1,4 @@
-<div class="flex flex-col gap-3 font-ubuntu-medium">
+<div class="flex flex-col gap-3 font-sans">
     @php
         session(['url.intended' => url()->previous()]);
     @endphp

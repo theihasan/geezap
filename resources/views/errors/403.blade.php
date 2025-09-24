@@ -26,7 +26,7 @@
                     <h2 class="text-4xl font-oxanium-bold text-gray-900 dark:text-white">
                         Access Denied
                     </h2>
-                    <p class="text-xl text-gray-600 dark:text-gray-300 font-ubuntu-light max-w-2xl mx-auto">
+                    <p class="text-xl text-gray-600 dark:text-gray-300 font-sans max-w-2xl mx-auto">
                         Sorry, you don't have permission to access this page.
                         Please make sure you're logged in with the correct credentials.
                     </p>
@@ -34,12 +34,12 @@
 
                 <div class="flex flex-col md:flex-row gap-4 justify-center">
                     <a href="{{ route('home') }}"
-                       class="font-ubuntu-regular bg-gradient-to-r from-blue-500 to-blue-600 dark:from-pink-500 dark:to-purple-600 text-white px-8 py-3 rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+                       class="font-sans bg-gradient-to-r from-blue-500 to-blue-600 dark:from-pink-500 dark:to-purple-600 text-white px-8 py-3 rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
                         <i class="las la-home"></i>
                         Back to Home
                     </a>
                     <a href="{{ route('login') }}"
-                       class="font-ubuntu-regular bg-gray-100 dark:bg-[#1a1a3a] text-gray-900 dark:text-white px-8 py-3 rounded-xl hover:bg-gray-200 dark:hover:bg-[#1a1a3a]/80 transition-all flex items-center justify-center gap-2">
+                       class="font-sans bg-gray-100 dark:bg-[#1a1a3a] text-gray-900 dark:text-white px-8 py-3 rounded-xl hover:bg-gray-200 dark:hover:bg-[#1a1a3a]/80 transition-all flex items-center justify-center gap-2">
                         <i class="las la-sign-in-alt"></i>
                         Login
                     </a>

@@ -4,11 +4,11 @@
     <div class="bg-white dark:bg-[#12122b] rounded-2xl shadow-lg p-8 max-w-lg w-full space-y-6 border border-gray-200 dark:border-gray-800">
         <div class="text-center">
             <h2 class="text-3xl font-bold text-gray-900 dark:text-white font-oxanium-bold">Create an Account</h2>
-            <p class="text-gray-600 dark:text-gray-400 font-ubuntu-light">Join Geezap and start your job search journey.</p>
+            <p class="text-gray-600 dark:text-gray-400 font-sans">Join Geezap and start your job search journey.</p>
         </div>
 
         <div class="flex justify-center mb-4">
-            <a href="{{ route('home') }}" class="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-pink-500 transition-colors flex items-center gap-2 font-ubuntu">
+            <a href="{{ route('home') }}" class="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-pink-500 transition-colors flex items-center gap-2 font-sans>
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                 </svg>
