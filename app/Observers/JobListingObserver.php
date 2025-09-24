@@ -33,38 +33,24 @@ class JobListingObserver
     public function created(JobListing $jobListing): void
     {
         $this->clearCache();
-        //$this->submitToGoogleIndexing($jobListing, 'URL_UPDATED');
+        // Only invalidate related jobs cache for the same category
+        RelatedJobListingCache::invalidateForCategory($jobListing->job_category);
     }
     
     public function updated(JobListing $jobListing): void
     {
         $this->clearCache();
-        //$this->submitToGoogleIndexing($jobListing, 'URL_UPDATED');
+        // Only invalidate related jobs cache for the same category
+        RelatedJobListingCache::invalidateForCategory($jobListing->job_category);
     }
 
     public function deleted(JobListing $jobListing): void
     {
         $this->clearCache();
-        //$this->submitToGoogleIndexing($jobListing, 'URL_DELETED');
+        // Only invalidate related jobs cache for the same category
+        RelatedJobListingCache::invalidateForCategory($jobListing->job_category);
     }
 
-    private function submitToGoogleIndexing(JobListing $jobListing, string $type): void
-    {
-        if (!config('services.google_indexing.enabled')) {
-            return;
-        }
-
-        try {
-            $url = route('job.show', $jobListing->slug);
-            SubmitUrlToGoogleIndexing::dispatch($url, $type);
-        } catch (\Exception $e) {
-            \Log::warning('Failed to dispatch Google Indexing job', [
-                'job_id' => $jobListing->id,
-                'slug' => $jobListing->slug,
-                'type' => $type,
-                'error' => $e->getMessage()
-            ]);
-        }
     }
 
     protected function clearCache(): void
@@ -83,7 +69,8 @@ class JobListingObserver
         JobsCountCache::invalidateLastWeekAdded();
         JobsCountCache::invalidateTodayAdded();
         JobsCountCache::invalidateAvailableJobsCount();
-        RelatedJobListingCache::invalidate();
+        // Only invalidate related jobs cache for the same category, not all
+        // RelatedJobListingCache::invalidate(); // Commented out to reduce aggressive cache clearing
         JobCategoryCache::invalidate();
         JobsCountCache::invalidateCategoriesCount();
         JobFilterCache::invalidate();
