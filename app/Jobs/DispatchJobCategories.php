@@ -49,37 +49,33 @@ class DispatchJobCategories implements ShouldQueue
     /**
      * Create a batch of jobs for processing categories
      */
-     private function createJobBatch(int $maxCategoryId): PendingBatch
-     {
-         $cacheKey = 'job_categories_batch_' . $maxCategoryId;
+    private function createJobBatch(int $maxCategoryId): PendingBatch
+    {
+        $jobs = [];
         
-         return cache()->remember($cacheKey, now()->addHour(), function () use ($maxCategoryId) {
-             $jobs = [];
-
-             JobCategory::query()->chunk(10, function ($categories) use (&$jobs, $maxCategoryId) {
-                 foreach ($categories as $category) {
-                     $isLastCategory = $category->id === $maxCategoryId;
-                     $jobs[] = new GetJobData($category->id, $category->page, $isLastCategory);
-                 }
-             });
-
-             return Bus::batch($jobs)
-                 ->name('Job Data Fetching')
-                 ->allowFailures()
-                 ->onQueue('default')
-                 ->then(function (Batch $batch) {
-                     logger()->debug('All job data fetching completed', [
-                         'batch_id' => $batch->id,
-                         'total_jobs' => $batch->totalJobs,
-                     ]);
-                 })
-                 ->catch(function (Batch $batch, Throwable $e) {
-                     logger()->error('Job batch has failed jobs', [
-                         'batch_id' => $batch->id,
-                         'failed_jobs' => $batch->failedJobs,
-                         'error' => $e->getMessage(),
-                     ]);
-                 });
-         });
-     }
+        JobCategory::query()->chunk(10, function ($categories) use (&$jobs, $maxCategoryId) {
+            foreach ($categories as $category) {
+                $isLastCategory = $category->id === $maxCategoryId;
+                $jobs[] = new GetJobData($category->id, $category->page, $isLastCategory);
+            }
+        });
+        
+        return Bus::batch($jobs)
+            ->name('Job Data Fetching')
+            ->allowFailures()
+            ->onQueue('default')
+            ->then(function (Batch $batch) {
+                logger()->debug('All job data fetching completed', [
+                    'batch_id' => $batch->id,
+                    'total_jobs' => $batch->totalJobs,
+                ]);
+            })
+            ->catch(function (Batch $batch, Throwable $e) {
+                logger()->error('Job batch has failed jobs', [
+                    'batch_id' => $batch->id,
+                    'failed_jobs' => $batch->failedJobs,
+                    'error' => $e->getMessage(),
+                ]);
+            });
+    }
 }

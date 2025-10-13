@@ -63,11 +63,7 @@ class GetJobData implements ShouldQueue
                 return;
             }
 
-            $category = cache()->remember(
-                'job_category_' . $this->categoryId,
-                now()->addHour(),
-                fn() => JobCategory::with('countries')->findOrFail($this->categoryId)
-            );
+            $category = JobCategory::with('countries')->findOrFail($this->categoryId);
 
             $this->fetchAndStoreJobs($apiKey, $category);
 
@@ -91,8 +87,8 @@ class GetJobData implements ShouldQueue
                     if ($this->batch() && $this->batch()->cancelled()) {
                         return;
                     }
-
-                    Log::debug('Processing', [
+                    
+                    Log::info('Processing', [
                         'category_id' => $category->id,
                         'category_name' => $category->name,
                         'page' => $page,
@@ -100,43 +96,26 @@ class GetJobData implements ShouldQueue
                         'batch_id' => $this->batch() ? $this->batch()->id : null,
                     ]);
 
-                    $cacheKey = "job_data_{$category->id}_{$country->code}_page{$page}";
+                    $response = Http::job()->retry([100, 200])->get('/search', [
+                        'query' => $category->query_name,
+                        'page' => $page,
+                        'num_pages' => $category->num_page,
+                        'date_posted' => $category->timeframe,
+                        'country' => $country->code
+                    ]);
 
-                    // Cache scope-related data
-                    $batchId = $this->batch() ? $this->batch()->id : null;
-                    $cacheScope = "batch_{$batchId}_category_{$category->id}";
+                    throw_if($response->status() === 429, new RuntimeException('Rate limit exceeded'));
+                    throw_if(!$response->successful(), new RequestException($response));
 
-                    $responseData = cache()->tags([$cacheScope])->remember(
-                        $cacheKey,
-                        now()->addHours(6), 
-                        function () use ($category, $page, $country, $apiKey) {
-                            $response = Http::job()->retry([100, 200])->get('/search', [
-                                'query' => $category->query_name,
-                                'page' => $page,
-                                'num_pages' => $category->num_page,
-                                'date_posted' => $category->timeframe,
-                                'country' => $country->code
-                            ]);
+                    $this->updateApiKeyUsage($apiKey, $response);
 
-                            throw_if($response->status() === 429, new RuntimeException('Rate limit exceeded'));
-                            throw_if(!$response->successful(), new RequestException($response));
-
-                            $this->updateApiKeyUsage($apiKey, $response);
-
-                            return [
-                                'json' => $response->json(),
-                                'ok' => $response->ok()
-                            ];
-                        }
-                    );
-
-                    if ($responseData['ok']) {
+                    if ($response->ok()) {
                         $jobResponseDTO = JobResponseDTO::fromResponse(
-                            $responseData['json'],
+                            $response->json(),
                             $category->id,
                             $category->category_image
                         );
-                        StoreJobs::dispatch($jobResponseDTO)->delay(now()->addMinutes(5));
+                        StoreJobs::dispatch($jobResponseDTO);
                     }
 
                 } catch (RequestException | RuntimeException | Exception $e) {
@@ -146,7 +125,7 @@ class GetJobData implements ShouldQueue
                         'page' => $page,
                         'error' => $e->getMessage(),
                     ]);
-
+                    
                     continue;
                 }
             }
