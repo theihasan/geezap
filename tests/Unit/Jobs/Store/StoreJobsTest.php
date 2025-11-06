@@ -72,6 +72,14 @@ class StoreJobsTest extends TestCase
                     && $jobDTO->employerName === 'Test Company';
             }));
 
+        // Mock the log call that happens in testing environment for each job
+        Log::shouldReceive('info')
+            ->once()
+            ->with('Processing job in StoreJobs', [
+                'job_id' => '123',
+                'job_title' => 'Software Engineer',
+            ]);
+
         Log::shouldReceive('info')
             ->once()
             ->with('StoreJobs completed', [
@@ -151,6 +159,21 @@ class StoreJobsTest extends TestCase
             ->with($this->callback(function (JobDTO $jobDTO) {
                 return $jobDTO->jobCategory === 2 && $jobDTO->categoryImage === 'marketing.png';
             }));
+
+        // Mock the log calls that happen in testing environment for each job
+        Log::shouldReceive('info')
+            ->once()
+            ->with('Processing job in StoreJobs', [
+                'job_id' => '123',
+                'job_title' => 'Engineer A',
+            ]);
+
+        Log::shouldReceive('info')
+            ->once()
+            ->with('Processing job in StoreJobs', [
+                'job_id' => '456',
+                'job_title' => 'Engineer B',
+            ]);
 
         Log::shouldReceive('info')
             ->once()
@@ -254,6 +277,14 @@ class StoreJobsTest extends TestCase
             ->method('storeJob')
             ->willThrowException(new \PDOException('Database connection failed'));
 
+        // Mock the log call that happens in testing environment before the exception
+        Log::shouldReceive('info')
+            ->once()
+            ->with('Processing job in StoreJobs', [
+                'job_id' => '123',
+                'job_title' => 'Software Engineer',
+            ]);
+
         Log::shouldReceive('error')
             ->once()
             ->with('Exception in StoreJobs', [
@@ -313,6 +344,14 @@ class StoreJobsTest extends TestCase
             ->expects($this->once())
             ->method('storeJob')
             ->willThrowException(new \Exception('Something went wrong'));
+
+        // Mock the log call that happens in testing environment before the exception
+        Log::shouldReceive('info')
+            ->once()
+            ->with('Processing job in StoreJobs', [
+                'job_id' => '123',
+                'job_title' => 'Software Engineer',
+            ]);
 
         Log::shouldReceive('error')
             ->once()
@@ -396,6 +435,16 @@ class StoreJobsTest extends TestCase
         $jobStorageService = $this->createMock(JobStorageService::class);
         $jobStorageService->expects($this->exactly(30))
             ->method('storeJob');
+
+        // Mock all the log calls that happen in testing environment for each job
+        for ($i = 1; $i <= 30; $i++) {
+            Log::shouldReceive('info')
+                ->once()
+                ->with('Processing job in StoreJobs', [
+                    'job_id' => "job-{$i}",
+                    'job_title' => "Engineer {$i}",
+                ]);
+        }
 
         Log::shouldReceive('info')
             ->once()
