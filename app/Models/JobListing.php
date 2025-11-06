@@ -2,27 +2,25 @@
 
 namespace App\Models;
 
-use App\Filters\JobFilter;
-use Laravel\Scout\Searchable;
-use Illuminate\Support\Facades\Log;
-use App\Observers\JobListingObserver;
 use Abbasudo\Purity\Traits\Filterable;
 use App\Models\Scopes\JobListingScope;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\MassPrunable;
-use Illuminate\Database\Eloquent\Attributes\ScopedBy;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Observers\JobListingObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Attributes\ScopedBy;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\MassPrunable;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Laravel\Scout\Searchable;
 
 #[ObservedBy([JobListingObserver::class])]
 #[ScopedBy([JobListingScope::class])]
 class JobListing extends Model
 {
-    use HasFactory, Filterable, MassPrunable, Searchable;
+    use Filterable, HasFactory, MassPrunable, Searchable;
 
     protected $fillable = [
         'job_id',
@@ -88,19 +86,31 @@ class JobListing extends Model
         return $this->hasMany(JobApplyOption::class);
     }
 
+    // Accessor to provide apply_options as an array (for backward compatibility with tests)
+    public function getApplyOptionsAttribute(): array
+    {
+        return $this->applyOptions()->orderBy('publisher', 'desc')->get()->map(function ($option) {
+            return [
+                'publisher' => $option->publisher,
+                'apply_link' => $option->apply_link,
+                'is_direct' => $option->is_direct,
+            ];
+        })->toArray();
+    }
+
     public function prunable(): Builder
     {
         return static::query()->where('created_at', '<=', now()->subDays(14));
     }
 
-
     public function toSearchableArray(): array
     {
         $array = $this->toArray();
+
         return array_merge($array, [
             'id' => (string) $this->id,
             'created_at' => $this->created_at->timestamp,
-            'job_category' => (string) $this->job_category, 
+            'job_category' => (string) $this->job_category,
             'is_remote' => (bool) $this->is_remote,
             'publisher' => (string) $this->publisher,
             'salary_min' => (int) $this->min_salary,
