@@ -1,165 +1,422 @@
-[![Details Documentation](https://deepwiki.com/badge.svg)](https://deepwiki.com/theihasan/geezap)
+# Geezap Job Aggregator
 
-![Free Palestine](https://github.com/user-attachments/assets/2b796609-c819-4cf6-b454-993e47a6e0f2)
+A comprehensive job aggregation platform that consolidates job listings from multiple sources (LinkedIn, Upwork, Indeed, ZipRecruiter) into one unified search interface with AI-powered features.
 
+## Quick Start Installation
 
-<div align="center">
-  <h1>🎯 Geezap-Job Aggregator</h1>
-  <p>A comprehensive job aggregation platform that brings opportunities from multiple sources into one place.</p>
-</div>
+### Prerequisites
 
-## 📌 Project Overview
+Ensure your system has:
+- PHP 8.2 or higher
+- Composer
+- Node.js 18+ and npm
+- MySQL 8.0+
+- Redis server
 
-Geezap-Job Aggregator is a Laravel-based application that simplifies the job search process by aggregating job listings from various platforms including:
-- LinkedIn
-- Upwork
-- Indeed
-- ZipRecruiter
-- And more...
+### Step 1: Download and Setup
 
-The platform not only consolidates job listings but also provides tools to enhance the job application process and preparation.
-
-## 🚀 Key Features
-
-- **Job Aggregation**
-    - Unified search across multiple job platforms
-    - Real-time job updates
-    - Detailed job information in a standardized format
-
-- **Application Management**
-    - Track application status (Applied, Saved)
-    - Save jobs for later application
-    - Application history dashboard
-
-- **Cover Letter Generation**
-    - AI-powered cover letter generation based on job details
-    - Customizable templates
-    - Export options
-
-## 🛠️ Installation
-
-1. Clone the repository
 ```bash
 git clone https://github.com/theihasan/geezap.git
 cd geezap
-```
-
-2. Install dependencies
-```bash
 composer install
 npm install
 ```
 
-3. Configure environment variables
+### Step 2: Environment Configuration
+
 ```bash
 cp .env.example .env
 php artisan key:generate
 ```
 
-4. Set up required API keys in `.env`:
-```bash
-OPENAI_API_KEY=your_openai_api_key
+### Step 3: Database Setup
 
-# Cloudflare Turnstile
-CLOUDFLARE_TURNSTILE_SITE_KEY=your_site_key
-CLOUDFLARE_TURNSTILE_SECRET_KEY=your_secret_key
+Create a MySQL database and update your `.env` file:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=geezap
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
 ```
-> Also you may need to set turnstile widget from cloudflare dashboard
 
-5. Run migrations and generate application key
+Run database migrations:
+
 ```bash
 php artisan migrate
+php artisan db:seed
 ```
 
-6. Set up Laravel Reverb for WebSocket:
+### Step 4: Build Assets
+
 ```bash
-php artisan reverb:install
-php artisan reverb:start
+npm run build
 ```
 
-7. Start the development server
+### Step 5: Start Background Services
+
+The application requires multiple background services to function properly:
+
 ```bash
+# Terminal 1 - Main application
 php artisan serve
-npm run dev
-```
 
-8. Add Job Category
-- Add a job category via the admin panel: `/geezap/job-categories`.
-- Admin credential are available in the seeder class
-
-9. Add API-Key
-- Add API Keys for job search via admin panel: `/geezap/api-keys`.
-
-10. Run the Scheduler
-```bash
-php artisan schedule:run
-```
-
-1.   Run the queue worker
-```bash
+# Terminal 2 - Queue worker (required for job processing)
 php artisan queue:work
+
+# Terminal 3 - WebSocket server (required for real-time features)
+php artisan reverb:start (### Currently Not Running)
+
+# Terminal 4 - Scheduler (required for automated job fetching)
+php artisan schedule:work
 ```
 
-**Notes**
-- If you don't get expected behavior check `laravel.log` file
-- Following command might be helpful in some cases
+### Step 6: Initial Admin Setup
+
+1. Access admin panel at: `http://localhost:8000/geezap`
+    -`Admin Email: admin@geezap.com`
+    -`password: password`
+2. Default admin credentials are created by the seeder
+3. Add job categories via: `/geezap/job-categories`
+4. Configure API keys via: `/geezap/api-keys`
+
+## Required API Credentials
+
+### Essential Services
+
+**AI Service (Choose One):**
+```env
+# OpenAI (Recommended)
+OPENAI_API_KEY=sk-your-openai-key
+
+# Or Gemini
+GEMINI_API_KEY=your-gemini-key
+
+# Or DeepSeek
+DEEPSEEK_API_KEY=your-deepseek-key
+```
+
+**Bot Protection (Required):**
+```env
+CLOUDFLARE_TURNSTILE_SITE_KEY=your-site-key
+CLOUDFLARE_TURNSTILE_SECRET_KEY=your-secret-key
+```
+
+Get Cloudflare Turnstile keys from: https://dash.cloudflare.com/
+
+### Email Configuration
+
+Configure email service for user notifications:
+
+```env
+# Primary email service (Brevo/Sendinblue)
+BREVO_API_KEY=your-brevo-key
+BREVO_SMTP_HOST=smtp-relay.brevo.com
+BREVO_SMTP_PORT=587
+BREVO_SMTP_ENCRYPTION=tls
+BREVO_SMTP_USERNAME=your-brevo-username
+BREVO_SMTP_PASSWORD=your-brevo-password
+
+# Backup email service (Resend)
+RESEND_KEY=your-resend-key
+
+# Or use ZeptoMail
+ZEPTO_SMTP_HOST=smtp.zeptomail.com
+ZEPTO_SMTP_PORT=587
+ZEPTO_SMTP_ENCRYPTION=tls
+ZEPTO_SMTP_USERNAME=your-zepto-username
+ZEPTO_SMTP_PASSWORD=your-zepto-password
+```
+
+### Social Authentication (Optional)
+
+```env
+# GitHub OAuth
+GITHUB_CLIENT_ID=your-github-client-id
+GITHUB_CLIENT_SECRET=your-github-client-secret
+
+# Google OAuth
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+
+```
+
+### Redis Configuration
+
+For production environments with separate Redis instances:
+
+```env
+REDIS_CLIENT=predis
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=null
+REDIS_PORT=6379
+REDIS_SCHEME=tls
+```
+
+## Production Deployment
+
+### Server Requirements
+
+- **Web Server**: Nginx with Laravel configuration
+- **PHP**: 8.2+ with extensions: PDO, MySQL, Curl, OpenSSL, JSON, Tokenizer, XML, Ctype, BCMath
+- **Database**: MySQL 8.0+ or MariaDB 10.3+
+- **Cache**: Redis 6.0+
+- **Memory**: Minimum 2GB RAM (4GB+ recommended)
+- **Storage**: 10GB+ with room for growth
+
+### Production Installation
+
 ```bash
+# Install dependencies
+composer install --no-dev --optimize-autoloader
+npm ci && npm run build
+
+# Configure environment
+cp .env.example .env
+# Edit .env with production values
+php artisan key:generate
+
+# Database setup
+php artisan migrate --force
+
+# Cache optimization
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan optimize
+
+# Set proper permissions
+chmod -R 755 storage bootstrap/cache
+chown -R www-data:www-data storage bootstrap/cache
+```
+
+### Background Services Setup
+
+Use a process manager like Supervisor to manage background services:
+
+**Queue Worker Configuration:**
+```ini
+[program:geezap-worker]
+process_name=%(program_name)s_%(process_num)02d
+command=php /var/www/html/geezap/artisan queue:work --sleep=3 --tries=3
+directory=/var/www/html/geezap
+autostart=true
+autorestart=true
+user=www-data
+numprocs=2
+redirect_stderr=true
+stdout_logfile=/var/www/html/geezap/storage/logs/worker.log
+```
+
+**Scheduler Cron Job:**
+```bash
+# Add to crontab
+* * * * * cd /var/www/html/geezap && php artisan schedule:run >> /dev/null 2>&1
+```
+
+## Common Errors and Solutions
+
+### Installation Errors
+
+**Error**: `Class 'PDO' not found`
+**Solution**: Install PHP PDO extension: `sudo apt-get install php8.2-mysql`
+
+**Error**: `composer: command not found`
+**Solution**: Install Composer: https://getcomposer.org/download/
+
+**Error**: `npm: command not found`
+**Solution**: Install Node.js: https://nodejs.org/
+
+### Database Errors
+
+**Error**: `SQLSTATE[HY000] [2002] No such file or directory`
+**Solution**: Ensure MySQL service is running: `sudo systemctl start mysql`
+
+**Error**: `Access denied for user 'root'@'localhost'`
+**Solution**: Check database credentials in `.env` file and ensure user has proper permissions
+
+**Error**: `Base table or view not found`
+**Solution**: Run migrations: `php artisan migrate`
+
+### Application Errors
+
+**Error**: `419 Page Expired`
+**Solution**: Clear cache and regenerate app key:
+```bash
+php artisan cache:clear
+php artisan config:clear
+php artisan key:generate
+```
+
+**Error**: `Class 'Redis' not found`
+**Solution**: Install Redis PHP extension: `sudo apt-get install php8.2-redis`
+
+**Error**: Jobs not processing
+**Solution**: Ensure queue worker is running: `php artisan queue:work`
+
+**Error**: Real-time features not working
+**Solution**: Ensure Reverb WebSocket server is running: `php artisan reverb:start`
+
+### API Integration Errors
+
+**Error**: Cover letter generation fails
+**Solution**: Verify AI service API key is set correctly in `.env`
+
+**Error**: Bot protection not working
+**Solution**: 
+1. Verify Cloudflare Turnstile keys are correct
+2. Ensure domain is properly configured in Cloudflare dashboard
+
+**Error**: Social login not working
+**Solution**: 
+1. Check OAuth credentials in `.env`
+2. Verify callback URLs are configured correctly in OAuth providers
+3. Ensure SSL is enabled for production domains
+
+### Performance Issues
+
+**Error**: Slow page loading
+**Solution**: 
+```bash
+# Enable caching
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+
+# Clear old cache if needed
 php artisan cache:clear
 ```
 
-## 💻 Technologies Used
+**Error**: High memory usage
+**Solution**: 
+1. Monitor queue worker memory with `php artisan horizon` (if using Horizon)
+2. Restart workers periodically: `php artisan queue:restart`
 
-- Laravel 11.x
-- Laravel Reverb for WebSocket
-- OpenAI API
-- MySQL
-- Livewire (Frontend)
-- TailwindCSS
+## How to Use the Application
 
-## 📧 Email Communications
+### For Job Seekers
 
-Geezap sends emails to users at various touchpoints throughout their journey:
+**Browse Jobs:**
+1. Visit the homepage to see latest job listings
+2. Use search filters to narrow down results by location, category, and keywords
+3. Click on job titles to view detailed descriptions
 
-1. **User Registration**
-    - Welcome email when a new user signs up
+**Save and Apply:**
+1. Create an account or log in
+2. Click "Save for Later" on interesting jobs
+3. Use "Apply" button to track your applications
+4. Access saved jobs from your dashboard
 
-2. **Password Management**
-    - Password reset links when requested
+**AI Cover Letter Generation:**
+1. Open any job listing detail page
+2. Click "Generate Cover Letter" button
+3. AI will create a customized cover letter based on job requirements
+4. Edit and download the generated cover letter
 
-3. **Job Alerts**
-    - Weekly job digest with personalized job recommendations
+**Email Notifications:**
+1. Set email preferences in your account settings
+2. Receive weekly job digest emails with personalized recommendations
+3. Get notifications about saved job deadlines
 
-All emails are sent using a failover configuration that ensures reliable delivery through multiple providers. Users can manage their email preferences through their account settings.
+### For Administrators
 
-## Current Feature
-  - It collect techical jobs from Bangladesh, India, Australia, UK, USA, Thailand and show this portal
-  - User can generate a darft cover letter from job details page.
-  - User get weekly digest in their email.
-  - User get push notification.
-  - Apply button click history.
-  - Save job for letter apply.
-  - Social Authentication via Github, Google. Facebook ongoing.
-  - Bot protection using Cloudflare turnstile.
-  - Better filtering options in browse job page.
-## 🔜 Upcoming Features
-- **Personalized Job Recommendations**
-    - AI-driven suggestions based on user activity, preferences, and saved searches.
-    - AI-powered job recommendations
-    - Skill compatibility scoring
+**Admin Panel Access:**
+- Navigate to `/geezap` for admin dashboard
+- Requires admin credentials (created during seeding)
 
-- **Social Media Sharing**
-    - Share job listings on platforms like LinkedIn, Twitter, and Facebook.
-    - Auto posting to facebook
+**Manage Job Categories:**
+1. Go to `/geezap/job-categories`
+2. Add, edit, or delete job categories
+3. Set category images and descriptions
 
-- **Reminder Notification for Saved for Latter Job**
-    - When user saved a job for letter application then he will get a email notification before 2days of deadline of this job
-    - Job preference
+**Configure API Keys:**
+1. Visit `/geezap/api-keys`
+2. Add API keys for different job platforms
+3. Monitor API usage and rate limits
 
+**Monitor System:**
+1. Check queue jobs at `/horizon`
+2. View application logs in `storage/logs/`
+3. Monitor user analytics and search patterns
 
-## 🤝 Contributing
+## Key Features
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+**Job Aggregation:**
+- Automatically collects jobs from LinkedIn, Upwork, Indeed, and ZipRecruiter
+- Standardizes job data format for consistent display
+- Real-time updates via WebSocket connections
+- Advanced filtering and search capabilities
 
-## 📝 License
+**AI-Powered Tools:**
+- Intelligent cover letter generation based on job descriptions
+- Personalized job recommendations
+- Smart matching algorithms
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+**User Management:**
+- Social authentication via GitHub, Google, and Facebook
+- User preferences and notification settings
+- Application tracking and history
+
+**Security Features:**
+- Bot protection using Cloudflare Turnstile
+- Rate limiting and CSRF protection
+- Secure API key management
+
+**Administrative Tools:**
+- Comprehensive admin dashboard using Filament
+- Real-time monitoring with Laravel Horizon
+- Analytics and reporting features
+- Backup and maintenance tools
+
+## Technical Stack
+
+- **Backend**: Laravel 12, PHP 8.2+
+- **Frontend**: Livewire 3, Alpine.js, TailwindCSS
+- **Database**: MySQL 8.0+, Redis
+- **Queue**: Laravel Horizon with Redis
+- **WebSockets**: Laravel Reverb
+- **AI Integration**: OpenAI/Gemini/DeepSeek APIs
+- **Admin Panel**: Filament v3
+
+## Support and Troubleshooting
+
+**Log Files:**
+- Application logs: `storage/logs/laravel.log`
+- Queue logs: Check Horizon dashboard
+- Web server logs: Check your web server configuration
+
+**Debug Mode:**
+For development only, enable debug mode in `.env`:
+```env
+APP_DEBUG=true
+APP_ENV=local
+```
+
+**Cache Issues:**
+Clear all caches when experiencing unexpected behavior:
+```bash
+php artisan cache:clear
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
+```
+
+**Database Issues:**
+Reset database if needed (development only):
+```bash
+php artisan migrate:fresh --seed
+```
+
+## Contributing
+
+Contributions are welcome. Please ensure all tests pass before submitting pull requests:
+
+```bash
+php artisan test
+```
+
+## License
+
+This project is licensed under the MIT License.
