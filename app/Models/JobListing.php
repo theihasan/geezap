@@ -24,6 +24,7 @@ class JobListing extends Model
 
     protected $fillable = [
         'job_id',
+        'uuid',
         'employer_name',
         'employer_logo',
         'employer_website',
@@ -31,6 +32,7 @@ class JobListing extends Model
         'publisher',
         'employment_type',
         'job_title',
+        'slug',
         'job_category',
         'category_image',
         'apply_link',
