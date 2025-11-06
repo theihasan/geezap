@@ -1,0 +1,231 @@
+name: Auto-generate Release Notes
+
+on:
+  push:
+    tags:
+      - 'v*'  # Triggers when you create tags like v1.0.0, v2.1.3, etc.
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch full history for better release notes
+
+      - name: Get release info
+        id: release_info
+        run: |
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          echo "tag_name=$TAG_NAME" >> $GITHUB_OUTPUT
+          
+          # Check if this is a prerelease (contains alpha, beta, rc, etc.)
+          if [[ $TAG_NAME =~ (alpha|beta|rc|pre) ]]; then
+            echo "is_prerelease=true" >> $GITHUB_OUTPUT
+          else
+            echo "is_prerelease=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Get previous tag
+        id: prev_tag
+        run: |
+          CURRENT_TAG="${{ steps.release_info.outputs.tag_name }}"
+          PREV_TAG=$(git tag --sort=-version:refname | grep -v "^${CURRENT_TAG}$" | head -1)
+          echo "prev_tag=${PREV_TAG}" >> $GITHUB_OUTPUT
+          echo "Previous tag: ${PREV_TAG}"
+
+      - name: Generate enhanced release notes
+        id: release_notes
+        run: |
+          CURRENT_TAG="${{ steps.release_info.outputs.tag_name }}"
+          PREV_TAG="${{ steps.prev_tag.outputs.prev_tag }}"
+          IS_PRERELEASE="${{ steps.release_info.outputs.is_prerelease }}"
+          
+          # If no previous tag exists, use the first commit
+          if [ -z "$PREV_TAG" ]; then
+            PREV_TAG=$(git rev-list --max-parents=0 HEAD)
+            echo "No previous tag found, using first commit: $PREV_TAG"
+          fi
+          
+          echo "Generating release notes from $PREV_TAG to $CURRENT_TAG"
+          
+          # Create release notes file
+          RELEASE_NOTES_FILE=$(mktemp)
+          
+          # Add header based on release type
+          if [ "$IS_PRERELEASE" = "true" ]; then
+            echo "## Pre-release" >> $RELEASE_NOTES_FILE
+            echo "" >> $RELEASE_NOTES_FILE
+            echo "This is a pre-release version. Use with caution in production." >> $RELEASE_NOTES_FILE
+          else
+            # Determine release type from version
+            if [[ $CURRENT_TAG =~ v([0-9]+)\.([0-9]+)\.([0-9]+) ]]; then
+              MAJOR=${BASH_REMATCH[1]}
+              MINOR=${BASH_REMATCH[2]}
+              PATCH=${BASH_REMATCH[3]}
+              
+              if [[ $PREV_TAG =~ v([0-9]+)\.([0-9]+)\.([0-9]+) ]]; then
+                PREV_MAJOR=${BASH_REMATCH[1]}
+                PREV_MINOR=${BASH_REMATCH[2]}
+                PREV_PATCH=${BASH_REMATCH[3]}
+                
+                if [ "$MAJOR" != "$PREV_MAJOR" ]; then
+                  echo "## Major Release" >> $RELEASE_NOTES_FILE
+                  echo "" >> $RELEASE_NOTES_FILE
+                  echo "This major release includes breaking changes and significant new features." >> $RELEASE_NOTES_FILE
+                elif [ "$MINOR" != "$PREV_MINOR" ]; then
+                  echo "## Minor Release" >> $RELEASE_NOTES_FILE
+                  echo "" >> $RELEASE_NOTES_FILE
+                  echo "This minor release includes new features and improvements." >> $RELEASE_NOTES_FILE
+                else
+                  echo "## Patch Release" >> $RELEASE_NOTES_FILE
+                  echo "" >> $RELEASE_NOTES_FILE
+                  echo "This patch release includes bug fixes and minor improvements." >> $RELEASE_NOTES_FILE
+                fi
+              fi
+            fi
+          fi
+          
+          echo "" >> $RELEASE_NOTES_FILE
+          echo "## What's Changed" >> $RELEASE_NOTES_FILE
+          echo "" >> $RELEASE_NOTES_FILE
+          
+          # Categorize commits
+          FEATURES=""
+          FIXES=""
+          DOCS=""
+          REFACTOR=""
+          CHORE=""
+          BREAKING=""
+          OTHER=""
+          
+          # Get commits and categorize them
+          while IFS= read -r commit; do
+            commit_lower=$(echo "$commit" | tr '[:upper:]' '[:lower:]')
+            if [[ $commit_lower == *"breaking"* ]] || [[ $commit_lower == *"break"* ]]; then
+              BREAKING="${BREAKING}${commit}\n"
+            elif [[ $commit_lower == *"feat"* ]] || [[ $commit_lower == *"feature"* ]] || [[ $commit_lower == *"add"* ]]; then
+              FEATURES="${FEATURES}${commit}\n"
+            elif [[ $commit_lower == *"fix"* ]] || [[ $commit_lower == *"bug"* ]] || [[ $commit_lower == *"resolve"* ]]; then
+              FIXES="${FIXES}${commit}\n"
+            elif [[ $commit_lower == *"doc"* ]] || [[ $commit_lower == *"readme"* ]]; then
+              DOCS="${DOCS}${commit}\n"
+            elif [[ $commit_lower == *"refactor"* ]] || [[ $commit_lower == *"clean"* ]] || [[ $commit_lower == *"optimize"* ]]; then
+              REFACTOR="${REFACTOR}${commit}\n"
+            elif [[ $commit_lower == *"chore"* ]] || [[ $commit_lower == *"deps"* ]] || [[ $commit_lower == *"update"* ]]; then
+              CHORE="${CHORE}${commit}\n"
+            else
+              OTHER="${OTHER}${commit}\n"
+            fi
+          done < <(git log --pretty=format:"* %s (%h)" --no-merges ${PREV_TAG}..${CURRENT_TAG})
+          
+          # Add categorized sections
+          if [ -n "$BREAKING" ]; then
+            echo "### Breaking Changes" >> $RELEASE_NOTES_FILE
+            echo -e "$BREAKING" >> $RELEASE_NOTES_FILE
+          fi
+          
+          if [ -n "$FEATURES" ]; then
+            echo "### New Features" >> $RELEASE_NOTES_FILE
+            echo -e "$FEATURES" >> $RELEASE_NOTES_FILE
+          fi
+          
+          if [ -n "$FIXES" ]; then
+            echo "### Bug Fixes" >> $RELEASE_NOTES_FILE
+            echo -e "$FIXES" >> $RELEASE_NOTES_FILE
+          fi
+          
+          if [ -n "$REFACTOR" ]; then
+            echo "### Improvements & Refactoring" >> $RELEASE_NOTES_FILE
+            echo -e "$REFACTOR" >> $RELEASE_NOTES_FILE
+          fi
+          
+          if [ -n "$DOCS" ]; then
+            echo "### Documentation" >> $RELEASE_NOTES_FILE
+            echo -e "$DOCS" >> $RELEASE_NOTES_FILE
+          fi
+          
+          if [ -n "$CHORE" ]; then
+            echo "### Maintenance" >> $RELEASE_NOTES_FILE
+            echo -e "$CHORE" >> $RELEASE_NOTES_FILE
+          fi
+          
+          if [ -n "$OTHER" ]; then
+            echo "### Other Changes" >> $RELEASE_NOTES_FILE
+            echo -e "$OTHER" >> $RELEASE_NOTES_FILE
+          fi
+          
+          # If no commits, add placeholder
+          if [ -z "$BREAKING" ] && [ -z "$FEATURES" ] && [ -z "$FIXES" ] && [ -z "$DOCS" ] && [ -z "$REFACTOR" ] && [ -z "$CHORE" ] && [ -z "$OTHER" ]; then
+            echo "* No significant changes" >> $RELEASE_NOTES_FILE
+            echo "" >> $RELEASE_NOTES_FILE
+          fi
+          
+          # Add contributors
+          echo "## Contributors" >> $RELEASE_NOTES_FILE
+          echo "" >> $RELEASE_NOTES_FILE
+          
+          CONTRIBUTORS=$(git log --pretty=format:"@%an" --no-merges ${PREV_TAG}..${CURRENT_TAG} | sort | uniq)
+          if [ -n "$CONTRIBUTORS" ]; then
+            echo "$CONTRIBUTORS" | while read -r contributor; do
+              echo "* $contributor" >> $RELEASE_NOTES_FILE
+            done
+          else
+            echo "* @$(git log --pretty=format:"%an" -1)" >> $RELEASE_NOTES_FILE
+          fi
+          
+          echo "" >> $RELEASE_NOTES_FILE
+          echo "**Full Changelog**: https://github.com/${{ github.repository }}/compare/${PREV_TAG}...${CURRENT_TAG}" >> $RELEASE_NOTES_FILE
+          
+          # Store release notes content in environment variable
+          echo "RELEASE_NOTES<<EOF" >> $GITHUB_ENV
+          cat $RELEASE_NOTES_FILE >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.release_info.outputs.tag_name }}
+          name: Release ${{ steps.release_info.outputs.tag_name }}
+          body: ${{ env.RELEASE_NOTES }}
+          prerelease: ${{ steps.release_info.outputs.is_prerelease }}
+          draft: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Send Discord Notification (Success)
+        if: success()
+        run: |
+          if [ -n "${{ secrets.DISCORD_WEBHOOK }}" ]; then
+            IS_PRERELEASE="${{ steps.release_info.outputs.is_prerelease }}"
+            TAG_NAME="${{ steps.release_info.outputs.tag_name }}"
+            
+            if [ "$IS_PRERELEASE" = "true" ]; then
+              TYPE="Pre-release"
+            else
+              TYPE="Release"
+            fi
+            
+            curl -H "Content-Type: application/json" \
+            -d "{\"content\": \"**New $TYPE Published!** \n\n**Version:** $TAG_NAME\n**Repository:** ${{ github.repository }}\n**Release Notes:** https://github.com/${{ github.repository }}/releases/tag/$TAG_NAME\"}" \
+            ${{ secrets.DISCORD_WEBHOOK }}
+          else
+            echo "Discord webhook not configured, skipping notification"
+          fi
+
+      - name: Send Discord Notification (Failure)
+        if: failure()
+        run: |
+          if [ -n "${{ secrets.DISCORD_WEBHOOK }}" ]; then
+            curl -H "Content-Type: application/json" \
+            -d "{\"content\": \"**Release Notes Generation Failed!** \n\n**Tag:** ${{ steps.release_info.outputs.tag_name }}\n**Repository:** ${{ github.repository }}\n**Check:** https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}" \
+            ${{ secrets.DISCORD_WEBHOOK }}
+          else
+            echo "Discord webhook not configured, skipping notification"
+          fi
