@@ -2,27 +2,30 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class ApiKey extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
-        'api_key', 
-        'api_secret', 
-        'api_name', 
-        'request_remaining', 
+        'api_key',
+        'api_secret',
+        'api_name',
+        'request_remaining',
         'request_sent_at',
         'rate_limit_reset',
-        'sent_request'
+        'sent_request',
     ];
 
     protected function casts()
     {
         return [
             'request_sent_at' => 'datetime',
-            'rate_limit_reset' => 'datetime', 
+            'rate_limit_reset' => 'datetime',
             'request_remaining' => 'integer',
-            'sent_request' => 'integer'
+            'sent_request' => 'integer',
         ];
     }
 }
