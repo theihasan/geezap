@@ -30,11 +30,14 @@ class ApiKeyService
 
     public function updateUsage(ApiKey $apiKey, Response $response): void
     {
+        $resetTimestamp = $response->header('X-RateLimit-Reset');
+        $resetTime = $resetTimestamp ? Carbon::createFromTimestamp($resetTimestamp) : null;
+
         DB::table('api_keys')
             ->where('id', $apiKey->id)
             ->update([
                 'request_remaining' => $response->header('X-RateLimit-Requests-Remaining'),
-                'rate_limit_reset' => Carbon::createFromTimestamp($response->header('X-RateLimit-Reset')),
+                'rate_limit_reset' => $resetTime,
                 'sent_request' => DB::raw('sent_request + 1'),
                 'updated_at' => now(),
             ]);
