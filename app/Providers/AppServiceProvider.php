@@ -2,36 +2,28 @@
 
 namespace App\Providers;
 
-use Carbon\Carbon;
-use App\Enums\Role;
 use App\Enums\ApiName;
-use App\Models\ApiKey;
-use Livewire\Livewire;
-use App\DTO\MetaTagDTO;
-use App\DTO\OpenGraphDTO;
-use App\DTO\DiscordCardDTO;
-use App\DTO\TwitterCardDTO;
-use App\Services\MetaTagGenerator;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\View;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Cache\RateLimiting\Limit;
-use Opcodes\LogViewer\Facades\LogViewer;
-use Illuminate\Support\Facades\RateLimiter;
-use App\Listeners\MetricsEventListener;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Auth\Events\Login;
-
+use App\Enums\Role;
 use App\Events\ExceptionHappenEvent;
-use Illuminate\Queue\Events\JobProcessed;
-use Illuminate\Queue\Events\JobFailed;
+use App\Listeners\MetricsEventListener;
+use App\Models\ApiKey;
+use Carbon\Carbon;
+use Illuminate\Auth\Events\Login;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Mail\Events\MessageSent;
 use Illuminate\Notifications\Events\NotificationSent;
+use Illuminate\Queue\Events\JobFailed;
+use Illuminate\Queue\Events\JobProcessed;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\ServiceProvider;
+use Livewire\Livewire;
+use Opcodes\LogViewer\Facades\LogViewer;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -52,16 +44,16 @@ class AppServiceProvider extends ServiceProvider
         $this->registerHttpMacros();
         $this->configureCommand();
         $this->configureMetaTags();
-        //$this->configureRateLimiter();
+        // $this->configureRateLimiter();
         $this->configureLogViewer();
-        //$this->registerMetricsEventListeners();
+        // $this->registerMetricsEventListeners();
         Livewire::component('job-filter', \App\Livewire\JobFilter::class);
 
     }
 
     private function configureUrl(): void
     {
-        if(config('app.env') === 'production') {
+        if (config('app.env') === 'production') {
             URL::forceScheme('https');
         }
     }
@@ -72,7 +64,7 @@ class AppServiceProvider extends ServiceProvider
 
             $this->registerJobMacro();
             $this->registerOpenAIMacro();
-        } catch (\Exception $e){
+        } catch (\Exception $e) {
             logger('Error on app service provider', [
                 'message' => $e->getMessage(),
                 'line' => $e->getLine(),
@@ -90,7 +82,7 @@ class AppServiceProvider extends ServiceProvider
     {
         try {
             View::composer('v2.partials.header', function ($view) {
-                if (!$view->offsetExists('meta')) {
+                if (! $view->offsetExists('meta')) {
                     $seoService = app(\App\Services\SeoMetaService::class);
                     $meta = $seoService->generateMeta();
                     $view->with('meta', $meta);
@@ -119,10 +111,8 @@ class AppServiceProvider extends ServiceProvider
 
             logger('API Key for request', [
                 'API Key' => $apiKey->api_key,
-                'Request Remaining' => $apiKey->request_remaining
+                'Request Remaining' => $apiKey->request_remaining,
             ]);
-
-            $apiKey->increment('sent_request');
 
             $httpMacro = Http::withHeaders([
                 'X-RapidAPI-Host' => 'jsearch.p.rapidapi.com',
@@ -130,6 +120,7 @@ class AppServiceProvider extends ServiceProvider
             ])->baseUrl('https://jsearch.p.rapidapi.com');
 
             $apiKey->touch('request_sent_at');
+
             return $httpMacro;
         });
     }
@@ -141,7 +132,7 @@ class AppServiceProvider extends ServiceProvider
 
             return Http::withHeaders([
                 'Content-Type' => 'application/json',
-                'Authorization' => 'Bearer ' . $apiKey,
+                'Authorization' => 'Bearer '.$apiKey,
             ])->baseUrl('https://api.openai.com/v1/chat');
         });
     }
@@ -171,6 +162,4 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(MessageSent::class, [MetricsEventListener::class, 'handleMessageSent']);
         Event::listen(NotificationSent::class, [MetricsEventListener::class, 'handleNotificationSent']);
     }
-
-
 }
