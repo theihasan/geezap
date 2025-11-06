@@ -9,6 +9,7 @@
     <meta name="title" content="{{ $meta->title }}">
     <meta name="description" content="{{ $meta->description }}">
     <meta name="keywords" content="{{ $meta->keywords }}">
+    <meta name="robots" content="{{ $meta->robots }}">
 
     <!-- Theme initialization script to prevent flash of unstyled content -->
     <script>
@@ -65,11 +66,11 @@
     <meta property="og:site_name" content="Geezap">
 
     <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="{{ url()->current() }}">
-    <meta property="twitter:title" content="{{ $meta->twitter->title }}">
-    <meta property="twitter:description" content="{{ $meta->twitter->description }}">
-    <meta property="twitter:image" content="{{ $meta->twitter->image ?? asset('assets/images/favicon.ico') }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="{{ url()->current() }}">
+    <meta name="twitter:title" content="{{ $meta->twitter->title }}">
+    <meta name="twitter:description" content="{{ $meta->twitter->description }}">
+    <meta name="twitter:image" content="{{ $meta->twitter->image ?? asset('assets/images/favicon.ico') }}">
 
     <!-- Discord -->
     <meta property="discord:title" content="{{ $meta->discord->title }}">
