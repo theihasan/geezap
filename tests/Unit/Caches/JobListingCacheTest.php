@@ -15,11 +15,11 @@ class JobListingCacheTest extends TestCase
     public function test_job_listing_cache_eager_loads_apply_options()
     {
         // Create a job listing
-        $job = JobListing::factory()->create();
-        
-        // Update the slug after creation to ensure it's set correctly
-        $job->update(['slug' => 'test-job-slug']);
-        $job->refresh();
+        $job = JobListing::factory()->create([
+            'slug' => 'test-job-slug',
+            'job_title' => 'Test Job',
+            'employer_name' => 'Test Company'
+        ]);
 
         // Create apply options for the job
         JobApplyOption::factory()->create([
@@ -46,15 +46,12 @@ class JobListingCacheTest extends TestCase
         $this->assertInstanceOf(JobListing::class, $cachedJob);
         $this->assertEquals('test-job-slug', $cachedJob->slug);
 
-        // Verify apply options relationship is eager loaded (this checks the relationship, not the accessor)
+        // Verify apply options are eager loaded (no additional queries)
         $this->assertTrue($cachedJob->relationLoaded('applyOptions'));
+        $this->assertCount(2, $cachedJob->applyOptions);
         
-        // Access the relationship directly (not through the accessor)
-        $applyOptionsRelation = $cachedJob->getRelation('applyOptions');
-        $this->assertCount(2, $applyOptionsRelation);
-        
-        // Verify the apply options data using the relationship
-        $publishers = $applyOptionsRelation->pluck('publisher')->toArray();
+        // Verify the apply options data
+        $publishers = $cachedJob->applyOptions->pluck('publisher')->toArray();
         $this->assertContains('LinkedIn', $publishers);
         $this->assertContains('Indeed', $publishers);
     }
@@ -62,11 +59,11 @@ class JobListingCacheTest extends TestCase
     public function test_job_listing_cache_handles_job_without_apply_options()
     {
         // Create a job listing without apply options
-        $job = JobListing::factory()->create();
-        
-        // Update the slug after creation to ensure it's set correctly
-        $job->update(['slug' => 'test-job-no-options']);
-        $job->refresh();
+        $job = JobListing::factory()->create([
+            'slug' => 'test-job-no-options',
+            'job_title' => 'Test Job No Options',
+            'employer_name' => 'Test Company'
+        ]);
 
         // Clear any existing cache
         \Illuminate\Support\Facades\Cache::forget(JobListingCache::key('test-job-no-options'));
@@ -80,9 +77,6 @@ class JobListingCacheTest extends TestCase
 
         // Verify apply options relationship is loaded but empty
         $this->assertTrue($cachedJob->relationLoaded('applyOptions'));
-        
-        // Access the relationship directly (not through the accessor)
-        $applyOptionsRelation = $cachedJob->getRelation('applyOptions');
-        $this->assertCount(0, $applyOptionsRelation);
+        $this->assertCount(0, $cachedJob->applyOptions);
     }
 }

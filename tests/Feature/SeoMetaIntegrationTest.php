@@ -24,7 +24,7 @@ class SeoMetaIntegrationTest extends TestCase
         $meta = Seo::generateMeta('Facade Test', 'Testing the SEO facade');
 
         // Assert
-        $this->assertStringContainsString('Facade Test', $meta->title);
+        $this->assertStringContains('Facade Test', $meta->title);
         $this->assertEquals('Testing the SEO facade', $meta->description);
     }
 
@@ -54,8 +54,8 @@ class SeoMetaIntegrationTest extends TestCase
     public function full_workflow_home_page_meta_generation()
     {
         // Arrange
-        JobCategory::factory()->count(3)->create();
-        JobListing::factory()->count(5)->create();
+        JobCategory::factory()->count(8)->create();
+        JobListing::factory()->count(150)->create();
 
         // Simulate homepage controller logic
         $availableJobs = JobListing::count();
@@ -72,11 +72,11 @@ class SeoMetaIntegrationTest extends TestCase
         );
 
         // Assert
-        $this->assertStringContainsString((string)$availableJobs, $meta->title);
-        $this->assertStringContainsString((string)$todayAdded, $meta->description);
+        $this->assertStringContains((string)$availableJobs, $meta->title);
+        $this->assertStringContains((string)$todayAdded, $meta->description);
         $this->assertNotNull($meta->structuredData);
         $this->assertEquals('website', $meta->og->type);
-        $this->assertStringContainsString('WebSite', json_encode($meta->structuredData->toArray()));
+        $this->assertStringContains('WebSite', json_encode($meta->structuredData->toArray()));
     }
 
     /** @test */
@@ -100,10 +100,10 @@ class SeoMetaIntegrationTest extends TestCase
         $meta = seo_job_meta($job);
 
         // Assert
-        $this->assertStringContainsString('Full Stack Developer', $meta->title);
-        $this->assertStringContainsString('Innovation Labs', $meta->title);
-        $this->assertStringContainsString('Austin', $meta->title);
-        $this->assertStringContainsString('$90000-$130000', $meta->title);
+        $this->assertStringContains('Full Stack Developer', $meta->title);
+        $this->assertStringContains('Innovation Labs', $meta->title);
+        $this->assertStringContains('Austin', $meta->title);
+        $this->assertStringContains('$90000-$130000', $meta->title);
         $this->assertEquals('article', $meta->og->type);
         $this->assertEquals('https://innovationlabs.com/logo.png', $meta->og->image);
         
@@ -118,7 +118,7 @@ class SeoMetaIntegrationTest extends TestCase
     public function full_workflow_jobs_index_with_filters()
     {
         // Arrange
-        JobListing::factory()->count(5)->create();
+        JobListing::factory()->count(75)->create();
         $request = new Request([
             'category' => 'react',
             'location' => 'Seattle',
@@ -129,10 +129,10 @@ class SeoMetaIntegrationTest extends TestCase
         $meta = seo_jobs_index_meta($request, 75);
 
         // Assert
-        $this->assertStringContainsString('Browse React Jobs in Seattle', $meta->title);
-        $this->assertStringContainsString('75+ Opportunities', $meta->title);
-        $this->assertStringContainsString('Seattle jobs', $meta->keywords);
-        $this->assertStringContainsString('react jobs', $meta->keywords);
+        $this->assertStringContains('Browse React Jobs in Seattle', $meta->title);
+        $this->assertStringContains('75+ Opportunities', $meta->title);
+        $this->assertStringContains('Seattle jobs', $meta->keywords);
+        $this->assertStringContains('react jobs', $meta->keywords);
     }
 
     /** @test */
@@ -149,8 +149,8 @@ class SeoMetaIntegrationTest extends TestCase
         $meta = seo_job_meta($job);
 
         // Assert
-        $this->assertStringContainsString('Basic Job', $meta->title);
-        $this->assertStringContainsString('Basic Company', $meta->title);
+        $this->assertStringContains('Basic Job', $meta->title);
+        $this->assertStringContains('Basic Company', $meta->title);
         $this->assertNotEmpty($meta->og->image); // Should use fallback
         $this->assertNotNull($meta->structuredData);
     }
@@ -166,17 +166,22 @@ class SeoMetaIntegrationTest extends TestCase
         $html = $view->render();
 
         // Assert
-        $this->assertStringContainsString('<title>Component Test', $html);
-        $this->assertStringContainsString('<meta name="description" content="Testing Blade component integration">', $html);
-        $this->assertStringContainsString('<meta property="og:title"', $html);
-        $this->assertStringContainsString('<meta name="twitter:title"', $html);
+        $this->assertStringContains('<title>Component Test', $html);
+        $this->assertStringContains('<meta name="description" content="Testing Blade component integration">', $html);
+        $this->assertStringContains('<meta property="og:title"', $html);
+        $this->assertStringContains('<meta name="twitter:title"', $html);
     }
 
     /** @test */
     public function controller_base_class_helpers_work()
-    {        
+    {
+        // This would typically be tested with a real controller, 
+        // but we can test the concept with a mock
+        
         // Arrange
-        $controller = new class extends \App\Http\Controllers\Controller {
+        $controller = new class {
+            use \App\Http\Controllers\Controller;
+            
             public function testViewWithMeta()
             {
                 return $this->viewWithMeta('test.view', ['data' => 'test']);
@@ -213,8 +218,8 @@ class SeoMetaIntegrationTest extends TestCase
         $metaEs = seo_meta('Spanish Title');
 
         // Assert
-        $this->assertStringContainsString('English Title', $metaEn->title);
-        $this->assertStringContainsString('Spanish Title', $metaEs->title);
+        $this->assertStringContains('English Title', $metaEn->title);
+        $this->assertStringContains('Spanish Title', $metaEs->title);
         // Both should have appropriate locale settings
         $this->assertNotNull($metaEn->og);
         $this->assertNotNull($metaEs->og);
@@ -230,7 +235,7 @@ class SeoMetaIntegrationTest extends TestCase
         $meta = seo_meta('Cached Config Test');
 
         // Assert
-        $this->assertStringContainsString('Cached Config Test', $meta->title);
+        $this->assertStringContains('Cached Config Test', $meta->title);
         $this->assertNotNull($meta->og);
         $this->assertNotNull($meta->twitter);
 
@@ -242,14 +247,14 @@ class SeoMetaIntegrationTest extends TestCase
     public function seo_system_performs_well_with_large_datasets()
     {
         // Arrange - Create many jobs and categories
-        JobCategory::factory()->count(3)->create();
-        JobListing::factory()->count(10)->create();
+        JobCategory::factory()->count(50)->create();
+        JobListing::factory()->count(1000)->create();
 
         $startTime = microtime(true);
 
         // Act - Generate meta for various scenarios
-        $homeMeta = seo_home_meta(10, 5, 50, 200, JobCategory::take(3)->get());
-        $indexMeta = seo_jobs_index_meta(new Request(['category' => 'php']), 10);
+        $homeMeta = seo_home_meta(1000, 50, 50, 200, JobCategory::take(5)->get());
+        $indexMeta = seo_jobs_index_meta(new Request(['category' => 'php']), 1000);
         $job = JobListing::first();
         $jobMeta = seo_job_meta($job);
 
@@ -291,11 +296,11 @@ class SeoMetaIntegrationTest extends TestCase
         $content = $response->getContent();
         
         // Verify all expected meta elements are present
-        $this->assertStringContainsString('<title>', $content);
-        $this->assertStringContainsString('<meta name="description"', $content);
-        $this->assertStringContainsString('<meta name="keywords"', $content);
-        $this->assertStringContainsString('<meta property="og:title"', $content);
-        $this->assertStringContainsString('<meta name="twitter:card"', $content);
-        $this->assertStringContainsString('<script type="application/ld+json">', $content);
+        $this->assertStringContains('<title>', $content);
+        $this->assertStringContains('<meta name="description"', $content);
+        $this->assertStringContains('<meta name="keywords"', $content);
+        $this->assertStringContains('<meta property="og:title"', $content);
+        $this->assertStringContains('<meta name="twitter:card"', $content);
+        $this->assertStringContains('<script type="application/ld+json">', $content);
     }
 }
