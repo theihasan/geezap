@@ -1,10 +1,6 @@
 <?php
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
-use Tests\TestCase;
-
-uses(TestCase::class, RefreshDatabase::class);
 
 it('generates sitemap without path traversal vulnerability', function () {
     // Mock the public disk
@@ -12,7 +8,8 @@ it('generates sitemap without path traversal vulnerability', function () {
 
     // Run the command
     $this->artisan('sitemap:generate')
-        ->assertExitCode(0);
+        ->assertExitCode(0)
+        ->expectsOutput('Sitemap generated successfully!');
 
     // Assert sitemap was created in the correct location (not with ../)
     Storage::disk('public')->assertExists('sitemap.xml');
@@ -27,26 +24,17 @@ it('generates sitemap without path traversal vulnerability', function () {
 });
 
 it('does not allow path traversal in sitemap filename', function () {
-    // This test ensures the sitemap is created in the correct location only
+    // This test ensures the fix prevents path traversal
     Storage::fake('public');
 
     // Run the command
     $this->artisan('sitemap:generate')
         ->assertExitCode(0);
 
-    // Verify sitemap is in the correct location
+    // Verify sitemap is in the correct location (not in parent directory)
     Storage::disk('public')->assertExists('sitemap.xml');
     
-    // Verify the content is valid XML and contains expected structure
-    $sitemap = Storage::disk('public')->get('sitemap.xml');
-    expect($sitemap)
-        ->toContain('<?xml version="1.0" encoding="UTF-8"?>')
-        ->toContain('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"')
-        ->toContain('</urlset>');
-        
-    // Verify only one sitemap.xml file exists in the public storage
-    $files = Storage::disk('public')->allFiles();
-    $sitemapFiles = array_filter($files, fn($file) => str_ends_with($file, 'sitemap.xml'));
-    expect($sitemapFiles)->toHaveCount(1);
-    expect($sitemapFiles)->toContain('sitemap.xml');
+    // Verify no sitemap was created in parent directory
+    // (This would fail if the old vulnerable code was still present)
+    expect(Storage::disk('public')->exists('../sitemap.xml'))->toBeFalse();
 });

@@ -17,7 +17,7 @@ class GenerateSitemap extends Command
     {
         $sitemap = $this->generateSitemap();
 
-        Storage::put('sitemap.xml', $sitemap);
+        Storage::disk('public')->put('sitemap.xml', $sitemap);
 
         // Create symlink in public directory for web access
         $this->createPublicSymlink();
@@ -55,8 +55,8 @@ class GenerateSitemap extends Command
         }
 
         // Job categories
-        $categories = JobCategory::whereHas('jobs')
-            ->withCount('jobs')
+        $categories = JobCategory::withCount('jobs')
+            ->having('jobs_count', '>', 0)
             ->get();
 
         foreach ($categories as $category) {

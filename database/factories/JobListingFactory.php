@@ -20,23 +20,16 @@ class JobListingFactory extends Factory
      */
     public function definition(): array
     {
-        $jobTitle = $this->faker->jobTitle();
-        
         return [
-            'job_id' => $this->faker->uuid(),
-            'uuid' => $this->faker->uuid(),
+            'job_id' => $this->faker->unique()->uuid(),
             'employer_name' => $this->faker->company(),
             'employer_logo' => $this->faker->imageUrl(100, 100),
             'employer_website' => $this->faker->url(),
             'employer_company_type' => $this->faker->randomElement(['Private', 'Public', 'Non-profit']),
             'publisher' => $this->faker->randomElement(['LinkedIn', 'Indeed', 'Glassdoor', 'Monster']),
             'employment_type' => $this->faker->randomElement(['Full-time', 'Part-time', 'Contract', 'Freelance']),
-            'job_title' => $jobTitle,
-            'slug' => \Illuminate\Support\Str::slug($jobTitle . '-' . $this->faker->randomNumber(6)),
-            'job_category' => function () {
-                // Try to use an existing category first, create one if none exists
-                return JobCategory::inRandomOrder()->first()?->id ?? JobCategory::factory()->create()->id;
-            },
+            'job_title' => $this->faker->jobTitle(),
+            'job_category' => JobCategory::factory()->create()->id,
             'category_image' => $this->faker->imageUrl(200, 200),
             'apply_link' => $this->faker->url(),
             'description' => $this->faker->paragraphs(3, true),
@@ -47,8 +40,8 @@ class JobListingFactory extends Factory
             'latitude' => $this->faker->latitude(),
             'longitude' => $this->faker->longitude(),
             'google_link' => $this->faker->url(),
-            'posted_at' => $this->faker->dateTimeBetween('-30 days', 'now')->format('Y-m-d H:i:s'),
-            'expired_at' => $this->faker->dateTimeBetween('now', '+30 days')->format('Y-m-d H:i:s'),
+            'posted_at' => $this->faker->dateTimeBetween('-30 days', 'now'),
+            'expired_at' => $this->faker->dateTimeBetween('now', '+30 days'),
             'min_salary' => $this->faker->numberBetween(30000, 80000),
             'max_salary' => $this->faker->numberBetween(80000, 150000),
             'salary_currency' => 'USD',
