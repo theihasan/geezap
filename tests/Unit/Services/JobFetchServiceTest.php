@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Services;
 
+use App\Enums\ApiName;
 use App\Models\ApiKey;
 use App\Models\Country;
 use App\Models\JobCategory;
 use App\Services\ApiKeyService;
 use App\Services\JobFetchService;
-use App\Enums\ApiName;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -28,14 +28,14 @@ class JobFetchServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Create a test API key for the Http::job() macro
         ApiKey::factory()->create([
             'api_name' => ApiName::JOB,
             'api_key' => 'test-api-key',
             'sent_request' => 0,
         ]);
-        
+
         $this->apiKeyService = $this->createMock(ApiKeyService::class);
         $this->service = new JobFetchService($this->apiKeyService);
         Queue::fake();
@@ -48,8 +48,9 @@ class JobFetchServiceTest extends TestCase
             ->has(Country::factory()->count(2))
             ->create();
 
+        // With 2 countries and 2 pages, we expect 4 calls to getAvailableApiKey
         $this->apiKeyService
-            ->expects($this->once())
+            ->expects($this->exactly(4))
             ->method('getAvailableApiKey')
             ->willReturn(null);
 
@@ -76,7 +77,9 @@ class JobFetchServiceTest extends TestCase
 
         $apiKey = ApiKey::factory()->create();
 
+        // With 2 countries and 2 pages, we expect 4 calls to getAvailableApiKey
         $this->apiKeyService
+            ->expects($this->exactly(4))
             ->method('getAvailableApiKey')
             ->willReturn($apiKey);
 
@@ -127,6 +130,7 @@ class JobFetchServiceTest extends TestCase
         $apiKey = ApiKey::factory()->create();
 
         $this->apiKeyService
+            ->expects($this->once())
             ->method('getAvailableApiKey')
             ->willReturn($apiKey);
 
@@ -158,6 +162,7 @@ class JobFetchServiceTest extends TestCase
         $apiKey = ApiKey::factory()->create();
 
         $this->apiKeyService
+            ->expects($this->once())
             ->method('getAvailableApiKey')
             ->willReturn($apiKey);
 
@@ -189,6 +194,7 @@ class JobFetchServiceTest extends TestCase
         $apiKey = ApiKey::factory()->create();
 
         $this->apiKeyService
+            ->expects($this->once())
             ->method('getAvailableApiKey')
             ->willReturn($apiKey);
 
@@ -233,6 +239,7 @@ class JobFetchServiceTest extends TestCase
         $apiKey = ApiKey::factory()->create();
 
         $this->apiKeyService
+            ->expects($this->once())
             ->method('getAvailableApiKey')
             ->willReturn($apiKey);
 
@@ -265,6 +272,7 @@ class JobFetchServiceTest extends TestCase
         $apiKey = ApiKey::factory()->create();
 
         $this->apiKeyService
+            ->expects($this->once())
             ->method('getAvailableApiKey')
             ->willReturn($apiKey);
 
@@ -298,6 +306,7 @@ class JobFetchServiceTest extends TestCase
         $apiKey = ApiKey::factory()->create();
 
         $this->apiKeyService
+            ->expects($this->exactly(2))
             ->method('getAvailableApiKey')
             ->willReturn($apiKey);
 
@@ -319,7 +328,7 @@ class JobFetchServiceTest extends TestCase
 
         $this->service->fetchJobsForCategory($category->fresh(), 2);
 
-        Http::assertSentCount(4); // Page 1: 3 requests (original + 2 retries), Page 2: 1 request  
+        Http::assertSentCount(4); // Page 1: 3 requests (original + 2 retries), Page 2: 1 request
     }
 
     #[Test]
@@ -332,6 +341,7 @@ class JobFetchServiceTest extends TestCase
         $apiKey = ApiKey::factory()->create();
 
         $this->apiKeyService
+            ->expects($this->once())
             ->method('getAvailableApiKey')
             ->willReturn($apiKey);
 
@@ -345,5 +355,71 @@ class JobFetchServiceTest extends TestCase
         $this->service->fetchJobsForCategory($category->fresh(), 1);
 
         Http::assertSentCount(1);
+    }
+
+    #[Test]
+    public function it_fetches_jobs_for_single_country(): void
+    {
+        $country = Country::factory()->create(['code' => 'US']);
+        $category = JobCategory::factory()->create([
+            'query_name' => 'software engineer',
+            'num_page' => 5,
+            'timeframe' => 'week',
+        ]);
+
+        $apiKey = ApiKey::factory()->create();
+
+        $this->apiKeyService
+            ->expects($this->exactly(2))
+            ->method('getAvailableApiKey')
+            ->willReturn($apiKey);
+
+        $this->apiKeyService
+            ->expects($this->exactly(2))
+            ->method('updateUsage');
+
+        Http::fake([
+            '*' => Http::response([
+                'data' => [
+                    [
+                        'job_id' => 'test-job-1',
+                        'job_title' => 'Software Engineer',
+                    ],
+                ],
+            ], 200, [
+                'X-RateLimit-Requests-Remaining' => 99,
+                'X-RateLimit-Reset' => 1640995200,
+            ]),
+        ]);
+
+        $this->service->fetchJobsForCountry($category, $country, 2);
+
+        Http::assertSentCount(2);
+
+        Http::assertSent(function ($request) use ($category, $country) {
+            return str_contains($request->url(), '/search') &&
+                   $request->data()['query'] === $category->query_name &&
+                   $request->data()['country'] === $country->code &&
+                   in_array($request->data()['page'], [1, 2]);
+        });
+    }
+
+    #[Test]
+    public function it_handles_no_api_key_for_single_country_gracefully(): void
+    {
+        $country = Country::factory()->create(['code' => 'US']);
+        $category = JobCategory::factory()->create();
+
+        $this->apiKeyService
+            ->expects($this->exactly(2))
+            ->method('getAvailableApiKey')
+            ->willReturn(null);
+
+        Http::fake();
+        Log::shouldReceive('warning')->twice();
+
+        $this->service->fetchJobsForCountry($category, $country, 2);
+
+        Http::assertNothingSent();
     }
 }

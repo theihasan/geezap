@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Jobs;
 
 use App\Exceptions\CountryNotFoundException;
+use App\Models\Country;
 use App\Models\JobCategory;
 use App\Services\JobFetchService;
 use Exception;
@@ -31,8 +32,9 @@ class GetJobData implements ShouldQueue
 
     public function __construct(
         private readonly int $categoryId,
+        private readonly int $countryId,
         private readonly int $totalPages,
-        private readonly bool $isLastCategory
+        private readonly bool $isLastJob
     ) {}
 
     public function handle(JobFetchService $jobFetchService): void
@@ -42,8 +44,10 @@ class GetJobData implements ShouldQueue
         }
 
         try {
-            $category = JobCategory::with('countries')->findOrFail($this->categoryId);
-            $jobFetchService->fetchJobsForCategory($category, $this->totalPages);
+            $category = JobCategory::findOrFail($this->categoryId);
+            $country = Country::findOrFail($this->countryId);
+
+            $jobFetchService->fetchJobsForCountry($category, $country, $this->totalPages);
 
         } catch (ValidationException|InvalidArgumentException|CountryNotFoundException|ModelNotFoundException|Exception $e) {
             Log::error('Error on job fetching', [
@@ -51,6 +55,7 @@ class GetJobData implements ShouldQueue
                 'line' => $e->getLine(),
                 'file' => $e->getFile(),
                 'category_id' => $this->categoryId,
+                'country_id' => $this->countryId,
             ]);
 
             $this->fail($e);

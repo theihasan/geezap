@@ -18,6 +18,7 @@ class DispatchJobCategories implements ShouldQueue
     use Queueable;
 
     public int $tries = 4;
+
     public array $backoff = [30, 45, 60];
 
     /**
@@ -34,32 +35,48 @@ class DispatchJobCategories implements ShouldQueue
     public function handle(): void
     {
         try {
-            
-            $maxCategoryId = JobCategory::query()->max('id');
-            
-            $batch = $this->createJobBatch($maxCategoryId);
-            
+            $batch = $this->createJobBatch();
+
             $batch->dispatch();
-            
-        } catch (CategoryNotFoundException | \Exception $e) {
+
+        } catch (CategoryNotFoundException|\Exception $e) {
             logger()->error('Something went wrong in Job dispatching in DispatchJobCategories class', [$e->getMessage()]);
         }
     }
-    
+
     /**
-     * Create a batch of jobs for processing categories
+     * Create a batch of jobs for processing categories and countries
      */
-    private function createJobBatch(int $maxCategoryId): PendingBatch
+    private function createJobBatch(): PendingBatch
     {
         $jobs = [];
-        
-        JobCategory::query()->chunk(10, function ($categories) use (&$jobs, $maxCategoryId) {
+        $totalJobsCount = 0;
+
+        // Calculate total jobs count for tracking last job
+        JobCategory::query()->with('countries')->chunk(10, function ($categories) use (&$totalJobsCount) {
             foreach ($categories as $category) {
-                $isLastCategory = $category->id === $maxCategoryId;
-                $jobs[] = new GetJobData($category->id, $category->page, $isLastCategory);
+                $totalJobsCount += $category->countries->count();
             }
         });
-        
+
+        $currentJobIndex = 0;
+
+        JobCategory::query()->with('countries')->chunk(10, function ($categories) use (&$jobs, &$currentJobIndex, $totalJobsCount) {
+            foreach ($categories as $category) {
+                foreach ($category->countries as $country) {
+                    $currentJobIndex++;
+                    $isLastJob = $currentJobIndex === $totalJobsCount;
+
+                    $jobs[] = new GetJobData(
+                        $category->id,
+                        $country->id,
+                        $category->page,
+                        $isLastJob
+                    );
+                }
+            }
+        });
+
         return Bus::batch($jobs)
             ->name('Job Data Fetching')
             ->allowFailures()

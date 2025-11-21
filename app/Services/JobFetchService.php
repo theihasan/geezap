@@ -21,16 +21,27 @@ class JobFetchService
 
     public function fetchJobsForCategory(JobCategory $category, int $totalPages): void
     {
-        $apiKey = $this->apiKeyService->getAvailableApiKey();
+        $category->countries->each(function ($country) use ($category, $totalPages) {
+            $this->fetchJobsForCountry($category, $country, $totalPages);
+        });
+    }
 
-        if (! $apiKey) {
-            return;
-        }
+    public function fetchJobsForCountry(JobCategory $category, $country, int $totalPages): void
+    {
+        collect(range(1, $totalPages))->each(function ($page) use ($category, $country) {
+            $apiKey = $this->apiKeyService->getAvailableApiKey();
 
-        $category->countries->each(function ($country) use ($apiKey, $category, $totalPages) {
-            collect(range(1, $totalPages))->each(function ($page) use ($apiKey, $category, $country) {
-                $this->fetchJobsForPage($apiKey, $category, $country, $page);
-            });
+            if (! $apiKey) {
+                Log::warning('No available API key for request', [
+                    'category_id' => $category->id,
+                    'country' => $country->code,
+                    'page' => $page,
+                ]);
+
+                return;
+            }
+
+            $this->fetchJobsForPage($apiKey, $category, $country, $page);
         });
     }
 
@@ -44,14 +55,27 @@ class JobFetchService
                 'country' => $country->code,
             ]);
 
-            $response = Http::job()->retry([100, 200])->get('/search', [
-                'query' => $category->query_name,
-                'page' => $page,
-                'num_pages' => $category->num_page,
-                'date_posted' => $category->timeframe,
-                'country' => $country->code,
+            Log::debug('Using API key', [
+                'api_key' => substr($apiKey->api_key, 0, 8).'...',
+                'request_remaining' => $apiKey->request_remaining,
+                'sent_request' => $apiKey->sent_request,
+                'usage_ratio' => $apiKey->request_remaining > 0 ? round($apiKey->sent_request / $apiKey->request_remaining, 3) : 'N/A',
             ]);
-            
+
+            $response = Http::withHeaders([
+                'X-RapidAPI-Host' => 'jsearch.p.rapidapi.com',
+                'X-RapidAPI-Key' => $apiKey->api_key,
+            ])
+                ->baseUrl('https://jsearch.p.rapidapi.com')
+                ->retry([100, 200])
+                ->get('/search', [
+                    'query' => $category->query_name,
+                    'page' => $page,
+                    'num_pages' => $category->num_page,
+                    'date_posted' => $category->timeframe,
+                    'country' => $country->code,
+                ]);
+
             $this->apiKeyService->updateUsage($apiKey, $response);
 
             throw_if($response->status() === 429, RuntimeException::class, 'Rate limit exceeded');
