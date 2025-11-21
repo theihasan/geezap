@@ -1,12 +1,26 @@
 @extends('v2.layouts.app')
 @section('content')
-    <section class="py-20 bg-gray-50 dark:bg-[#12122b]">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="mb-8">
+    <section class="py-6 md:py-20 bg-gray-50 dark:bg-[#12122b] min-h-screen">
+        <div class="max-w-7xl mx-auto px-4 md:px-6">
+            <!-- Desktop Header -->
+            <div class="hidden lg:block mb-8">
                 <h2 class="text-2xl font-sans text-gray-900 dark:text-white">
                     Available Jobs <span class="text-blue-600 dark:text-pink-500" id="job-count">({{ $jobs->total() }})</span>
                 </h2>
             </div>
+            
+            <!-- Mobile Header -->
+            <div class="block lg:hidden mb-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h1 class="text-xl font-bold text-gray-900 dark:text-white">
+                        Find Jobs
+                    </h1>
+                    <div class="text-sm text-gray-600 dark:text-gray-400">
+                        <span id="job-count-mobile">{{ $jobs->total() }}</span> jobs
+                    </div>
+                </div>
+            </div>
+
             <livewire:job-filter />
         </div>
     </section>
@@ -18,8 +32,13 @@
 
         function updateJobCountDisplay(count) {
             const jobCountElement = document.getElementById('job-count');
+            const jobCountMobileElement = document.getElementById('job-count-mobile');
+            
             if (jobCountElement) {
                 jobCountElement.textContent = `(${count})`;
+            }
+            if (jobCountMobileElement) {
+                jobCountMobileElement.textContent = count;
             }
         }
         
