@@ -37,41 +37,60 @@ jobs:
           echo "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
 
-      - name: Debug and Deploy to Server using SSH
+      - name: Deploy to Server
         id: deploy
         run: |
-          echo "=== Debug Info ==="
-           echo "SERVER_IP variable: '${{ secrets.SERVER_IP }}'"
-           echo "SERVER_IP length: $(echo -n '${{ secrets.SERVER_IP }}' | wc -c)"
-           echo "SERVER_IP hex dump:"
-           echo -n '${{ secrets.SERVER_IP }}' | hexdump -C
-           echo "=== Attempting SSH connection ==="
-           ssh -o StrictHostKeyChecking=no deploy@${{ secrets.SERVER_IP }} "
+          ssh -o StrictHostKeyChecking=no deploy@${{ secrets.SERVER_IP }} "
             set -euo pipefail
-            cd /var/www/html/geezap && \
-            git fetch origin main && \
-            git reset --hard origin/main && \
-            composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev && \
-            mkdir -p public/build && \
-            npm ci && \
-            npm run build -- --emptyOutDir=false && \
-            php artisan migrate --force && \
-            php artisan config:cache && \
-            php artisan route:cache && \
-            php artisan view:cache && \
+            cd /var/www/html/geezap
+            git fetch origin main
+            git reset --hard origin/main
+            composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
+            mkdir -p public/build storage/logs bootstrap/cache
+            sudo chown -R deploy:www-data /var/www/html/geezap
+            sudo chmod -R 755 /var/www/html/geezap
+            sudo chmod -R 775 /var/www/html/geezap/storage
+            sudo chmod -R 775 /var/www/html/geezap/bootstrap/cache
+            sudo chmod -R 755 /var/www/html/geezap/public
+            npm ci
+            npm run build -- --emptyOutDir=false
+            php artisan migrate --force
+            php artisan config:clear
+            php artisan config:cache
+            php artisan route:clear
+            php artisan route:cache
+            php artisan view:clear
+            php artisan view:cache
             php artisan optimize
+            sudo chown -R www-data:www-data /var/www/html/geezap/storage /var/www/html/geezap/bootstrap/cache
+          "
+
+      - name: Verify Deployment
+        if: success()
+        run: |
+          ssh -o StrictHostKeyChecking=no deploy@${{ secrets.SERVER_IP }} "
+            cd /var/www/html/geezap
+            php artisan --version
+            php artisan config:show app.name
           "
 
       - name: Send Discord Notification (Success)
         if: success()
         run: |
           curl -H "Content-Type: application/json" \
-          -d "{\"content\": \"✅ Deployment to production successful!\"}" \
+          -d "{\"content\": \"Deployment to production successful\"}" \
           ${{ secrets.DISCORD_WEBHOOK }}
+
+      - name: Rollback on Failure
+        if: failure()
+        run: |
+          ssh -o StrictHostKeyChecking=no deploy@${{ secrets.SERVER_IP }} "
+            sudo chown -R www-data:www-data /var/www/html/geezap/storage /var/www/html/geezap/bootstrap/cache || true
+          " || true
 
       - name: Send Discord Notification (Failure)
         if: failure()
         run: |
           curl -H "Content-Type: application/json" \
-          -d "{\"content\": \"❌ Deployment to production failed! Check GitHub Actions logs.\"}" \
+          -d "{\"content\": \"Deployment to production failed. Check GitHub Actions logs for details.\"}" \
           ${{ secrets.DISCORD_WEBHOOK }}
