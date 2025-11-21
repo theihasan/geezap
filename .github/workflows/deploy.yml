@@ -47,11 +47,6 @@ jobs:
             git reset --hard origin/main
             composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
             mkdir -p public/build storage/logs bootstrap/cache
-            sudo chown -R deploy:www-data /var/www/html/geezap
-            sudo chmod -R 755 /var/www/html/geezap
-            sudo chmod -R 775 /var/www/html/geezap/storage
-            sudo chmod -R 775 /var/www/html/geezap/bootstrap/cache
-            sudo chmod -R 755 /var/www/html/geezap/public
             npm ci
             npm run build -- --emptyOutDir=false
             php artisan migrate --force
@@ -62,7 +57,6 @@ jobs:
             php artisan view:clear
             php artisan view:cache
             php artisan optimize
-            sudo chown -R www-data:www-data /var/www/html/geezap/storage /var/www/html/geezap/bootstrap/cache
           "
 
       - name: Verify Deployment
@@ -81,11 +75,14 @@ jobs:
           -d "{\"content\": \"Deployment to production successful\"}" \
           ${{ secrets.DISCORD_WEBHOOK }}
 
-      - name: Rollback on Failure
+      - name: Cleanup on Failure
         if: failure()
         run: |
           ssh -o StrictHostKeyChecking=no deploy@${{ secrets.SERVER_IP }} "
-            sudo chown -R www-data:www-data /var/www/html/geezap/storage /var/www/html/geezap/bootstrap/cache || true
+            cd /var/www/html/geezap
+            php artisan config:clear || true
+            php artisan route:clear || true
+            php artisan view:clear || true
           " || true
 
       - name: Send Discord Notification (Failure)

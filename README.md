@@ -186,11 +186,70 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 php artisan optimize
-
-# Set proper permissions
-chmod -R 755 storage bootstrap/cache
-chown -R www-data:www-data storage bootstrap/cache
 ```
+
+### File Permissions Setup
+
+**Critical**: Proper file permissions are essential for the application to function correctly. Run these commands on your production server:
+
+```bash
+# Set ownership of the application directory
+sudo chown -R deploy:www-data /var/www/html/geezap
+
+# Set base permissions for the entire application
+sudo chmod -R 755 /var/www/html/geezap
+
+# Set writable permissions for storage and cache directories
+sudo chmod -R 775 /var/www/html/geezap/storage
+sudo chmod -R 775 /var/www/html/geezap/bootstrap/cache
+
+# Set permissions for public assets
+sudo chmod -R 755 /var/www/html/geezap/public
+
+# Ensure web server owns critical directories for write operations
+sudo chown -R www-data:www-data /var/www/html/geezap/storage
+sudo chown -R www-data:www-data /var/www/html/geezap/bootstrap/cache
+```
+
+**Permission Structure Explained:**
+- **755** (rwxr-xr-x): Owner can read/write/execute, group and others can read/execute
+- **775** (rwxrwxr-x): Owner and group can read/write/execute, others can read/execute
+- **www-data**: Web server user that needs write access to logs, cache, and uploaded files
+- **deploy**: Deployment user that owns the application files
+
+**Required Directories with Write Permissions:**
+- `storage/` - For logs, cache, sessions, and uploaded files
+- `storage/logs/` - Application and error logs
+- `storage/framework/cache/` - Application cache files
+- `storage/framework/sessions/` - User session data
+- `storage/framework/views/` - Compiled Blade templates
+- `bootstrap/cache/` - Configuration and route cache files
+
+**Verification:**
+After setting permissions, verify they are correct:
+
+```bash
+# Check storage directory permissions
+ls -la /var/www/html/geezap/storage
+
+# Check bootstrap cache permissions  
+ls -la /var/www/html/geezap/bootstrap/cache
+
+# Test write permissions
+sudo -u www-data touch /var/www/html/geezap/storage/logs/test.log
+sudo rm /var/www/html/geezap/storage/logs/test.log
+```
+
+**Common Permission Issues:**
+- **500 Internal Server Error**: Often caused by incorrect file ownership
+- **Permission Denied**: Web server cannot write to storage or cache directories
+- **Failed to open stream**: Log files or cache files cannot be created or accessed
+
+**Security Notes:**
+- Never set 777 permissions on any directory
+- Ensure only necessary directories have write permissions
+- Web server should not own the entire application directory
+- Keep sensitive files (like `.env`) readable only by owner
 
 ### Background Services Setup
 
