@@ -2,7 +2,7 @@
 
 <div class="relative group rounded-xl bg-white dark:bg-[#1a1a3a] border border-gray-200 dark:border-gray-800 hover:border-blue-500 dark:hover:border-pink-500 transition-all duration-200 hover:shadow-lg">
     <!-- Mobile Layout (Default) -->
-    <div class="p-4 md:p-5">
+    <div class="block lg:hidden p-4 md:p-5">
         <!-- Header Row: Logo, Title & Bookmark -->
         <div class="flex items-start gap-3 mb-3">
             <!-- Logo -->
