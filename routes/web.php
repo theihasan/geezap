@@ -1,17 +1,14 @@
 <?php
 
-use Illuminate\Support\Facades\Context;
-use Prometheus\RenderTextFormat;
-use Prometheus\CollectorRegistry;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\JobController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\HomePageController;
-use App\Http\Controllers\SocialAuthController;
-use App\Http\Controllers\JobCategoryController;
 use App\Http\Controllers\ApplicationController;
-use App\Http\Controllers\JobPreferencesController;
 use App\Http\Controllers\CoverLetterController;
+use App\Http\Controllers\HomePageController;
+use App\Http\Controllers\JobCategoryController;
+use App\Http\Controllers\JobController;
+use App\Http\Controllers\JobPreferencesController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SocialAuthController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomePageController::class)->name('home');
 Route::get('about', \App\Http\Controllers\Pages\AboutPageController::class)->name('about');
