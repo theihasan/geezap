@@ -83,82 +83,88 @@
 
     <!-- Desktop Layout Override -->
     <div class="hidden lg:block">
-        <div class="flex gap-6 p-5">
-            <!-- Left Column -->
-            <div class="flex gap-4 flex-1">
-                <!-- Logo -->
-                <div class="shrink-0">
-                    <img
-                        src="{{ $job->employer_logo ?? 'https://placehold.co/100x100/2a2a4a/FFFFFF' }}"
-                        alt="{{ $job->employer_name }}"
-                        class="w-12 h-12 rounded-lg object-cover bg-gray-100 dark:bg-gray-800/50"
-                        loading="lazy"
-                    >
+        <div class="p-6">
+            <!-- Top Row: Title, Company, Bookmark -->
+            <div class="flex items-start justify-between gap-4 mb-4">
+                <div class="flex items-start gap-4 min-w-0 flex-1">
+                    <!-- Logo -->
+                    <div class="shrink-0">
+                        <img
+                            src="{{ $job->employer_logo ?? 'https://placehold.co/100x100/2a2a4a/FFFFFF' }}"
+                            alt="{{ $job->employer_name }}"
+                            class="w-14 h-14 rounded-xl object-cover bg-gray-100 dark:bg-gray-800/50"
+                            loading="lazy"
+                        >
+                    </div>
+                    
+                    <!-- Title & Company -->
+                    <div class="min-w-0 flex-1">
+                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white leading-tight hover:text-blue-600 dark:hover:text-pink-500 transition-colors mb-1 overflow-hidden" 
+                            style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;" 
+                            title="{{ $job->job_title }}">
+                            {{ $job->job_title }}
+                        </h3>
+                        <p class="text-gray-600 dark:text-gray-400 font-medium">{{ $job->employer_name }}</p>
+                    </div>
                 </div>
-
-                <!-- Main Info -->
-                <div class="min-w-0">
-                    <h3 class="text-gray-900 dark:text-white font-medium truncate hover:text-blue-600 dark:hover:text-pink-500 transition-colors">
-                        {{ $job->job_title }}
-                    </h3>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm">{{ $job->employer_name }}</p>
-
-                    <!-- Job Meta -->
-                    <div class="flex flex-wrap gap-4 mt-3 text-sm text-gray-600 dark:text-gray-400">
-                        <div class="flex items-center gap-1.5">
-                            <i class="las la-map-marker"></i>
-                            {{ $job->is_remote ? 'Remote' : $job->city }}
-                        </div>
-                        <div class="flex items-center gap-1.5">
-                            <i class="las la-clock"></i>
-                            {{ $job->employment_type }}
-                        </div>
-                        <div class="flex items-center gap-1.5">
-                            <i class="las la-calendar"></i>
-                            {{ $job->created_at->diffForHumans() }}
-                        </div>
-                    </div>
-
-                    <!-- Tags -->
-                    <div class="flex gap-2 mt-3">
-                        <span class="px-2.5 py-1 bg-blue-500/10 dark:bg-pink-500/10 text-blue-600 dark:text-pink-400 text-xs font-medium rounded-md">
-                            {{ $job->category->name }}
-                        </span>
-                        @if($job->benefits)
-                            <span class="px-2.5 py-1 bg-blue-600/10 dark:bg-purple-500/10 text-blue-700 dark:text-purple-400 text-xs font-medium rounded-md">
-                                {{ count($job->benefits) }} Benefits
-                            </span>
-                        @endif
-                    </div>
+                
+                <!-- Bookmark -->
+                <div class="shrink-0">
+                    <livewire:jobs.bookmark-job :jobId="$job->id" />
                 </div>
             </div>
 
-            <!-- Right Column -->
-            <div class="flex flex-col items-end justify-between gap-3">
-                <!-- Bookmark -->
+            <!-- Middle Row: Job Meta Information -->
+            <div class="flex flex-wrap items-center gap-6 mb-4 text-sm text-gray-600 dark:text-gray-400">
                 <div class="flex items-center gap-2">
-                    <livewire:jobs.bookmark-job :jobId="$job->id" />
+                    <i class="las la-map-marker-alt text-blue-500 dark:text-pink-500 text-base"></i>
+                    <span class="font-medium">{{ $job->is_remote ? 'Remote' : $job->city }}</span>
                 </div>
-
-                <!-- Salary -->
+                <div class="flex items-center gap-2">
+                    <i class="las la-briefcase text-blue-500 dark:text-pink-500 text-base"></i>
+                    <span>{{ $job->employment_type }}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <i class="las la-clock text-blue-500 dark:text-pink-500 text-base"></i>
+                    <span>{{ $job->created_at->diffForHumans() }}</span>
+                </div>
                 @if ($job->min_salary && $job->max_salary)
-                    <div class="text-right">
-                        <div class="text-blue-600 dark:text-pink-400 font-medium">
-                            ${{ \App\Helpers\NumberFormatter::formatNumber($job->min_salary) }} -
-                            ${{ \App\Helpers\NumberFormatter::formatNumber($job->max_salary) }}
-                        </div>
-                        <div class="text-xs text-gray-500 dark:text-gray-500">per {{ $job->salary_period }}</div>
+                    <div class="flex items-center gap-2 ml-auto">
+                        <i class="las la-dollar-sign text-green-500 text-base"></i>
+                        <span class="font-semibold text-green-600 dark:text-green-400">
+                            ${{ \App\Helpers\NumberFormatter::formatNumber($job->min_salary) }} - ${{ \App\Helpers\NumberFormatter::formatNumber($job->max_salary) }}
+                        </span>
+                        <span class="text-xs text-gray-500">/ {{ $job->salary_period }}</span>
                     </div>
                 @endif
+            </div>
+
+            <!-- Bottom Row: Tags and Action Button -->
+            <div class="flex items-center justify-between gap-4">
+                <!-- Tags -->
+                <div class="flex gap-2 flex-wrap">
+                    <span class="px-3 py-1.5 bg-blue-500/10 dark:bg-pink-500/10 text-blue-600 dark:text-pink-400 text-sm font-medium rounded-full">
+                        {{ $job->category->name }}
+                    </span>
+                    @if($job->benefits && count($job->benefits) > 0)
+                        <span class="px-3 py-1.5 bg-green-500/10 dark:bg-green-500/10 text-green-600 dark:text-green-400 text-sm font-medium rounded-full">
+                            {{ count($job->benefits) }} Benefits
+                        </span>
+                    @endif
+                </div>
 
                 <!-- Action Button -->
-                <a href="{{ route('job.show', $job->slug) }}"
-                   class="inline-flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium text-white
-                          bg-gradient-to-r from-blue-600 to-blue-700 dark:from-pink-600 dark:to-purple-600 hover:from-blue-500 hover:to-blue-600 dark:hover:from-pink-500 dark:hover:to-purple-500
-                          transition-all duration-200">
-                    View Role
-                    <i class="las la-arrow-right"></i>
-                </a>
+                <div class="shrink-0">
+                    <a href="{{ route('job.show', $job->slug) }}"
+                       class="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white
+                              bg-gradient-to-r from-blue-600 to-blue-700 dark:from-pink-600 dark:to-purple-600 
+                              hover:from-blue-500 hover:to-blue-600 dark:hover:from-pink-500 dark:hover:to-purple-500
+                              hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0
+                              transition-all duration-200 whitespace-nowrap">
+                        View Details
+                        <i class="las la-arrow-right text-base"></i>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
