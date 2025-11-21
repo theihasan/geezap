@@ -51,15 +51,17 @@ class ApiKeyServiceTest extends TestCase
     }
 
     #[Test]
-    public function it_returns_api_key_with_lowest_sent_requests_when_multiple_available(): void
+    public function it_returns_api_key_with_lowest_usage_ratio_when_multiple_available(): void
     {
-        $highUsageKey = ApiKey::factory()->create([
+        // Usage ratio: 100/50 = 2.0
+        $highUsageRatioKey = ApiKey::factory()->create([
             'api_name' => ApiName::JOB,
             'request_remaining' => 50,
             'sent_request' => 100,
         ]);
 
-        $lowUsageKey = ApiKey::factory()->create([
+        // Usage ratio: 25/75 = 0.33 (lower ratio, should be selected)
+        $lowUsageRatioKey = ApiKey::factory()->create([
             'api_name' => ApiName::JOB,
             'request_remaining' => 75,
             'sent_request' => 25,
@@ -68,8 +70,9 @@ class ApiKeyServiceTest extends TestCase
         $result = $this->service->getAvailableApiKey();
 
         $this->assertNotNull($result);
-        $this->assertEquals($lowUsageKey->id, $result->id);
+        $this->assertEquals($lowUsageRatioKey->id, $result->id);
         $this->assertEquals(25, $result->sent_request);
+        $this->assertEquals(75, $result->request_remaining);
     }
 
     #[Test]
@@ -112,6 +115,37 @@ class ApiKeyServiceTest extends TestCase
         $result = $this->service->getAvailableApiKey();
 
         $this->assertNull($result);
+    }
+
+    #[Test]
+    public function it_handles_usage_ratio_calculation_with_edge_cases(): void
+    {
+        // Case 1: API key with 0 sent requests - ratio should be 0
+        $noUsageKey = ApiKey::factory()->create([
+            'api_name' => ApiName::JOB,
+            'request_remaining' => 100,
+            'sent_request' => 0,
+        ]);
+
+        // Case 2: API key with same usage ratio but different sent_request values
+        $sameRatioKey1 = ApiKey::factory()->create([
+            'api_name' => ApiName::JOB,
+            'request_remaining' => 50,
+            'sent_request' => 50, // ratio: 1.0
+        ]);
+
+        $sameRatioKey2 = ApiKey::factory()->create([
+            'api_name' => ApiName::JOB,
+            'request_remaining' => 25,
+            'sent_request' => 25, // ratio: 1.0
+        ]);
+
+        $result = $this->service->getAvailableApiKey();
+
+        // Should return the one with 0 usage (lowest ratio)
+        $this->assertNotNull($result);
+        $this->assertEquals($noUsageKey->id, $result->id);
+        $this->assertEquals(0, $result->sent_request);
     }
 
     #[Test]
