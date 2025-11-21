@@ -33,9 +33,9 @@ class JobListingObserver
         $this->clearCache();
         // Only invalidate related jobs cache for the same category
         RelatedJobListingCache::invalidateForCategory($jobListing->job_category);
-        
-        // Dispatch Google indexing job
-        // $this->dispatchGoogleIndexingJob($jobListing, 'URL_UPDATED');
+
+        // Dispatch Google indexing job (disabled via config)
+        $this->dispatchGoogleIndexingJob($jobListing, 'URL_UPDATED');
     }
 
     public function updated(JobListing $jobListing): void
@@ -43,9 +43,9 @@ class JobListingObserver
         $this->clearCache();
         // Only invalidate related jobs cache for the same category
         RelatedJobListingCache::invalidateForCategory($jobListing->job_category);
-        
-        // Dispatch Google indexing job
-        // $this->dispatchGoogleIndexingJob($jobListing, 'URL_UPDATED');
+
+        // Dispatch Google indexing job (disabled via config)
+        $this->dispatchGoogleIndexingJob($jobListing, 'URL_UPDATED');
     }
 
     public function deleted(JobListing $jobListing): void
@@ -53,9 +53,9 @@ class JobListingObserver
         $this->clearCache();
         // Only invalidate related jobs cache for the same category
         RelatedJobListingCache::invalidateForCategory($jobListing->job_category);
-        
-        // Dispatch Google indexing job for deletion
-        // $this->dispatchGoogleIndexingJob($jobListing, 'URL_DELETED');
+
+        // Dispatch Google indexing job for deletion (disabled via config)
+        $this->dispatchGoogleIndexingJob($jobListing, 'URL_DELETED');
     }
 
     protected function clearCache(): void
@@ -83,7 +83,7 @@ class JobListingObserver
 
     protected function dispatchGoogleIndexingJob(JobListing $jobListing, string $type): void
     {
-        if (!config('services.google_indexing.enabled', true)) {
+        if (! config('services.google_indexing.enabled', false)) {
             return;
         }
 
@@ -99,7 +99,7 @@ class JobListingObserver
                 'job_listing_id' => $jobListing->id,
                 'slug' => $jobListing->slug,
                 'type' => $type,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
         }
     }
