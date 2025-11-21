@@ -2,12 +2,9 @@
 
 namespace App\Providers;
 
-use App\Enums\ApiName;
 use App\Enums\Role;
 use App\Events\ExceptionHappenEvent;
 use App\Listeners\MetricsEventListener;
-use App\Models\ApiKey;
-use Carbon\Carbon;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -100,18 +97,18 @@ class AppServiceProvider extends ServiceProvider
     private function registerJobMacro(): void
     {
         Http::macro('job', function () {
-            $apiKey = ApiKey::query()
-                ->where('api_name', ApiName::JOB)
-                // ->where(function($query) {
-                //     $query->whereNull('rate_limit_reset')
-                //         ->orWhere('rate_limit_reset', '>', Carbon::now());
-                // })
-                ->orderBy('sent_request')
-                ->first();
+            $apiKeyService = app(\App\Services\ApiKeyService::class);
+            $apiKey = $apiKeyService->getAvailableApiKey();
+
+            if (! $apiKey) {
+                throw new \RuntimeException('No available API key for job requests');
+            }
 
             logger('API Key for request', [
                 'API Key' => $apiKey->api_key,
                 'Request Remaining' => $apiKey->request_remaining,
+                'Sent Request' => $apiKey->sent_request,
+                'Usage Ratio' => $apiKey->request_remaining > 0 ? round($apiKey->sent_request / $apiKey->request_remaining, 3) : 'N/A',
             ]);
 
             $httpMacro = Http::withHeaders([

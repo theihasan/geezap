@@ -18,7 +18,8 @@ class ApiKeyService
         $apiKey = ApiKey::query()
             ->where('api_name', ApiName::JOB)
             ->where('request_remaining', '>', 0)
-            ->orderBy('sent_request')
+            ->selectRaw('*, (sent_request / NULLIF(request_remaining, 0)) as usage_ratio')
+            ->orderBy('usage_ratio', 'asc')
             ->first();
 
         if (! $apiKey) {
@@ -32,14 +33,27 @@ class ApiKeyService
     {
         $resetTimestamp = $response->header('X-RateLimit-Reset');
         $resetTime = $resetTimestamp ? Carbon::createFromTimestamp($resetTimestamp) : null;
+        $remainingRequests = $response->header('X-RateLimit-Requests-Remaining');
+
+        Log::debug('Updating API key usage', [
+            'api_key_id' => $apiKey->id,
+            'before_remaining' => $apiKey->request_remaining,
+            'before_sent' => $apiKey->sent_request,
+            'new_remaining' => $remainingRequests,
+            'response_status' => $response->status(),
+        ]);
 
         DB::table('api_keys')
             ->where('id', $apiKey->id)
             ->update([
-                'request_remaining' => $response->header('X-RateLimit-Requests-Remaining'),
+                'request_remaining' => $remainingRequests,
                 'rate_limit_reset' => $resetTime,
                 'sent_request' => DB::raw('sent_request + 1'),
                 'updated_at' => now(),
             ]);
+
+        Log::debug('API key usage updated successfully', [
+            'api_key_id' => $apiKey->id,
+        ]);
     }
 }
