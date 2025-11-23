@@ -29,7 +29,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(\App\Services\Cache\ApiKeyHealthCache::class);
     }
 
     /**
@@ -104,21 +104,18 @@ class AppServiceProvider extends ServiceProvider
                 throw new \RuntimeException('No available API key for job requests');
             }
 
-            logger('API Key for request', [
-                'API Key' => $apiKey->api_key,
+            logger('Selected API Key for request', [
+                'API Key ID' => $apiKey->id,
+                'API Key' => substr($apiKey->api_key, 0, 8).'...',
                 'Request Remaining' => $apiKey->request_remaining,
                 'Sent Request' => $apiKey->sent_request,
-                'Usage Ratio' => $apiKey->request_remaining > 0 ? round($apiKey->sent_request / $apiKey->request_remaining, 3) : 'N/A',
+                'Last Used' => $apiKey->request_sent_at?->diffForHumans() ?? 'Never',
             ]);
 
-            $httpMacro = Http::withHeaders([
+            return Http::withHeaders([
                 'X-RapidAPI-Host' => 'jsearch.p.rapidapi.com',
                 'X-RapidAPI-Key' => $apiKey->api_key,
             ])->baseUrl('https://jsearch.p.rapidapi.com');
-
-            $apiKey->touch('request_sent_at');
-
-            return $httpMacro;
         });
     }
 
