@@ -35,7 +35,7 @@ class JobListingObserver
         RelatedJobListingCache::invalidateForCategory($jobListing->job_category);
 
         // Dispatch Google indexing job (disabled via config)
-        $this->dispatchGoogleIndexingJob($jobListing, 'URL_UPDATED');
+        //$this->dispatchGoogleIndexingJob($jobListing, 'URL_UPDATED');
     }
 
     public function updated(JobListing $jobListing): void
@@ -45,7 +45,7 @@ class JobListingObserver
         RelatedJobListingCache::invalidateForCategory($jobListing->job_category);
 
         // Dispatch Google indexing job (disabled via config)
-        $this->dispatchGoogleIndexingJob($jobListing, 'URL_UPDATED');
+        //$this->dispatchGoogleIndexingJob($jobListing, 'URL_UPDATED');
     }
 
     public function deleted(JobListing $jobListing): void
@@ -55,7 +55,7 @@ class JobListingObserver
         RelatedJobListingCache::invalidateForCategory($jobListing->job_category);
 
         // Dispatch Google indexing job for deletion (disabled via config)
-        $this->dispatchGoogleIndexingJob($jobListing, 'URL_DELETED');
+        //$this->dispatchGoogleIndexingJob($jobListing, 'URL_DELETED');
     }
 
     protected function clearCache(): void
