@@ -4,9 +4,9 @@
         <p class="text-gray-600 dark:text-gray-300 mb-6">Choose your preferred application method below.</p>
         
         @if(auth()->check())
-            @if($job->applyOptions->isNotEmpty())
+            @if($job->applyOptions()->exists())
                 <div class="flex flex-wrap justify-center gap-4">
-                    @foreach($job->applyOptions as $option)
+                    @foreach($job->applyOptions()->orderBy('publisher', 'desc')->get() as $option)
                         <a href="{{ $option->apply_link }}" 
                            target="_blank"
                            wire:click="apply" 
