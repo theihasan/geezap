@@ -72,8 +72,8 @@ return [
 
         'redis' => [
             'driver' => 'redis',
-            'connection' => 'default',  
-            'lock_connection' => 'default', 
+            'connection' => 'default',
+            'lock_connection' => 'default',
         ],
 
         'dynamodb' => [
@@ -103,5 +103,24 @@ return [
     */
 
     'prefix' => env('CACHE_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_').'_cache_'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | API Key Health Cache Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configuration for API key health tracking and circuit breaker pattern.
+    | These values control how long various health metrics are cached.
+    |
+    */
+
+    'api_key_health' => [
+        'health_cache_ttl' => env('API_HEALTH_CACHE_TTL', 300), // 5 minutes
+        'metrics_ttl' => env('API_METRICS_TTL', 86400), // 24 hours
+        'circuit_breaker_cooldown' => env('API_CIRCUIT_BREAKER_COOLDOWN', 600), // 10 minutes
+        'min_requests_threshold' => env('API_MIN_REQUESTS_THRESHOLD', 10),
+        'failure_penalty_factor' => env('API_FAILURE_PENALTY_FACTOR', 0.5),
+        'circuit_breaker_failure_threshold' => env('API_CIRCUIT_BREAKER_FAILURE_THRESHOLD', 0.8),
+    ],
 
 ];
