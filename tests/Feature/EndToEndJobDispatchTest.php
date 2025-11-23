@@ -16,9 +16,7 @@ use App\Services\JobFetchService;
 use App\Services\JobStorageService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Request;
-use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 
 class EndToEndJobDispatchTest extends TestCase
@@ -134,8 +132,7 @@ class EndToEndJobDispatchTest extends TestCase
             ]),
         ]);
 
-
-        $getJobDataJob = new GetJobData($category->id, 5, false);
+        $getJobDataJob = new GetJobData($category->id, $countries->first()->id, 5, false);
 
         $apiKeyService = new ApiKeyService;
         $jobStorageService = new JobStorageService;
@@ -208,7 +205,7 @@ class EndToEndJobDispatchTest extends TestCase
             'jsearch.p.rapidapi.com/*' => Http::response(['error' => 'API Error'], 500),
         ]);
 
-        $getJobDataJob = new GetJobData($category->id, 5, false);
+        $getJobDataJob = new GetJobData($category->id, $countries->first()->id, 5, false);
         $apiKeyService = new ApiKeyService;
         $jobFetchService = new JobFetchService($apiKeyService);
 
@@ -248,7 +245,7 @@ class EndToEndJobDispatchTest extends TestCase
             ], 200),
         ]);
 
-        $getJobDataJob = new GetJobData($category->id, 5, false);
+        $getJobDataJob = new GetJobData($category->id, $countries->first()->id, 5, false);
         $apiKeyService = new ApiKeyService;
         $jobFetchService = new JobFetchService($apiKeyService);
 
@@ -330,7 +327,7 @@ class EndToEndJobDispatchTest extends TestCase
 
         $initialMemory = memory_get_usage(true);
 
-        $getJobDataJob = new GetJobData($category->id, 5, false);
+        $getJobDataJob = new GetJobData($category->id, $countries->first()->id, 5, false);
         $apiKeyService = new ApiKeyService;
         $jobStorageService = new JobStorageService;
         $jobFetchService = new JobFetchService($apiKeyService);

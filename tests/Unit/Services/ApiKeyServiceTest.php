@@ -24,7 +24,7 @@ class ApiKeyServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->service = new ApiKeyService;
+        $this->service = app(ApiKeyService::class);
     }
 
     #[Test]
@@ -51,17 +51,15 @@ class ApiKeyServiceTest extends TestCase
     }
 
     #[Test]
-    public function it_returns_api_key_with_lowest_usage_ratio_when_multiple_available(): void
+    public function it_returns_one_of_the_available_api_keys_using_weighted_selection(): void
     {
-        // Usage ratio: 100/50 = 2.0
-        $highUsageRatioKey = ApiKey::factory()->create([
+        $highUsageKey = ApiKey::factory()->create([
             'api_name' => ApiName::JOB,
             'request_remaining' => 50,
             'sent_request' => 100,
         ]);
 
-        // Usage ratio: 25/75 = 0.33 (lower ratio, should be selected)
-        $lowUsageRatioKey = ApiKey::factory()->create([
+        $lowUsageKey = ApiKey::factory()->create([
             'api_name' => ApiName::JOB,
             'request_remaining' => 75,
             'sent_request' => 25,
@@ -70,9 +68,9 @@ class ApiKeyServiceTest extends TestCase
         $result = $this->service->getAvailableApiKey();
 
         $this->assertNotNull($result);
-        $this->assertEquals($lowUsageRatioKey->id, $result->id);
-        $this->assertEquals(25, $result->sent_request);
-        $this->assertEquals(75, $result->request_remaining);
+        // With weighted selection, either key could be selected,
+        // but we verify it's one of the available keys
+        $this->assertContains($result->id, [$highUsageKey->id, $lowUsageKey->id]);
     }
 
     #[Test]
@@ -118,34 +116,33 @@ class ApiKeyServiceTest extends TestCase
     }
 
     #[Test]
-    public function it_handles_usage_ratio_calculation_with_edge_cases(): void
+    public function it_handles_weighted_selection_with_different_usage_patterns(): void
     {
-        // Case 1: API key with 0 sent requests - ratio should be 0
+        // Case 1: API key with no usage - should have high weight
         $noUsageKey = ApiKey::factory()->create([
             'api_name' => ApiName::JOB,
             'request_remaining' => 100,
             'sent_request' => 0,
         ]);
 
-        // Case 2: API key with same usage ratio but different sent_request values
-        $sameRatioKey1 = ApiKey::factory()->create([
+        // Case 2: API keys with different usage patterns
+        $mediumUsageKey1 = ApiKey::factory()->create([
             'api_name' => ApiName::JOB,
             'request_remaining' => 50,
-            'sent_request' => 50, // ratio: 1.0
+            'sent_request' => 50,
         ]);
 
-        $sameRatioKey2 = ApiKey::factory()->create([
+        $mediumUsageKey2 = ApiKey::factory()->create([
             'api_name' => ApiName::JOB,
             'request_remaining' => 25,
-            'sent_request' => 25, // ratio: 1.0
+            'sent_request' => 25,
         ]);
 
         $result = $this->service->getAvailableApiKey();
 
-        // Should return the one with 0 usage (lowest ratio)
+        // With weighted selection, any of these keys could be selected
         $this->assertNotNull($result);
-        $this->assertEquals($noUsageKey->id, $result->id);
-        $this->assertEquals(0, $result->sent_request);
+        $this->assertContains($result->id, [$noUsageKey->id, $mediumUsageKey1->id, $mediumUsageKey2->id]);
     }
 
     #[Test]
