@@ -10,11 +10,16 @@ use App\Services\Cache\ApiKeyHealthCache;
 use Carbon\Carbon;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class ApiKeyService
 {
+    private const ROUND_ROBIN_CACHE_KEY = 'api_key_round_robin_index';
+
+    private const ROUND_ROBIN_CACHE_TTL = 3600; // 1 hour
+
     public function __construct(
         private ApiKeyHealthCache $healthCache
     ) {}
@@ -24,13 +29,15 @@ class ApiKeyService
         $availableKeys = $this->getAvailableKeys();
 
         if ($availableKeys->isEmpty()) {
-            Log::warning('No available API key with remaining requests');
+            Log::warning('No available API keys', [
+                'reason' => 'All keys exhausted, in cooldown, or circuit breaker open',
+            ]);
 
             return null;
         }
 
-        // Use weighted round-robin selection
-        return $this->selectKeyUsingWeightedRoundRobin($availableKeys);
+        // Use intelligent round-robin selection with health awareness
+        return $this->selectKeyUsingRoundRobin($availableKeys);
     }
 
     private function getAvailableKeys(): Collection
@@ -51,75 +58,62 @@ class ApiKeyService
         });
     }
 
-    private function selectKeyUsingWeightedRoundRobin(Collection $apiKeys): ApiKey
+    /**
+     * Round-robin selection with health-aware sorting.
+     * This ensures all keys get used roughly equally while prioritizing healthier keys.
+     */
+    private function selectKeyUsingRoundRobin(Collection $apiKeys): ApiKey
     {
-        $weights = $apiKeys->map(function (ApiKey $apiKey) {
-            return [
-                'key' => $apiKey,
-                'weight' => $this->calculateApiKeyWeight($apiKey),
-            ];
-        })->sortByDesc('weight');
+        // Sort by health factor and remaining requests for better distribution
+        $sortedKeys = $apiKeys->sortBy(function (ApiKey $apiKey) {
+            $healthFactor = $this->healthCache->getHealthFactor($apiKey);
 
-        Log::debug('API Key weights calculated', [
-            'weights' => $weights->map(fn ($item) => [
-                'id' => $item['key']->id,
-                'weight' => round($item['weight'], 4),
-                'remaining' => $item['key']->request_remaining,
-                'sent' => $item['key']->sent_request,
+            // Sort by: health factor (desc) then remaining (desc)
+            return [
+                -$healthFactor, // Negative for descending
+                -$apiKey->request_remaining,
+            ];
+        })->values();
+
+        Log::debug('Available API keys for selection', [
+            'count' => $sortedKeys->count(),
+            'keys' => $sortedKeys->map(fn ($key) => [
+                'id' => $key->id,
+                'remaining' => $key->request_remaining,
+                'health_factor' => round($this->healthCache->getHealthFactor($key), 4),
             ])->toArray(),
         ]);
 
-        // Weighted random selection
-        $totalWeight = $weights->sum('weight');
-        $randomWeight = mt_rand() / mt_getrandmax() * $totalWeight;
+        $selectedKey = $this->getNextKeyInRoundRobin($sortedKeys);
 
-        $currentWeight = 0;
-        foreach ($weights as $item) {
-            $currentWeight += $item['weight'];
-            if ($randomWeight <= $currentWeight) {
-                return $item['key'];
-            }
-        }
-
-        return $weights->first()['key'];
-    }
-
-    private function calculateApiKeyWeight(ApiKey $apiKey): float
-    {
-        $maxRequests = max($apiKey->request_remaining + $apiKey->sent_request, 1);
-        $remainingRatio = $apiKey->request_remaining / $maxRequests;
-
-        // Apply logarithmic scaling to prevent extreme values
-        $baseWeight = log10($apiKey->request_remaining + 1) / log10($maxRequests + 1);
-
-        $healthFactor = $this->healthCache->getHealthFactor($apiKey);
-
-        // Time-based factor to prevent recently used keys from being selected too frequently
-        $timeFactor = $this->getTimeFactor($apiKey);
-
-        $weight = $baseWeight * $healthFactor * $timeFactor;
-
-        Log::debug('Weight calculation', [
-            'api_key_id' => $apiKey->id,
-            'base_weight' => round($baseWeight, 4),
-            'health_factor' => round($healthFactor, 4),
-            'time_factor' => round($timeFactor, 4),
-            'final_weight' => round($weight, 4),
-            'remaining' => $apiKey->request_remaining,
+        Log::debug('API key selected via round-robin', [
+            'selected_key_id' => $selectedKey->id,
+            'remaining' => $selectedKey->request_remaining,
         ]);
 
-        return max($weight, 0.001); // Ensure minimum weight
+        return $selectedKey;
     }
 
-    private function getTimeFactor(ApiKey $apiKey): float
+    /**
+     * Get the next key in round-robin sequence.
+     * This ensures each key is used in turn before cycling back.
+     */
+    private function getNextKeyInRoundRobin(Collection $sortedKeys): ApiKey
     {
-        if (! $apiKey->request_sent_at) {
-            return 1.0; // Never used, full weight
+        $currentIndex = (int) Cache::get(self::ROUND_ROBIN_CACHE_KEY, 0);
+
+        // Ensure index is within bounds
+        if ($currentIndex >= $sortedKeys->count()) {
+            $currentIndex = 0;
         }
 
-        $secondsSinceLastUse = now()->diffInSeconds($apiKey->request_sent_at);
+        $selectedKey = $sortedKeys->get($currentIndex);
 
-        return min(1.0, $secondsSinceLastUse / 60.0);
+        // Move to next index for next call
+        $nextIndex = ($currentIndex + 1) % $sortedKeys->count();
+        Cache::put(self::ROUND_ROBIN_CACHE_KEY, $nextIndex, self::ROUND_ROBIN_CACHE_TTL);
+
+        return $selectedKey;
     }
 
     public function updateUsage(ApiKey $apiKey, Response $response): void
@@ -154,7 +148,14 @@ class ApiKeyService
 
         Log::debug('API key usage updated successfully', [
             'api_key_id' => $apiKey->id,
+            'health_metrics_updated' => true,
         ]);
+    }
+
+    public function resetRoundRobinIndex(): void
+    {
+        Cache::forget(self::ROUND_ROBIN_CACHE_KEY);
+        Log::info('Round-robin index reset');
     }
 
     public function getApiKeyStats(): array
@@ -166,7 +167,6 @@ class ApiKeyService
 
         return $apiKeys->map(function (ApiKey $apiKey) {
             $healthFactor = $this->healthCache->getHealthFactor($apiKey);
-            $weight = $this->calculateApiKeyWeight($apiKey);
             $cacheStats = $this->healthCache->getCacheStats($apiKey->id);
 
             return [
@@ -174,7 +174,6 @@ class ApiKeyService
                 'request_remaining' => $apiKey->request_remaining,
                 'sent_request' => $apiKey->sent_request,
                 'health_factor' => round($healthFactor, 4),
-                'weight' => round($weight, 4),
                 'last_used' => $apiKey->request_sent_at?->diffForHumans(),
                 'recent_requests' => $cacheStats['requests'],
                 'recent_failures' => $cacheStats['failures'],
