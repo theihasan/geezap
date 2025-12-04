@@ -110,17 +110,24 @@ return [
     |--------------------------------------------------------------------------
     |
     | Configuration for API key health tracking and circuit breaker pattern.
-    | These values control how long various health metrics are cached.
+    | Carefully tuned to balance quick failure detection with avoiding false positives.
+    |
+    | - health_cache_ttl: How long to cache health factor before recalculation (reduces CPU)
+    | - metrics_ttl: How long to keep request/failure metrics (shorter = forgiving)
+    | - circuit_breaker_cooldown: How long to isolate a failing key
+    | - min_requests_threshold: Minimum requests before circuit breaker can activate
+    | - failure_penalty_factor: How much each failure impacts health (0.5 = half weight per failure)
+    | - circuit_breaker_failure_threshold: Failure rate to trigger circuit breaker (0.5 = 50%)
     |
     */
 
     'api_key_health' => [
-        'health_cache_ttl' => env('API_HEALTH_CACHE_TTL', 300), // 5 minutes
-        'metrics_ttl' => env('API_METRICS_TTL', 86400), // 24 hours
-        'circuit_breaker_cooldown' => env('API_CIRCUIT_BREAKER_COOLDOWN', 600), // 10 minutes
-        'min_requests_threshold' => env('API_MIN_REQUESTS_THRESHOLD', 10),
-        'failure_penalty_factor' => env('API_FAILURE_PENALTY_FACTOR', 0.5),
-        'circuit_breaker_failure_threshold' => env('API_CIRCUIT_BREAKER_FAILURE_THRESHOLD', 0.8),
+        'health_cache_ttl' => env('API_HEALTH_CACHE_TTL', 300), 
+        'metrics_ttl' => env('API_METRICS_TTL', 3600), 
+        'circuit_breaker_cooldown' => env('API_CIRCUIT_BREAKER_COOLDOWN', 300), 
+        'min_requests_threshold' => env('API_MIN_REQUESTS_THRESHOLD', 5), 
+        'failure_penalty_factor' => env('API_FAILURE_PENALTY_FACTOR', 0.8),
+        'circuit_breaker_failure_threshold' => env('API_CIRCUIT_BREAKER_FAILURE_THRESHOLD', 0.5), 
     ],
 
 ];

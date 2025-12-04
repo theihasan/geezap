@@ -48,18 +48,19 @@ class JobFetchService
     private function fetchJobsForPage(ApiKey $apiKey, JobCategory $category, $country, int $page): void
     {
         try {
-            Log::info('Processing', [
+            Log::info('Processing job fetch', [
                 'category_id' => $category->id,
                 'category_name' => $category->name,
                 'page' => $page,
                 'country' => $country->code,
+                'api_key_id' => $apiKey->id,
             ]);
 
             Log::debug('Using API key', [
-                'api_key' => substr($apiKey->api_key, 0, 8).'...',
+                'api_key_id' => $apiKey->id,
+                'api_key_preview' => substr($apiKey->api_key, 0, 8).'...',
                 'request_remaining' => $apiKey->request_remaining,
                 'sent_request' => $apiKey->sent_request,
-                'usage_ratio' => $apiKey->request_remaining > 0 ? round($apiKey->sent_request / $apiKey->request_remaining, 3) : 'N/A',
             ]);
 
             $response = Http::withHeaders([
@@ -89,6 +90,12 @@ class JobFetchService
                     $category->category_image
                 );
                 StoreJobs::dispatch($jobResponseDTO);
+
+                Log::info('Jobs queued for storage', [
+                    'job_count' => count($jobResponseDTO->data),
+                    'category_id' => $category->id,
+                    'page' => $page,
+                ]);
             }
 
         } catch (RequestException|RuntimeException|\Exception $e) {
@@ -96,7 +103,9 @@ class JobFetchService
                 'category_id' => $category->id,
                 'country' => $country->code,
                 'page' => $page,
+                'api_key_id' => $apiKey->id,
                 'error' => $e->getMessage(),
+                'exception' => get_class($e),
             ]);
         }
     }
