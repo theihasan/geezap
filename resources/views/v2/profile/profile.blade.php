@@ -253,116 +253,87 @@
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
-            <!-- Profile Summary -->
-            <div class="lg:col-span-1 space-y-6">
-                <!-- Profile Completion Card -->
-                <div class="bg-white dark:bg-[#12122b] rounded-2xl p-6 border border-gray-200 dark:border-gray-800">
-                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4 font-oxanium-semibold">Profile Completion</h3>
-                    @php
-                        $completedFields = 0;
-                        $totalFields = 8;
-                        
-                        if(auth()->user()->name) $completedFields++;
-                        if(auth()->user()->email) $completedFields++;
-                        if(auth()->user()->phone) $completedFields++;
-                        if(auth()->user()->occupation) $completedFields++;
-                        if(auth()->user()->bio) $completedFields++;
-                        if(auth()->user()->address) $completedFields++;
-                        if(auth()->user()->experience) $completedFields++;
-                        if(auth()->user()->website || auth()->user()->github || auth()->user()->linkedin) $completedFields++;
-                        
-                        $completionPercentage = round(($completedFields / $totalFields) * 100);
-                    @endphp
-                    <div class="mb-4">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ $completionPercentage }}% Complete</span>
-                            <span class="text-sm text-gray-500">{{ $completedFields }}/{{ $totalFields }}</span>
-                        </div>
-                        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5">
-                            <div class="bg-gradient-to-r from-blue-500 to-blue-600 dark:from-pink-500 dark:to-purple-600 h-2.5 rounded-full transition-all duration-500"
-                                 style="width: {{ $completionPercentage }}%"></div>
-                        </div>
-                    </div>
-                    @if($completionPercentage < 100)
-                        <p class="text-sm text-gray-600 dark:text-gray-400 font-sans">
-                            Complete your profile to increase your chances of being discovered by employers.
-                        </p>
-                    @endif
+        <!-- Activity Stats Section - Full Width -->
+        <div class="bg-white dark:bg-[#12122b] rounded-2xl p-6 border border-gray-200 dark:border-gray-800 mb-6 sm:mb-8">
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-6 font-oxanium-semibold flex items-center gap-2">
+                <i class="las la-chart-line text-blue-600 dark:text-pink-500"></i>
+                Your Activity Overview
+            </h3>
+            @php
+                $completedFields = 0;
+                $totalFields = 8;
+                
+                if(auth()->user()->name) $completedFields++;
+                if(auth()->user()->email) $completedFields++;
+                if(auth()->user()->phone) $completedFields++;
+                if(auth()->user()->occupation) $completedFields++;
+                if(auth()->user()->bio) $completedFields++;
+                if(auth()->user()->address) $completedFields++;
+                if(auth()->user()->experience) $completedFields++;
+                if(auth()->user()->website || auth()->user()->github || auth()->user()->linkedin) $completedFields++;
+                
+                $completionPercentage = round(($completedFields / $totalFields) * 100);
+            @endphp
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="text-center p-4 bg-blue-50 dark:bg-blue-500/10 rounded-xl">
+                    <div class="text-3xl font-bold text-blue-600 dark:text-blue-400 font-oxanium-bold mb-1">{{ auth()->user()->jobs()->count() ?? 0 }}</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400 font-sans">Job Applications</div>
                 </div>
-
-                <!-- Quick Profile Info -->
-                <div class="bg-white dark:bg-[#12122b] rounded-2xl p-6 border border-gray-200 dark:border-gray-800">
-                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4 font-oxanium-semibold">Profile Overview</h3>
-                    <div class="space-y-3 font-sans">
-                        <div class="flex items-center gap-3">
-                            <i class="las la-user text-blue-600 dark:text-pink-500"></i>
-                            <span class="text-gray-900 dark:text-white">{{ auth()->user()->name }}</span>
-                        </div>
-                        @if(auth()->user()->occupation)
-                            <div class="flex items-center gap-3">
-                                <i class="las la-briefcase text-blue-600 dark:text-pink-500"></i>
-                                <span class="text-gray-900 dark:text-white">{{ auth()->user()->occupation }}</span>
-                            </div>
-                        @endif
-                        <div class="flex items-center gap-3">
-                            <i class="las la-envelope text-blue-600 dark:text-pink-500"></i>
-                            <span class="text-gray-900 dark:text-white text-sm">{{ auth()->user()->email }}</span>
-                        </div>
-                        @if(auth()->user()->phone)
-                            <div class="flex items-center gap-3">
-                                <i class="las la-phone text-blue-600 dark:text-pink-500"></i>
-                                <span class="text-gray-900 dark:text-white">{{ auth()->user()->phone }}</span>
-                            </div>
-                        @endif
-                        @if(auth()->user()->state && auth()->user()->country)
-                            <div class="flex items-center gap-3">
-                                <i class="las la-map-marker text-blue-600 dark:text-pink-500"></i>
-                                <span class="text-gray-900 dark:text-white">{{ auth()->user()->state }}, {{ auth()->user()->country }}</span>
-                            </div>
-                        @endif
-                    </div>
+                <div class="text-center p-4 bg-green-50 dark:bg-green-500/10 rounded-xl">
+                    <div class="text-3xl font-bold text-green-600 dark:text-green-400 font-oxanium-bold mb-1">{{ $recommendedJobs ? $recommendedJobs->count() : 0 }}</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400 font-sans">Recommended Jobs</div>
+                </div>
+                <div class="text-center p-4 bg-purple-50 dark:bg-purple-500/10 rounded-xl">
+                    <div class="text-3xl font-bold text-purple-600 dark:text-purple-400 font-oxanium-bold mb-1">{{ $completionPercentage }}%</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400 font-sans">Profile Complete</div>
+                </div>
+                <div class="text-center p-4 bg-orange-50 dark:bg-orange-500/10 rounded-xl">
+                    <div class="text-3xl font-bold text-orange-600 dark:text-orange-400 font-oxanium-bold mb-1">{{ round(auth()->user()->created_at->diffInDays()) ?? 0 }}</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400 font-sans">Days Active</div>
                 </div>
             </div>
+        </div>
 
-            <!-- Main Content Area -->
+        <!-- Main Content Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+            <!-- Main Content Area - Job Recommendations -->
             <div class="lg:col-span-2 space-y-6">
                 <!-- Recommended Jobs Section -->
                 <div class="bg-white dark:bg-[#12122b] rounded-2xl p-6 border border-gray-200 dark:border-gray-800">
                     <div class="flex items-center justify-between mb-6">
-                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2 font-oxanium-semibold">
+                        <h3 class="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-3 font-oxanium-bold">
                             <i class="las la-star text-blue-600 dark:text-pink-500"></i>
                             Recommended For You
                         </h3>
                         <a href="{{ route('job.index') }}" 
-                           class="text-blue-600 dark:text-pink-500 hover:text-blue-700 dark:hover:text-pink-400 text-sm font-sans flex items-center gap-1">
+                           class="text-blue-600 dark:text-pink-500 hover:text-blue-700 dark:hover:text-pink-400 text-sm font-sans flex items-center gap-1 bg-blue-50 dark:bg-blue-500/10 px-3 py-2 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-500/20 transition-all">
                             Browse All Jobs
                             <i class="las la-arrow-right"></i>
                         </a>
                     </div>
                     
                     @if($recommendedJobs && $recommendedJobs->count() > 0)
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            @foreach($recommendedJobs->take(4) as $job)
-                                <div class="bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 rounded-xl p-4 transition-all border border-gray-200 dark:border-gray-700 hover:border-blue-500/30 dark:hover:border-pink-500/30">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                            @foreach($recommendedJobs->take(6) as $job)
+                                <div class="bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 rounded-xl p-5 transition-all border border-gray-200 dark:border-gray-700 hover:border-blue-500/30 dark:hover:border-pink-500/30 hover:shadow-lg">
                                     <div class="flex items-start justify-between mb-3">
                                         <div class="flex-1">
-                                            <h4 class="text-gray-900 dark:text-white font-medium text-sm mb-1 line-clamp-2 font-sans">
+                                            <h4 class="text-gray-900 dark:text-white font-semibold text-base mb-2 line-clamp-2 font-sans leading-relaxed">
                                                 <a href="{{ route('job.show', $job->slug) }}" class="hover:text-blue-600 dark:hover:text-pink-500 transition-colors">
                                                     {{ $job->job_title }}
                                                 </a>
                                             </h4>
-                                            <p class="text-gray-600 dark:text-gray-400 text-xs font-sans">{{ $job->employer_name }}</p>
+                                            <p class="text-gray-600 dark:text-gray-400 text-sm font-sans font-medium">{{ $job->employer_name }}</p>
                                         </div>
                                         @if($job->is_remote)
-                                            <span class="bg-green-500/10 text-green-600 dark:text-green-400 px-2 py-1 rounded-lg text-xs font-sans">
+                                            <span class="bg-green-500/10 text-green-600 dark:text-green-400 px-3 py-1 rounded-full text-xs font-medium font-sans">
                                                 Remote
                                             </span>
                                         @endif
                                     </div>
                                     
                                     <div class="flex items-center justify-between text-xs">
-                                        <div class="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+                                        <div class="flex items-center gap-3 text-gray-600 dark:text-gray-400">
                                             @if($job->country)
                                                 <span class="flex items-center gap-1">
                                                     <i class="las la-map-marker"></i>
@@ -370,7 +341,7 @@
                                                 </span>
                                             @endif
                                             @if($job->category)
-                                                <span class="bg-blue-500/10 dark:bg-pink-500/10 text-blue-600 dark:text-pink-400 px-2 py-1 rounded">
+                                                <span class="bg-blue-500/10 dark:bg-pink-500/10 text-blue-600 dark:text-pink-400 px-2 py-1 rounded-full text-xs font-medium">
                                                     {{ $job->category->name }}
                                                 </span>
                                             @endif
@@ -382,26 +353,36 @@
                                 </div>
                             @endforeach
                         </div>
+                        
+                        @if($recommendedJobs->count() > 6)
+                            <div class="text-center mt-6">
+                                <a href="{{ route('job.index') }}" 
+                                   class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 dark:from-pink-500 dark:to-purple-600 text-white px-6 py-3 rounded-lg hover:opacity-90 transition-opacity font-sans font-medium">
+                                    <i class="las la-eye"></i>
+                                    View All {{ $recommendedJobs->count() }} Recommendations
+                                </a>
+                            </div>
+                        @endif
                     @else
                         <!-- No recommendations fallback -->
-                        <div class="text-center py-8">
-                            <div class="mb-4">
-                                <i class="las la-lightbulb text-6xl text-gray-300 dark:text-gray-600"></i>
+                        <div class="text-center py-12">
+                            <div class="mb-6">
+                                <i class="las la-lightbulb text-8xl text-gray-300 dark:text-gray-600"></i>
                             </div>
-                            <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-2 font-oxanium-semibold">
+                            <h4 class="text-xl font-bold text-gray-900 dark:text-white mb-3 font-oxanium-bold">
                                 No Recommendations Yet
                             </h4>
-                            <p class="text-gray-600 dark:text-gray-400 mb-6 font-sans max-w-md mx-auto">
+                            <p class="text-gray-600 dark:text-gray-400 mb-8 font-sans max-w-md mx-auto text-base leading-relaxed">
                                 Set up your job preferences to get personalized job recommendations that match your interests and skills.
                             </p>
-                            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                            <div class="flex flex-col sm:flex-row gap-4 justify-center">
                                 <a href="{{ route('profile.preferences') }}" 
-                                   class="bg-gradient-to-r from-blue-500 to-blue-600 dark:from-pink-500 dark:to-purple-600 text-white px-6 py-2 rounded-lg hover:opacity-90 transition-all font-sans flex items-center gap-2 justify-center">
+                                   class="bg-gradient-to-r from-blue-500 to-blue-600 dark:from-pink-500 dark:to-purple-600 text-white px-6 py-3 rounded-lg hover:opacity-90 transition-all font-sans flex items-center gap-2 justify-center font-medium">
                                     <i class="las la-cog"></i>
                                     Set Preferences
                                 </a>
                                 <a href="{{ route('job.index') }}" 
-                                   class="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-300 px-6 py-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors font-sans flex items-center gap-2 justify-center">
+                                   class="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-300 px-6 py-3 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors font-sans flex items-center gap-2 justify-center font-medium">
                                     <i class="las la-search"></i>
                                     Browse All Jobs
                                 </a>
@@ -409,23 +390,106 @@
                         </div>
                     @endif
                 </div>
+            </div>
 
-                <!-- Recent Activity or Stats -->
+            <!-- Right Sidebar - Profile Summary -->
+            <div class="lg:col-span-1 space-y-6">
+                <!-- Profile Completion Card -->
                 <div class="bg-white dark:bg-[#12122b] rounded-2xl p-6 border border-gray-200 dark:border-gray-800">
-                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-6 font-oxanium-semibold">Your Activity</h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div class="text-center p-4 bg-blue-50 dark:bg-blue-500/10 rounded-xl">
-                            <div class="text-2xl font-bold text-blue-600 dark:text-blue-400 font-oxanium-bold">{{ auth()->user()->jobs()->count() ?? 0 }}</div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400 font-sans">Applications</div>
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4 font-oxanium-semibold flex items-center gap-2">
+                        <i class="las la-chart-pie text-blue-600 dark:text-pink-500"></i>
+                        Profile Completion
+                    </h3>
+                    <div class="mb-6">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ $completionPercentage }}% Complete</span>
+                            <span class="text-sm text-gray-500">{{ $completedFields }}/{{ $totalFields }}</span>
                         </div>
-                        <div class="text-center p-4 bg-green-50 dark:bg-green-500/10 rounded-xl">
-                            <div class="text-2xl font-bold text-green-600 dark:text-green-400 font-oxanium-bold">{{ $recommendedJobs ? $recommendedJobs->count() : 0 }}</div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400 font-sans">Recommended</div>
+                        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
+                            <div class="bg-gradient-to-r from-blue-500 to-blue-600 dark:from-pink-500 dark:to-purple-600 h-3 rounded-full transition-all duration-700"
+                                 style="width: {{ $completionPercentage }}%"></div>
                         </div>
-                        <div class="text-center p-4 bg-purple-50 dark:bg-purple-500/10 rounded-xl">
-                            <div class="text-2xl font-bold text-purple-600 dark:text-purple-400 font-oxanium-bold">{{ $completionPercentage }}%</div>
-                            <div class="text-sm text-gray-600 dark:text-gray-400 font-sans">Profile Complete</div>
+                    </div>
+                    @if($completionPercentage < 100)
+                        <div class="bg-blue-50 dark:bg-blue-500/10 p-4 rounded-lg">
+                            <p class="text-sm text-gray-700 dark:text-gray-300 font-sans">
+                                <i class="las la-info-circle text-blue-600 dark:text-blue-400 mr-1"></i>
+                                Complete your profile to increase your chances of being discovered by employers.
+                            </p>
                         </div>
+                    @else
+                        <div class="bg-green-50 dark:bg-green-500/10 p-4 rounded-lg">
+                            <p class="text-sm text-gray-700 dark:text-gray-300 font-sans">
+                                <i class="las la-check-circle text-green-600 dark:text-green-400 mr-1"></i>
+                                Great! Your profile is complete and ready for employers.
+                            </p>
+                        </div>
+                    @endif
+                </div>
+
+                <!-- Quick Profile Info -->
+                <div class="bg-white dark:bg-[#12122b] rounded-2xl p-6 border border-gray-200 dark:border-gray-800">
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4 font-oxanium-semibold flex items-center gap-2">
+                        <i class="las la-user text-blue-600 dark:text-pink-500"></i>
+                        Profile Overview
+                    </h3>
+                    <div class="space-y-4 font-sans">
+                        <div class="flex items-center gap-3">
+                            <i class="las la-id-card text-blue-600 dark:text-pink-500"></i>
+                            <span class="text-gray-900 dark:text-white font-medium">{{ auth()->user()->name }}</span>
+                        </div>
+                        @if(auth()->user()->occupation)
+                            <div class="flex items-center gap-3">
+                                <i class="las la-briefcase text-blue-600 dark:text-pink-500"></i>
+                                <span class="text-gray-600 dark:text-gray-400">{{ auth()->user()->occupation }}</span>
+                            </div>
+                        @endif
+                        @if(auth()->user()->location || auth()->user()->country)
+                            <div class="flex items-center gap-3">
+                                <i class="las la-map-marker text-blue-600 dark:text-pink-500"></i>
+                                <span class="text-gray-600 dark:text-gray-400">{{ auth()->user()->location ?? auth()->user()->country }}</span>
+                            </div>
+                        @endif
+                        @if(auth()->user()->website)
+                            <div class="flex items-center gap-3">
+                                <i class="las la-link text-blue-600 dark:text-pink-500"></i>
+                                <a href="{{ auth()->user()->website }}" target="_blank" class="text-blue-600 dark:text-pink-500 hover:underline">{{ Str::limit(auth()->user()->website, 25) }}</a>
+                            </div>
+                        @endif
+                    </div>
+                    
+                    <div class="flex gap-3 mt-6">
+                        <button onclick="openModal('editProfileModal')" class="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 dark:from-pink-500 dark:to-purple-600 text-white px-4 py-2 rounded-lg hover:opacity-90 transition-opacity text-sm font-sans font-medium">
+                            <i class="las la-edit mr-2"></i>Edit Profile
+                        </button>
+                        <button onclick="openModal('editSocialModal')" class="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-300 px-4 py-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm font-sans">
+                            <i class="las la-share-alt"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quick Actions Card -->
+                <div class="bg-white dark:bg-[#12122b] rounded-2xl p-6 border border-gray-200 dark:border-gray-800">
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4 font-oxanium-semibold flex items-center gap-2">
+                        <i class="las la-bolt text-blue-600 dark:text-pink-500"></i>
+                        Quick Actions
+                    </h3>
+                    <div class="space-y-3">
+                        <a href="{{ route('profile.preferences') }}" 
+                           class="flex items-center gap-3 p-3 bg-gray-50 dark:bg-white/5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 transition-colors text-gray-900 dark:text-white font-sans">
+                            <i class="las la-cog text-blue-600 dark:text-pink-500"></i>
+                            <span>Job Preferences</span>
+                        </a>
+                        <a href="{{ route('job.index') }}" 
+                           class="flex items-center gap-3 p-3 bg-gray-50 dark:bg-white/5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 transition-colors text-gray-900 dark:text-white font-sans">
+                            <i class="las la-search text-blue-600 dark:text-pink-500"></i>
+                            <span>Search Jobs</span>
+                        </a>
+                        <a href="{{ route('applications') }}" 
+                           class="flex items-center gap-3 p-3 bg-gray-50 dark:bg-white/5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 transition-colors text-gray-900 dark:text-white font-sans">
+                            <i class="las la-file-alt text-blue-600 dark:text-pink-500"></i>
+                            <span>My Applications</span>
+                        </a>
                     </div>
                 </div>
             </div>
