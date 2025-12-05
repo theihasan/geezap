@@ -328,20 +328,20 @@
             <!-- Main Content Area -->
             <div class="lg:col-span-2 space-y-6">
                 <!-- Recommended Jobs Section -->
-                @if($recommendedJobs && $recommendedJobs->count() > 0)
-                    <div class="bg-white dark:bg-[#12122b] rounded-2xl p-6 border border-gray-200 dark:border-gray-800">
-                        <div class="flex items-center justify-between mb-6">
-                            <h3 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2 font-oxanium-semibold">
-                                <i class="las la-star text-blue-600 dark:text-pink-500"></i>
-                                Recommended For You
-                            </h3>
-                            <a href="{{ route('job.index') }}?recommended=1" 
-                               class="text-blue-600 dark:text-pink-500 hover:text-blue-700 dark:hover:text-pink-400 text-sm font-sans flex items-center gap-1">
-                                View All
-                                <i class="las la-arrow-right"></i>
-                            </a>
-                        </div>
-                        
+                <div class="bg-white dark:bg-[#12122b] rounded-2xl p-6 border border-gray-200 dark:border-gray-800">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2 font-oxanium-semibold">
+                            <i class="las la-star text-blue-600 dark:text-pink-500"></i>
+                            Recommended For You
+                        </h3>
+                        <a href="{{ route('job.index') }}" 
+                           class="text-blue-600 dark:text-pink-500 hover:text-blue-700 dark:hover:text-pink-400 text-sm font-sans flex items-center gap-1">
+                            Browse All Jobs
+                            <i class="las la-arrow-right"></i>
+                        </a>
+                    </div>
+                    
+                    @if($recommendedJobs && $recommendedJobs->count() > 0)
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             @foreach($recommendedJobs->take(4) as $job)
                                 <div class="bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 rounded-xl p-4 transition-all border border-gray-200 dark:border-gray-700 hover:border-blue-500/30 dark:hover:border-pink-500/30">
@@ -349,10 +349,10 @@
                                         <div class="flex-1">
                                             <h4 class="text-gray-900 dark:text-white font-medium text-sm mb-1 line-clamp-2 font-sans">
                                                 <a href="{{ route('job.show', $job->slug) }}" class="hover:text-blue-600 dark:hover:text-pink-500 transition-colors">
-                                                    {{ $job->title }}
+                                                    {{ $job->job_title }}
                                                 </a>
                                             </h4>
-                                            <p class="text-gray-600 dark:text-gray-400 text-xs font-sans">{{ $job->company }}</p>
+                                            <p class="text-gray-600 dark:text-gray-400 text-xs font-sans">{{ $job->employer_name }}</p>
                                         </div>
                                         @if($job->is_remote)
                                             <span class="bg-green-500/10 text-green-600 dark:text-green-400 px-2 py-1 rounded-lg text-xs font-sans">
@@ -369,6 +369,11 @@
                                                     {{ $job->country }}
                                                 </span>
                                             @endif
+                                            @if($job->category)
+                                                <span class="bg-blue-500/10 dark:bg-pink-500/10 text-blue-600 dark:text-pink-400 px-2 py-1 rounded">
+                                                    {{ $job->category->name }}
+                                                </span>
+                                            @endif
                                         </div>
                                         <span class="text-gray-500 font-sans">
                                             {{ $job->created_at->diffForHumans() }}
@@ -377,8 +382,33 @@
                                 </div>
                             @endforeach
                         </div>
-                    </div>
-                @endif
+                    @else
+                        <!-- No recommendations fallback -->
+                        <div class="text-center py-8">
+                            <div class="mb-4">
+                                <i class="las la-lightbulb text-6xl text-gray-300 dark:text-gray-600"></i>
+                            </div>
+                            <h4 class="text-lg font-semibold text-gray-900 dark:text-white mb-2 font-oxanium-semibold">
+                                No Recommendations Yet
+                            </h4>
+                            <p class="text-gray-600 dark:text-gray-400 mb-6 font-sans max-w-md mx-auto">
+                                Set up your job preferences to get personalized job recommendations that match your interests and skills.
+                            </p>
+                            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                                <a href="{{ route('profile.preferences') }}" 
+                                   class="bg-gradient-to-r from-blue-500 to-blue-600 dark:from-pink-500 dark:to-purple-600 text-white px-6 py-2 rounded-lg hover:opacity-90 transition-all font-sans flex items-center gap-2 justify-center">
+                                    <i class="las la-cog"></i>
+                                    Set Preferences
+                                </a>
+                                <a href="{{ route('job.index') }}" 
+                                   class="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-300 px-6 py-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors font-sans flex items-center gap-2 justify-center">
+                                    <i class="las la-search"></i>
+                                    Browse All Jobs
+                                </a>
+                            </div>
+                        </div>
+                    @endif
+                </div>
 
                 <!-- Recent Activity or Stats -->
                 <div class="bg-white dark:bg-[#12122b] rounded-2xl p-6 border border-gray-200 dark:border-gray-800">
