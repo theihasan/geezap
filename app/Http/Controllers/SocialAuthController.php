@@ -78,4 +78,24 @@ class SocialAuthController extends Controller
             return redirect()->route('login')->with(['status' => $e->getMessage()]);
         }
     }
+
+    /**
+     * Handle profile image download and saving for social authentication
+     */
+    private function handleProfileImage(User $user, $providerUser, string $provider): void
+    {
+        try {
+            $avatarUrl = $providerUser->getAvatar();
+            
+            if ($avatarUrl) {
+                $imagePath = $this->profileImageService->downloadAndSaveProfileImage($avatarUrl, $provider, $user->id);
+                
+                if ($imagePath) {
+                    $user->update(['profile_image' => $imagePath]);
+                }
+            }
+        } catch (\Exception $e) {
+            logger("Failed to save profile image for user {$user->id}: " . $e->getMessage());
+        }
+    }
 }
