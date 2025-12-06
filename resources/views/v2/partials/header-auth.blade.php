@@ -11,7 +11,7 @@
     <div class="relative" x-data="{ open: false }">
         <button @click="open = !open" @click.away="open = false"
                 class="flex items-center gap-2 text-gray-700 dark:text-gray-100 hover:text-blue-600 dark:hover:text-pink-500 px-2 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 transition-all">
-            <img src="https://placehold.co/32x32" alt="Profile" class="w-8 h-8 rounded-lg object-cover">
+            <img src="{{ auth()->user()->profile_image_or_default }}" alt="{{ auth()->user()->name }}" class="w-8 h-8 rounded-lg object-cover">
             <span>{{auth()->user()->name}}</span>
             <i class="las la-angle-down transition-transform" :class="{ 'rotate-180': open }"></i>
         </button>

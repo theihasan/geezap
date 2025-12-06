@@ -10,7 +10,7 @@
         @if(auth()->check())
         <div class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-white/10">
             <div class="flex items-center gap-3">
-                <img src="https://placehold.co/40x40" alt="Profile" class="w-10 h-10 rounded-lg object-cover">
+                <img src="{{ auth()->user()->profile_image_or_default }}" alt="{{ auth()->user()->name }}" class="w-10 h-10 rounded-lg object-cover">
                 <div>
                     <div class="font-medium text-gray-900 dark:text-white">{{auth()->user()->name}}</div>
                     <div class="text-sm text-gray-600 dark:text-gray-400">{{auth()->user()->email}}</div>
