@@ -14,7 +14,7 @@
                     <!-- Profile Image with Status -->
                     <div class="relative group">
                         <div class="relative">
-                            <img src="{{asset('assets/images/profile.jpg')}}" alt="{{ auth()->user()->name }}" 
+                            <img src="{{ auth()->user()->profile_image_or_default }}" alt="{{ auth()->user()->name }}" 
                                  class="w-32 h-32 lg:w-40 lg:h-40 rounded-3xl object-cover border-4 border-white dark:border-gray-800 shadow-lg">
                             <!-- Online Status -->
                             <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 border-4 border-white dark:border-gray-800 rounded-full animate-pulse"></div>
