@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\SocialProvider;
 use App\Models\User;
+use App\Services\ProfileImageService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,6 +15,10 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class SocialAuthController extends Controller
 {
+    public function __construct(
+        private ProfileImageService $profileImageService
+    ) {}
+
     public function redirect(string $provider): RedirectResponse|\Illuminate\Http\RedirectResponse
     {
         return Socialite::driver($provider)
@@ -54,7 +59,13 @@ class SocialAuthController extends Controller
                 $data['name'] = $providerResponse->getName() ?? $providerResponse->getNickname();
                 $data['bio'] = $providerResponse->user['bio'] ?? '';
 
+                $this->handleProfileImage($user, $providerResponse, $provider);
+
                 event(new Registered($user));
+            } else {
+                if (empty($user->profile_image)) {
+                    $this->handleProfileImage($user, $providerResponse, $provider);
+                }
             }
 
             $user->update($data);

@@ -13,10 +13,56 @@ use Illuminate\Support\Facades\Redirect;
 
 class ProfileService
 {
+    public function __construct(
+        private ProfileImageService $profileImageService
+    ) {}
+
     public function updatePersonalInfo(PersonalInfoUpdateRequest $request, User $user): void
     {
         $data = $request->validated();
+        
+        if ($request->hasFile('profile_image')) {
+            if ($user->profile_image) {
+                $this->profileImageService->deleteOldProfileImage($user->profile_image);
+            }
+            
+            $imagePath = $this->uploadProfileImage($request->file('profile_image'), $user->id);
+            if ($imagePath) {
+                $data['profile_image'] = $imagePath;
+            }
+        }
+        
         $user->update($data);
+    }
+    
+    /**
+     * Upload profile image to storage
+     *
+     * @param \Illuminate\Http\UploadedFile $file
+     * @param int $userId
+     * @return string|null
+     */
+    private function uploadProfileImage($file, $userId): ?string
+    {
+        try {
+            // Generate unique filename
+            $extension = $file->getClientOriginalExtension();
+            $filename = "user_{$userId}_" . time() . "_" . uniqid() . ".{$extension}";
+            
+            // Store the file in public disk under profile-images folder
+            $filePath = $file->storeAs('profile-images', $filename, 'public');
+            
+            if ($filePath) {
+                return $filePath;
+            }
+            
+        } catch (\Exception $e) {
+            \Log::error("Failed to upload profile image for user {$userId}", [
+                'error' => $e->getMessage()
+            ]);
+        }
+        
+        return null;
     }
 
     public function updateContactInfo(ContactInfoUpdateRequest $request, User $user): void
