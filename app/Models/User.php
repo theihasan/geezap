@@ -27,7 +27,7 @@ class User extends Authenticatable implements FilamentUser, CanAccessAnalyticsDa
      */
     protected $fillable = [
         'name','email','address','dob','state','country','occupation','postcode','phone','website','password',
-        'bio','facebook','twitter','linkedin','github','skills','locale','timezone','experience','role','facebook_id',
+        'bio','profile_image','facebook','twitter','linkedin','github','skills','locale','timezone','experience','role','facebook_id',
         'facebook_token','google_id','google_token','github_id','github_token','last_login_at',
     ];
 
@@ -97,4 +97,28 @@ class User extends Authenticatable implements FilamentUser, CanAccessAnalyticsDa
       {
          return true;
       }
+
+    /**
+     * Get the user's profile image URL
+     *
+     * @return string|null
+     */
+    public function getProfileImageUrlAttribute(): ?string
+    {
+        if (!$this->profile_image) {
+            return null;
+        }
+
+        return \Storage::disk('public')->url($this->profile_image);
+    }
+
+    /**
+     * Get profile image or default placeholder
+     *
+     * @return string
+     */
+    public function getProfileImageOrDefaultAttribute(): string
+    {
+        return $this->profile_image_url ?? asset('assets/images/profile.jpg');
+    }
 }
