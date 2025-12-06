@@ -56,41 +56,36 @@
         @endif
 
         <!-- Navigation Tabs -->
-        <div class="mb-8">
+        <div class="mb-8" id="tab-container">
             <div class="bg-white dark:bg-gray-900 rounded-2xl p-2 border border-gray-200 dark:border-gray-700">
-                <nav class="flex space-x-1" x-data="{ activeTab: 'personal' }">
-                    <button @click="activeTab = 'personal'" 
-                            :class="activeTab === 'personal' ? 'bg-blue-500 text-white shadow-lg' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'"
-                            class="flex-1 py-3 px-4 rounded-xl font-medium transition-all flex items-center justify-center gap-2">
+                <nav class="flex space-x-1">
+                    <button onclick="showTab('personal')" data-tab="personal"
+                            class="tab-button flex-1 py-3 px-4 rounded-xl font-medium transition-all flex items-center justify-center gap-2 bg-blue-500 text-white shadow-lg">
                         <i class="las la-user"></i>
                         <span class="hidden sm:inline">Personal Info</span>
                     </button>
-                    <button @click="activeTab = 'professional'" 
-                            :class="activeTab === 'professional' ? 'bg-blue-500 text-white shadow-lg' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'"
-                            class="flex-1 py-3 px-4 rounded-xl font-medium transition-all flex items-center justify-center gap-2">
+                    <button onclick="showTab('professional')" data-tab="professional"
+                            class="tab-button flex-1 py-3 px-4 rounded-xl font-medium transition-all flex items-center justify-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
                         <i class="las la-briefcase"></i>
                         <span class="hidden sm:inline">Professional</span>
                     </button>
-                    <button @click="activeTab = 'social'" 
-                            :class="activeTab === 'social' ? 'bg-blue-500 text-white shadow-lg' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'"
-                            class="flex-1 py-3 px-4 rounded-xl font-medium transition-all flex items-center justify-center gap-2">
+                    <button onclick="showTab('social')" data-tab="social"
+                            class="tab-button flex-1 py-3 px-4 rounded-xl font-medium transition-all flex items-center justify-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
                         <i class="las la-share-alt"></i>
                         <span class="hidden sm:inline">Social</span>
                     </button>
-                    <button @click="activeTab = 'security'" 
-                            :class="activeTab === 'security' ? 'bg-blue-500 text-white shadow-lg' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'"
-                            class="flex-1 py-3 px-4 rounded-xl font-medium transition-all flex items-center justify-center gap-2">
+                    <button onclick="showTab('security')" data-tab="security"
+                            class="tab-button flex-1 py-3 px-4 rounded-xl font-medium transition-all flex items-center justify-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
                         <i class="las la-lock"></i>
                         <span class="hidden sm:inline">Security</span>
                     </button>
                 </nav>
             </div>
-        </div>
 
         <!-- Tab Content -->
-        <div x-data="{ activeTab: 'personal' }">
+        <div>
             <!-- Personal Information Tab -->
-            <div x-show="activeTab === 'personal'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform translate-y-4" x-transition:enter-end="opacity-100 transform translate-y-0">
+            <div id="personal-tab" class="tab-content" style="display: block;">
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <!-- Main Form -->
                     <div class="lg:col-span-2">
@@ -262,14 +257,14 @@
                                     <div class="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
                                     <p class="text-sm text-gray-600 dark:text-gray-400">Keep your contact information up to date</p>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
+            </div>
+        </div>
+    </div>
                 </div>
             </div>
 
             <!-- Professional Information Tab -->
-            <div x-show="activeTab === 'professional'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform translate-y-4" x-transition:enter-end="opacity-100 transform translate-y-0">
+            <div id="professional-tab" class="tab-content" style="display: none;">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <!-- Experience Form -->
                     <form action="{{ route('experience.update') }}" method="POST" class="bg-white dark:bg-gray-900 rounded-3xl p-8 border border-gray-200 dark:border-gray-700 shadow-sm">
@@ -422,7 +417,7 @@
             </div>
 
             <!-- Social Media Tab -->
-            <div x-show="activeTab === 'social'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform translate-y-4" x-transition:enter-end="opacity-100 transform translate-y-0">
+            <div id="social-tab" class="tab-content" style="display: none;">
                 <div class="max-w-2xl mx-auto">
                     <form action="{{ route('social-media-info.update') }}" method="POST" class="bg-white dark:bg-gray-900 rounded-3xl p-8 border border-gray-200 dark:border-gray-700 shadow-sm">
                         @csrf
@@ -473,7 +468,7 @@
             </div>
 
             <!-- Security Tab -->
-            <div x-show="activeTab === 'security'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 transform translate-y-4" x-transition:enter-end="opacity-100 transform translate-y-0">
+            <div id="security-tab" class="tab-content" style="display: none;">
                 <div class="max-w-2xl mx-auto">
                     <form action="{{ route('userpassword.update') }}" method="POST" class="bg-white dark:bg-gray-900 rounded-3xl p-8 border border-gray-200 dark:border-gray-700 shadow-sm">
                         @csrf
@@ -568,6 +563,30 @@
     </div>
 
     @push('extra-js')
+    <script>
+        function showTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.style.display = 'none';
+            });
+            
+            // Remove active styles from all buttons
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.className = button.className.replace(/bg-blue-500|text-white|shadow-lg/g, '');
+                if (!button.classList.contains('text-gray-600')) {
+                    button.classList.add('text-gray-600', 'dark:text-gray-400', 'hover:text-gray-900', 'dark:hover:text-white');
+                }
+            });
+            
+            // Show the selected tab content
+            document.getElementById(tabName + '-tab').style.display = 'block';
+            
+            // Add active styles to the selected button
+            const activeButton = document.querySelector(`[data-tab="${tabName}"]`);
+            activeButton.classList.remove('text-gray-600', 'dark:text-gray-400', 'hover:text-gray-900', 'dark:hover:text-white');
+            activeButton.classList.add('bg-blue-500', 'text-white', 'shadow-lg');
+        }
+    </script>
     <script>
         // Experience Management
         document.getElementById('add-experience').addEventListener('click', function() {
