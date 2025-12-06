@@ -36,6 +36,7 @@ Route::middleware('auth')->group(function () {
     Route::post('social-media-info', [ProfileController::class, 'updateSocialMediaInfo'])->name('social-media-info.update');
     Route::post('experience', [ProfileController::class, 'updateExperience'])->name('experience.update');
     Route::post('skill', [ProfileController::class, 'updateSkill'])->name('skill.update');
+    Route::delete('profile/image', [ProfileController::class, 'removeProfileImage'])->name('profile.image.remove');
 
     Route::get('/applications', [ApplicationController::class, 'index'])->name('applications');
     Route::get('/cover-letter', [CoverLetterController::class, 'update'])->name('cover-letter.update');

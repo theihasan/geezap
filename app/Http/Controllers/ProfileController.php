@@ -23,6 +23,7 @@ use App\Http\Requests\ContactInfoUpdateRequest;
 use App\Http\Requests\PersonalInfoUpdateRequest;
 use App\Http\Requests\UserPreferencesUpdateRequest;
 use App\Http\Requests\SocialMediaInfoUpdateRequest;
+use App\Services\ProfileImageService;
 
 class ProfileController extends Controller
 {
@@ -136,5 +137,31 @@ class ProfileController extends Controller
         JobRecommendationCache::invalidateUserRecommendations($user->id);
 
         return redirect()->route('profile.preferences')->with('success', 'Preferences updated successfully!');
+    }
+
+    /**
+     * Remove user's profile image
+     */
+    public function removeProfileImage(ProfileImageService $profileImageService)
+    {
+        $user = Auth::user();
+        
+        try {
+            if ($user->profile_image) {
+                $profileImageService->deleteOldProfileImage($user->profile_image);
+                $user->update(['profile_image' => null]);
+                
+                return response()->json(['success' => true, 'message' => 'Profile image removed successfully']);
+            }
+            
+            return response()->json(['success' => false, 'message' => 'No profile image to remove']);
+            
+        } catch (\Exception $e) {
+            \Log::error('Error removing profile image for user ' . $user->id, [
+                'error' => $e->getMessage()
+            ]);
+            
+            return response()->json(['success' => false, 'message' => 'Error removing profile image']);
+        }
     }
 }

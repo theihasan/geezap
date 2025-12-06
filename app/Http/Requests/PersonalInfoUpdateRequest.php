@@ -35,6 +35,7 @@ class PersonalInfoUpdateRequest extends FormRequest
             'postcode' => ['nullable', 'string', 'max:15'],
             'phone' => ['nullable', 'string', 'max:20'],
             'bio' => ['nullable', 'string'],
+            'profile_image' => ['nullable', 'image', 'mimes:jpeg,jpg,png,gif,webp', 'max:5120'], 
         ];
     }
 
@@ -55,6 +56,9 @@ class PersonalInfoUpdateRequest extends FormRequest
             'postcode.string' => 'Postcode must be a string',
             'phone.string' => 'Phone must be a string',
             'bio.string' => 'Bio must be a string',
+            'profile_image.image' => 'Profile image must be an image file',
+            'profile_image.mimes' => 'Profile image must be a JPEG, JPG, PNG, GIF, or WebP file',
+            'profile_image.max' => 'Profile image must not exceed 5MB',
         ];
     }
 }
