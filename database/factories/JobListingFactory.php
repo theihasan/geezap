@@ -20,8 +20,8 @@ class JobListingFactory extends Factory
      */
     public function definition(): array
     {
-        $jobTitle = $this->faker->jobTitle();
-        
+        $jobTitle = fake()->words(3, true);
+
         return [
             'job_id' => $this->faker->uuid(),
             'uuid' => $this->faker->uuid(),
@@ -32,7 +32,7 @@ class JobListingFactory extends Factory
             'publisher' => $this->faker->randomElement(['LinkedIn', 'Indeed', 'Glassdoor', 'Monster']),
             'employment_type' => $this->faker->randomElement(['Full-time', 'Part-time', 'Contract', 'Freelance']),
             'job_title' => $jobTitle,
-            'slug' => \Illuminate\Support\Str::slug($jobTitle . '-' . $this->faker->randomNumber(6)),
+            'slug' => \Illuminate\Support\Str::slug($jobTitle.'-'.$this->faker->randomNumber(6)),
             'job_category' => function () {
                 // Try to use an existing category first, create one if none exists
                 return JobCategory::inRandomOrder()->first()?->id ?? JobCategory::factory()->create()->id;
