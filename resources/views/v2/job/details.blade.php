@@ -44,7 +44,7 @@
                                 <button onclick="shareJob()" class="p-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-pink-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-all">
                                     <i class="las la-share-alt text-xl"></i>
                                 </button>
-                        <livewire:jobs.bookmark-job :job="$job" />
+                        <livewire:jobs.bookmark-job :jobId="$job->id" />
                             </div>
                         </div>
 
@@ -93,7 +93,7 @@
                             <button onclick="shareJob()" class="p-3 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-pink-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-all">
                                 <i class="las la-share-alt text-xl"></i>
                             </button>
-                            <livewire:jobs.bookmark-job :job="$job" />
+                        <livewire:jobs.bookmark-job :jobId="$job->id" />
                         </div>
                         
                         @if($job->min_salary && $job->max_salary)
