@@ -11,9 +11,9 @@
                 <div class="md:w-full">
                     <div class="relative flex items-end justify-between">
                         <div class="relative flex items-end">
-                            <img src="{{asset('assets/images/profile.jpg')}}"
+                            <img src="{{ auth()->user()->profile_image_or_default }}"
                                  class="size-28 rounded-full shadow dark:shadow-gray-800 ring-4 ring-slate-50 dark:ring-slate-800"
-                                 alt="">
+                                 alt="{{auth()->user()->name}}">
                             <div class="ms-4">
                                 <h5 class="text-lg font-semibold">{{auth()->user()->name}}</h5>
                                 <p class="text-slate-400">{{auth()->user()->occupation}}</p>

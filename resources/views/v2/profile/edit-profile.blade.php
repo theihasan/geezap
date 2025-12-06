@@ -8,7 +8,7 @@
                 <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6">
                     <!-- Profile Image -->
                     <div class="relative group">
-                        <img src="{{asset('assets/images/profile.jpg')}}" alt="{{ auth()->user()->name }}"
+                        <img src="{{ auth()->user()->profile_image_or_default }}" alt="{{ auth()->user()->name }}"
                              class="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl object-cover border-3 border-white dark:border-gray-700 shadow-lg">
                         <div class="absolute inset-0 bg-black/40 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                             <button class="text-white hover:text-blue-400 transition-colors">
@@ -97,6 +97,8 @@
                                 </div>
                                 <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Personal Information</h2>
                             </div>
+
+
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <!-- Full Name -->
@@ -711,6 +713,65 @@
                 input.type = 'password';
                 icon.classList.remove('la-eye-slash');
                 icon.classList.add('la-eye');
+            }
+        }
+
+        // Profile image preview function
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                
+                // Check file size (5MB limit)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('File size must be less than 5MB');
+                    input.value = '';
+                    return;
+                }
+                
+                // Check file type
+                if (!file.type.match('image.*')) {
+                    alert('Please select a valid image file');
+                    input.value = '';
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('profile-preview').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        // Remove profile image function
+        function removeProfileImage() {
+            if (confirm('Are you sure you want to remove your profile photo?')) {
+                fetch('{{ route("profile.image.remove") }}', {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('profile-preview').src = '{{ asset("assets/images/profile.jpg") }}';
+                        document.getElementById('profile-image').value = '';
+                        
+                        // Hide remove button if no more image
+                        const removeBtn = document.querySelector('button[onclick="removeProfileImage()"]');
+                        if (removeBtn) removeBtn.style.display = 'none';
+                        
+                        alert('Profile photo removed successfully!');
+                    } else {
+                        alert('Error removing profile photo: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error removing profile photo');
+                });
             }
         }
 

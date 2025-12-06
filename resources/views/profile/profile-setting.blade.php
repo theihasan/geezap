@@ -16,7 +16,7 @@
                 <div class="md:w-full">
                     <div class="relative flex items-end justify-between mt-4">
                         <div class="relative flex items-end">
-                            <img src="{{asset('assets/images/profile.jpg')}}"
+                            <img src="{{ auth()->user()->profile_image_or_default }}"
                                  class="size-28 rounded-full shadow dark:shadow-gray-800 ring-4 ring-slate-50 dark:ring-slate-800"
                                  alt="">
                             <div class="ms-4">
