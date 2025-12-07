@@ -57,7 +57,7 @@ class OnboardingTest extends TestCase
             ->assertSee('Essential Information')
             ->assertSee('Step 2 of 3')
             ->assertSee('What\'s your occupation?', false)
-            ->assertSee('Tell us about yourself');
+            ->assertSee('Tell us about your professional background');
     }
 
     public function test_preferences_page_displays_correctly(): void
@@ -68,8 +68,8 @@ class OnboardingTest extends TestCase
 
         $response->assertSuccessful()
             ->assertSee('Your Preferences')
-            ->assertSee('Final Step')
-            ->assertSee('Email notifications')
+            ->assertSee('Step 3 of 3')
+            ->assertSee('Email alerts')
             ->assertSee('Job alerts');
     }
 
