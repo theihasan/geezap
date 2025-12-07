@@ -77,7 +77,9 @@ class UserFactory extends Factory
                     'current' => false,
                     'description' => 'Implemented CI/CD pipelines and managed cloud resources.'
                 ]
-            ])
+            ]),
+            'onboarding_completed_at' => null,
+            'profile_completion_score' => 0
         ];
     }
 
