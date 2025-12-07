@@ -29,6 +29,7 @@ class User extends Authenticatable implements FilamentUser, CanAccessAnalyticsDa
         'name','email','address','dob','state','country','occupation','postcode','phone','website','password',
         'bio','profile_image','facebook','twitter','linkedin','github','skills','locale','timezone','experience','role','facebook_id',
         'facebook_token','google_id','google_token','github_id','github_token','last_login_at',
+        'onboarding_completed_at','profile_completion_score',
     ];
 
     /**
@@ -56,6 +57,7 @@ class User extends Authenticatable implements FilamentUser, CanAccessAnalyticsDa
             'skills' => 'array',
             'role' => Role::class,
             'last_login_at' => 'datetime',
+            'onboarding_completed_at' => 'datetime',
         ];
     }
 
@@ -88,7 +90,6 @@ class User extends Authenticatable implements FilamentUser, CanAccessAnalyticsDa
         return $this->preferences ?: new UserPreference([
             'show_recommendations' => true,
             'email_notifications_enabled' => true,
-            'job_alerts_enabled' => true,
             'remote_only' => false,
         ]);
     }

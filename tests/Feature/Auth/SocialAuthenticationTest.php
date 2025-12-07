@@ -61,7 +61,7 @@ class SocialAuthenticationTest extends TestCase
         $user = User::where('email', 'test@example.com')->first();
         $this->assertNotNull($user);
         $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard'));
+        $response->assertRedirect(route('onboarding.welcome'));
     }
 
     public function test_social_callback_logs_in_existing_user(): void
