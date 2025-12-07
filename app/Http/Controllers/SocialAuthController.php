@@ -72,6 +72,11 @@ class SocialAuthController extends Controller
 
             Auth::login($user, remember: true);
             $user->update(['last_login_at' => now()]);
+            
+            if ($user->wasRecentlyCreated || !$user->onboarding_completed_at) {
+                return redirect()->route('onboarding.welcome');
+            }
+            
             return redirect()->intended(route('dashboard'));
         } catch (\Exception $e){
             logger('Error on social login: ' . $e->getMessage());
