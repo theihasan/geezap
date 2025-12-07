@@ -33,6 +33,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/onboarding/essential-info', [OnboardingController::class, 'storeEssentialInfo'])->name('onboarding.essential-info.store');
     Route::get('/onboarding/preferences', [OnboardingController::class, 'preferences'])->name('onboarding.preferences');
     Route::post('/onboarding/preferences', [OnboardingController::class, 'storePreferences'])->name('onboarding.preferences.store');
+    Route::get('/onboarding/skip', [OnboardingController::class, 'skip'])->name('onboarding.skip');
     Route::post('/onboarding/skip', [OnboardingController::class, 'skip'])->name('onboarding.skip.post');
 });
 
