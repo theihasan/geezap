@@ -34,10 +34,8 @@ class EnsureOnboardingCompleted
         
         // Allow auth routes
         $authPaths = ['/login', '/register', '/forgot-password', '/reset-password', '/verify-email'];
-        foreach ($authPaths as $authPath) {
-            if (str_starts_with($path, $authPath)) {
-                return $next($request);
-            }
+        if (\Illuminate\Support\Str::startsWith($path, $authPaths)) {
+            return $next($request);
         }
         
         // Allow API routes

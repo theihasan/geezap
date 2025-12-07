@@ -59,7 +59,7 @@ class OnboardingController extends Controller
         ]);
 
         $user = Auth::user();
-        $country = Country::query()->find($request->country_id);
+        $country = Country::query()->findOrFail($request->country_id);
         
         $user->update([
             'occupation' => $request->occupation,
@@ -84,7 +84,7 @@ class OnboardingController extends Controller
             return redirect()->route('dashboard');
         }
 
-        $preferences = $user->userPreference;
+        $preferences = $user->preferences;
         if (!$preferences) {
             $preferences = new UserPreference();
         }
@@ -106,7 +106,7 @@ class OnboardingController extends Controller
 
         $user = Auth::user();
 
-        $preferences = $user->preferences ?: new UserPreference();
+        $preferences = $user->preferences()->firstOrNew([]);
         $preferences->fill([
             'user_id' => $user->id,
             'email_notifications' => $request->boolean('email_notifications', true),
@@ -115,11 +115,7 @@ class OnboardingController extends Controller
             'marketing_emails' => $request->boolean('marketing_emails', false),
         ]);
 
-        if (!$preferences->exists) {
-            $user->preferences()->save($preferences);
-        } else {
-            $preferences->save();
-        }
+        $preferences->save();
 
         $user->update([
             'onboarding_completed_at' => now(),
@@ -151,12 +147,8 @@ class OnboardingController extends Controller
      */
     private function updateProfileCompletionScore(User $user): void
     {
-        if ($user->onboarding_completed_at) {
-            $user->update(['profile_completion_score' => 100]);
-            return;
-        }
-
-        // During onboarding, calculate based on required fields only
+        
+        // Calculate score based on a weighted average of required and optional fields
         $requiredFields = [
             'name' => !empty($user->name),
             'email' => !empty($user->email),
