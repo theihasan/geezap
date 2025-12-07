@@ -12,6 +12,7 @@ class UserPreference extends Model
         'preferred_job_categories_id', 'preferred_regions_id', 'preferred_job_types', 
         'preferred_experience_levels', 'min_salary', 'max_salary', 'remote_only', 
         'email_notifications_enabled', 'show_recommendations', 
+        'email_notifications', 'job_alerts', 'newsletter', 'marketing_emails',
         'last_recommendation_update'
     ];
 
@@ -25,9 +26,13 @@ class UserPreference extends Model
         'email_notifications_enabled' => 'boolean',
         'show_recommendations' => 'boolean',
         'remote_only' => 'boolean',
+        'email_notifications' => 'boolean',
+        'job_alerts' => 'boolean',
+        'newsletter' => 'boolean',
+        'marketing_emails' => 'boolean',
         'last_recommendation_update' => 'datetime',
         ];
-   }
+    }
 
     public function user(): BelongsTo
     {
