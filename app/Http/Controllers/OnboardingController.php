@@ -67,7 +67,6 @@ class OnboardingController extends Controller
             'bio' => $request->bio,
         ]);
 
-        $user->refresh();
         $this->updateProfileCompletionScore($user);
 
         return redirect()->route('onboarding.preferences');
