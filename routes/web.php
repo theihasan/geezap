@@ -6,6 +6,7 @@ use App\Http\Controllers\HomePageController;
 use App\Http\Controllers\JobCategoryController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\JobPreferencesController;
+use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SocialAuthController;
 use Illuminate\Support\Facades\Route;
@@ -24,11 +25,20 @@ Route::prefix('jobs')->group(function () {
 
 Route::get('/categories', JobCategoryController::class)->name('job.categories');
 
-Route::get('/dashboard', [ProfileController::class, 'dashboard'])->middleware(['auth'])->name('dashboard');
+Route::get('/dashboard', [ProfileController::class, 'dashboard'])->middleware(['auth', 'onboarding.required'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/onboarding/welcome', [OnboardingController::class, 'welcome'])->name('onboarding.welcome');
+    Route::get('/onboarding/essential-info', [OnboardingController::class, 'essentialInfo'])->name('onboarding.essential-info');
+    Route::post('/onboarding/essential-info', [OnboardingController::class, 'storeEssentialInfo'])->name('onboarding.essential-info.store');
+    Route::get('/onboarding/preferences', [OnboardingController::class, 'preferences'])->name('onboarding.preferences');
+    Route::post('/onboarding/preferences', [OnboardingController::class, 'storePreferences'])->name('onboarding.preferences.store');
+    Route::get('/onboarding/skip', [OnboardingController::class, 'skip'])->name('onboarding.skip');
+    Route::post('/onboarding/skip', [OnboardingController::class, 'skip'])->name('onboarding.skip.post');
+});
+
+Route::middleware(['auth', 'onboarding.required'])->group(function () {
     Route::get('/profile-update', [ProfileController::class, 'edit'])
-        ->middleware(['auth'])
         ->name('profile.update');
     Route::post('personal-info', [ProfileController::class, 'updatePersonalInfo'])->name('personal-info.update');
     Route::post('contact-info', [ProfileController::class, 'updateContactInfo'])->name('contact-info.update');
