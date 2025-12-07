@@ -83,14 +83,6 @@ class User extends Authenticatable implements FilamentUser, CanAccessAnalyticsDa
     }
 
     /**
-     * Get the user's preferences.
-     */
-    public function userPreference(): HasOne
-    {
-        return $this->hasOne(UserPreference::class);
-    }
-
-    /**
      * Get user preferences with defaults if none exist.
      */
     public function getPreferencesWithDefaults()
