@@ -65,7 +65,7 @@
                                 required
                             >
                                 <option value="">Select your country</option>
-                                @foreach(\App\Models\Country::where('is_active', true)->orderBy('name')->get() as $country)
+                                @foreach($countries as $country)
                                     <option value="{{ $country->id }}" {{ old('country_id') == $country->id ? 'selected' : '' }}>
                                         {{ $country->name }}
                                     </option>
