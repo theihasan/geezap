@@ -31,6 +31,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'cf-turnstile.verify' => VerifyClouflareTurnstile::class,
             'api.throttle' => \App\Http\Middleware\ApiThrottleMiddleware::class,
+            'onboarding.required' => \App\Http\Middleware\EnsureOnboardingCompleted::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
