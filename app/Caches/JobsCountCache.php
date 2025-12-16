@@ -1,35 +1,36 @@
 <?php
+
 namespace App\Caches;
 
 use App\Models\JobListing;
 use Illuminate\Support\Facades\Cache;
 
-class JobsCountCache{
-
+class JobsCountCache
+{
     public static function todayAdded()
     {
-        return Cache::remember(self::todayAddedKey(), 24 * 60, function () {
+        return Cache::remember(self::todayAddedKey(), 6 * 60 * 60, function () {
             return JobListing::whereDate('created_at', today())->count();
         });
     }
 
     public static function lastWeekAdded()
     {
-        return Cache::remember(self::lastWeekAddedKey(), 24 * 60, function () {
+        return Cache::remember(self::lastWeekAddedKey(), 6 * 60 * 60, function () {
             return JobListing::whereBetween('created_at', [now()->subWeek(), now()])->count();
         });
     }
 
     public static function availableJobsCount()
     {
-        return Cache::remember(self::availableJobsKey(), 24 * 60, function () {
+        return Cache::remember(self::availableJobsKey(), 6 * 60 * 60, function () {
             return JobListing::count();
         });
     }
 
     public static function categoriesCount()
     {
-        return Cache::remember(self::categoriesCountKey(), 24 * 60, function () {
+        return Cache::remember(self::categoriesCountKey(), 6 * 60 * 60, function () {
             return JobListing::distinct()->count('job_category');
         });
     }
@@ -73,5 +74,4 @@ class JobsCountCache{
     {
         return 'jobCategoriesCount';
     }
-
 }
