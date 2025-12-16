@@ -10,8 +10,9 @@ class SmartRelatedJobListingCache
     public static function get(JobListing $job)
     {
         $cacheKey = 'smart_related_jobs_' . $job->slug;
+        $tags = ['smart_related_jobs', 'smart_related_jobs_category_' . $job->job_category];
 
-        return Cache::remember($cacheKey, 60 * 24, function () use ($job) {
+        return Cache::tags($tags)->remember($cacheKey, 60 * 24, function () use ($job) {
             return self::getSmartRelatedJobs($job);
         });
     }
@@ -61,23 +62,6 @@ class SmartRelatedJobListingCache
 
     public static function invalidateForCategory($category)
     {
-        $pattern = 'smart_related_jobs_*';
-        
-        $keys = Cache::getRedis()->keys(config('cache.prefix') . ':' . $pattern);
-        
-        if (!empty($keys)) {
-            $keys = array_map(function ($key) {
-                return str_replace(config('cache.prefix') . ':', '', $key);
-            }, $keys);
-            
-            foreach ($keys as $key) {
-                $jobSlug = str_replace('smart_related_jobs_', '', $key);
-                $job = JobListing::where('slug', $jobSlug)->first();
-                
-                if ($job && $job->job_category === $category) {
-                    Cache::forget($key);
-                }
-            }
-        }
+        Cache::tags('smart_related_jobs_category_' . $category)->flush();
     }
 }
