@@ -25,7 +25,7 @@ class SmartRelatedJobListingCache
         $seed = crc32($job->slug . date('Y-m-d')) % 1000000;
 
         return JobListing::query()
-            ->where('job_category', $job->job_category)
+            ->where('job_category', (int) $job->job_category)
             ->where('id', '!=', $job->id)
             ->select([
                 'id', 'employer_name', 'slug', 'state', 'country', 'employment_type', 
