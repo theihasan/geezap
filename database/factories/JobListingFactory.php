@@ -23,11 +23,11 @@ class JobListingFactory extends Factory
         $jobTitle = fake()->words(3, true);
 
         return [
-            'job_id' => $this->faker->uuid(),
-            'uuid' => $this->faker->uuid(),
-            'employer_name' => $this->faker->company(),
-            'employer_logo' => $this->faker->imageUrl(100, 100),
-            'employer_website' => $this->faker->url(),
+            'job_id' => 'job-' . $this->faker->unique()->randomNumber(7),
+            'uuid' => \Illuminate\Support\Str::uuid(),
+            'employer_name' => fake()->company(),
+            'employer_logo' => fake()->imageUrl(100, 100),
+            'employer_website' => fake()->url(),
             'employer_company_type' => $this->faker->randomElement(['Private', 'Public', 'Non-profit']),
             'publisher' => $this->faker->randomElement(['LinkedIn', 'Indeed', 'Glassdoor', 'Monster']),
             'employment_type' => $this->faker->randomElement(['Full-time', 'Part-time', 'Contract', 'Freelance']),
