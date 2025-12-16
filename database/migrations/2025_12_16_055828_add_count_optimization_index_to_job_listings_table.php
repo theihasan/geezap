@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::table('job_listings', function (Blueprint $table) {
             $table->index(['id'], 'job_listings_count');
+            $table->index(['created_at'], 'job_listings_created_at');
+            $table->index(['job_category'], 'job_listings_job_category');
         });
     }
 
@@ -23,6 +25,8 @@ return new class extends Migration
     {
         Schema::table('job_listings', function (Blueprint $table) {
             $table->dropIndex('job_listings_count');
+            $table->dropIndex('job_listings_created_at');
+            $table->dropIndex('job_listings_job_category');
         });
     }
 };
