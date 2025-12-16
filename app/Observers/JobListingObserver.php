@@ -13,9 +13,11 @@ use App\Caches\JobsCountCache;
 use App\Caches\LatestJobsCache;
 use App\Caches\MostViewedJobsCache;
 use App\Caches\RelatedJobListingCache;
+use App\Caches\ImprovedRelatedJobListingCache;
 use App\Jobs\SubmitUrlToGoogleIndexing;
 use App\Models\JobListing;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class JobListingObserver
@@ -33,6 +35,7 @@ class JobListingObserver
         $this->clearCache();
         // Only invalidate related jobs cache for the same category
         RelatedJobListingCache::invalidateForCategory($jobListing->job_category);
+        ImprovedRelatedJobListingCache::invalidateForCategory($jobListing->job_category);
 
         // Dispatch Google indexing job (disabled via config)
         //$this->dispatchGoogleIndexingJob($jobListing, 'URL_UPDATED');
@@ -43,6 +46,7 @@ class JobListingObserver
         $this->clearCache();
         // Only invalidate related jobs cache for the same category
         RelatedJobListingCache::invalidateForCategory($jobListing->job_category);
+        ImprovedRelatedJobListingCache::invalidateForCategory($jobListing->job_category);
 
         // Dispatch Google indexing job (disabled via config)
         //$this->dispatchGoogleIndexingJob($jobListing, 'URL_UPDATED');
@@ -53,6 +57,7 @@ class JobListingObserver
         $this->clearCache();
         // Only invalidate related jobs cache for the same category
         RelatedJobListingCache::invalidateForCategory($jobListing->job_category);
+        ImprovedRelatedJobListingCache::invalidateForCategory($jobListing->job_category);
 
         // Dispatch Google indexing job for deletion (disabled via config)
         //$this->dispatchGoogleIndexingJob($jobListing, 'URL_DELETED');
@@ -116,7 +121,7 @@ class JobListingObserver
             $url = route('job.show', $jobListing->slug);
             SubmitUrlToGoogleIndexing::dispatch($url, $type);
         } catch (\Exception $e) {
-            \Log::warning('Failed to dispatch Google indexing job', [
+            Log::warning('Failed to dispatch Google indexing job', [
                 'job_listing_id' => $jobListing->id,
                 'slug' => $jobListing->slug,
                 'type' => $type,

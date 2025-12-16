@@ -7,6 +7,7 @@ use App\Caches\JobListingCache;
 use App\Caches\JobPageCache;
 use App\Caches\JobViewsCache;
 use App\Caches\RelatedJobListingCache;
+use App\Caches\ImprovedRelatedJobListingCache;
 use App\Services\SearchSuggestionService;
 use App\Services\SeoMetaService;
 use App\Traits\DetectsUserCountry;
@@ -15,6 +16,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class JobController extends Controller
 {
@@ -54,7 +56,7 @@ class JobController extends Controller
 
                 $searchService->trackSearch([
                     'query' => $request->search,
-                    'user_id' => auth()->id(),
+                    'user_id' => Auth::id(),
                     'results_count' => $jobs->total(),
                     'filters' => $appliedFilters,
                 ]);
@@ -81,7 +83,7 @@ class JobController extends Controller
     {
         $jobViews = JobViewsCache::get($slug, request()->ip());
         $job = JobListingCache::get($slug);
-        $relatedJobs = RelatedJobListingCache::get($slug, $job);
+        $relatedJobs = ImprovedRelatedJobListingCache::get($job);
         $meta = $seoService->generateJobDetailMeta($job);
 
         return view('v2.job.details', [
