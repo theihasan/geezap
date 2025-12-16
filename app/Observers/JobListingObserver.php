@@ -70,16 +70,37 @@ class JobListingObserver
         CountryAwareMostViewedJobsCache::invalidate();
         CountryAwareLatestJobsCache::invalidate();
         CountryAwareJobPageCache::invalidate();
-
-        JobsCountCache::invalidateLastWeekAdded();
-        JobsCountCache::invalidateTodayAdded();
-        JobsCountCache::invalidateAvailableJobsCount();
+        
         // Only invalidate related jobs cache for the same category, not all
         // RelatedJobListingCache::invalidate(); // Commented out to reduce aggressive cache clearing
         JobCategoryCache::invalidate();
-        JobsCountCache::invalidateCategoriesCount();
         JobFilterCache::invalidate();
+
+        if ($this->shouldInvalidateCountCaches()) {
+            JobsCountCache::invalidateLastWeekAdded();
+            JobsCountCache::invalidateTodayAdded();
+            JobsCountCache::invalidateAvailableJobsCount();
+            JobsCountCache::invalidateCategoriesCount();
+        }
     }
+
+    /**
+     * Determine if count caches should be invalidated to reduce cache churn
+     */
+     private function shouldInvalidateCountCaches(): bool
+     {
+         $counter = Cache::increment('job_count_cache_invalidation_counter');
+     
+         // Invalidate every 10th operation.
+         $shouldInvalidate = ($counter % 10 === 0);
+     
+         // Reset counter periodically to prevent it from growing too large.
+         if ($counter >= 100) {
+             Cache::put('job_count_cache_invalidation_counter', 0);
+         }
+     
+         return $shouldInvalidate;
+     }
 
     protected function dispatchGoogleIndexingJob(JobListing $jobListing, string $type): void
     {
