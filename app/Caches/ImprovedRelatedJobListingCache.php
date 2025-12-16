@@ -10,8 +10,9 @@ class ImprovedRelatedJobListingCache
     public static function get(JobListing $job)
     {
         $cacheKey = 'related_jobs_v2_' . $job->slug;
+        $tags = ['related_jobs_v2', 'related_jobs_v2_category_' . $job->job_category];
 
-        return Cache::remember($cacheKey, 60 * 24, function () use ($job) {
+        return Cache::tags($tags)->remember($cacheKey, 60 * 24, function () use ($job) {
             return self::getRelatedJobsRandomSampling($job);
         });
     }
@@ -35,25 +36,6 @@ class ImprovedRelatedJobListingCache
 
     public static function invalidateForCategory($category)
     {
-        $pattern = 'related_jobs_v2_*';
-        
-        // Get all cache keys matching the pattern
-        $keys = Cache::getRedis()->keys(config('cache.prefix') . ':' . $pattern);
-        
-        if (!empty($keys)) {
-            // Remove the cache prefix from keys
-            $keys = array_map(function ($key) {
-                return str_replace(config('cache.prefix') . ':', '', $key);
-            }, $keys);
-            
-            foreach ($keys as $key) {
-                $jobSlug = str_replace('related_jobs_v2_', '', $key);
-                $job = JobListing::where('slug', $jobSlug)->first();
-                
-                if ($job && $job->job_category == $category) {
-                    Cache::forget($key);
-                }
-            }
-        }
+        Cache::tags('related_jobs_v2_category_' . $category)->flush();
     }
 }
