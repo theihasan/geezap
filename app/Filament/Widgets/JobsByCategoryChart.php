@@ -65,21 +65,21 @@ class JobsByCategoryChart extends ChartWidget
                     }
                 })->toArray();
 
+            // Build data array matching the trend format (moved outside the loop to prevent N+1)
+            $trendData = Trend::query(JobListing::query())
+                ->between(
+                    start: $startDate,
+                    end: $endDate,
+                )
+                ->perWeek()
+                ->count();
+
             // Generate datasets for each category using the pre-fetched data
             foreach ($topCategories as $index => $category) {
                 $categoryData = $jobData->get($category->id, collect());
 
                 // Create a map of week -> count for this category
                 $weekCounts = $categoryData->pluck('count', 'date_week');
-
-                // Build data array matching the trend format
-                $trendData = Trend::query(JobListing::query())
-                    ->between(
-                        start: $startDate,
-                        end: $endDate,
-                    )
-                    ->perWeek()
-                    ->count();
 
                 $data = $trendData->map(function (TrendValue $value) use ($weekCounts) {
                     $week = \Carbon\Carbon::parse($value->date)->format('Y-W');
@@ -131,7 +131,7 @@ class JobsByCategoryChart extends ChartWidget
 
         $jobData = JobListing::selectRaw('
                 job_category,
-                WEEK(created_at) as week_num,
+                WEEK(created_at, 3) as week_num,
                 YEAR(created_at) as year_num,
                 count(*) as count
             ')
