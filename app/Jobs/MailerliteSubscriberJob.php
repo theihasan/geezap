@@ -6,6 +6,7 @@ use App\Models\User;
 use Ihasan\LaravelMailerlite\Facades\MailerLite;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use function Sentry\logger;
 
 class MailerliteSubscriberJob implements ShouldQueue
 {
@@ -26,15 +27,10 @@ class MailerliteSubscriberJob implements ShouldQueue
     {
         $user = User::query()->findOrFail($this->userId);
         
-        $subscriber = MailerLite::subscribers()
+        MailerLite::subscribers()
             ->email($user->email)
-            ->find();
+            ->named($user->name)
+            ->subscribe();
             
-        if($subscriber) {
-            MailerLite::subscribers()
-                ->email($user->email)
-                ->named($user->name)
-                ->subscribe();
-        }
     }
 }
