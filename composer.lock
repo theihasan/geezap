@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "925122c81807a4879ea211d16c7870c3",
+    "content-hash": "6cb250acc92e7d0ac141ee33475c02e5",
     "packages": [
         {
             "name": "abbasudo/laravel-purity",
@@ -1928,7 +1928,7 @@
         },
         {
             "name": "geezap/content-formatter",
-            "version": "dev-fix-mix-content-ssl-issue",
+            "version": "dev-mailer-lite-implement",
             "dist": {
                 "type": "path",
                 "url": "./packages/geezap/content-formatter",
@@ -4451,6 +4451,79 @@
                 }
             ],
             "time": "2025-07-17T05:12:15+00:00"
+        },
+        {
+            "name": "mailerlite/mailerlite-php",
+            "version": "v1.0.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mailerlite/mailerlite-php.git",
+                "reference": "cd401460a20d7fe545a932623f193115de654141"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mailerlite/mailerlite-php/zipball/cd401460a20d7fe545a932623f193115de654141",
+                "reference": "cd401460a20d7fe545a932623f193115de654141",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "php": "^7.4|^8.0",
+                "php-http/client-common": "^2.2",
+                "php-http/discovery": "^1.9",
+                "php-http/httplug": "^2.1",
+                "psr/http-client": "^1.0",
+                "psr/http-client-implementation": "^1.0",
+                "psr/http-factory": "^1.0",
+                "psr/http-message": "^1.0 || ^2.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.18",
+                "guzzlehttp/psr7": "^2.6.1",
+                "http-interop/http-factory-guzzle": "^1.0",
+                "mockery/mockery": "^0.9.4",
+                "nyholm/psr7": "^1.8",
+                "php-http/guzzle7-adapter": "^0.1",
+                "php-http/message": "^1.0",
+                "php-http/mock-client": "^1.0",
+                "phpstan/phpstan": "^1.10",
+                "phpunit/phpunit": "^7.5.15 || ^8.4 || ^9.0"
+            },
+            "suggest": {
+                "guzzlehttp/guzzle": "^7.8 || ^8.0",
+                "nyholm/psr7": "^1.8",
+                "symfony/http-client": "^7.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "MailerLite\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Remigijus Rekerta",
+                    "email": "remigijus.rekerta@mailerlite.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "MailerLite PHP SDK",
+            "homepage": "https://github.com/mailerlite/mailerlite-php",
+            "keywords": [
+                "email",
+                "mailerlite",
+                "marketing",
+                "sdk"
+            ],
+            "support": {
+                "issues": "https://github.com/mailerlite/mailerlite-php/issues",
+                "source": "https://github.com/mailerlite/mailerlite-php/tree/v1.0.5"
+            },
+            "time": "2025-11-12T13:43:53+00:00"
         },
         {
             "name": "masterminds/html5",
@@ -11302,6 +11375,83 @@
                 }
             ],
             "time": "2025-08-13T11:49:31+00:00"
+        },
+        {
+            "name": "theihasan/laravel-mailerlite",
+            "version": "v1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/theihasan/laravel-mailerlite.git",
+                "reference": "cf0f8a48a6af16bf56f033495dd9753163d40a28"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/theihasan/laravel-mailerlite/zipball/cf0f8a48a6af16bf56f033495dd9753163d40a28",
+                "reference": "cf0f8a48a6af16bf56f033495dd9753163d40a28",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/contracts": "^10.0|^11.0|^12.0",
+                "mailerlite/mailerlite-php": "^1.0",
+                "php": "^8.2",
+                "spatie/laravel-package-tools": "^1.16"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.14",
+                "nunomaduro/collision": "^8.8",
+                "orchestra/testbench": "^9.0.0",
+                "pestphp/pest": "^3.0",
+                "pestphp/pest-plugin-arch": "^3.0",
+                "pestphp/pest-plugin-laravel": "^3.0",
+                "phpstan/extension-installer": "^1.3",
+                "phpstan/phpstan": "^1.10"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "MailerLite": "Ihasan\\LaravelMailerlite\\Facades\\MailerLite"
+                    },
+                    "providers": [
+                        "Ihasan\\LaravelMailerlite\\LaravelMailerliteServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Ihasan\\LaravelMailerlite\\": "src/",
+                    "Ihasan\\LaravelMailerlite\\Database\\Factories\\": "database/factories/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Abul Hassan",
+                    "email": "imabulhasan99@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A Laravel wrapper for the official MailerLite PHP SDK",
+            "homepage": "https://github.com/theihasan/laravel-mailerlite",
+            "keywords": [
+                "Ihasan",
+                "laravel",
+                "laravel-mailerlite"
+            ],
+            "support": {
+                "issues": "https://github.com/theihasan/laravel-mailerlite/issues",
+                "source": "https://github.com/theihasan/laravel-mailerlite/tree/v1.0.2"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/Ihasan",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-09-07T14:25:08+00:00"
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",
