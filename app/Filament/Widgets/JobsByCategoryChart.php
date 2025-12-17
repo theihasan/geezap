@@ -29,32 +29,27 @@ class JobsByCategoryChart extends ChartWidget
                 '#8b5cf6', '#06b6d4', '#ec4899', '#84cc16',
             ];
 
-            // Generate data for each category over the last 8 weeks
-            foreach ($topCategories as $index => $category) {
-                $data = Trend::query(
-                    JobListing::where('job_category', $category->id)
-                )
-                    ->between(
-                        start: now()->subWeek(),
-                        end: now(),
-                    )
-                    ->perWeek()
-                    ->count();
+            $startDate = now()->subWeek();
+            $endDate = now();
 
-                $datasets[] = [
-                    'label' => $category->name,
-                    'data' => $data->map(fn (TrendValue $value) => $value->aggregate)->toArray(),
-                    'borderColor' => $colors[$index % count($colors)],
-                    'backgroundColor' => $colors[$index % count($colors)].'20',
-                    'tension' => 0.3,
-                ];
-            }
+            // Get all data in a single optimized query to prevent N+1
+            $jobData = JobListing::selectRaw("
+                    job_category,
+                    date_format(created_at, '%Y-%u') as date_week,
+                    count(*) as count
+                ")
+                ->whereIn('job_category', $topCategories->pluck('id'))
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->groupBy(['job_category', 'date_week'])
+                ->orderBy('date_week')
+                ->get()
+                ->groupBy('job_category');
 
-            // Get labels for the last 8 weeks
-            $labels = Trend::query(JobListing::class)
+            // Get labels for the date range
+            $labels = Trend::query(JobListing::query())
                 ->between(
-                    start: now()->subWeek(),
-                    end: now(),
+                    start: $startDate,
+                    end: $endDate,
                 )
                 ->perWeek()
                 ->count()
@@ -69,6 +64,37 @@ class JobsByCategoryChart extends ChartWidget
                         return 'N/A';
                     }
                 })->toArray();
+
+            // Generate datasets for each category using the pre-fetched data
+            foreach ($topCategories as $index => $category) {
+                $categoryData = $jobData->get($category->id, collect());
+
+                // Create a map of week -> count for this category
+                $weekCounts = $categoryData->pluck('count', 'date_week');
+
+                // Build data array matching the trend format
+                $trendData = Trend::query(JobListing::query())
+                    ->between(
+                        start: $startDate,
+                        end: $endDate,
+                    )
+                    ->perWeek()
+                    ->count();
+
+                $data = $trendData->map(function (TrendValue $value) use ($weekCounts) {
+                    $week = \Carbon\Carbon::parse($value->date)->format('Y-W');
+
+                    return $weekCounts->get($week, 0);
+                })->toArray();
+
+                $datasets[] = [
+                    'label' => $category->name,
+                    'data' => $data,
+                    'borderColor' => $colors[$index % count($colors)],
+                    'backgroundColor' => $colors[$index % count($colors)].'20',
+                    'tension' => 0.3,
+                ];
+            }
 
             return [
                 'datasets' => $datasets,
@@ -93,25 +119,43 @@ class JobsByCategoryChart extends ChartWidget
             '#8b5cf6', '#06b6d4', '#ec4899', '#84cc16',
         ];
 
-        // Generate labels for the last 8 weeks
+        // Generate labels for the last 2 weeks
         for ($i = 1; $i >= 0; $i--) {
             $startOfWeek = now()->subWeeks($i)->startOfWeek();
             $labels[] = $startOfWeek->format('M j');
         }
 
-        // Generate data for each category
+        // Get all job data in a single optimized query
+        $startDate = now()->subWeeks(1)->startOfWeek();
+        $endDate = now()->endOfWeek();
+
+        $jobData = JobListing::selectRaw('
+                job_category,
+                WEEK(created_at) as week_num,
+                YEAR(created_at) as year_num,
+                count(*) as count
+            ')
+            ->whereIn('job_category', $topCategories->pluck('id'))
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->groupBy(['job_category', 'week_num', 'year_num'])
+            ->get()
+            ->groupBy('job_category');
+
+        // Generate data for each category using pre-fetched data
         foreach ($topCategories as $index => $category) {
+            $categoryData = $jobData->get($category->id, collect());
             $data = [];
 
             for ($i = 1; $i >= 0; $i--) {
-                $startOfWeek = now()->subWeeks($i)->startOfWeek();
-                $endOfWeek = now()->subWeeks($i)->endOfWeek();
+                $weekStart = now()->subWeeks($i)->startOfWeek();
+                $weekNum = $weekStart->week;
+                $yearNum = $weekStart->year;
 
-                $count = JobListing::where('job_category', $category->id)
-                    ->whereBetween('created_at', [$startOfWeek, $endOfWeek])
-                    ->count();
+                $weekData = $categoryData->where('week_num', $weekNum)
+                    ->where('year_num', $yearNum)
+                    ->first();
 
-                $data[] = $count;
+                $data[] = $weekData ? (int) $weekData->count : 0;
             }
 
             $datasets[] = [
