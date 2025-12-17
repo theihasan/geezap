@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\SocialProvider;
+use App\Jobs\MailerliteSubscriberJob;
 use App\Models\User;
 use App\Services\ProfileImageService;
 use Illuminate\Auth\Events\Registered;
@@ -53,8 +54,9 @@ class SocialAuthController extends Controller
 
                 default: break;
             }
-
-
+            
+            MailerliteSubscriberJob::dispatch((int) $user->id);
+            
             if ($user->wasRecentlyCreated) {
                 $data['name'] = $providerResponse->getName() ?? $providerResponse->getNickname();
                 $data['bio'] = $providerResponse->user['bio'] ?? '';
