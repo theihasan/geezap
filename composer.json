@@ -30,6 +30,7 @@
         "resend/resend-php": "^0.18.0",
         "sentry/sentry-laravel": "^4.10",
         "spatie/laravel-backup": "^9.3",
+        "theihasan/laravel-mailerlite": "^1.0",
         "typesense/typesense-php": "^5.1"
     },
     "require-dev": {
