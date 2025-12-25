@@ -160,6 +160,7 @@ return [
     'typesense' => [
         'client-settings' => [
             'api_key' => env('TYPESENSE_API_KEY', 'xyz'),
+            'search_only_api_key' => env('TYPESENSE_SEARCH_ONLY_API_KEY'),
             'nodes' => [
                 [
                     'host' => env('TYPESENSE_HOST', 'localhost'),
