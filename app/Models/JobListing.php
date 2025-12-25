@@ -108,30 +108,81 @@ class JobListing extends Model
     public function toSearchableArray(): array
     {
         return [
+            // Core fields
             'id' => (string) $this->id,
             'job_title' => (string) ($this->job_title ?? ''),
             'employer_name' => (string) ($this->employer_name ?? ''),
             'description' => (string) ($this->description ?? ''),
+            
+            // Location fields
             'city' => (string) ($this->city ?? ''),
             'state' => (string) ($this->state ?? ''),
             'country' => (string) ($this->country ?? ''),
+            'location_geopoint' => $this->getLocationGeopoint(),
+            
+            // Employment fields
             'employment_type' => (string) ($this->employment_type ?? ''),
             'is_remote' => (bool) $this->is_remote,
             'job_category' => (string) ($this->job_category ?? ''),
             'required_experience' => (int) ($this->required_experience ?? 0),
+            
+            // Salary fields
             'salary_min' => (int) ($this->min_salary ?? 0),
             'salary_max' => (int) ($this->max_salary ?? 0),
             'salary_currency' => (string) ($this->salary_currency ?? ''),
             'salary_period' => (string) ($this->salary_period ?? ''),
+            
+            // Metadata
             'publisher' => (string) ($this->publisher ?? ''),
+            
+            // Date fields
             'posted_at' => $this->posted_at?->timestamp ?? $this->created_at->timestamp,
             'created_at' => $this->created_at->timestamp,
             'expired_at' => $this->expired_at?->timestamp,
-            'skills' => $this->skills ?? [],
-            'benefits' => $this->benefits ?? [],
-            'qualifications' => $this->qualifications ?? [],
-            'responsibilities' => $this->responsibilities ?? [],
+            
+            // Enhanced array fields
+            'skills' => $this->formatSearchableArray($this->skills),
+            'benefits' => $this->formatSearchableArray($this->benefits),
+            'qualifications' => $this->formatSearchableArray($this->qualifications),
+            'responsibilities' => $this->formatSearchableArray($this->responsibilities),
         ];
+    }
+
+    /**
+     * Get location geopoint for Typesense
+     */
+    private function getLocationGeopoint(): ?array
+    {
+        if (!$this->latitude || !$this->longitude) {
+            return null;
+        }
+        
+        return [(float) $this->latitude, (float) $this->longitude];
+    }
+
+    /**
+     * Format array fields for Typesense indexing
+     */
+    private function formatSearchableArray($field): array
+    {
+        if (empty($field)) {
+            return [];
+        }
+        
+        if (!is_array($field)) {
+            return [];
+        }
+        
+        // Filter out empty values and ensure strings
+        return array_values(array_filter(
+            array_map(function ($item) {
+                $trimmed = trim((string) $item);
+                return $trimmed !== '' ? $trimmed : null;
+            }, $field),
+            function ($item) {
+                return $item !== null;
+            }
+        ));
     }
 
     public function searchableAs(): string
