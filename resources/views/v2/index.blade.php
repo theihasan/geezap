@@ -355,13 +355,20 @@
             async function fetchSuggestions(query) {
                 try {
                     showLoadingState();
-                    const response = await fetch(`/api/search/suggestions?q=${encodeURIComponent(query)}&limit=8`);
-                    const data = await response.json();
+                    
+                    // Check if Typesense client is available
+                    if (!window.typesenseSearch) {
+                        console.warn('Typesense client not available, showing default suggestions');
+                        showPopularSuggestions();
+                        return;
+                    }
 
-                    if (data.success) {
-                        renderSuggestions(data.data.suggestions);
+                    // Use direct Typesense client for ultra-fast suggestions
+                    const suggestions = await window.typesenseSearch.getSuggestions(query.trim(), 8);
+                    
+                    if (suggestions && suggestions.length > 0) {
+                        renderSuggestions(suggestions);
                     } else {
-                        console.error('Failed to fetch suggestions:', data.message);
                         showPopularSuggestions();
                     }
                 } catch (error) {
@@ -469,31 +476,8 @@
 
             async function loadRecentSearches() {
                 @if(auth()->check())
-                try {
-                    const response = await fetch('/api/search/recent');
-                    const data = await response.json();
-
-                    if (data.success && data.data.searches.length > 0) {
-                        recentSearchesList.innerHTML = '';
-                        data.data.searches.forEach(search => {
-                            const item = document.createElement('button');
-                            item.type = 'button';
-                            item.className = 'recent-search-item text-left p-2 rounded-lg hover:bg-gray-50 dark:hover:bg-white/5 transition-colors flex items-center gap-2 w-full';
-                            item.innerHTML = `
-                                <i class="las la-history text-gray-400"></i>
-                                <span>${search}</span>
-                            `;
-                            item.addEventListener('click', function() {
-                                searchInput.value = search;
-                                searchForm.submit();
-                            });
-                            recentSearchesList.appendChild(item);
-                        });
-                        recentSearchesDiv.classList.remove('hidden');
-                    }
-                } catch (error) {
-                    console.error('Error loading recent searches:', error);
-                }
+                // Disabled API call - using localStorage for recent searches instead
+                console.log('Recent searches via API disabled - using localStorage if needed');
                 @endif
             }
 
