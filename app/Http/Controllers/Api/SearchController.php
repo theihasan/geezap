@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\Role;
 use App\Http\Controllers\Controller;
 use App\Services\SearchSuggestionService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class SearchController extends Controller
 {
@@ -38,7 +41,7 @@ class SearchController extends Controller
                 ],
             ]);
         } catch (\Exception $e) {
-            \Log::error('Search suggestions error', [
+            Log::error('Search suggestions error', [
                 'query' => $query,
                 'error' => $e->getMessage(),
             ]);
@@ -65,7 +68,7 @@ class SearchController extends Controller
         try {
             $this->searchService->trackSearch([
                 'query' => $request->query,
-                'user_id' => auth()->id(),
+                'user_id' => Auth::id(),
                 'results_count' => $request->results_count ?? 0,
                 'filters' => $request->filters ?? [],
             ]);
@@ -75,7 +78,7 @@ class SearchController extends Controller
                 'message' => 'Search tracked successfully',
             ]);
         } catch (\Exception $e) {
-            \Log::error('Search tracking error', [
+            Log::error('Search tracking error', [
                 'query' => $request->query,
                 'error' => $e->getMessage(),
             ]);
@@ -92,7 +95,7 @@ class SearchController extends Controller
      */
     public function stats(): JsonResponse
     {
-        if (! auth()->user()?->hasRole('admin')) {
+        if (! Auth::user() || Auth::user()->role !== Role::ADMIN) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized',
@@ -107,7 +110,7 @@ class SearchController extends Controller
                 'data' => $stats,
             ]);
         } catch (\Exception $e) {
-            \Log::error('Search stats error', ['error' => $e->getMessage()]);
+            Log::error('Search stats error', ['error' => $e->getMessage()]);
 
             return response()->json([
                 'success' => false,
@@ -121,7 +124,7 @@ class SearchController extends Controller
      */
     public function recent(): JsonResponse
     {
-        if (! auth()->check()) {
+        if (! Auth::check()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Authentication required',
@@ -129,7 +132,7 @@ class SearchController extends Controller
         }
 
         try {
-            $recentSearches = \App\Models\SearchAnalytics::where('user_id', auth()->id())
+            $recentSearches = \App\Models\SearchAnalytics::where('user_id', Auth::id())
                 ->orderBy('searched_at', 'desc')
                 ->limit(10)
                 ->pluck('query')
@@ -144,7 +147,7 @@ class SearchController extends Controller
                 ],
             ]);
         } catch (\Exception $e) {
-            \Log::error('Recent searches error', ['error' => $e->getMessage()]);
+            Log::error('Recent searches error', ['error' => $e->getMessage()]);
 
             return response()->json([
                 'success' => false,

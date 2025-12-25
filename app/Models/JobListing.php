@@ -109,6 +109,18 @@ class JobListing extends Model
     {
         $array = $this->toArray();
 
+        // Convert datetime fields to timestamps for Typesense compatibility
+        if (isset($array['posted_at']) && $array['posted_at']) {
+            $array['posted_at'] = $this->posted_at->timestamp;
+        } else {
+            // Use created_at as fallback for null posted_at
+            $array['posted_at'] = $this->created_at->timestamp;
+        }
+
+        if (isset($array['expired_at']) && $array['expired_at']) {
+            $array['expired_at'] = $this->expired_at->timestamp;
+        }
+
         return array_merge($array, [
             'id' => (string) $this->id,
             'created_at' => $this->created_at->timestamp,
