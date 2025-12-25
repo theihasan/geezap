@@ -185,8 +185,8 @@ return [
                 'collection-schema' => [
                     'fields' => [
                         ['name' => 'id', 'type' => 'string'],
-                        ['name' => 'job_title', 'type' => 'string'],
-                        ['name' => 'employer_name', 'type' => 'string'],
+                        ['name' => 'job_title', 'type' => 'string', 'facet' => true],
+                        ['name' => 'employer_name', 'type' => 'string', 'facet' => true],
                         ['name' => 'description', 'type' => 'string'],
                         ['name' => 'city', 'type' => 'string', 'optional' => true, 'facet' => true],
                         ['name' => 'state', 'type' => 'string', 'optional' => true, 'facet' => true],
