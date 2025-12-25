@@ -107,19 +107,31 @@ class JobListing extends Model
 
     public function toSearchableArray(): array
     {
-        $array = $this->toArray();
-
-        return array_merge($array, [
+        return [
             'id' => (string) $this->id,
-            'created_at' => $this->created_at->timestamp,
-            'job_category' => (string) $this->job_category,
+            'job_title' => (string) ($this->job_title ?? ''),
+            'employer_name' => (string) ($this->employer_name ?? ''),
+            'description' => (string) ($this->description ?? ''),
+            'city' => (string) ($this->city ?? ''),
+            'state' => (string) ($this->state ?? ''),
+            'country' => (string) ($this->country ?? ''),
+            'employment_type' => (string) ($this->employment_type ?? ''),
             'is_remote' => (bool) $this->is_remote,
-            'publisher' => (string) $this->publisher,
-            'salary_min' => (int) $this->min_salary,
-            'salary_max' => (int) $this->max_salary,
-            'salary_currency' => (string) $this->salary_currency,
-            'salary_period' => (string) $this->salary_period,
-        ]);
+            'job_category' => (string) ($this->job_category ?? ''),
+            'required_experience' => (int) ($this->required_experience ?? 0),
+            'salary_min' => (int) ($this->min_salary ?? 0),
+            'salary_max' => (int) ($this->max_salary ?? 0),
+            'salary_currency' => (string) ($this->salary_currency ?? ''),
+            'salary_period' => (string) ($this->salary_period ?? ''),
+            'publisher' => (string) ($this->publisher ?? ''),
+            'posted_at' => $this->posted_at?->timestamp ?? $this->created_at->timestamp,
+            'created_at' => $this->created_at->timestamp,
+            'expired_at' => $this->expired_at?->timestamp,
+            'skills' => $this->skills ?? [],
+            'benefits' => $this->benefits ?? [],
+            'qualifications' => $this->qualifications ?? [],
+            'responsibilities' => $this->responsibilities ?? [],
+        ];
     }
 
     public function searchableAs(): string
