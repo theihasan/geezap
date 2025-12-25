@@ -1,4 +1,5 @@
 import './bootstrap';
+import './typesense-search';
 import Alpine from 'alpinejs';
 
 window.Alpine = Alpine;
@@ -9,6 +10,11 @@ window.toggleMobileMenu = () => {
     const backdrop = document.getElementById('menu-backdrop');
     const menuItems = document.querySelectorAll('.mobile-menu-item');
     const icon = document.querySelector('#menu-toggle i');
+
+    // Return early if required elements don't exist
+    if (!menu || !backdrop || !icon) {
+        return;
+    }
 
     const isOpen = menu.classList.contains('translate-x-0');
 
@@ -42,7 +48,9 @@ document.addEventListener('click', (e) => {
     const menu = document.getElementById('mobile-menu');
     const menuButton = document.getElementById('menu-toggle');
 
-    if (!menu.contains(e.target) && !menuButton.contains(e.target) &&
+    // Only proceed if menu elements exist on this page
+    if (menu && menuButton && 
+        !menu.contains(e.target) && !menuButton.contains(e.target) &&
         !menu.classList.contains('translate-x-full')) {
         toggleMobileMenu();
     }
