@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\Role;
 use App\Http\Controllers\Controller;
 use App\Services\SearchSuggestionService;
 use Illuminate\Http\JsonResponse;
@@ -94,8 +95,7 @@ class SearchController extends Controller
      */
     public function stats(): JsonResponse
     {
-        // Simple admin check - you might want to implement proper role checking
-        if (! Auth::user() || Auth::user()->email !== 'admin@example.com') {
+        if (! Auth::user() || Auth::user()->role !== Role::ADMIN) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized',
