@@ -12,6 +12,12 @@ class TypesenseSearch {
             const response = await fetch('/api/typesense/config');
             const config = await response.json();
 
+            // Check if Typesense is enabled
+            if (config.enabled === false) {
+                console.log('Typesense search disabled:', config.message || 'Search suggestions unavailable');
+                return;
+            }
+
             this.client = new Typesense.Client({
                 nodes: config.nodes,
                 apiKey: config.api_key,
