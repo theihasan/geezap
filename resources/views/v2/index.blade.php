@@ -30,7 +30,7 @@
                 </p>
                 <!-- Enhanced Search Box -->
                 <div class="mt-8 w-full">
-                    <form action="{{ route('job.index') }}" method="get" class="relative">
+                    <form id="searchForm" action="{{ route('job.index') }}" method="get" class="relative">
                         <div class="flex flex-col sm:flex-row gap-3">
                             <!-- Main Search Input -->
                             <div class="flex-1 relative group">
@@ -244,6 +244,12 @@
             const recentSearchesDiv = document.getElementById('recentSearches');
             const recentSearchesList = document.getElementById('recentSearchesList');
 
+            // Check if required elements exist
+            if (!searchForm) {
+                console.error('Search form not found');
+                return;
+            }
+
             let searchTimeout;
             let recentSearches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
 
@@ -295,17 +301,19 @@
                     }
 
                     // Submit form
-                    searchForm.submit();
+                    if (searchForm) {
+                        searchForm.submit();
+                    }
                 });
             });
 
             // Handle form submission
-            searchForm.addEventListener('submit', function() {
+            if (searchForm) { searchForm.addEventListener('submit', function() {
                 const searchTerm = searchInput.value.trim();
                 if (searchTerm) {
                     addToRecentSearches(searchTerm);
                 }
-            });
+            });}
 
             function showDropdown() {
                 autocompleteDropdown.classList.remove('hidden');
@@ -344,7 +352,7 @@
                         `;
                         item.addEventListener('click', function() {
                             searchInput.value = search;
-                            searchForm.submit();
+                            if (searchForm) { searchForm.submit(); }
                         });
                         recentSearchesList.appendChild(item);
                     });
@@ -441,7 +449,9 @@
                     item.addEventListener('click', function() {
                         searchInput.value = suggestion.text;
                         addToRecentSearches(suggestion.text);
-                        searchForm.submit();
+                        if (searchForm) {
+                            searchForm.submit();
+                        }
                     });
 
                     suggestionsList.appendChild(item);
