@@ -31,6 +31,20 @@ class JobFilter extends Component
         }
     }
 
+    public function dehydrate()
+    {
+        // Ensure state is properly maintained
+        $this->dispatch('component-dehydrated');
+    }
+
+    public function hydrate()
+    {
+        // Validate component state on rehydration
+        if (! is_array($this->types)) {
+            $this->types = [];
+        }
+    }
+
     #[Url]
     public $search = '';
 

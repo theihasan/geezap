@@ -21,7 +21,7 @@
                 </div>
             </div>
 
-            <livewire:job-filter />
+            <livewire:job-filter wire:key="job-filter-main" />
         </div>
     </section>
 @endsection
@@ -68,15 +68,6 @@
                     }
                 }
             }
-        });
-        
-        document.getElementById('jobs-filter-form')?.addEventListener('submit', function() {
-            const checkboxes = document.querySelectorAll('.type-checkbox');
-            const types = Array.from(checkboxes)
-                .filter(checkbox => checkbox.checked)
-                .map(checkbox => checkbox.value)
-                .join(',');
-            document.getElementById('types-hidden-input').value = types;
         });
     </script>
 @endpush
