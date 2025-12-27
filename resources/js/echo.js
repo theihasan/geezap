@@ -8,21 +8,23 @@ const reverbAppKey = import.meta.env.VITE_REVERB_APP_KEY;
 const reverbHost = import.meta.env.VITE_REVERB_HOST;
 
 if (reverbAppKey && reverbHost) {
-    window.Echo = new Echo({
-        broadcaster: 'reverb',
-        key: reverbAppKey,
-        wsHost: reverbHost,
-        wsPort: import.meta.env.VITE_REVERB_PORT ?? 80,
-        wssPort: import.meta.env.VITE_REVERB_PORT ?? 443,
-        forceTLS: (import.meta.env.VITE_REVERB_SCHEME ?? 'https') === 'https',
-        enabledTransports: ['ws', 'wss'],
-    });
+    try {
+        window.Echo = new Echo({
+            broadcaster: 'reverb',
+            key: reverbAppKey,
+            wsHost: reverbHost,
+            wsPort: import.meta.env.VITE_REVERB_PORT ?? 80,
+            wssPort: import.meta.env.VITE_REVERB_PORT ?? 443,
+            forceTLS: (import.meta.env.VITE_REVERB_SCHEME ?? 'https') === 'https',
+            enabledTransports: ['ws', 'wss'],
+        });
+        console.log('Echo/Reverb initialized successfully');
+    } catch (error) {
+        console.warn('Echo/Reverb initialization failed:', error);
+        window.Echo = null;
+    }
 } else {
     console.log('Echo/Reverb not initialized - missing configuration');
-    // Create a mock Echo object to prevent errors
-    window.Echo = {
-        channel: () => ({ listen: () => {} }),
-        private: () => ({ listen: () => {} }),
-        leave: () => {},
-    };
+    // Set Echo to null to indicate it's not available
+    window.Echo = null;
 }

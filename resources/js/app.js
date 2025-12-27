@@ -2,8 +2,8 @@ import './bootstrap';
 import './typesense-search';
 import Alpine from 'alpinejs';
 
-window.Alpine = Alpine;
-Alpine.start();
+// window.Alpine = Alpine;
+// Alpine.start();
 
 window.toggleMobileMenu = () => {
     const menu = document.getElementById('mobile-menu');
@@ -49,7 +49,7 @@ document.addEventListener('click', (e) => {
     const menuButton = document.getElementById('menu-toggle');
 
     // Only proceed if menu elements exist on this page
-    if (menu && menuButton && 
+    if (menu && menuButton &&
         !menu.contains(e.target) && !menuButton.contains(e.target) &&
         !menu.classList.contains('translate-x-full')) {
         toggleMobileMenu();
