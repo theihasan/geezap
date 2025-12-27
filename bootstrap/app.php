@@ -23,7 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->append(BlockCrawlerMiddleware::class);
+        //$middleware->append(BlockCrawlerMiddleware::class);
         $middleware->web(append: [
             CaptureCloudflareCountry::class,
             PrometheusMiddleware::class,
@@ -78,7 +78,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $schedule->command('model:prune', [
             '--model' => 'MeShaon\RequestAnalytics\Models\RequestAnalytics',
         ])->daily();
-        
+
         $schedule->command('cloudflare:reload')->daily();
 
     })->create();
