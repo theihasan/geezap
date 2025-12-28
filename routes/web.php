@@ -6,6 +6,7 @@ use App\Http\Controllers\HomePageController;
 use App\Http\Controllers\JobCategoryController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\JobPreferencesController;
+use App\Http\Controllers\MetricsController;
 use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SocialAuthController;
@@ -58,5 +59,7 @@ Route::prefix('auth')->middleware('guest')->group(function () {
     Route::get('{provider}/redirect', [SocialAuthController::class, 'redirect'])->name('social.redirect');
     Route::get('{provider}/callback', [SocialAuthController::class, 'callback'])->name('social.callback');
 });
+
+Route::get('/metrics', MetricsController::class)->name('metrics');
 
 require __DIR__.'/auth.php';
