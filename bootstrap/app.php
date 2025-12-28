@@ -2,9 +2,7 @@
 
 use App\Http\Middleware\BlockCrawlerMiddleware;
 use App\Http\Middleware\CaptureCloudflareCountry;
-use App\Http\Middleware\PrometheusMiddleware;
 use App\Http\Middleware\VerifyClouflareTurnstile;
-use App\Jobs\CollectMetricsJob;
 use App\Jobs\DispatchJobCategories;
 use App\Jobs\NotifyUserAboutNewJobs;
 use App\Jobs\ResetAPIKeyLimit;
@@ -26,7 +24,6 @@ return Application::configure(basePath: dirname(__DIR__))
         //$middleware->append(BlockCrawlerMiddleware::class);
         $middleware->web(append: [
             CaptureCloudflareCountry::class,
-            PrometheusMiddleware::class,
         ]);
         $middleware->alias([
             'cf-turnstile.verify' => VerifyClouflareTurnstile::class,
@@ -65,14 +62,6 @@ return Application::configure(basePath: dirname(__DIR__))
         $schedule->command('sitemap:generate')
             ->daily()
             ->withoutOverlapping(600);
-
-        // $schedule->job(new CollectMetricsJob('business'))
-        //     ->everyFiveMinutes()
-        //     ->withoutOverlapping(300);
-
-        // $schedule->job(new CollectMetricsJob('system'))
-        //     ->everyTenMinutes()
-        //     ->withoutOverlapping(600);
 
         $schedule->command('model:prune')->everyMinute();
         $schedule->command('model:prune', [
