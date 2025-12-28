@@ -30,7 +30,7 @@ class PrometheusMiddleware
         $response = $next($request);
         $this->counter->inc([
             'method' => $request->method(),
-            'path' => $request->path(),
+            'path' => $request->route()?->uri() ?? 'unmatched',
             'status' => $response->getStatusCode(),
         ]);
 
