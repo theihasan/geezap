@@ -3,17 +3,8 @@
 namespace App\Providers;
 
 use App\Enums\Role;
-use App\Events\ExceptionHappenEvent;
-use App\Listeners\MetricsEventListener;
-use Illuminate\Auth\Events\Login;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Cache\RateLimiting\Limit;
-use Illuminate\Mail\Events\MessageSent;
-use Illuminate\Notifications\Events\NotificationSent;
-use Illuminate\Queue\Events\JobFailed;
-use Illuminate\Queue\Events\JobProcessed;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
@@ -43,7 +34,6 @@ class AppServiceProvider extends ServiceProvider
         $this->configureMetaTags();
         // $this->configureRateLimiter();
         $this->configureLogViewer();
-        // $this->registerMetricsEventListeners();
         Livewire::component('job-filter', \App\Livewire\JobFilter::class);
 
     }
@@ -143,17 +133,5 @@ class AppServiceProvider extends ServiceProvider
         LogViewer::auth(function () {
             return auth()->check() && auth()->user()->role === Role::ADMIN;
         });
-    }
-
-    private function registerMetricsEventListeners(): void
-    {
-        Event::listen(Registered::class, [MetricsEventListener::class, 'handleUserRegistered']);
-        Event::listen(Login::class, [MetricsEventListener::class, 'handleUserLogin']);
-
-        Event::listen(ExceptionHappenEvent::class, [MetricsEventListener::class, 'handleExceptionHappen']);
-        Event::listen(JobProcessed::class, [MetricsEventListener::class, 'handleJobProcessed']);
-        Event::listen(JobFailed::class, [MetricsEventListener::class, 'handleJobFailed']);
-        Event::listen(MessageSent::class, [MetricsEventListener::class, 'handleMessageSent']);
-        Event::listen(NotificationSent::class, [MetricsEventListener::class, 'handleNotificationSent']);
     }
 }
