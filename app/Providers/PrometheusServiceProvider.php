@@ -13,7 +13,7 @@ class PrometheusServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(CollectorRegistry::class, function ($app) {
-            return new CollectorRegistry(new Redis(config('database.redis.prometheus', config('database.redis.default'))));
+            return new CollectorRegistry(new Redis(config('database.redis.default')));
         });
     }
 
