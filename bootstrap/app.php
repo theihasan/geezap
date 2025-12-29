@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\BlockCrawlerMiddleware;
 use App\Http\Middleware\CaptureCloudflareCountry;
+use App\Http\Middleware\PrometheusMiddleware;
 use App\Http\Middleware\VerifyClouflareTurnstile;
 use App\Jobs\DispatchJobCategories;
 use App\Jobs\NotifyUserAboutNewJobs;
@@ -24,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
         //$middleware->append(BlockCrawlerMiddleware::class);
         $middleware->web(append: [
             CaptureCloudflareCountry::class,
+            PrometheusMiddleware::class,
         ]);
         $middleware->alias([
             'cf-turnstile.verify' => VerifyClouflareTurnstile::class,
