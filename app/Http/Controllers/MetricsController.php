@@ -1,18 +1,31 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Response;
+use Prometheus\CollectorRegistry;
+use Prometheus\RenderTextFormat;
+
 final class MetricsController
 {
-
-    public function __invoke()
+    public function __invoke(): Response
     {
-        $registry = app(\Prometheus\CollectorRegistry::class);
-        $renderer = new \Prometheus\RenderTextFormat();
-        $metrics = $registry->getMetricFamilySamples();
-        $result = $renderer->render($metrics);
+        try {
+            $registry = app(CollectorRegistry::class);
+            $renderer = new RenderTextFormat;
+            $metrics = $registry->getMetricFamilySamples();
+            $result = $renderer->render($metrics);
 
-        return response($result, 200, ['Content-Type' => \Prometheus\RenderTextFormat::MIME_TYPE]);
+            return response($result, 200, ['Content-Type' => RenderTextFormat::MIME_TYPE]);
+        } catch (\Exception $e) {
+            report($e);
+            return response(
+                "# Redis connection error - no metrics available\n",
+                503,
+                ['Content-Type' => RenderTextFormat::MIME_TYPE]
+            );
+        }
     }
-
 }
