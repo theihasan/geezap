@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "925122c81807a4879ea211d16c7870c3",
+    "content-hash": "9462549940d8a5cc955b158d02425c46",
     "packages": [
         {
             "name": "abbasudo/laravel-purity",
@@ -1928,7 +1928,7 @@
         },
         {
             "name": "geezap/content-formatter",
-            "version": "dev-promethus-monitoring",
+            "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./packages/geezap/content-formatter",
@@ -4451,6 +4451,73 @@
                 }
             ],
             "time": "2025-07-17T05:12:15+00:00"
+        },
+        {
+            "name": "lkaemmerling/laravel-horizon-prometheus-exporter",
+            "version": "v1.8.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/LKaemmerling/laravel-horizon-prometheus-exporter.git",
+                "reference": "18a1fdabdc73dd57860da5bc7b4227a58ab4454f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/LKaemmerling/laravel-horizon-prometheus-exporter/zipball/18a1fdabdc73dd57860da5bc7b4227a58ab4454f",
+                "reference": "18a1fdabdc73dd57860da5bc7b4227a58ab4454f",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/config": "^6.0|^7.0|^8.0|^9.0|^10.0|^11.0|^12.0",
+                "illuminate/routing": "^6.0|^7.0|^8.0|^9.0|^10.0|^11.0|^12.0",
+                "illuminate/support": "^6.0|^7.0|^8.0|^9.0|^10.0|^11.0|^12.0",
+                "laravel/horizon": "^4.0|^5.0",
+                "php": "^7.1|^8.0",
+                "promphp/prometheus_client_php": "^1.0.3|^2.0.0"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^v4.9|^5.3|^6.3|^7.0|^8.0|^9.0|^10.0",
+                "phpunit/phpunit": "^8.2|^9.0|^10.5|^11.5.3",
+                "symfony/var-dumper": "^4.3|^5.1|^7.2"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "LKDevelopment\\HorizonPrometheusExporter\\HorizonPrometheusExporterServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "LKDevelopment\\HorizonPrometheusExporter\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Lukas Kämmerling",
+                    "email": "kontakt@lukas-kaemmerling.de",
+                    "homepage": "https://lukas-kaemmerling.de",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A small package to gain and export long time information from Laravel & Horizon for Prometheus.",
+            "homepage": "https://github.com/lkaemmerling/laravel-horizon-prometheus-exporter",
+            "keywords": [
+                "exporter",
+                "horizon",
+                "laravel",
+                "laravel-horizon-prometheus-exporter",
+                "prometheus"
+            ],
+            "support": {
+                "issues": "https://github.com/LKaemmerling/laravel-horizon-prometheus-exporter/issues",
+                "source": "https://github.com/LKaemmerling/laravel-horizon-prometheus-exporter/tree/v1.8.2"
+            },
+            "time": "2025-02-20T07:33:29+00:00"
         },
         {
             "name": "masterminds/html5",

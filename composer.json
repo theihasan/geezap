@@ -21,6 +21,7 @@
         "laravel/socialite": "^5.16",
         "laravel/tinker": "^2.9",
         "livewire/livewire": "*",
+        "lkaemmerling/laravel-horizon-prometheus-exporter": "^1.8",
         "me-shaon/laravel-request-analytics": "^1.2",
         "monicahq/laravel-cloudflare": "^4.0",
         "opcodesio/log-viewer": "^3.15",
