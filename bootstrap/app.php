@@ -32,10 +32,6 @@ return Application::configure(basePath: dirname(__DIR__))
             'api.throttle' => \App\Http\Middleware\ApiThrottleMiddleware::class,
             'onboarding.required' => \App\Http\Middleware\EnsureOnboardingCompleted::class,
         ]);
-        $middleware->replace(
-            \Illuminate\Http\Middleware\TrustProxies::class,
-            \Monicahq\Cloudflare\Http\Middleware\TrustProxies::class
-        );
     })
     ->withExceptions(function (Exceptions $exceptions) {
         Integration::handles($exceptions);
@@ -70,6 +66,5 @@ return Application::configure(basePath: dirname(__DIR__))
             '--model' => 'MeShaon\RequestAnalytics\Models\RequestAnalytics',
         ])->daily();
 
-        $schedule->command('cloudflare:reload')->daily();
 
     })->create();
