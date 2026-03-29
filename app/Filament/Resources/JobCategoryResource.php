@@ -105,11 +105,28 @@ class JobCategoryResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->before(function ($record) {
+                        $record->countries()->detach();
+                        $jobCount = $record->jobs()->count();
+                        if ($jobCount > 0) {
+                            throw new \Exception("Cannot delete job category '{$record->name}' because it has {$jobCount} associated job listings. Please reassign or delete those jobs first.");
+                        }
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->before(function ($records) {
+                            foreach ($records as $record) {
+                                $record->countries()->detach();
+                                
+                                $jobCount = $record->jobs()->count();
+                                if ($jobCount > 0) {
+                                    throw new \Exception("Cannot delete job category '{$record->name}' because it has {$jobCount} associated job listings. Please reassign or delete those jobs first.");
+                                }
+                            }
+                        }),
                 ]),
             ]);
     }
